@@ -1,6 +1,5 @@
-package net.minecraft.src;
+package littleblocks.core;
 
-import littleblocks.core.LBCore;
 import littleblocks.network.ClientPacketHandler;
 import littleblocks.network.CommonPacketHandler;
 import net.minecraft.src.EurysMods.api.ICommonProxy;
