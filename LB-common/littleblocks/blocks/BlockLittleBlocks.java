@@ -3,30 +3,23 @@ package littleblocks.blocks;
 import java.util.ArrayList;
 import java.util.List;
 
+import littleblocks.api.ILBCommonProxy;
 import littleblocks.core.LBCore;
 import littleblocks.core.LBInit;
 import littleblocks.tileentities.TileEntityLittleBlocks;
-import littleblocks.network.packets.PacketLittleBlocks;
-import littleblocks.proxy.ILBCommonProxy;
 import net.minecraft.src.AxisAlignedBB;
-import net.minecraft.src.BaseMod;
 import net.minecraft.src.Block;
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.EnumGameType;
 import net.minecraft.src.IBlockAccess;
-import net.minecraft.src.ItemBucket;
-import net.minecraft.src.ItemInWorldManager;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
-import net.minecraft.src.ModLoader;
 import net.minecraft.src.MovingObjectPosition;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.Vec3;
 import net.minecraft.src.World;
-import net.minecraft.src.EurysMods.core.EurysCore;
 
 public class BlockLittleBlocks extends BlockContainer {
 
@@ -92,13 +85,15 @@ public class BlockLittleBlocks extends BlockContainer {
 	@Override
 	public void onBlockClicked(World world, int x, int y, int z,
 			EntityPlayer entityplayer) {
-		((ILBCommonProxy)LBInit.LBM.getProxy()).onBlockClicked(world, this, x, y, z, entityplayer);
+		((ILBCommonProxy) LBInit.LBM.getProxy()).onBlockClicked(world, this, x,
+				y, z, entityplayer);
 	}
 
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z,
 			EntityPlayer entityplayer, int q, float a, float b, float c) {
-		return ((ILBCommonProxy)LBInit.LBM.getProxy()).onBlockActivated(world,this,x,y,z,entityplayer,q,a,b,c);
+		return ((ILBCommonProxy) LBInit.LBM.getProxy()).onBlockActivated(world,
+				this, x, y, z, entityplayer, q, a, b, c);
 	}
 
 	public void dropLittleBlockAsItem_do(World world, int x, int y, int z,

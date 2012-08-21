@@ -3,29 +3,21 @@ package littleblocks.network;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 
-import cpw.mods.fml.common.network.IPacketHandler;
-import cpw.mods.fml.common.network.Player;
 import littleblocks.blocks.BlockLittleBlocks;
-import littleblocks.core.LBCore;
-import littleblocks.core.LBInit;
-import littleblocks.core.LittleWorld;
 import littleblocks.network.packets.PacketLittleBlocks;
 import littleblocks.network.packets.PacketTileEntityLB;
 import littleblocks.tileentities.TileEntityLittleBlocks;
-import net.minecraft.src.EntityClientPlayerMP;
 import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.EurysMods.core.EurysCore;
-import net.minecraft.src.EurysMods.network.IPacketHandling;
 import net.minecraft.src.EurysMods.network.packets.core.PacketIds;
 import net.minecraft.src.EurysMods.network.packets.core.PacketTileEntity;
-import net.minecraft.src.EurysMods.network.packets.core.PacketTileEntityMT;
 import net.minecraft.src.EurysMods.network.packets.core.PacketUpdate;
+import cpw.mods.fml.common.network.IPacketHandler;
+import cpw.mods.fml.common.network.Player;
 
 public class ClientPacketHandler implements IPacketHandler {
 
@@ -48,16 +40,19 @@ public class ClientPacketHandler implements IPacketHandler {
 						for (int xx = 0; xx < 8; xx++) {
 							for (int yy = 0; yy < 8; yy++) {
 								for (int zz = 0; zz < 8; zz++) {
-									tileentitylb.setContent(xx, yy, zz,
-											packetLB.payload
-													.getIntPayload(1 + xx
-															+ yy * 8 + zz
-															* 8 * 8),
-											packetLB.payload
-													.getIntPayload(1 + 8
-															* 8 * 8 + xx
-															+ yy * 8 + zz
-															* 8 * 8));
+									tileentitylb
+											.setContent(xx, yy, zz,
+													packetLB.payload
+															.getIntPayload(1
+																	+ xx + yy
+																	* 8 + zz
+																	* 8 * 8),
+													packetLB.payload
+															.getIntPayload(1
+																	+ 8 * 8 * 8
+																	+ xx + yy
+																	* 8 + zz
+																	* 8 * 8));
 								}
 							}
 						}
@@ -88,13 +83,11 @@ public class ClientPacketHandler implements IPacketHandler {
 	}
 
 	public static void blockUpdate(World world, EntityPlayer entityplayer,
-			int x, int y, int z, 
-			int q, float a, float b, float c,
+			int x, int y, int z, int q, float a, float b, float c,
 			BlockLittleBlocks block, String command) {
-		PacketLittleBlocks packetLB = new PacketLittleBlocks(command,
-				x, y, z, q, a, b, c, block.xSelected, block.ySelected,
-				block.zSelected, block.blockID, block.side);
-		EurysCore.console(LBInit.LBM.getModName(), "Sending Packet to Server");
+		PacketLittleBlocks packetLB = new PacketLittleBlocks(command, x, y, z,
+				q, a, b, c, block.xSelected, block.ySelected, block.zSelected,
+				block.blockID, block.side);
 		ModLoader.sendPacket(packetLB.getPacket());
 	}
 
@@ -113,8 +106,7 @@ public class ClientPacketHandler implements IPacketHandler {
 								packetLB.xPosition, packetLB.yPosition,
 								packetLB.zPosition, packetLB.getBlockID(),
 								packetLB.getMetadata());
-						world.markBlockAsNeedsUpdate(
-								packetLB.getSelectedX(),
+						world.markBlockAsNeedsUpdate(packetLB.getSelectedX(),
 								packetLB.getSelectedY(),
 								packetLB.getSelectedZ());
 						break;
@@ -130,21 +122,20 @@ public class ClientPacketHandler implements IPacketHandler {
 		DataInputStream data = new DataInputStream(new ByteArrayInputStream(
 				packet.data));
 		try {
-			EntityPlayer entityplayer = (EntityPlayer)player;
+			EntityPlayer entityplayer = (EntityPlayer) player;
 			World world = entityplayer.worldObj;
 			int packetID = data.read();
 			switch (packetID) {
 			case PacketIds.TILE:
 				PacketTileEntityLB packetTileLB = new PacketTileEntityLB();
 				packetTileLB.readData(data);
-				this.handleTileEntityPacket(packetTileLB,
+				ClientPacketHandler.handleTileEntityPacket(packetTileLB,
 						entityplayer, world);
 				break;
 			case PacketIds.UPDATE:
 				PacketLittleBlocks packetLB = new PacketLittleBlocks();
 				packetLB.readData(data);
-				this.handlePacket(packetLB, entityplayer,
-						world);
+				ClientPacketHandler.handlePacket(packetLB, entityplayer, world);
 				break;
 			}
 		} catch (Exception ex) {

@@ -6,7 +6,6 @@ import java.util.List;
 import littleblocks.core.LBCore;
 import littleblocks.core.LittleWorld;
 import littleblocks.network.packets.PacketTileEntityLB;
-
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagInt;
 import net.minecraft.src.NBTTagList;
@@ -15,6 +14,7 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.WorldProviderSurface;
 import net.minecraft.src.EurysMods.network.packets.core.PacketPayload;
+import net.minecraft.src.EurysMods.network.packets.core.PacketUpdate;
 
 public class TileEntityLittleBlocks extends TileEntity {
 	public static int size = 8;
@@ -24,13 +24,12 @@ public class TileEntityLittleBlocks extends TileEntity {
 	private boolean upToDate = false;
 
 	private static LittleWorld littleWorld;
-	
+
 	@Override
-    public void func_70308_a(World par1World)
-    {
-        this.worldObj = par1World;
-        this.littleWorld = getLittleWorld(this.worldObj);
-    }
+	public void func_70308_a(World par1World) {
+		this.worldObj = par1World;
+		TileEntityLittleBlocks.littleWorld = getLittleWorld(this.worldObj);
+	}
 
 	public TileEntityLittleBlocks() {
 		for (int x = 0; x < content.length; x++) {
@@ -161,8 +160,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 					+ (y >= size ? 1 : 0), zCoord + (z >= size ? 1 : 0)) == 0) {
 				worldObj.setBlockWithNotify(xCoord + (x >= size ? 1 : 0),
 						yCoord + (y >= size ? 1 : 0), zCoord
-								+ (z >= size ? 1 : 0),
-						LBCore.littleBlocksID);
+								+ (z >= size ? 1 : 0), LBCore.littleBlocksID);
 			}
 			if (worldObj.getBlockId(xCoord + (x >= size ? 1 : 0), yCoord
 					+ (y >= size ? 1 : 0), zCoord + (z >= size ? 1 : 0)) == LBCore.littleBlocksID) {
@@ -207,8 +205,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 					+ (y >= size ? 1 : 0), zCoord + (z >= size ? 1 : 0)) == 0) {
 				worldObj.setBlockWithNotify(xCoord + (x >= size ? 1 : 0),
 						yCoord + (y >= size ? 1 : 0), zCoord
-								+ (z >= size ? 1 : 0),
-						LBCore.littleBlocksID);
+								+ (z >= size ? 1 : 0), LBCore.littleBlocksID);
 			}
 			if (worldObj.getBlockId(xCoord + (x >= size ? 1 : 0), yCoord
 					+ (y >= size ? 1 : 0), zCoord + (z >= size ? 1 : 0)) == LBCore.littleBlocksID) {
@@ -241,8 +238,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 
 		if (metadatas[x][y][z] != metadata) {
 			littleWorld.metadataModified((this.xCoord << 3) + x,
-					(this.yCoord << 3) + y, (this.zCoord << 3) + z,
-					0, 0, 0, 0,
+					(this.yCoord << 3) + y, (this.zCoord << 3) + z, 0, 0, 0, 0,
 					metadatas[x][y][z], metadata);
 		}
 	}
@@ -253,8 +249,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 					+ (y >= size ? 1 : 0), zCoord + (z >= size ? 1 : 0)) == 0) {
 				worldObj.setBlockWithNotify(xCoord + (x >= size ? 1 : 0),
 						yCoord + (y >= size ? 1 : 0), zCoord
-								+ (z >= size ? 1 : 0),
-						LBCore.littleBlocksID);
+								+ (z >= size ? 1 : 0), LBCore.littleBlocksID);
 			}
 			if (worldObj.getBlockId(xCoord + (x >= size ? 1 : 0), yCoord
 					+ (y >= size ? 1 : 0), zCoord + (z >= size ? 1 : 0)) == LBCore.littleBlocksID) {
@@ -290,14 +285,12 @@ public class TileEntityLittleBlocks extends TileEntity {
 
 		if (lastData != metadata) {
 			littleWorld.metadataModified((this.xCoord << 3) + x,
-					(this.yCoord << 3) + y, (this.zCoord << 3) + z,
-					0, 0, 0, 0,
+					(this.yCoord << 3) + y, (this.zCoord << 3) + z, 0, 0, 0, 0,
 					lastData, metadata);
 		}
 		if (lastId != id) {
 			littleWorld.idModified((this.xCoord << 3) + x, (this.yCoord << 3)
-					+ y, (this.zCoord << 3) + z, 
-					0, 0, 0, 0, lastId, id);
+					+ y, (this.zCoord << 3) + z, 0, 0, 0, 0, lastId, id);
 		}
 	}
 
@@ -419,7 +412,11 @@ public class TileEntityLittleBlocks extends TileEntity {
 	}
 
 	public Packet getUpdatePacket() {
-		return new PacketTileEntityLB(this).getPacket();
+		return getPacketUpdate().getPacket();
+	}
+
+	public PacketUpdate getPacketUpdate() {
+		return new PacketTileEntityLB(this);
 	}
 
 	public PacketPayload getTileEntityPayload() {
@@ -479,9 +476,6 @@ public class TileEntityLittleBlocks extends TileEntity {
 		}
 
 		upToDate = false;
-		// return ModLoaderMp.getTileEntityPacket(mod_LittleBlocks.instance,
-		// xCoord, yCoord, zCoord, getMetadata(xCoord, yCoord, zCoord), dataInt,
-		// null, null);
 		PacketPayload p = new PacketPayload(dataInt.length, 0, 1, 0);
 		p.setStringPayload(0,
 				String.valueOf(getMetadata(xCoord, yCoord, zCoord)));

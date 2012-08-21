@@ -1,44 +1,34 @@
 package littleblocks.core;
 
-import cpw.mods.fml.common.Side;
 import littleblocks.network.CommonPacketHandler;
-import littleblocks.network.ILBPacketHandling;
 import littleblocks.tileentities.TileEntityLittleBlocks;
-import net.minecraft.client.Minecraft;
 import net.minecraft.src.Block;
 import net.minecraft.src.Chunk;
-import net.minecraft.src.ChunkProviderFlat;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EnumSkyBlock;
 import net.minecraft.src.IChunkProvider;
-import net.minecraft.src.ISaveHandler;
 import net.minecraft.src.MovingObjectPosition;
-import net.minecraft.src.Profiler;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.Vec3;
 import net.minecraft.src.World;
 import net.minecraft.src.WorldProvider;
 import net.minecraft.src.WorldSettings;
-import net.minecraft.src.EurysMods.core.EurysCore;
 
 public class LittleWorld extends World {
 
 	private final World realWorld;
 
 	public LittleWorld(World world, WorldProvider worldprovider) {
-		super(world.getSaveHandler(), "	", 
-				new WorldSettings(world.getWorldInfo().getSeed(), world.getWorldInfo().getGameType(),
-						world.getWorldInfo().isMapFeaturesEnabled(),
-						world.getWorldInfo().isHardcoreModeEnabled(),
-						world.getWorldInfo().getTerrainType()), 
-						worldprovider, null);
-		EurysCore.console(LBInit.LBM.getModName(), "World Created");
-		
+		super(world.getSaveHandler(), "	", new WorldSettings(world
+				.getWorldInfo().getSeed(), world.getWorldInfo().getGameType(),
+				world.getWorldInfo().isMapFeaturesEnabled(), world
+						.getWorldInfo().isHardcoreModeEnabled(), world
+						.getWorldInfo().getTerrainType()), worldprovider, null);
+
 		this.realWorld = world;
 		this.worldInfo = world.getWorldInfo();
 	}
 
-	// Eury START
 	@Override
 	public int getLightBrightnessForSkyBlocks(int i, int j, int k, int l) {
 		return realWorld.getLightBrightnessForSkyBlocks(i >> 3, j >> 3, k >> 3,
@@ -49,10 +39,9 @@ public class LittleWorld extends World {
 	public float getBrightness(int i, int j, int k, int l) {
 		return realWorld.getBrightness(i >> 3, j >> 3, k >> 3, l);
 	}
-	// Eury END Client
 
 	@Override
-    public void setSpawnLocation() {
+	public void setSpawnLocation() {
 	}
 
 	public boolean isOutdated(World world) {
@@ -68,7 +57,7 @@ public class LittleWorld extends World {
 		if (y < 0) {
 			return 0;
 		}
-		if (y >= 256 << 3) {
+		if (y >= 128 << 3) {
 			return 0;
 		} else {
 			int id = realWorld.getChunkFromChunkCoords(x >> 7, z >> 7)
@@ -107,7 +96,7 @@ public class LittleWorld extends World {
 		if (y < 0) {
 			return 0;
 		}
-		if (y >= 256 << 3) {
+		if (y >= 128 << 3) {
 			return 0;
 		} else {
 			int id = realWorld.getChunkFromChunkCoords(x >> 7, z >> 7)
@@ -138,7 +127,7 @@ public class LittleWorld extends World {
 		if (y < 0) {
 			return false;
 		}
-		if (y >= 256 << 3) {
+		if (y >= 128 << 3) {
 			return false;
 		} else {
 			boolean flag = false;
@@ -169,7 +158,7 @@ public class LittleWorld extends World {
 		if (y < 0) {
 			return false;
 		}
-		if (y >= 256 << 3) {
+		if (y >= 128 << 3) {
 			return false;
 		} else {
 			boolean flag = false;
@@ -199,7 +188,7 @@ public class LittleWorld extends World {
 		if (y < 0) {
 			return false;
 		}
-		if (y >= 256 << 3) {
+		if (y >= 128 << 3) {
 			return false;
 		} else {
 			Chunk chunk = realWorld.getChunkFromChunkCoords(x >> 7, z >> 7);
@@ -273,8 +262,8 @@ public class LittleWorld extends World {
 		}
 	}
 
-	public void idModified(int x, int y, int z, int side, 
-			float vecX, float vecY, float vecZ, int lastId, int newId) {
+	public void idModified(int x, int y, int z, int side, float vecX,
+			float vecY, float vecZ, int lastId, int newId) {
 		if (lastId != 0) {
 			Block.blocksList[lastId].breakBlock(this, x, y, z, 0, 0);
 		}
@@ -285,17 +274,16 @@ public class LittleWorld extends World {
 			// } Client
 		}
 
-		CommonPacketHandler.idModified(
-						x, y, z, side, vecX, vecY, vecZ, lastId, newId, this);
+		CommonPacketHandler.idModified(x, y, z, side, vecX, vecY, vecZ, lastId,
+				newId, this);
 
 		notifyBlockChange(x, y, z, newId);
 	}
 
-	public void metadataModified(int x, int y, int z, int side,
-			float vecX, float vecY, float vecZ,
-			int lastMetadata, int newMetadata) {
-		CommonPacketHandler.metadataModified(
-						this, x, y, z, side, vecX, vecY, vecZ, lastMetadata, newMetadata);
+	public void metadataModified(int x, int y, int z, int side, float vecX,
+			float vecY, float vecZ, int lastMetadata, int newMetadata) {
+		CommonPacketHandler.metadataModified(this, x, y, z, side, vecX, vecY,
+				vecZ, lastMetadata, newMetadata);
 	}
 
 	@Override
@@ -307,7 +295,7 @@ public class LittleWorld extends World {
 		if (y < 0) {
 			return null;
 		}
-		if (y >= 256 << 3) {
+		if (y >= 128 << 3) {
 			return null;
 		} else {
 			Chunk chunk = realWorld.getChunkFromChunkCoords(x >> 7, z >> 7);
@@ -330,7 +318,7 @@ public class LittleWorld extends World {
 		if (y < 0) {
 			return;
 		}
-		if (y >= 256 << 3) {
+		if (y >= 128 << 3) {
 			return;
 		} else {
 			Chunk chunk = realWorld.getChunkFromChunkCoords(x >> 7, z >> 7);
@@ -355,7 +343,7 @@ public class LittleWorld extends World {
 		if (y < 0) {
 			return;
 		}
-		if (y >= 256 << 3) {
+		if (y >= 128 << 3) {
 			return;
 		} else {
 			Chunk chunk = realWorld.getChunkFromChunkCoords(x >> 7, z >> 7);

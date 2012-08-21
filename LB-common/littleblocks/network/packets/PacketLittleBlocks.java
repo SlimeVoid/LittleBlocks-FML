@@ -15,9 +15,8 @@ public class PacketLittleBlocks extends PacketUpdate {
 	}
 
 	public PacketLittleBlocks(String command, int x, int y, int z, int side,
-			float vecX, float vecY, float vecZ,
-			int selectedX, int selectedY, int selectedZ, int blockId,
-			int metadata) {
+			float vecX, float vecY, float vecZ, int selectedX, int selectedY,
+			int selectedZ, int blockId, int metadata) {
 		this();
 		this.setPosition(x, y, z, side);
 		this.setVecs(vecX, vecY, vecZ);
@@ -29,7 +28,7 @@ public class PacketLittleBlocks extends PacketUpdate {
 	}
 
 	public PacketLittleBlocks(String command, int x, int y, int z, int side,
-			float vecX, float vecY, float vecZ,int blockId, int newMetadata) {
+			float vecX, float vecY, float vecZ, int blockId, int newMetadata) {
 		this();
 		this.setPosition(x, y, z, side);
 		this.setVecs(vecX, vecY, vecZ);

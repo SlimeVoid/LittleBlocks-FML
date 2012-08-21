@@ -5,7 +5,6 @@ import java.util.List;
 
 import littleblocks.core.LBCore;
 import littleblocks.tileentities.TileEntityLittleBlocks;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.Block;
 import net.minecraft.src.BlockContainer;
@@ -17,7 +16,7 @@ import net.minecraft.src.TileEntitySpecialRenderer;
 
 import org.lwjgl.opengl.GL11;
 
-public class LittleBlocksRenderer extends TileEntitySpecialRenderer {
+public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 	private Tessellator tessellator = Tessellator.instance;
 	private List<TileEntity> entitiesToDraw = new ArrayList<TileEntity>();
 
