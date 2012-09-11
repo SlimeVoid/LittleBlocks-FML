@@ -79,7 +79,7 @@ public class CommonProxy implements ILBCommonProxy {
 			for (int i = 0; i < blocks.length; i++) {
 				if (blocks[i] != null && blocks[i].blockID == itemID) {
 					Block theBlock = blocks[i];
-					if (theBlock.hasTileEntity()) {
+					if (theBlock.hasTileEntity(0)) {
 						return false;
 					}
 				}

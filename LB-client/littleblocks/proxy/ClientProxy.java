@@ -25,16 +25,19 @@ import cpw.mods.fml.common.registry.TickRegistry;
 
 public class ClientProxy extends CommonProxy {
 
+	@SideOnly(Side.CLIENT)
 	@Override
 	public String getMinecraftDir() {
 		return Minecraft.getMinecraftDir().toString();
 	}
 
+	@SideOnly(Side.CLIENT)
 	@Override
 	public void registerRenderInformation() {
 		RenderingRegistry.registerBlockHandler(new BlockLittleBlocksRenderer());
 	}
 
+	@SideOnly(Side.CLIENT)
 	@Override
 	public void registerTileEntitySpecialRenderer(
 			Class<? extends TileEntity> clazz) {
@@ -50,11 +53,13 @@ public class ClientProxy extends CommonProxy {
 	@SideOnly(Side.CLIENT)
 	private static Minecraft mc = ModLoader.getMinecraftInstance();
 
+	@SideOnly(Side.CLIENT)
 	@Override
 	public void registerTickHandler() {
 		TickRegistry.registerTickHandler(new CommonTickHandler(), Side.CLIENT);
 	}
 
+	@SideOnly(Side.CLIENT)
 	@Override
 	public boolean onBlockActivated(World world, BlockLittleBlocks block,
 			int x, int y, int z, EntityPlayer entityplayer, int q, float a,
@@ -80,6 +85,7 @@ public class ClientProxy extends CommonProxy {
 		return false;
 	}
 
+	@SideOnly(Side.CLIENT)
 	@Override
 	public void onBlockClicked(World world, BlockLittleBlocks block, int x,
 			int y, int z, EntityPlayer entityplayer) {
@@ -110,7 +116,6 @@ public class ClientProxy extends CommonProxy {
 				}
 			}
 		}
-
 		tile.setContent(block.xSelected, block.ySelected, block.zSelected, 0);
 	}
 }

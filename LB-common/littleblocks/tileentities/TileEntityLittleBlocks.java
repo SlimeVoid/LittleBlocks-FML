@@ -3,13 +3,18 @@ package littleblocks.tileentities;
 import java.util.ArrayList;
 import java.util.List;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+
 import littleblocks.core.LBCore;
 import littleblocks.core.LittleWorld;
 import littleblocks.network.packets.PacketTileEntityLB;
+import net.minecraft.src.ModLoader;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagInt;
 import net.minecraft.src.NBTTagList;
+import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet;
+import net.minecraft.src.Packet132TileEntityData;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.WorldProviderSurface;
@@ -24,6 +29,14 @@ public class TileEntityLittleBlocks extends TileEntity {
 	private boolean upToDate = false;
 
 	private static LittleWorld littleWorld;
+    
+	@Override
+	public void onDataPacket(NetworkManager net, Packet132TileEntityData pkt)
+    {
+		if (FMLCommonHandler.instance().getSide().isClient()) {
+			ModLoader.getMinecraftInstance().thePlayer.addChatMessage("Data Packet");
+		}
+    }
 
 	@Override
 	public void func_70308_a(World par1World) {

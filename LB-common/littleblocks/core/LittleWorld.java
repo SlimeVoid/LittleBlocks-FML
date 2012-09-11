@@ -269,9 +269,9 @@ public class LittleWorld extends World {
 		}
 		realWorld.updateAllLightTypes(x, y, z);
 		if (newId != 0) {
-			// if(!this.isRemote) {
+			if(!this.isRemote) {
 			Block.blocksList[newId].onBlockAdded(this, x, y, z);
-			// } Client
+			}// Client
 		}
 
 		CommonPacketHandler.idModified(x, y, z, side, vecX, vecY, vecZ, lastId,

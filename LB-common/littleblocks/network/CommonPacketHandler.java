@@ -54,7 +54,7 @@ public class CommonPacketHandler implements IPacketHandler {
 							.getSelectedZ();
 					((BlockLittleBlocks) LBCore.littleBlocks).side = packetLB
 							.getMetadata();
-					((BlockLittleBlocks) LBCore.littleBlocks).onBlockActivated(
+					((BlockLittleBlocks) LBCore.littleBlocks).onServerBlockActivated(
 							world, packet.xPosition, packet.yPosition,
 							packet.zPosition, entityplayer, packet.side,
 							packet.vecX, packet.vecY, packet.vecZ);
@@ -75,7 +75,8 @@ public class CommonPacketHandler implements IPacketHandler {
 							.getSelectedZ();
 					((BlockLittleBlocks) LBCore.littleBlocks).side = packetLB
 							.getMetadata();
-					((BlockLittleBlocks) LBCore.littleBlocks).onBlockClicked(
+					entityplayer.addChatMessage("Clicking Block");
+					((BlockLittleBlocks) LBCore.littleBlocks).onServerBlockClicked(
 							world, packet.xPosition, packet.yPosition,
 							packet.zPosition, entityplayer);
 					((BlockLittleBlocks) LBCore.littleBlocks).xSelected = -10;
@@ -115,14 +116,15 @@ public class CommonPacketHandler implements IPacketHandler {
 			if (shouldSendToPlayer) {
 				if (Math.abs(entityplayermp.posX - x) <= 16
 						&& Math.abs(entityplayermp.posY - y) <= 16
-						&& Math.abs(entityplayermp.posZ - z) <= 16)
-					entityplayermp.serverForThisPlayer.theNetworkManager
-							.addToSendQueue(packet);
+						&& Math.abs(entityplayermp.posZ - z) <= 16) {
+					entityplayermp.addChatMessage("Sending to player");
+					entityplayermp.serverForThisPlayer.sendPacketToPlayer(packet);
+				}
 			}
 		}
 	}
 
-	public void blockUpdate(World world, EntityPlayer entityplayer, int x,
+	public static void blockUpdate(World world, EntityPlayer entityplayer, int x,
 			int y, int z, int q, float a, float b, float c,
 			BlockLittleBlocks block, String blockActivateCommand) {
 	}
@@ -130,11 +132,11 @@ public class CommonPacketHandler implements IPacketHandler {
 	@Override
 	public void onPacketData(NetworkManager manager,
 			Packet250CustomPayload packet, Player player) {
+		EntityPlayer entityplayer = (EntityPlayer) player;
+		World world = entityplayer.worldObj;
 		DataInputStream data = new DataInputStream(new ByteArrayInputStream(
 				packet.data));
 		try {
-			EntityPlayer entityplayer = (EntityPlayer) player;
-			World world = entityplayer.worldObj;
 			int packetID = data.read();
 			switch (packetID) {
 			case PacketIds.UPDATE:

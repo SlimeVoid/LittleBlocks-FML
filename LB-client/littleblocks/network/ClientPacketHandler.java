@@ -7,6 +7,7 @@ import littleblocks.blocks.BlockLittleBlocks;
 import littleblocks.network.packets.PacketLittleBlocks;
 import littleblocks.network.packets.PacketTileEntityLB;
 import littleblocks.tileentities.TileEntityLittleBlocks;
+import net.minecraft.client.Minecraft;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.NetworkManager;
@@ -16,11 +17,14 @@ import net.minecraft.src.World;
 import net.minecraft.src.EurysMods.network.packets.core.PacketIds;
 import net.minecraft.src.EurysMods.network.packets.core.PacketTileEntity;
 import net.minecraft.src.EurysMods.network.packets.core.PacketUpdate;
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
 
-public class ClientPacketHandler implements IPacketHandler {
+public class ClientPacketHandler extends CommonPacketHandler {
 
+	@SideOnly(Side.CLIENT)
 	public static void handleTileEntityPacket(PacketTileEntity packet,
 			EntityPlayer entityplayer, World world) {
 		TileEntity tileentity = world.getBlockTileEntity(packet.xPosition,
@@ -82,15 +86,19 @@ public class ClientPacketHandler implements IPacketHandler {
 		}
 	}
 
+	@SideOnly(Side.CLIENT)
 	public static void blockUpdate(World world, EntityPlayer entityplayer,
 			int x, int y, int z, int q, float a, float b, float c,
 			BlockLittleBlocks block, String command) {
-		PacketLittleBlocks packetLB = new PacketLittleBlocks(command, x, y, z,
-				q, a, b, c, block.xSelected, block.ySelected, block.zSelected,
-				block.blockID, block.side);
-		ModLoader.sendPacket(packetLB.getPacket());
+		if (world.isRemote) {
+			PacketLittleBlocks packetLB = new PacketLittleBlocks(command, x, y, z,
+					q, a, b, c, block.xSelected, block.ySelected, block.zSelected,
+					block.blockID, block.side);
+			ModLoader.sendPacket(packetLB.getPacket());
+		}
 	}
-
+	
+	@SideOnly(Side.CLIENT)
 	public static void handlePacket(PacketUpdate packet,
 			EntityPlayer entityplayer, World world) {
 		if (packet instanceof PacketLittleBlocks) {
@@ -116,14 +124,15 @@ public class ClientPacketHandler implements IPacketHandler {
 		}
 	}
 
+	@SideOnly(Side.CLIENT)
 	@Override
 	public void onPacketData(NetworkManager manager,
 			Packet250CustomPayload packet, Player player) {
+		EntityPlayer entityplayer = (EntityPlayer) player;
+		World world = entityplayer.worldObj;
 		DataInputStream data = new DataInputStream(new ByteArrayInputStream(
 				packet.data));
 		try {
-			EntityPlayer entityplayer = (EntityPlayer) player;
-			World world = entityplayer.worldObj;
 			int packetID = data.read();
 			switch (packetID) {
 			case PacketIds.TILE:
