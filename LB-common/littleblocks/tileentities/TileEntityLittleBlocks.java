@@ -41,7 +41,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 	@Override
 	public void func_70308_a(World par1World) {
 		this.worldObj = par1World;
-		TileEntityLittleBlocks.littleWorld = getLittleWorld(this.worldObj);
+		this.littleWorld = getLittleWorld(this.worldObj);
 	}
 
 	public TileEntityLittleBlocks() {
@@ -433,12 +433,12 @@ public class TileEntityLittleBlocks extends TileEntity {
 	}
 
 	public PacketPayload getTileEntityPayload() {
-		int blocks = 0;
+		int numberOfLittleBlocks = 0;
 		for (int x = 0; x < content.length; x++) {
 			for (int y = 0; y < content[x].length; y++) {
 				for (int z = 0; z < content[x][y].length; z++) {
 					if (content[x][y][z] > 0) {
-						blocks++;
+						numberOfLittleBlocks++;
 					}
 				}
 			}
@@ -446,7 +446,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 		int[] dataInt;
 		if (upToDate) {
 			dataInt = new int[] { 0, 0 };
-		} else if (blocks > 204) {
+		} else if (numberOfLittleBlocks > 204) {
 			// (3 /* POS */ + 2 /* ID & DATA */)x > 8*8*8*2 /* ID & DATA */ <=>
 			// 5x > 1024 <=> x > 204.8
 			dataInt = new int[2 + 8 * 8 * 8 * 2];
@@ -468,7 +468,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 				}
 			}
 		} else {
-			dataInt = new int[2 + blocks * 5];
+			dataInt = new int[2 + numberOfLittleBlocks * 5];
 			dataInt[0] = 0;
 			dataInt[1] = 2;
 			int i = 0;

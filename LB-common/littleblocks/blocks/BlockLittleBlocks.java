@@ -53,7 +53,6 @@ public class BlockLittleBlocks extends BlockContainer {
 			TileEntityLittleBlocks tile = (TileEntityLittleBlocks) world
 					.getBlockTileEntity(x, y, z);
 			if (tile.isEmpty()) {
-				player.addChatMessage("Empty Tile @isRemote:" + world.isRemote);
 				return super.removeBlockByPlayer(world, player, x, y, z);
 			} else {
 				if (world.getWorldInfo().getGameType() == EnumGameType.CREATIVE) {
@@ -143,7 +142,6 @@ public class BlockLittleBlocks extends BlockContainer {
 		TileEntity tileentity = world.getBlockTileEntity(x, y, z);
 		if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
 			TileEntityLittleBlocks tileEntityLittleBlocks = (TileEntityLittleBlocks) tileentity;
-			entityplayer.addChatMessage("TileExists in LW: " + tileEntityLittleBlocks.getLittleWorld().toString());
 			if (entityplayer instanceof EntityPlayerMP) {
 				EntityPlayerMP player = (EntityPlayerMP) entityplayer;
 	

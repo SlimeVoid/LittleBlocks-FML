@@ -398,6 +398,6 @@ public class LittleWorld extends World {
 
 	@Override
 	protected IChunkProvider createChunkProvider() {
-		return new LBChunkProvider(realWorld);
+		return new LBChunkProvider(this);
 	}
 }

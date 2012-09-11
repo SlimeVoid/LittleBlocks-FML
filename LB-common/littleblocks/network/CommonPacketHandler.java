@@ -75,7 +75,6 @@ public class CommonPacketHandler implements IPacketHandler {
 							.getSelectedZ();
 					((BlockLittleBlocks) LBCore.littleBlocks).side = packetLB
 							.getMetadata();
-					entityplayer.addChatMessage("Clicking Block");
 					((BlockLittleBlocks) LBCore.littleBlocks).onServerBlockClicked(
 							world, packet.xPosition, packet.yPosition,
 							packet.zPosition, entityplayer);
@@ -117,7 +116,6 @@ public class CommonPacketHandler implements IPacketHandler {
 				if (Math.abs(entityplayermp.posX - x) <= 16
 						&& Math.abs(entityplayermp.posY - y) <= 16
 						&& Math.abs(entityplayermp.posZ - z) <= 16) {
-					entityplayermp.addChatMessage("Sending to player");
 					entityplayermp.serverForThisPlayer.sendPacketToPlayer(packet);
 				}
 			}
