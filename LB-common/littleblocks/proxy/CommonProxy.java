@@ -60,6 +60,11 @@ public class CommonProxy implements ILBCommonProxy {
 	}
 
 	@Override
+	public int getBlockTextureFromSideAndMetadata(int side, int meta) {
+		return getBlockTextureFromMetadata(meta);
+	}
+
+	@Override
 	public void onPacketData(NetworkManager manager,
 			Packet250CustomPayload packet, Player player) {
 	}

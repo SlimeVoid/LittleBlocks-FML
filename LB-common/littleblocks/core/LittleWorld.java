@@ -249,7 +249,7 @@ public class LittleWorld extends World {
 		// this.editingBlocks || this.isRemote) {
 		// return;
 		// } Client
-		if (realWorld.editingBlocks || this.editingBlocks) {
+		if (realWorld.editingBlocks || this.editingBlocks || realWorld.isRemote || this.isRemote) {
 			return;
 		}
 		Block block = Block.blocksList[world.getBlockId(i, j, k)];
@@ -273,7 +273,7 @@ public class LittleWorld extends World {
 			Block.blocksList[newId].onBlockAdded(this, x, y, z);
 			}// Client
 		}
-
+		if (!this.isRemote)
 		CommonPacketHandler.idModified(x, y, z, side, vecX, vecY, vecZ, lastId,
 				newId, this);
 
@@ -282,6 +282,7 @@ public class LittleWorld extends World {
 
 	public void metadataModified(int x, int y, int z, int side, float vecX,
 			float vecY, float vecZ, int lastMetadata, int newMetadata) {
+		if (!this.isRemote)
 		CommonPacketHandler.metadataModified(this, x, y, z, side, vecX, vecY,
 				vecZ, lastMetadata, newMetadata);
 	}
