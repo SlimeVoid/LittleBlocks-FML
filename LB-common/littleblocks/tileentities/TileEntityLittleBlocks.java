@@ -6,8 +6,9 @@ import java.util.List;
 import cpw.mods.fml.common.FMLCommonHandler;
 
 import littleblocks.core.LBCore;
-import littleblocks.core.LittleWorld;
 import littleblocks.network.packets.PacketTileEntityLB;
+import littleblocks.world.LittleWorld;
+import net.minecraft.src.Block;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagInt;
@@ -443,6 +444,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 				}
 			}
 		}
+		System.out.println("Littleblocks: " + numberOfLittleBlocks);
 		int[] dataInt;
 		if (upToDate) {
 			dataInt = new int[] { 0, 0 };

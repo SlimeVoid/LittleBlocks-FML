@@ -3,8 +3,10 @@ package littleblocks.core;
 import java.io.File;
 
 import littleblocks.blocks.BlockLittleBlocks;
+import littleblocks.tileentities.TileEntityLittleBlocks;
 import net.minecraft.src.Block;
 import net.minecraft.src.ItemStack;
+import net.minecraft.src.Material;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.EurysMods.api.ICommonProxy;
 import net.minecraftforge.common.Configuration;
@@ -30,7 +32,12 @@ public class LBCore {
 
 	public static void addItems() {
 		littleBlocksID = configurationProperties();
-		littleBlocks = new BlockLittleBlocks(littleBlocksID)
+		littleBlocks = new BlockLittleBlocks(
+					littleBlocksID,
+					TileEntityLittleBlocks.class,
+					Material.wood,
+					2F,
+					true)
 				.setBlockName("littleBlocks");
 		GameRegistry.registerBlock(littleBlocks);
 	}

@@ -1,7 +1,7 @@
 package littleblocks.api;
 
 import littleblocks.blocks.BlockLittleBlocks;
-import littleblocks.core.LittleWorld;
+import littleblocks.world.LittleWorld;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.World;
 import net.minecraft.src.EurysMods.api.IPacketHandling;

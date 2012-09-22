@@ -11,6 +11,7 @@ import littleblocks.core.LBCore;
 import littleblocks.core.LBInit;
 import littleblocks.network.ClientPacketHandler;
 import littleblocks.network.CommonPacketHandler;
+import littleblocks.network.packets.PacketLittleBlocks;
 import littleblocks.tileentities.TileEntityLittleBlocks;
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
@@ -37,11 +38,16 @@ public class BlockLittleBlocks extends BlockContainer {
 	public int xSelected = -10, ySelected = -10, zSelected = -10, side = -1;
 
 	public boolean updateEveryone = true;
+	
+	private Class clazz;
 
-	public BlockLittleBlocks(int id) {
-		super(id, Material.wood);
-		setHardness(2F);
-		setRequiresSelfNotify();
+	public BlockLittleBlocks(int id, Class clazz, Material material, float hardness, boolean selfNotify) {
+		super(id, material);
+		this.clazz = clazz;
+		setHardness(hardness/**2F*/);
+		if (selfNotify) {
+			setRequiresSelfNotify();
+		}
 	}
 
 	// Eury START
@@ -94,21 +100,6 @@ public class BlockLittleBlocks extends BlockContainer {
 	}
 
 	@Override
-	public void onBlockClicked(World world, int x, int y, int z,
-			EntityPlayer entityplayer) {
-		if (world.isRemote) {
-			ClientPacketHandler.blockUpdate(world, entityplayer, x, y, z, 0, 0, 0,
-					0, this, LBCore.blockClickCommand);
-			//if (ModLoader.getMinecraftInstance().isSingleplayer()) {
-				this.onClientBlockClicked(world, x, y, z, entityplayer);
-			//}
-		}
-		if (!world.isRemote && FMLCommonHandler.instance().getSide().isServer()) {
-			//this.onServerBlockClicked(world, x, y, z, entityplayer);
-		}
-	}
-
-	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z,
 			EntityPlayer entityplayer, int q, float a, float b, float c) {
 		if (entityplayer.getCurrentEquippedItem() != null) {
@@ -128,7 +119,7 @@ public class BlockLittleBlocks extends BlockContainer {
 			ClientPacketHandler.blockUpdate(world, entityplayer, x, y, z, q, a, b,
 					c, this, LBCore.blockActivateCommand);
 		} else {
-			//return this.onServerBlockActivated(world, x, y, z, entityplayer, q, a, b, c);
+			//this.onServerBlockActivated(world, x, y, z, entityplayer, q, a, b, c);
 		}
 		return true;
 	}
@@ -142,6 +133,7 @@ public class BlockLittleBlocks extends BlockContainer {
 		TileEntity tileentity = world.getBlockTileEntity(x, y, z);
 		if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
 			TileEntityLittleBlocks tileEntityLittleBlocks = (TileEntityLittleBlocks) tileentity;
+			System.out.println("Content:" + tileEntityLittleBlocks.getContent(this.xSelected, this.ySelected, this.zSelected));
 			if (entityplayer instanceof EntityPlayerMP) {
 				EntityPlayerMP player = (EntityPlayerMP) entityplayer;
 	
@@ -163,11 +155,26 @@ public class BlockLittleBlocks extends BlockContainer {
 					world.markBlockNeedsUpdate(x, y, z);
 					return true;
 				}
-				CommonPacketHandler.sendToAll(tileEntityLittleBlocks.getPacketUpdate());
+				//CommonPacketHandler.sendToAll(tileEntityLittleBlocks.getPacketUpdate());
 			}
 		}
 		return false;
 	}
+
+	@Override
+	public void onBlockClicked(World world, int x, int y, int z,
+			EntityPlayer entityplayer) {
+		if (world.isRemote) {
+			ClientPacketHandler.blockUpdate(world, entityplayer, x, y, z, 0, 0, 0,
+					0, this, LBCore.blockClickCommand);
+			//if (ModLoader.getMinecraftInstance().isSingleplayer()) {
+				this.onClientBlockClicked(world, x, y, z, entityplayer);
+			//}
+		} else {
+			//this.onServerBlockClicked(world, x, y, z, entityplayer);
+		}
+	}
+	
 	public void onClientBlockClicked(World world, int x,
 			int y, int z, EntityPlayer entityplayer) {
 		TileEntityLittleBlocks tile = (TileEntityLittleBlocks) world
@@ -200,7 +207,6 @@ public class BlockLittleBlocks extends BlockContainer {
 	
 	public void onServerBlockClicked(World world, int x,
 			int y, int z, EntityPlayer entityplayer) {
-		entityplayer.addChatMessage("ServerClicked");
 		TileEntityLittleBlocks tile = (TileEntityLittleBlocks) world
 				.getBlockTileEntity(x, y, z);
 
@@ -208,7 +214,6 @@ public class BlockLittleBlocks extends BlockContainer {
 
 		int content = tile.getContent(this.xSelected, this.ySelected,
 				this.zSelected);
-		entityplayer.addChatMessage("SX:" + xSelected);
 		if (content > 0 && this.blocksList[content] != null) {
 			//if (player.theItemInWorldManager.getGameType() != EnumGameType.CREATIVE) {
 				int idDropped = this.blocksList[content].idDropped(tile
@@ -231,7 +236,7 @@ public class BlockLittleBlocks extends BlockContainer {
 				world.markBlockNeedsUpdate(x, y, z);
 			//}
 		}
-		//CommonPacketHandler.sendToAllPlayers(world, entityplayer, (tile.getPacketUpdate()).getPacket(), x, y, z, true);
+		CommonPacketHandler.sendToAllPlayers(world, entityplayer, new PacketLittleBlocks("UPDATECLIENT", x, y, z, 0, 0, 0, 0, this.xSelected, this.ySelected, this.zSelected, 0, 0).getPacket(), x, y, z, true);
 	}
 
 	public void dropLittleBlockAsItem_do(World world, int x, int y, int z,
@@ -239,12 +244,17 @@ public class BlockLittleBlocks extends BlockContainer {
 		this.dropBlockAsItem_do(world, x, y, z, itemStack);
 	}
 
-	// Eury END
-
-	@Override
-	public TileEntity createNewTileEntity(World world) {
-		return new TileEntityLittleBlocks();
-	}
+    public TileEntity createNewTileEntity(World par1World)
+    {
+        try
+        {
+            return (TileEntity)this.clazz.newInstance();
+        }
+        catch (Exception var3)
+        {
+            throw new RuntimeException(var3);
+        }
+    }
 
 	@Override
 	public int getRenderType() {

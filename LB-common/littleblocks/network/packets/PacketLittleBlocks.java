@@ -14,9 +14,12 @@ public class PacketLittleBlocks extends PacketUpdate {
 		this.setChannel(LBInit.LBM.getModChannel());
 	}
 
-	public PacketLittleBlocks(String command, int x, int y, int z, int side,
-			float vecX, float vecY, float vecZ, int selectedX, int selectedY,
-			int selectedZ, int blockId, int metadata) {
+	public PacketLittleBlocks(
+			String command,
+			int x, int y, int z, int side,
+			float vecX, float vecY, float vecZ,
+			int selectedX, int selectedY, int selectedZ,
+			int blockId, int metadata) {
 		this();
 		this.setPosition(x, y, z, side);
 		this.setVecs(vecX, vecY, vecZ);

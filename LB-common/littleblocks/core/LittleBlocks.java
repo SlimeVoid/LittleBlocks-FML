@@ -15,9 +15,20 @@ import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
 
 @Mod(modid = "LittleBlocksMod", name = "Little Blocks", version = "1.3.2.0")
-@NetworkMod(clientSideRequired = true, serverSideRequired = false, clientPacketHandlerSpec = @SidedPacketHandler(channels = { "LITTLEBLOCKS" }, packetHandler = ClientPacketHandler.class), serverPacketHandlerSpec = @SidedPacketHandler(channels = { "LITTLEBLOCKS" }, packetHandler = CommonPacketHandler.class), versionBounds = "[1.3]")
+@NetworkMod(
+		clientSideRequired = true,
+		serverSideRequired = false,
+		clientPacketHandlerSpec = @SidedPacketHandler(
+				channels = { "LITTLEBLOCKS" },
+				packetHandler = ClientPacketHandler.class),
+		serverPacketHandlerSpec = @SidedPacketHandler(
+				channels = { "LITTLEBLOCKS" },
+				packetHandler = CommonPacketHandler.class),
+		versionBounds = "[1.3]")
 public class LittleBlocks {
-	@SidedProxy(clientSide = "littleblocks.proxy.ClientProxy", serverSide = "littleblocks.proxy.CommonProxy")
+	@SidedProxy(
+			clientSide = "littleblocks.proxy.ClientProxy",
+			serverSide = "littleblocks.proxy.CommonProxy")
 	public static ICommonProxy proxy;
 	public static LittleBlocks instance;
 

@@ -19,10 +19,10 @@ public class LBInit {
 		if (initialized)
 			return;
 		LBM = new Core(proxy);
-		LBM.setModName("LittleBlocksMod");
+		LBM.setModName("LittleBlocks");
 		LBM.setModChannel("LITTLEBLOCKS");
 		LBCore.configFile = new File(LBM.getProxy().getMinecraftDir(),
-				"config/MultiTexturedSigns.cfg");
+				"config/LittleBlocks.cfg");
 		LBCore.configuration = new Configuration(LBCore.configFile);
 		load();
 	}

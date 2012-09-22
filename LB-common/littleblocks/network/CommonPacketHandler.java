@@ -5,8 +5,8 @@ import java.io.DataInputStream;
 
 import littleblocks.blocks.BlockLittleBlocks;
 import littleblocks.core.LBCore;
-import littleblocks.core.LittleWorld;
 import littleblocks.network.packets.PacketLittleBlocks;
+import littleblocks.world.LittleWorld;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.NetworkManager;

@@ -24,7 +24,6 @@ import cpw.mods.fml.common.network.Player;
 
 public class ClientPacketHandler extends CommonPacketHandler {
 
-	@SideOnly(Side.CLIENT)
 	public static void handleTileEntityPacket(PacketTileEntity packet,
 			EntityPlayer entityplayer, World world) {
 		TileEntity tileentity = world.getBlockTileEntity(packet.xPosition,
@@ -86,7 +85,6 @@ public class ClientPacketHandler extends CommonPacketHandler {
 		}
 	}
 
-	@SideOnly(Side.CLIENT)
 	public static void blockUpdate(World world, EntityPlayer entityplayer,
 			int x, int y, int z, int q, float a, float b, float c,
 			BlockLittleBlocks block, String command) {
@@ -96,7 +94,6 @@ public class ClientPacketHandler extends CommonPacketHandler {
 		ModLoader.sendPacket(packetLB.getPacket());
 	}
 	
-	@SideOnly(Side.CLIENT)
 	public static void handlePacket(PacketUpdate packet,
 			EntityPlayer entityplayer, World world) {
 		if (packet instanceof PacketLittleBlocks) {
@@ -106,23 +103,24 @@ public class ClientPacketHandler extends CommonPacketHandler {
 				if (tileentity != null
 						&& tileentity instanceof TileEntityLittleBlocks) {
 					TileEntityLittleBlocks tileentitylb = (TileEntityLittleBlocks) tileentity;
-					switch (packet.payload.getIntPayload(0)) {
-					case 0:
-						tileentitylb.getLittleWorld().setBlockAndMetadata(
-								packetLB.xPosition, packetLB.yPosition,
-								packetLB.zPosition, packetLB.getBlockID(),
-								packetLB.getMetadata());
-						world.markBlockAsNeedsUpdate(packetLB.getSelectedX(),
+					if (packetLB.getCommand().equals("UPDATECLIENT")) {
+						tileentitylb.setContent(
+								packetLB.getSelectedX(),
 								packetLB.getSelectedY(),
-								packetLB.getSelectedZ());
-						break;
+								packetLB.getSelectedZ(),
+								packetLB.getBlockID());
+						tileentitylb.onInventoryChanged();
+						world.markBlockAsNeedsUpdate(
+								packetLB.xPosition,
+								packetLB.yPosition,
+								packetLB.zPosition);
 					}
 				}
 			}
 		}
 	}
 
-	@SideOnly(Side.CLIENT)
+	//@SideOnly(Side.CLIENT)
 	@Override
 	public void onPacketData(NetworkManager manager,
 			Packet250CustomPayload packet, Player player) {

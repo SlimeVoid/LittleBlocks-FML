@@ -1,5 +1,6 @@
-package littleblocks.core;
+package littleblocks.world;
 
+import littleblocks.core.LBCore;
 import littleblocks.network.CommonPacketHandler;
 import littleblocks.tileentities.TileEntityLittleBlocks;
 import net.minecraft.src.Block;
@@ -7,7 +8,9 @@ import net.minecraft.src.Chunk;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EnumSkyBlock;
 import net.minecraft.src.IChunkProvider;
+import net.minecraft.src.ISaveHandler;
 import net.minecraft.src.MovingObjectPosition;
+import net.minecraft.src.Profiler;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.Vec3;
 import net.minecraft.src.World;
@@ -19,14 +22,20 @@ public class LittleWorld extends World {
 	private final World realWorld;
 
 	public LittleWorld(World world, WorldProvider worldprovider) {
-		super(world.getSaveHandler(), "	", new WorldSettings(world
-				.getWorldInfo().getSeed(), world.getWorldInfo().getGameType(),
-				world.getWorldInfo().isMapFeaturesEnabled(), world
-						.getWorldInfo().isHardcoreModeEnabled(), world
-						.getWorldInfo().getTerrainType()), worldprovider, null);
+		super(
+				world.getSaveHandler(),
+				"LittleBlockWorld",
+				new WorldSettings(
+						world.getWorldInfo().getSeed(),
+						world.getWorldInfo().getGameType(),
+						world.getWorldInfo().isMapFeaturesEnabled(),
+						world.getWorldInfo().isHardcoreModeEnabled(),
+						world.getWorldInfo().getTerrainType()),
+				worldprovider,
+				null
+		);
 
 		this.realWorld = world;
-		this.worldInfo = world.getWorldInfo();
 	}
 
 	@Override
@@ -249,7 +258,7 @@ public class LittleWorld extends World {
 		// this.editingBlocks || this.isRemote) {
 		// return;
 		// } Client
-		if (realWorld.editingBlocks || this.editingBlocks || realWorld.isRemote || this.isRemote) {
+		if (realWorld.editingBlocks || this.editingBlocks) {
 			return;
 		}
 		Block block = Block.blocksList[world.getBlockId(i, j, k)];
@@ -269,9 +278,9 @@ public class LittleWorld extends World {
 		}
 		realWorld.updateAllLightTypes(x, y, z);
 		if (newId != 0) {
-			if(!this.isRemote) {
+			//if(!this.isRemote) {
 			Block.blocksList[newId].onBlockAdded(this, x, y, z);
-			}// Client
+			//}// Client
 		}
 		if (!this.isRemote)
 		CommonPacketHandler.idModified(x, y, z, side, vecX, vecY, vecZ, lastId,
@@ -399,6 +408,6 @@ public class LittleWorld extends World {
 
 	@Override
 	protected IChunkProvider createChunkProvider() {
-		return new LBChunkProvider(this);
+		return new LBChunkProvider(this.realWorld);
 	}
 }

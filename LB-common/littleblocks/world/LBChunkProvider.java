@@ -1,4 +1,4 @@
-package littleblocks.core;
+package littleblocks.world;
 
 import java.util.List;
 
@@ -57,7 +57,7 @@ public class LBChunkProvider implements IChunkProvider {
 	 * saved.
 	 */
 	public boolean saveChunks(boolean par1, IProgressUpdate par2IProgressUpdate) {
-		return true;
+		return false;
 	}
 
 	/**
@@ -73,14 +73,14 @@ public class LBChunkProvider implements IChunkProvider {
 	 * Returns if the IChunkProvider supports saving.
 	 */
 	public boolean canSave() {
-		return true;
+		return false;
 	}
 
 	/**
 	 * Converts the instance data to a readable string.
 	 */
 	public String makeString() {
-		return "LittleBlockSource";
+		return worldObj.getProviderName() + "[LB]";
 	}
 
 	/**
