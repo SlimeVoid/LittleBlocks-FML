@@ -5,6 +5,7 @@ import java.util.List;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 
 import littleblocks.api.ILBCommonProxy;
 import littleblocks.core.LBCore;
@@ -73,8 +74,13 @@ public class BlockLittleBlocks extends BlockContainer {
 									&& Block.blocksList[content[x1][y1][z1]] != null) {
 								int idDropped = Block.blocksList[content[x1][y1][z1]]
 										.idDropped(tile.getMetadata(
-												this.xSelected, this.ySelected,
-												this.zSelected), world.rand, 0);
+												this.xSelected,
+												this.ySelected,
+												this.zSelected
+										),
+										world.rand,
+										0
+								);
 								int quantityDropped = Block.blocksList[content[x1][y1][z1]]
 										.quantityDropped(world.rand);
 								if (idDropped > 0 && quantityDropped > 0) {
@@ -83,12 +89,16 @@ public class BlockLittleBlocks extends BlockContainer {
 											x,
 											y,
 											z,
-											new ItemStack(idDropped,
+											new ItemStack(
+													idDropped,
 													quantityDropped,
 													tile.getMetadata(
 															this.xSelected,
 															this.ySelected,
-															this.zSelected)));
+															this.zSelected
+													)
+											)
+									);
 								}
 							}
 						}
@@ -115,11 +125,14 @@ public class BlockLittleBlocks extends BlockContainer {
 				}
 			}
 		}
-		if (world.isRemote) {
-			ClientPacketHandler.blockUpdate(world, entityplayer, x, y, z, q, a, b,
-					c, this, LBCore.blockActivateCommand);
-		} else {
-			//this.onServerBlockActivated(world, x, y, z, entityplayer, q, a, b, c);
+		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+			if (ModLoader.getMinecraftInstance().isSingleplayer()) {
+				System.out.println("IServer");
+				this.onServerBlockActivated(world, x, y, z, entityplayer, q, a, b, c);
+			} else {
+				ClientPacketHandler.blockUpdate(world, entityplayer, x, y, z, q, a, b,
+						c, this, LBCore.blockActivateCommand);
+			}
 		}
 		return true;
 	}
@@ -155,7 +168,6 @@ public class BlockLittleBlocks extends BlockContainer {
 					world.markBlockNeedsUpdate(x, y, z);
 					return true;
 				}
-				//CommonPacketHandler.sendToAll(tileEntityLittleBlocks.getPacketUpdate());
 			}
 		}
 		return false;
@@ -164,14 +176,14 @@ public class BlockLittleBlocks extends BlockContainer {
 	@Override
 	public void onBlockClicked(World world, int x, int y, int z,
 			EntityPlayer entityplayer) {
-		if (world.isRemote) {
-			ClientPacketHandler.blockUpdate(world, entityplayer, x, y, z, 0, 0, 0,
-					0, this, LBCore.blockClickCommand);
-			//if (ModLoader.getMinecraftInstance().isSingleplayer()) {
+		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+			if (ModLoader.getMinecraftInstance().isSingleplayer()) {
+				this.onServerBlockClicked(world, x, y, z, entityplayer);
+			} else {
+				ClientPacketHandler.blockUpdate(world, entityplayer, x, y, z, 0, 0, 0,
+						0, this, LBCore.blockClickCommand);
 				this.onClientBlockClicked(world, x, y, z, entityplayer);
-			//}
-		} else {
-			//this.onServerBlockClicked(world, x, y, z, entityplayer);
+			}
 		}
 	}
 	
@@ -180,14 +192,21 @@ public class BlockLittleBlocks extends BlockContainer {
 		TileEntityLittleBlocks tile = (TileEntityLittleBlocks) world
 				.getBlockTileEntity(x, y, z);
 
-		int content = tile.getContent(this.xSelected, this.ySelected,
-				this.zSelected);
+		int content = tile.getContent(
+							this.xSelected,
+							this.ySelected,
+							this.zSelected
+						);
 		if (content > 0 && this.blocksList[content] != null) {
-			//if (ModLoader.getMinecraftInstance().playerController
-				//	.isNotCreative()) {
-				int idDropped = this.blocksList[content].idDropped(tile
-						.getMetadata(this.xSelected, this.ySelected,
-								this.zSelected), world.rand, 0);
+				int idDropped = this.blocksList[content]
+									.idDropped(
+											tile.getMetadata(
+													this.xSelected, 
+													this.ySelected,
+													this.zSelected),
+													world.rand,
+													0
+											);
 				int quantityDropped = this.blocksList[content]
 						.quantityDropped(world.rand);
 				if (idDropped > 0 && quantityDropped > 0) {
@@ -196,13 +215,21 @@ public class BlockLittleBlocks extends BlockContainer {
 							x,
 							y,
 							z,
-							new ItemStack(idDropped, quantityDropped, tile
-									.getMetadata(this.xSelected,
-											this.ySelected, this.zSelected)));
+							new ItemStack(
+									idDropped,
+									quantityDropped,
+									tile.getMetadata(
+											this.xSelected,
+											this.ySelected,
+											this.zSelected
+									)
+							)
+					);
 				}
 			}
-		//}
 		tile.setContent(this.xSelected, this.ySelected, this.zSelected, 0);
+		tile.onInventoryChanged();
+		world.markBlockNeedsUpdate(x, y, z);
 	}
 	
 	public void onServerBlockClicked(World world, int x,
@@ -210,33 +237,59 @@ public class BlockLittleBlocks extends BlockContainer {
 		TileEntityLittleBlocks tile = (TileEntityLittleBlocks) world
 				.getBlockTileEntity(x, y, z);
 
-		EntityPlayerMP player = (EntityPlayerMP) entityplayer;
-
 		int content = tile.getContent(this.xSelected, this.ySelected,
 				this.zSelected);
 		if (content > 0 && this.blocksList[content] != null) {
-			//if (player.theItemInWorldManager.getGameType() != EnumGameType.CREATIVE) {
-				int idDropped = this.blocksList[content].idDropped(tile
-						.getMetadata(this.xSelected, this.ySelected,
-								this.zSelected), world.rand, 0);
-				int quantityDropped = this.blocksList[content]
-						.quantityDropped(world.rand);
-				if (idDropped > 0 && quantityDropped > 0) {
-					this.dropLittleBlockAsItem_do(
-							world,
-							x,
-							y,
-							z,
-							new ItemStack(idDropped, quantityDropped, tile
-									.getMetadata(this.xSelected,
-											this.ySelected, this.zSelected)));
-				}
-				tile.setContent(this.xSelected, this.ySelected, this.zSelected, 0);
-				tile.onInventoryChanged();
-				world.markBlockNeedsUpdate(x, y, z);
-			//}
+				int idDropped = this.blocksList[content]
+									.idDropped(
+											tile.getMetadata(
+													this.xSelected,
+													this.ySelected,
+													this.zSelected
+											),
+											world.rand,
+											0
+									);
+			int quantityDropped = this.blocksList[content]
+					.quantityDropped(world.rand);
+			if (idDropped > 0 && quantityDropped > 0) {
+				this.dropLittleBlockAsItem_do(
+						world,
+						x,
+						y,
+						z,
+						new ItemStack(
+								idDropped,
+								quantityDropped,
+								tile.getMetadata(
+										this.xSelected,
+										this.ySelected,
+										this.zSelected
+								)
+						)
+				);
+			}
+			tile.setContent(this.xSelected, this.ySelected, this.zSelected, 0);
+			tile.onInventoryChanged();
+			world.markBlockNeedsUpdate(x, y, z);
 		}
-		CommonPacketHandler.sendToAllPlayers(world, entityplayer, new PacketLittleBlocks("UPDATECLIENT", x, y, z, 0, 0, 0, 0, this.xSelected, this.ySelected, this.zSelected, 0, 0).getPacket(), x, y, z, true);
+		CommonPacketHandler.sendToAllPlayers(
+				world,
+				entityplayer,
+				new PacketLittleBlocks(
+						"UPDATECLIENT",
+						x, y, z, 0,
+						0, 0, 0,
+						this.xSelected,
+						this.ySelected,
+						this.zSelected,
+						0, 0
+				).getPacket(),
+				x,
+				y,
+				z,
+				true
+		);
 	}
 
 	public void dropLittleBlockAsItem_do(World world, int x, int y, int z,
