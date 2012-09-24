@@ -1,7 +1,6 @@
 package littleblocks.network.packets;
 
 import littleblocks.core.LBInit;
-import littleblocks.network.LBPacketIds;
 import net.minecraft.src.World;
 import net.minecraft.src.EurysMods.network.packets.core.PacketIds;
 import net.minecraft.src.EurysMods.network.packets.core.PacketPayload;
@@ -14,7 +13,7 @@ public class PacketLittleBlocksSettings extends PacketUpdate {
 		this.setChannel(LBInit.LBM.getModChannel());
 		this.payload = new PacketPayload(1, 0, 0, 1);
 	}
-	
+
 	@Override
 	public boolean targetExists(World world) {
 		return false;
@@ -23,7 +22,7 @@ public class PacketLittleBlocksSettings extends PacketUpdate {
 	public void setClipMode(boolean littleBlocksClip) {
 		this.payload.setBoolPayload(0, littleBlocksClip);
 	}
-	
+
 	public boolean getClipMode() {
 		return this.payload.getBoolPayload(0);
 	}
@@ -31,7 +30,7 @@ public class PacketLittleBlocksSettings extends PacketUpdate {
 	public void setCommand(int command) {
 		this.payload.setIntPayload(0, command);
 	}
-	
+
 	public int getCommand() {
 		return this.payload.getIntPayload(0);
 	}

@@ -1,8 +1,6 @@
 package littleblocks.network;
 
-import littleblocks.core.LBCore;
 import littleblocks.core.LBInit;
-import littleblocks.core.LittleBlocks;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.NetHandler;
 import net.minecraft.src.NetLoginHandler;
@@ -26,19 +24,19 @@ public class LBConnectionHandler implements IConnectionHandler {
 	@Override
 	public void connectionOpened(NetHandler netClientHandler, String server, int port, NetworkManager manager) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void connectionOpened(NetHandler netClientHandler, MinecraftServer server, NetworkManager manager) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void connectionClosed(NetworkManager manager) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override

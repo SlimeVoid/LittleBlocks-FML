@@ -9,7 +9,7 @@ import littleblocks.tileentities.TileEntityLittleBlocks;
 import net.minecraft.src.EurysMods.network.packets.core.PacketTileEntity;
 
 public class PacketTileEntityLB extends PacketTileEntity {
-	
+
 	private int sender;
 
 	public PacketTileEntityLB() {
@@ -22,7 +22,7 @@ public class PacketTileEntityLB extends PacketTileEntity {
 		super.writeData(data);
 		data.writeInt(this.sender);
 	}
-	
+
 	@Override
 	public void readData(DataInputStream data) throws IOException {
 		super.readData(data);
@@ -31,15 +31,18 @@ public class PacketTileEntityLB extends PacketTileEntity {
 
 	public PacketTileEntityLB(TileEntityLittleBlocks tileentity) {
 		this();
-		this.setPosition(tileentity.xCoord, tileentity.yCoord,
-				tileentity.zCoord, 0);
+		this.setPosition(
+				tileentity.xCoord,
+				tileentity.yCoord,
+				tileentity.zCoord,
+				0);
 		this.payload = tileentity.getTileEntityPayload();
 	}
-	
+
 	public int getSender() {
 		return this.sender;
 	}
-	
+
 	public void setSender(int sender) {
 		this.sender = sender;
 	}

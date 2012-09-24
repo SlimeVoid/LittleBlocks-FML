@@ -12,7 +12,7 @@ import net.minecraft.src.EurysMods.network.packets.core.PacketPayload;
 import net.minecraft.src.EurysMods.network.packets.core.PacketUpdate;
 
 public class PacketLittleBlocks extends PacketUpdate {
-	
+
 	private int sender;
 
 	@Override
@@ -26,18 +26,13 @@ public class PacketLittleBlocks extends PacketUpdate {
 		super.readData(data);
 		sender = data.readInt();
 	}
-	
+
 	public PacketLittleBlocks() {
 		super(PacketIds.UPDATE);
 		this.setChannel(LBInit.LBM.getModChannel());
 	}
 
-	public PacketLittleBlocks(
-			String command,
-			int x, int y, int z, int side,
-			float vecX, float vecY, float vecZ,
-			int selectedX, int selectedY, int selectedZ,
-			int blockId, int metadata) {
+	public PacketLittleBlocks(String command, int x, int y, int z, int side, float vecX, float vecY, float vecZ, int selectedX, int selectedY, int selectedZ, int blockId, int metadata) {
 		this();
 		this.setPosition(x, y, z, side);
 		this.setVecs(vecX, vecY, vecZ);
@@ -48,8 +43,7 @@ public class PacketLittleBlocks extends PacketUpdate {
 		this.setSelectedXYZ(selectedX, selectedY, selectedZ);
 	}
 
-	public PacketLittleBlocks(String command, int x, int y, int z, int side,
-			float vecX, float vecY, float vecZ, int blockId, int newMetadata) {
+	public PacketLittleBlocks(String command, int x, int y, int z, int side, float vecX, float vecY, float vecZ, int blockId, int newMetadata) {
 		this();
 		this.setPosition(x, y, z, side);
 		this.setVecs(vecX, vecY, vecZ);
@@ -74,7 +68,9 @@ public class PacketLittleBlocks extends PacketUpdate {
 	}
 
 	public TileEntity getTileEntity(World world) {
-		return world.getBlockTileEntity(this.xPosition, this.yPosition,
+		return world.getBlockTileEntity(
+				this.xPosition,
+				this.yPosition,
 				this.zPosition);
 	}
 
@@ -113,11 +109,11 @@ public class PacketLittleBlocks extends PacketUpdate {
 	public int getSelectedZ() {
 		return this.payload.getIntPayload(4);
 	}
-	
+
 	public int getSender() {
 		return this.sender;
 	}
-	
+
 	public void setSender(int sender) {
 		this.sender = sender;
 	}

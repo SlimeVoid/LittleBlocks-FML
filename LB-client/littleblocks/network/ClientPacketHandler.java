@@ -9,7 +9,6 @@ import littleblocks.network.packets.PacketLittleBlocks;
 import littleblocks.network.packets.PacketLittleBlocksSettings;
 import littleblocks.network.packets.PacketTileEntityLB;
 import littleblocks.tileentities.TileEntityLittleBlocks;
-import net.minecraft.client.Minecraft;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.NetworkManager;
@@ -20,8 +19,6 @@ import net.minecraft.src.World;
 import net.minecraft.src.EurysMods.network.packets.core.PacketIds;
 import net.minecraft.src.EurysMods.network.packets.core.PacketTileEntity;
 import net.minecraft.src.EurysMods.network.packets.core.PacketUpdate;
-import cpw.mods.fml.common.Side;
-import cpw.mods.fml.common.asm.SideOnly;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
 
@@ -37,17 +34,17 @@ public class ClientPacketHandler implements IPacketHandler {
 		}
 	}
 
-	public static void handleTileEntityPacket(PacketTileEntity packet,
-			EntityPlayer entityplayer, World world) {
-		TileEntity tileentity = world.getBlockTileEntity(packet.xPosition,
-				packet.yPosition, packet.zPosition);
+	public static void handleTileEntityPacket(PacketTileEntity packet, EntityPlayer entityplayer, World world) {
+		TileEntity tileentity = world.getBlockTileEntity(
+				packet.xPosition,
+				packet.yPosition,
+				packet.zPosition);
 		if (packet instanceof PacketTileEntityLB) {
 			PacketTileEntityLB packetLB = (PacketTileEntityLB) packet;
 			if (packetLB.getSender() == LBPacketIds.CLIENT) {
 				return;
 			}
-			if (tileentity != null
-					&& tileentity instanceof TileEntityLittleBlocks) {
+			if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
 				TileEntityLittleBlocks tileentitylb = (TileEntityLittleBlocks) tileentity;
 				switch (packetLB.payload.getIntPayload(0)) {
 				case 0:
@@ -60,18 +57,14 @@ public class ClientPacketHandler implements IPacketHandler {
 							for (int yy = 0; yy < 8; yy++) {
 								for (int zz = 0; zz < 8; zz++) {
 									tileentitylb
-											.setContent(xx, yy, zz,
+											.setContent(
+													xx,
+													yy,
+													zz,
 													packetLB.payload
-															.getIntPayload(1
-																	+ xx + yy
-																	* 8 + zz
-																	* 8 * 8),
+															.getIntPayload(1 + xx + yy * 8 + zz * 8 * 8),
 													packetLB.payload
-															.getIntPayload(1
-																	+ 8 * 8 * 8
-																	+ xx + yy
-																	* 8 + zz
-																	* 8 * 8));
+															.getIntPayload(1 + 8 * 8 * 8 + xx + yy * 8 + zz * 8 * 8));
 								}
 							}
 						}
@@ -93,26 +86,36 @@ public class ClientPacketHandler implements IPacketHandler {
 						break;
 					}
 					tileentitylb.onInventoryChanged();
-					world.markBlockNeedsUpdate(packet.xPosition,
-							packet.yPosition, packet.zPosition);
+					world.markBlockNeedsUpdate(
+							packet.xPosition,
+							packet.yPosition,
+							packet.zPosition);
 					break;
 				}
 			}
 		}
 	}
 
-	public static void blockUpdate(World world, EntityPlayer entityplayer,
-			int x, int y, int z, int q, float a, float b, float c,
-			BlockLittleBlocks block, String command) {
-		PacketLittleBlocks packetLB = new PacketLittleBlocks(command, x, y, z,
-				q, a, b, c, block.xSelected, block.ySelected, block.zSelected,
-				block.blockID, block.side);
+	public static void blockUpdate(World world, EntityPlayer entityplayer, int x, int y, int z, int q, float a, float b, float c, BlockLittleBlocks block, String command) {
+		PacketLittleBlocks packetLB = new PacketLittleBlocks(
+				command,
+				x,
+				y,
+				z,
+				q,
+				a,
+				b,
+				c,
+				block.xSelected,
+				block.ySelected,
+				block.zSelected,
+				block.blockID,
+				block.side);
 		packetLB.setSender(LBPacketIds.CLIENT);
 		ModLoader.sendPacket(packetLB.getPacket());
 	}
-	
-	public static void handlePacket(PacketUpdate packet,
-			EntityPlayer entityplayer, World world) {
+
+	public static void handlePacket(PacketUpdate packet, EntityPlayer entityplayer, World world) {
 		if (packet instanceof PacketLittleBlocks) {
 			PacketLittleBlocks packetLB = (PacketLittleBlocks) packet;
 			if (packetLB.getSender() == LBPacketIds.CLIENT) {
@@ -120,8 +123,7 @@ public class ClientPacketHandler implements IPacketHandler {
 			}
 			if (packetLB.targetExists(world)) {
 				TileEntity tileentity = packetLB.getTileEntity(world);
-				if (tileentity != null
-						&& tileentity instanceof TileEntityLittleBlocks) {
+				if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
 					TileEntityLittleBlocks tileentitylb = (TileEntityLittleBlocks) tileentity;
 					if (packetLB.getCommand().equals("UPDATECLIENT")) {
 						tileentitylb.setContent(
@@ -141,8 +143,7 @@ public class ClientPacketHandler implements IPacketHandler {
 	}
 
 	@Override
-	public void onPacketData(NetworkManager manager,
-			Packet250CustomPayload packet, Player player) {
+	public void onPacketData(NetworkManager manager, Packet250CustomPayload packet, Player player) {
 		EntityPlayer entityplayer = (EntityPlayer) player;
 		World world = entityplayer.worldObj;
 		DataInputStream data = new DataInputStream(new ByteArrayInputStream(
@@ -153,18 +154,20 @@ public class ClientPacketHandler implements IPacketHandler {
 			case PacketIds.LOGIN:
 				PacketLittleBlocksSettings settings = new PacketLittleBlocksSettings();
 				settings.readData(data);
-				this.handleLogin(settings, entityplayer, world);
+				ClientPacketHandler.handleLogin(settings, entityplayer, world);
 				break;
 			case PacketIds.TILE:
 				PacketTileEntityLB packetTileLB = new PacketTileEntityLB();
 				packetTileLB.readData(data);
-				this.handleTileEntityPacket(packetTileLB,
-						entityplayer, world);
+				ClientPacketHandler.handleTileEntityPacket(
+						packetTileLB,
+						entityplayer,
+						world);
 				break;
 			case PacketIds.UPDATE:
 				PacketLittleBlocks packetLB = new PacketLittleBlocks();
 				packetLB.readData(data);
-				this.handlePacket(packetLB, entityplayer, world);
+				ClientPacketHandler.handlePacket(packetLB, entityplayer, world);
 				break;
 			}
 		} catch (Exception ex) {

@@ -1,32 +1,23 @@
 package littleblocks.proxy;
 
-import littleblocks.blocks.BlockLittleBlocks;
 import littleblocks.core.CommonTickHandler;
-import littleblocks.core.LBCore;
 import littleblocks.network.ClientPacketHandler;
 import littleblocks.network.LBPacketIds;
 import littleblocks.network.packets.PacketLittleBlocksSettings;
 import littleblocks.render.BlockLittleBlocksRenderer;
 import littleblocks.render.TileEntityLittleBlocksRenderer;
-import littleblocks.tileentities.TileEntityLittleBlocks;
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.Block;
 import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.ItemBucket;
-import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.NetClientHandler;
 import net.minecraft.src.NetHandler;
 import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet1Login;
-import net.minecraft.src.PlayerControllerMP;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.Vec3;
 import net.minecraft.src.World;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.Side;
-import cpw.mods.fml.common.asm.SideOnly;
 import cpw.mods.fml.common.registry.TickRegistry;
 
 public class ClientProxy extends CommonProxy {
@@ -42,15 +33,14 @@ public class ClientProxy extends CommonProxy {
 	}
 
 	@Override
-	public void registerTileEntitySpecialRenderer(
-			Class<? extends TileEntity> clazz) {
-		ClientRegistry.bindTileEntitySpecialRenderer(clazz,
+	public void registerTileEntitySpecialRenderer(Class<? extends TileEntity> clazz) {
+		ClientRegistry.bindTileEntitySpecialRenderer(
+				clazz,
 				new TileEntityLittleBlocksRenderer());
 	}
 
 	@Override
-	public void displayTileEntityGui(EntityPlayer entityplayer,
-			TileEntity tileentity) {
+	public void displayTileEntityGui(EntityPlayer entityplayer, TileEntity tileentity) {
 	}
 
 	private static Minecraft mc = ModLoader.getMinecraftInstance();
@@ -59,7 +49,7 @@ public class ClientProxy extends CommonProxy {
 	public void registerTickHandler() {
 		TickRegistry.registerTickHandler(new CommonTickHandler(), Side.CLIENT);
 	}
-	
+
 	@Override
 	public void login(NetHandler handler, NetworkManager manager, Packet1Login login) {
 		World world = getWorld(handler);
@@ -69,7 +59,7 @@ public class ClientProxy extends CommonProxy {
 			ClientPacketHandler.sendPacket(packet.getPacket());
 		}
 	}
-	
+
 	@Override
 	public World getWorld() {
 		return ModLoader.getMinecraftInstance().theWorld;
@@ -79,10 +69,10 @@ public class ClientProxy extends CommonProxy {
 	public EntityPlayer getPlayer() {
 		return ModLoader.getMinecraftInstance().thePlayer;
 	}
-	
+
 	public World getWorld(NetHandler handler) {
 		if (handler instanceof NetClientHandler) {
-			return ((NetClientHandler)handler).getPlayer().worldObj;
+			return ((NetClientHandler) handler).getPlayer().worldObj;
 		}
 		return null;
 	}

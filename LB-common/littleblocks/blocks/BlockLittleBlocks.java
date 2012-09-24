@@ -3,13 +3,7 @@ package littleblocks.blocks;
 import java.util.ArrayList;
 import java.util.List;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Side;
-import cpw.mods.fml.common.asm.SideOnly;
-
-import littleblocks.api.ILBCommonProxy;
 import littleblocks.core.LBCore;
-import littleblocks.core.LBInit;
 import littleblocks.network.ClientPacketHandler;
 import littleblocks.network.CommonPacketHandler;
 import littleblocks.network.LBPacketIds;
@@ -20,7 +14,6 @@ import net.minecraft.src.Block;
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.EntityClientPlayerMP;
 import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.EnumGameType;
 import net.minecraft.src.IBlockAccess;
@@ -28,25 +21,26 @@ import net.minecraft.src.ItemBucket;
 import net.minecraft.src.ItemInWorldManager;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
-import net.minecraft.src.ModLoader;
 import net.minecraft.src.MovingObjectPosition;
-import net.minecraft.src.PlayerControllerMP;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.Vec3;
 import net.minecraft.src.World;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Side;
 
 public class BlockLittleBlocks extends BlockContainer {
 
 	public int xSelected = -10, ySelected = -10, zSelected = -10, side = -1;
 
 	public boolean updateEveryone = true;
-	
+
 	private Class clazz;
 
 	public BlockLittleBlocks(int id, Class clazz, Material material, float hardness, boolean selfNotify) {
 		super(id, material);
 		this.clazz = clazz;
-		setHardness(hardness/**2F*/);
+		setHardness(hardness/** 2F */
+		);
 		if (selfNotify) {
 			setRequiresSelfNotify();
 		}
@@ -54,8 +48,7 @@ public class BlockLittleBlocks extends BlockContainer {
 
 	// Eury START
 	@Override
-	public boolean removeBlockByPlayer(World world, EntityPlayer player, int x,
-			int y, int z) {
+	public boolean removeBlockByPlayer(World world, EntityPlayer player, int x, int y, int z) {
 		int id = world.getBlockId(x, y, z);
 		if (id == LBCore.littleBlocksID) {
 			TileEntityLittleBlocks tile = (TileEntityLittleBlocks) world
@@ -71,17 +64,12 @@ public class BlockLittleBlocks extends BlockContainer {
 				for (int x1 = 0; x1 < content.length; x1++) {
 					for (int y1 = 0; y1 < content[x1].length; y1++) {
 						for (int z1 = 0; z1 < content[x1][y1].length; z1++) {
-							if (content[x1][y1][z1] > 0
-									&& Block.blocksList[content[x1][y1][z1]] != null) {
+							if (content[x1][y1][z1] > 0 && Block.blocksList[content[x1][y1][z1]] != null) {
 								int idDropped = Block.blocksList[content[x1][y1][z1]]
 										.idDropped(tile.getMetadata(
 												this.xSelected,
 												this.ySelected,
-												this.zSelected
-										),
-										world.rand,
-										0
-								);
+												this.zSelected), world.rand, 0);
 								int quantityDropped = Block.blocksList[content[x1][y1][z1]]
 										.quantityDropped(world.rand);
 								if (idDropped > 0 && quantityDropped > 0) {
@@ -96,10 +84,7 @@ public class BlockLittleBlocks extends BlockContainer {
 													tile.getMetadata(
 															this.xSelected,
 															this.ySelected,
-															this.zSelected
-													)
-											)
-									);
+															this.zSelected)));
 								}
 							}
 						}
@@ -111,8 +96,7 @@ public class BlockLittleBlocks extends BlockContainer {
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z,
-			EntityPlayer entityplayer, int q, float a, float b, float c) {
+	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int q, float a, float b, float c) {
 		if (entityplayer.getCurrentEquippedItem() != null) {
 			int itemID = entityplayer.getCurrentEquippedItem().itemID;
 			Block[] blocks = Block.blocksList;
@@ -120,44 +104,64 @@ public class BlockLittleBlocks extends BlockContainer {
 				if (blocks[i] != null && blocks[i].blockID == itemID) {
 					Block theBlock = blocks[i];
 					if (theBlock.hasTileEntity(0)) {
-						entityplayer.addChatMessage("Sorry, you cannot place that here!");
+						entityplayer
+								.addChatMessage("Sorry, you cannot place that here!");
 						return false;
 					}
 				}
 			}
 		}
 		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
-			if(world.isRemote) {
-				ClientPacketHandler.blockUpdate(world, entityplayer, x, y, z, q, a, b,
-						c, this, LBCore.blockActivateCommand);
+			if (world.isRemote) {
+				ClientPacketHandler.blockUpdate(
+						world,
+						entityplayer,
+						x,
+						y,
+						z,
+						q,
+						a,
+						b,
+						c,
+						this,
+						LBCore.blockActivateCommand);
 			}
-			//this.onClientBlockActivated(world, x, y, z, entityplayer, q, a, b, c);
+			// this.onClientBlockActivated(world, x, y, z, entityplayer, q, a,
+			// b, c);
 		}
 		return true;
 	}
-	
+
 	private boolean onClientBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int q, float a, float b, float c) {
-		if (this.xSelected == - 10) {
+		if (this.xSelected == -10) {
 			return true;
 		}
-		TileEntity tileentity = world.getBlockTileEntity(x,  y,  z);
+		TileEntity tileentity = world.getBlockTileEntity(x, y, z);
 		if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
 			TileEntityLittleBlocks tileentitylittleblocks = (TileEntityLittleBlocks) tileentity;
 			if (entityplayer instanceof EntityPlayerMP) {
 				EntityPlayerMP player = (EntityPlayerMP) entityplayer;
-			
+
 				ItemInWorldManager itemManager = player.theItemInWorldManager;
-				if (itemManager.activateBlockOrUseItem(entityplayer,
+				if (itemManager.activateBlockOrUseItem(
+						entityplayer,
 						TileEntityLittleBlocks.getLittleWorld(world),
-						entityplayer.getCurrentEquippedItem(), (x << 3)
-								+ this.xSelected, (y << 3) + this.ySelected,
-						(z << 3) + this.zSelected, this.side, a, b, c)) {
+						entityplayer.getCurrentEquippedItem(),
+						(x << 3) + this.xSelected,
+						(y << 3) + this.ySelected,
+						(z << 3) + this.zSelected,
+						this.side,
+						a,
+						b,
+						c)) {
 					tileentitylittleblocks.onInventoryChanged();
 					world.markBlockAsNeedsUpdate(x, y, z);
 					return true;
-				} else if (entityplayer.getCurrentEquippedItem() != null
-						&& entityplayer.getCurrentEquippedItem().getItem() instanceof ItemBucket) {
-					itemManager.tryUseItem(entityplayer,
+				} else if (entityplayer.getCurrentEquippedItem() != null && entityplayer
+						.getCurrentEquippedItem()
+							.getItem() instanceof ItemBucket) {
+					itemManager.tryUseItem(
+							entityplayer,
 							TileEntityLittleBlocks.getLittleWorld(world),
 							entityplayer.getCurrentEquippedItem());
 					tileentitylittleblocks.onInventoryChanged();
@@ -169,9 +173,7 @@ public class BlockLittleBlocks extends BlockContainer {
 		return true;
 	}
 
-	public boolean onServerBlockActivated(World world,
-			int x, int y, int z, EntityPlayer entityplayer, int q, float a,
-			float b, float c) {
+	public boolean onServerBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int q, float a, float b, float c) {
 		if (this.xSelected == -10) {
 			return true;
 		}
@@ -180,19 +182,27 @@ public class BlockLittleBlocks extends BlockContainer {
 			TileEntityLittleBlocks tileentitylittleblocks = (TileEntityLittleBlocks) tileentity;
 			if (entityplayer instanceof EntityPlayerMP) {
 				EntityPlayerMP player = (EntityPlayerMP) entityplayer;
-	
+
 				ItemInWorldManager itemManager = player.theItemInWorldManager;
-				if (itemManager.activateBlockOrUseItem(entityplayer,
+				if (itemManager.activateBlockOrUseItem(
+						entityplayer,
 						TileEntityLittleBlocks.getLittleWorld(world),
-						entityplayer.getCurrentEquippedItem(), (x << 3)
-								+ this.xSelected, (y << 3) + this.ySelected,
-						(z << 3) + this.zSelected, this.side, a, b, c)) {
+						entityplayer.getCurrentEquippedItem(),
+						(x << 3) + this.xSelected,
+						(y << 3) + this.ySelected,
+						(z << 3) + this.zSelected,
+						this.side,
+						a,
+						b,
+						c)) {
 					tileentitylittleblocks.onInventoryChanged();
 					world.markBlockNeedsUpdate(x, y, z);
 					return true;
-				} else if (entityplayer.getCurrentEquippedItem() != null
-						&& entityplayer.getCurrentEquippedItem().getItem() instanceof ItemBucket) {
-					itemManager.tryUseItem(entityplayer,
+				} else if (entityplayer.getCurrentEquippedItem() != null && entityplayer
+						.getCurrentEquippedItem()
+							.getItem() instanceof ItemBucket) {
+					itemManager.tryUseItem(
+							entityplayer,
 							TileEntityLittleBlocks.getLittleWorld(world),
 							entityplayer.getCurrentEquippedItem());
 					tileentitylittleblocks.onInventoryChanged();
@@ -205,81 +215,43 @@ public class BlockLittleBlocks extends BlockContainer {
 	}
 
 	@Override
-	public void onBlockClicked(World world, int x, int y, int z,
-			EntityPlayer entityplayer) {
+	public void onBlockClicked(World world, int x, int y, int z, EntityPlayer entityplayer) {
 		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
 			if (world.isRemote) {
-				ClientPacketHandler.blockUpdate(world, entityplayer, x, y, z, 0, 0, 0,
-						0, this, LBCore.blockClickCommand);
+				ClientPacketHandler.blockUpdate(
+						world,
+						entityplayer,
+						x,
+						y,
+						z,
+						0,
+						0,
+						0,
+						0,
+						this,
+						LBCore.blockClickCommand);
 			}
-			//this.onClientBlockClicked(world, x, y, z, entityplayer);
+			// this.onClientBlockClicked(world, x, y, z, entityplayer);
 		}
 	}
-	
-	public void onClientBlockClicked(World world, int x,
-			int y, int z, EntityPlayer entityplayer) {
+
+	public void onClientBlockClicked(World world, int x, int y, int z, EntityPlayer entityplayer) {
 		TileEntityLittleBlocks tile = (TileEntityLittleBlocks) world
 				.getBlockTileEntity(x, y, z);
 
 		int content = tile.getContent(
+				this.xSelected,
+				this.ySelected,
+				this.zSelected);
+		if (content > 0 && Block.blocksList[content] != null) {
+			int idDropped = Block.blocksList[content].idDropped(
+					tile.getMetadata(
 							this.xSelected,
 							this.ySelected,
-							this.zSelected
-						);
-		if (content > 0 && this.blocksList[content] != null) {
-				int idDropped = this.blocksList[content]
-									.idDropped(
-											tile.getMetadata(
-													this.xSelected, 
-													this.ySelected,
-													this.zSelected),
-													world.rand,
-													0
-											);
-				int quantityDropped = this.blocksList[content]
-						.quantityDropped(world.rand);
-				if (idDropped > 0 && quantityDropped > 0) {
-					this.dropLittleBlockAsItem_do(
-							world,
-							x,
-							y,
-							z,
-							new ItemStack(
-									idDropped,
-									quantityDropped,
-									tile.getMetadata(
-											this.xSelected,
-											this.ySelected,
-											this.zSelected
-									)
-							)
-					);
-				}
-			}
-		tile.setContent(this.xSelected, this.ySelected, this.zSelected, 0);
-		tile.onInventoryChanged();
-		world.markBlockNeedsUpdate(x, y, z);
-	}
-	
-	public void onServerBlockClicked(World world, int x,
-			int y, int z, EntityPlayer entityplayer) {
-		TileEntityLittleBlocks tile = (TileEntityLittleBlocks) world
-				.getBlockTileEntity(x, y, z);
-
-		int content = tile.getContent(this.xSelected, this.ySelected,
-				this.zSelected);
-		if (content > 0 && this.blocksList[content] != null) {
-				int idDropped = this.blocksList[content]
-									.idDropped(
-											tile.getMetadata(
-													this.xSelected,
-													this.ySelected,
-													this.zSelected
-											),
-											world.rand,
-											0
-									);
-			int quantityDropped = this.blocksList[content]
+							this.zSelected),
+					world.rand,
+					0);
+			int quantityDropped = Block.blocksList[content]
 					.quantityDropped(world.rand);
 			if (idDropped > 0 && quantityDropped > 0) {
 				this.dropLittleBlockAsItem_do(
@@ -287,16 +259,47 @@ public class BlockLittleBlocks extends BlockContainer {
 						x,
 						y,
 						z,
-						new ItemStack(
-								idDropped,
-								quantityDropped,
-								tile.getMetadata(
+						new ItemStack(idDropped, quantityDropped, tile
+								.getMetadata(
 										this.xSelected,
 										this.ySelected,
-										this.zSelected
-								)
-						)
-				);
+										this.zSelected)));
+			}
+		}
+		tile.setContent(this.xSelected, this.ySelected, this.zSelected, 0);
+		tile.onInventoryChanged();
+		world.markBlockNeedsUpdate(x, y, z);
+	}
+
+	public void onServerBlockClicked(World world, int x, int y, int z, EntityPlayer entityplayer) {
+		TileEntityLittleBlocks tile = (TileEntityLittleBlocks) world
+				.getBlockTileEntity(x, y, z);
+
+		int content = tile.getContent(
+				this.xSelected,
+				this.ySelected,
+				this.zSelected);
+		if (content > 0 && Block.blocksList[content] != null) {
+			int idDropped = Block.blocksList[content].idDropped(
+					tile.getMetadata(
+							this.xSelected,
+							this.ySelected,
+							this.zSelected),
+					world.rand,
+					0);
+			int quantityDropped = Block.blocksList[content]
+					.quantityDropped(world.rand);
+			if (idDropped > 0 && quantityDropped > 0) {
+				this.dropLittleBlockAsItem_do(
+						world,
+						x,
+						y,
+						z,
+						new ItemStack(idDropped, quantityDropped, tile
+								.getMetadata(
+										this.xSelected,
+										this.ySelected,
+										this.zSelected)));
 			}
 			tile.setContent(this.xSelected, this.ySelected, this.zSelected, 0);
 			tile.onInventoryChanged();
@@ -304,13 +307,18 @@ public class BlockLittleBlocks extends BlockContainer {
 		}
 		PacketLittleBlocks packetLB = new PacketLittleBlocks(
 				"UPDATECLIENT",
-				x, y, z, 0,
-				0, 0, 0,
+				x,
+				y,
+				z,
+				0,
+				0,
+				0,
+				0,
 				this.xSelected,
 				this.ySelected,
 				this.zSelected,
-				0, 0
-		);
+				0,
+				0);
 		packetLB.setSender(LBPacketIds.SERVER);
 		CommonPacketHandler.sendToAllPlayers(
 				world,
@@ -319,26 +327,20 @@ public class BlockLittleBlocks extends BlockContainer {
 				x,
 				y,
 				z,
-				true
-		);
+				true);
 	}
 
-	public void dropLittleBlockAsItem_do(World world, int x, int y, int z,
-			ItemStack itemStack) {
+	public void dropLittleBlockAsItem_do(World world, int x, int y, int z, ItemStack itemStack) {
 		this.dropBlockAsItem_do(world, x, y, z, itemStack);
 	}
 
-    public TileEntity createNewTileEntity(World par1World)
-    {
-        try
-        {
-            return (TileEntity)this.clazz.newInstance();
-        }
-        catch (Exception e)
-        {
-            throw new RuntimeException(e);
-        }
-    }
+	public TileEntity createNewTileEntity(World par1World) {
+		try {
+			return (TileEntity) this.clazz.newInstance();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	@Override
 	public int getRenderType() {
@@ -356,8 +358,7 @@ public class BlockLittleBlocks extends BlockContainer {
 	}
 
 	@Override
-	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int i,
-			int j, int k) {
+	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int i, int j, int k) {
 		if (LBCore.littleBlocksClip) {
 			return super.getCollisionBoundingBoxFromPool(world, i, j, k);
 		}
@@ -378,49 +379,67 @@ public class BlockLittleBlocks extends BlockContainer {
 					.getBlockTileEntity(x, y, z);
 			int content = tile.getContent(xSelected, ySelected, zSelected);
 			if (content <= 0) {
-				setBlockBounds(xSelected / m, ySelected / m, zSelected / m,
-						(xSelected + 1) / m, (ySelected + 1) / m,
+				setBlockBounds(
+						xSelected / m,
+						ySelected / m,
+						zSelected / m,
+						(xSelected + 1) / m,
+						(ySelected + 1) / m,
 						(zSelected + 1) / m);
 			} else {
 				Block block = Block.blocksList[content];
-				block.setBlockBoundsBasedOnState(tile.getLittleWorld(),
-						(x << 3) + xSelected, (y << 3) + ySelected, (z << 3)
-								+ zSelected);
+				block.setBlockBoundsBasedOnState(
+						tile.getLittleWorld(),
+						(x << 3) + xSelected,
+						(y << 3) + ySelected,
+						(z << 3) + zSelected);
 				AxisAlignedBB bound = AxisAlignedBB.getBoundingBox(
-						(xSelected + block.minX) / m, (ySelected + block.minY)
-								/ m, (zSelected + block.minZ) / m,
-						(xSelected + block.maxX) / m, (ySelected + block.maxY)
-								/ m, (zSelected + block.maxZ) / m);
-				setBlockBounds((float) bound.minX, (float) bound.minY,
-						(float) bound.minZ, (float) bound.maxX,
-						(float) bound.maxY, (float) bound.maxZ);
+						(xSelected + block.minX) / m,
+						(ySelected + block.minY) / m,
+						(zSelected + block.minZ) / m,
+						(xSelected + block.maxX) / m,
+						(ySelected + block.maxY) / m,
+						(zSelected + block.maxZ) / m);
+				setBlockBounds(
+						(float) bound.minX,
+						(float) bound.minY,
+						(float) bound.minZ,
+						(float) bound.maxX,
+						(float) bound.maxY,
+						(float) bound.maxZ);
 			}
 		}
 	}
-	
+
 	@Override
-	public void addCollidingBlockToList(World world, int i, int j, int k,
-			AxisAlignedBB axisalignedbb, List list, Entity entity) {
+	public void addCollidingBlockToList(World world, int i, int j, int k, AxisAlignedBB axisalignedbb, List list, Entity entity) {
 		TileEntity tileentity = world.getBlockTileEntity(i, j, k);
 		if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
 			TileEntityLittleBlocks tile = (TileEntityLittleBlocks) tileentity;
-	
+
 			int[][][] content = tile.getContent();
 			float m = TileEntityLittleBlocks.size;
-	
+
 			for (int x = 0; x < content.length; x++) {
 				for (int y = 0; y < content[x].length; y++) {
 					for (int z = 0; z < content[x][y].length; z++) {
 						if (content[x][y][z] > 0) {
 							Block block = Block.blocksList[content[x][y][z]];
-							setBlockBounds((float) (x + block.minX) / m,
+							setBlockBounds(
+									(float) (x + block.minX) / m,
 									(float) (y + block.minY) / m,
 									(float) (z + block.minZ) / m,
 									(float) (x + block.maxX) / m,
 									(float) (y + block.maxY) / m,
 									(float) (z + block.maxZ) / m);
-							super.addCollidingBlockToList(world, i, j, k,
-									axisalignedbb, list, entity);
+							super.addCollidingBlockToList(
+									world,
+									i,
+									j,
+									k,
+									axisalignedbb,
+									list,
+									entity);
 						}
 					}
 				}
@@ -430,8 +449,7 @@ public class BlockLittleBlocks extends BlockContainer {
 	}
 
 	@Override
-	public MovingObjectPosition collisionRayTrace(World world, int i, int j,
-			int k, Vec3 player, Vec3 view) {
+	public MovingObjectPosition collisionRayTrace(World world, int i, int j, int k, Vec3 player, Vec3 view) {
 		TileEntityLittleBlocks tile = (TileEntityLittleBlocks) world
 				.getBlockTileEntity(i, j, k);
 
@@ -451,18 +469,34 @@ public class BlockLittleBlocks extends BlockContainer {
 				for (int z = 0; z < content[x][y].length; z++) {
 					if (content[x][y][z] > 0) {
 						Block block = Block.blocksList[content[x][y][z]];
-						block.collisionRayTrace(tile.getLittleWorld(), (i << 3)
-								+ x, (j << 3) + y, (k << 3) + z, player, view);
+						block.collisionRayTrace(
+								tile.getLittleWorld(),
+								(i << 3) + x,
+								(j << 3) + y,
+								(k << 3) + z,
+								player,
+								view);
 						Object[] ret = rayTraceBound(
-								AxisAlignedBB.getBoundingBox((x + block.minX)
-										/ m, (y + block.minY) / m,
-										(z + block.minZ) / m, (x + block.maxX)
-												/ m, (y + block.maxY) / m,
-										(z + block.maxZ) / m), i, j, k, player,
+								AxisAlignedBB.getBoundingBox(
+										(x + block.minX) / m,
+										(y + block.minY) / m,
+										(z + block.minZ) / m,
+										(x + block.maxX) / m,
+										(y + block.maxY) / m,
+										(z + block.maxZ) / m),
+								i,
+								j,
+								k,
+								player,
 								view);
 						if (ret != null) {
-							returns.add(new Object[] { ret[0], ret[1], ret[2],
-									x, y, z });
+							returns.add(new Object[] {
+									ret[0],
+									ret[1],
+									ret[2],
+									x,
+									y,
+									z });
 						}
 					}
 				}
@@ -476,12 +510,21 @@ public class BlockLittleBlocks extends BlockContainer {
 			for (int x = 0; x < max; x++) {
 				for (int z = 0; z < max; z++) {
 					int y = -1;
-					Object[] ret = rayTraceBound(AxisAlignedBB.getBoundingBox(x
-							/ m, y / m, z / m, (x + 1) / m, (y + 1) / m,
+					Object[] ret = rayTraceBound(AxisAlignedBB.getBoundingBox(
+							x / m,
+							y / m,
+							z / m,
+							(x + 1) / m,
+							(y + 1) / m,
 							(z + 1) / m), i, j, k, player, view);
 					if (ret != null) {
-						returns.add(new Object[] { ret[0], ret[1], ret[2], x,
-								y, z });
+						returns.add(new Object[] {
+								ret[0],
+								ret[1],
+								ret[2],
+								x,
+								y,
+								z });
 					}
 				}
 			}
@@ -492,12 +535,21 @@ public class BlockLittleBlocks extends BlockContainer {
 			for (int x = 0; x < max; x++) {
 				for (int z = 0; z < max; z++) {
 					int y = max;
-					Object[] ret = rayTraceBound(AxisAlignedBB.getBoundingBox(x
-							/ m, y / m, z / m, (x + 1) / m, (y + 1) / m,
+					Object[] ret = rayTraceBound(AxisAlignedBB.getBoundingBox(
+							x / m,
+							y / m,
+							z / m,
+							(x + 1) / m,
+							(y + 1) / m,
 							(z + 1) / m), i, j, k, player, view);
 					if (ret != null) {
-						returns.add(new Object[] { ret[0], ret[1], ret[2], x,
-								y, z });
+						returns.add(new Object[] {
+								ret[0],
+								ret[1],
+								ret[2],
+								x,
+								y,
+								z });
 					}
 				}
 			}
@@ -508,12 +560,21 @@ public class BlockLittleBlocks extends BlockContainer {
 			for (int y = 0; y < max; y++) {
 				for (int z = 0; z < max; z++) {
 					int x = -1;
-					Object[] ret = rayTraceBound(AxisAlignedBB.getBoundingBox(x
-							/ m, y / m, z / m, (x + 1) / m, (y + 1) / m,
+					Object[] ret = rayTraceBound(AxisAlignedBB.getBoundingBox(
+							x / m,
+							y / m,
+							z / m,
+							(x + 1) / m,
+							(y + 1) / m,
 							(z + 1) / m), i, j, k, player, view);
 					if (ret != null) {
-						returns.add(new Object[] { ret[0], ret[1], ret[2], x,
-								y, z });
+						returns.add(new Object[] {
+								ret[0],
+								ret[1],
+								ret[2],
+								x,
+								y,
+								z });
 					}
 				}
 			}
@@ -524,12 +585,21 @@ public class BlockLittleBlocks extends BlockContainer {
 			for (int y = 0; y < max; y++) {
 				for (int z = 0; z < max; z++) {
 					int x = max;
-					Object[] ret = rayTraceBound(AxisAlignedBB.getBoundingBox(x
-							/ m, y / m, z / m, (x + 1) / m, (y + 1) / m,
+					Object[] ret = rayTraceBound(AxisAlignedBB.getBoundingBox(
+							x / m,
+							y / m,
+							z / m,
+							(x + 1) / m,
+							(y + 1) / m,
 							(z + 1) / m), i, j, k, player, view);
 					if (ret != null) {
-						returns.add(new Object[] { ret[0], ret[1], ret[2], x,
-								y, z });
+						returns.add(new Object[] {
+								ret[0],
+								ret[1],
+								ret[2],
+								x,
+								y,
+								z });
 					}
 				}
 			}
@@ -540,12 +610,21 @@ public class BlockLittleBlocks extends BlockContainer {
 			for (int y = 0; y < max; y++) {
 				for (int x = 0; x < max; x++) {
 					int z = -1;
-					Object[] ret = rayTraceBound(AxisAlignedBB.getBoundingBox(x
-							/ m, y / m, z / m, (x + 1) / m, (y + 1) / m,
+					Object[] ret = rayTraceBound(AxisAlignedBB.getBoundingBox(
+							x / m,
+							y / m,
+							z / m,
+							(x + 1) / m,
+							(y + 1) / m,
 							(z + 1) / m), i, j, k, player, view);
 					if (ret != null) {
-						returns.add(new Object[] { ret[0], ret[1], ret[2], x,
-								y, z });
+						returns.add(new Object[] {
+								ret[0],
+								ret[1],
+								ret[2],
+								x,
+								y,
+								z });
 					}
 				}
 			}
@@ -556,12 +635,21 @@ public class BlockLittleBlocks extends BlockContainer {
 			for (int y = 0; y < max; y++) {
 				for (int x = 0; x < max; x++) {
 					int z = max;
-					Object[] ret = rayTraceBound(AxisAlignedBB.getBoundingBox(x
-							/ m, y / m, z / m, (x + 1) / m, (y + 1) / m,
+					Object[] ret = rayTraceBound(AxisAlignedBB.getBoundingBox(
+							x / m,
+							y / m,
+							z / m,
+							(x + 1) / m,
+							(y + 1) / m,
 							(z + 1) / m), i, j, k, player, view);
 					if (ret != null) {
-						returns.add(new Object[] { ret[0], ret[1], ret[2], x,
-								y, z });
+						returns.add(new Object[] {
+								ret[0],
+								ret[1],
+								ret[2],
+								x,
+								y,
+								z });
 					}
 				}
 			}
@@ -583,14 +671,23 @@ public class BlockLittleBlocks extends BlockContainer {
 				ySelected = (Integer) min[4];
 				zSelected = (Integer) min[5];
 				if (tile.getContent(xSelected, ySelected, zSelected) > 0) {
-					Block.blocksList[tile.getContent(xSelected, ySelected,
+					Block.blocksList[tile.getContent(
+							xSelected,
+							ySelected,
 							zSelected)].collisionRayTrace(
-							tile.getLittleWorld(), (i << 3) + xSelected,
-							(j << 3) + ySelected, (k << 3) + zSelected, player,
+							tile.getLittleWorld(),
+							(i << 3) + xSelected,
+							(j << 3) + ySelected,
+							(k << 3) + zSelected,
+							player,
 							view);
 				}
 				setBlockBoundsBasedOnSelection(world, i, j, k);
-				return new MovingObjectPosition(i, j, k, (Byte) min[1],
+				return new MovingObjectPosition(
+						i,
+						j,
+						k,
+						(Byte) min[1],
 						((Vec3) min[0]).addVector(i, j, k));
 			}
 		}
@@ -603,8 +700,7 @@ public class BlockLittleBlocks extends BlockContainer {
 		return null;
 	}
 
-	private Object[] rayTraceBound(AxisAlignedBB bound, int i, int j, int k,
-			Vec3 player, Vec3 view) {
+	private Object[] rayTraceBound(AxisAlignedBB bound, int i, int j, int k, Vec3 player, Vec3 view) {
 		Vec3 Vec32 = player.getIntermediateWithXValue(view, bound.minX);
 		Vec3 Vec33 = player.getIntermediateWithXValue(view, bound.maxX);
 		Vec3 Vec34 = player.getIntermediateWithYValue(view, bound.minY);
@@ -630,34 +726,28 @@ public class BlockLittleBlocks extends BlockContainer {
 			Vec37 = null;
 		}
 		Vec3 Vec38 = null;
-		if (Vec32 != null
-				&& (Vec38 == null || player.distanceTo(Vec32) < player
-						.distanceTo(Vec38))) {
+		if (Vec32 != null && (Vec38 == null || player.distanceTo(Vec32) < player
+				.distanceTo(Vec38))) {
 			Vec38 = Vec32;
 		}
-		if (Vec33 != null
-				&& (Vec38 == null || player.distanceTo(Vec33) < player
-						.distanceTo(Vec38))) {
+		if (Vec33 != null && (Vec38 == null || player.distanceTo(Vec33) < player
+				.distanceTo(Vec38))) {
 			Vec38 = Vec33;
 		}
-		if (Vec34 != null
-				&& (Vec38 == null || player.distanceTo(Vec34) < player
-						.distanceTo(Vec38))) {
+		if (Vec34 != null && (Vec38 == null || player.distanceTo(Vec34) < player
+				.distanceTo(Vec38))) {
 			Vec38 = Vec34;
 		}
-		if (Vec35 != null
-				&& (Vec38 == null || player.distanceTo(Vec35) < player
-						.distanceTo(Vec38))) {
+		if (Vec35 != null && (Vec38 == null || player.distanceTo(Vec35) < player
+				.distanceTo(Vec38))) {
 			Vec38 = Vec35;
 		}
-		if (Vec36 != null
-				&& (Vec38 == null || player.distanceTo(Vec36) < player
-						.distanceTo(Vec38))) {
+		if (Vec36 != null && (Vec38 == null || player.distanceTo(Vec36) < player
+				.distanceTo(Vec38))) {
 			Vec38 = Vec36;
 		}
-		if (Vec37 != null
-				&& (Vec38 == null || player.distanceTo(Vec37) < player
-						.distanceTo(Vec38))) {
+		if (Vec37 != null && (Vec38 == null || player.distanceTo(Vec37) < player
+				.distanceTo(Vec38))) {
 			Vec38 = Vec37;
 		}
 		if (Vec38 == null) {
@@ -689,8 +779,7 @@ public class BlockLittleBlocks extends BlockContainer {
 		if (Vec3 == null) {
 			return false;
 		} else {
-			return Vec3.yCoord >= bound.minY && Vec3.yCoord <= bound.maxY
-					&& Vec3.zCoord >= bound.minZ && Vec3.zCoord <= bound.maxZ;
+			return Vec3.yCoord >= bound.minY && Vec3.yCoord <= bound.maxY && Vec3.zCoord >= bound.minZ && Vec3.zCoord <= bound.maxZ;
 		}
 	}
 
@@ -698,8 +787,7 @@ public class BlockLittleBlocks extends BlockContainer {
 		if (Vec3 == null) {
 			return false;
 		} else {
-			return Vec3.xCoord >= bound.minX && Vec3.xCoord <= bound.maxX
-					&& Vec3.zCoord >= bound.minZ && Vec3.zCoord <= bound.maxZ;
+			return Vec3.xCoord >= bound.minX && Vec3.xCoord <= bound.maxX && Vec3.zCoord >= bound.minZ && Vec3.zCoord <= bound.maxZ;
 		}
 	}
 
@@ -707,14 +795,12 @@ public class BlockLittleBlocks extends BlockContainer {
 		if (Vec3 == null) {
 			return false;
 		} else {
-			return Vec3.xCoord >= bound.minX && Vec3.xCoord <= bound.maxX
-					&& Vec3.yCoord >= bound.minY && Vec3.yCoord <= bound.maxY;
+			return Vec3.xCoord >= bound.minX && Vec3.xCoord <= bound.maxX && Vec3.yCoord >= bound.minY && Vec3.yCoord <= bound.maxY;
 		}
 	}
 
 	@Override
-	public boolean isPoweringTo(IBlockAccess iblockaccess, int i, int j, int k,
-			int l) {
+	public boolean isPoweringTo(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		if (super.isPoweringTo(iblockaccess, i, j, k, l)) {
 			return true;
 		} else {
@@ -756,9 +842,12 @@ public class BlockLittleBlocks extends BlockContainer {
 					for (int z = startZ; z < maZ; z++) {
 						if (content[x][y][z] > 0) {
 							if (Block.blocksList[content[x][y][z]]
-									.isPoweringTo(tile.getLittleWorld(),
-											(i << 3) + x, (j << 3) + y,
-											(k << 3) + z, l)) {
+									.isPoweringTo(
+											tile.getLittleWorld(),
+											(i << 3) + x,
+											(j << 3) + y,
+											(k << 3) + z,
+											l)) {
 								return true;
 							}
 						}
@@ -811,9 +900,11 @@ public class BlockLittleBlocks extends BlockContainer {
 							if (content[x][y][z] > 0) {
 								Block.blocksList[content[x][y][z]]
 										.onNeighborBlockChange(
-												tile.getLittleWorld(), (i << 3)
-														+ x, (j << 3) + y,
-												(k << 3) + z, l);
+												tile.getLittleWorld(),
+												(i << 3) + x,
+												(j << 3) + y,
+												(k << 3) + z,
+												l);
 							}
 						}
 					}

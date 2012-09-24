@@ -21,14 +21,16 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 	private List<TileEntity> entitiesToDraw = new ArrayList<TileEntity>();
 
 	@Override
-	public void renderTileEntityAt(TileEntity tileentity, double d, double d1,
-			double d2, float f) {
-		renderTileEntityLittleBlocks((TileEntityLittleBlocks) tileentity, d,
-				d1, d2, f);
+	public void renderTileEntityAt(TileEntity tileentity, double d, double d1, double d2, float f) {
+		renderTileEntityLittleBlocks(
+				(TileEntityLittleBlocks) tileentity,
+				d,
+				d1,
+				d2,
+				f);
 	}
 
-	private void renderTileEntityLittleBlocks(TileEntityLittleBlocks tile,
-			double x, double y, double z, float f) {
+	private void renderTileEntityLittleBlocks(TileEntityLittleBlocks tile, double x, double y, double z, float f) {
 		GL11.glPushMatrix();
 		GL11.glTranslated(x, y, z);
 		GL11.glTranslated(-tile.xCoord, -tile.yCoord, -tile.zCoord);
@@ -62,16 +64,19 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 					if (content[x1][y1][z1] > 0) {
 						Block block = Block.blocksList[content[x1][y1][z1]];
 						if (LBCore.optifine) {
-							rb.renderBlockByRenderType(block,
-									(tile.xCoord << 3) + x1, (tile.yCoord << 3)
-											+ y1, (tile.zCoord << 3) + z1);
+							rb.renderBlockByRenderType(
+									block,
+									(tile.xCoord << 3) + x1,
+									(tile.yCoord << 3) + y1,
+									(tile.zCoord << 3) + z1);
 						}
 						if (block instanceof BlockContainer) {
-							TileEntity littleTile = tile.getLittleWorld()
-									.getBlockTileEntity(
-											(tile.xCoord << 3) + x1,
-											(tile.yCoord << 3) + y1,
-											(tile.zCoord << 3) + z1);
+							TileEntity littleTile = tile
+									.getLittleWorld()
+										.getBlockTileEntity(
+												(tile.xCoord << 3) + x1,
+												(tile.yCoord << 3) + y1,
+												(tile.zCoord << 3) + z1);
 							if (littleTile != null) {
 								if (!(littleTile instanceof TileEntityLittleBlocks)) {
 									entitiesToDraw.add(littleTile);
@@ -86,8 +91,12 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 		tessellator.draw();
 
 		for (TileEntity littleTile : entitiesToDraw) {
-			tileEntityRenderer.renderTileEntityAt(littleTile,
-					littleTile.xCoord, littleTile.yCoord, littleTile.zCoord, f);
+			tileEntityRenderer.renderTileEntityAt(
+					littleTile,
+					littleTile.xCoord,
+					littleTile.yCoord,
+					littleTile.zCoord,
+					f);
 		}
 
 		GL11.glDisable(32826 /* GL_RESCALE_NORMAL_EXT */);

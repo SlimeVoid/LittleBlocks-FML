@@ -1,19 +1,8 @@
 package littleblocks.proxy;
 
 import littleblocks.api.ILBCommonProxy;
-import littleblocks.blocks.BlockLittleBlocks;
 import littleblocks.core.CommonTickHandler;
-import littleblocks.core.LBCore;
-import littleblocks.network.CommonPacketHandler;
-import littleblocks.network.packets.PacketLittleBlocksSettings;
-import littleblocks.tileentities.TileEntityLittleBlocks;
-import net.minecraft.src.Block;
 import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.EntityPlayerMP;
-import net.minecraft.src.EnumGameType;
-import net.minecraft.src.ItemBucket;
-import net.minecraft.src.ItemInWorldManager;
-import net.minecraft.src.ItemStack;
 import net.minecraft.src.NetHandler;
 import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet1Login;
@@ -32,13 +21,11 @@ public class CommonProxy implements ILBCommonProxy {
 	}
 
 	@Override
-	public void registerTileEntitySpecialRenderer(
-			Class<? extends TileEntity> clazz) {
+	public void registerTileEntitySpecialRenderer(Class<? extends TileEntity> clazz) {
 	}
 
 	@Override
-	public void displayTileEntityGui(EntityPlayer entityplayer,
-			TileEntity tileentity) {
+	public void displayTileEntityGui(EntityPlayer entityplayer, TileEntity tileentity) {
 	}
 
 	@Override
@@ -47,14 +34,12 @@ public class CommonProxy implements ILBCommonProxy {
 	}
 
 	@Override
-	public Object getServerGuiElement(int ID, EntityPlayer player, World world,
-			int x, int y, int z) {
+	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
 		return null;
 	}
 
 	@Override
-	public Object getClientGuiElement(int ID, EntityPlayer player, World world,
-			int x, int y, int z) {
+	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
 		return null;
 	}
 
@@ -69,8 +54,7 @@ public class CommonProxy implements ILBCommonProxy {
 	}
 
 	@Override
-	public void onPacketData(NetworkManager manager,
-			Packet250CustomPayload packet, Player player) {
+	public void onPacketData(NetworkManager manager, Packet250CustomPayload packet, Player player) {
 	}
 
 	@Override

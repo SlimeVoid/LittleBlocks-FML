@@ -34,12 +34,11 @@ public class LBCore {
 	public static void addItems() {
 		littleBlocksID = configurationProperties();
 		littleBlocks = new BlockLittleBlocks(
-					littleBlocksID,
-					TileEntityLittleBlocks.class,
-					Material.wood,
-					2F,
-					true)
-				.setBlockName("littleBlocks");
+				littleBlocksID,
+				TileEntityLittleBlocks.class,
+				Material.wood,
+				2F,
+				true).setBlockName("littleBlocks");
 		GameRegistry.registerBlock(littleBlocks);
 	}
 
@@ -48,18 +47,28 @@ public class LBCore {
 	}
 
 	public static void addRecipes() {
-		GameRegistry.addRecipe(new ItemStack(littleBlocks), new Object[] { "#",
-				Character.valueOf('#'), Block.dirt });
+		GameRegistry.addRecipe(new ItemStack(littleBlocks), new Object[] {
+				"#",
+				Character.valueOf('#'),
+				Block.dirt });
 	}
 
 	public static int configurationProperties() {
 		configuration.load();
 		littleBlocksID = Integer.parseInt(configuration.getOrCreateIntProperty(
-				"littleBlocksID", Configuration.CATEGORY_BLOCK, 140).value);
-		littleBlocksClip = Boolean.parseBoolean(configuration.getOrCreateBooleanProperty("littleBlocksClip", Configuration.CATEGORY_GENERAL, true).value);
+				"littleBlocksID",
+				Configuration.CATEGORY_BLOCK,
+				140).value);
+		littleBlocksClip = Boolean.parseBoolean(configuration
+				.getOrCreateBooleanProperty(
+						"littleBlocksClip",
+						Configuration.CATEGORY_GENERAL,
+						true).value);
 		renderingMethod = Integer.parseInt(configuration
-				.getOrCreateIntProperty("renderingMethod",
-						Configuration.CATEGORY_GENERAL, 0).value);
+				.getOrCreateIntProperty(
+						"renderingMethod",
+						Configuration.CATEGORY_GENERAL,
+						0).value);
 		renderType = RenderingRegistry.getNextAvailableRenderId();
 		configuration.save();
 		return littleBlocksID;

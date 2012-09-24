@@ -14,13 +14,11 @@ import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 public class BlockLittleBlocksRenderer implements ISimpleBlockRenderingHandler {
 
 	@Override
-	public void renderInventoryBlock(Block block, int metadata, int modelID,
-			RenderBlocks renderer) {
+	public void renderInventoryBlock(Block block, int metadata, int modelID, RenderBlocks renderer) {
 	}
 
 	@Override
-	public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z,
-			Block block, int modelId, RenderBlocks renderer) {
+	public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
 		if (block.blockID == LBCore.littleBlocksID && !LBCore.optifine) {
 			Tessellator tessellator = Tessellator.instance;
 
@@ -54,11 +52,11 @@ public class BlockLittleBlocksRenderer implements ISimpleBlockRenderingHandler {
 				for (int y1 = 0; y1 < content[x1].length; y1++) {
 					for (int z1 = 0; z1 < content[x1][y1].length; z1++) {
 						if (content[x1][y1][z1] > 0) {
-							renderBlocks
-									.renderBlockByRenderType(
-											Block.blocksList[content[x1][y1][z1]],
-											(x << 3) + x1, (y << 3) + y1,
-											(z << 3) + z1);
+							renderBlocks.renderBlockByRenderType(
+									Block.blocksList[content[x1][y1][z1]],
+									(x << 3) + x1,
+									(y << 3) + y1,
+									(z << 3) + z1);
 						}
 					}
 				}

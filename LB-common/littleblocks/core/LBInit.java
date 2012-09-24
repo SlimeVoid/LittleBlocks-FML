@@ -21,7 +21,8 @@ public class LBInit {
 		LBM = new Core(proxy);
 		LBM.setModName("LittleBlocks");
 		LBM.setModChannel("LITTLEBLOCKS");
-		LBCore.configFile = new File(LBM.getProxy().getMinecraftDir(),
+		LBCore.configFile = new File(
+				LBM.getProxy().getMinecraftDir(),
 				"config/LittleBlocks.cfg");
 		LBCore.configuration = new Configuration(LBCore.configFile);
 		load();
@@ -30,7 +31,8 @@ public class LBInit {
 	public static void load() {
 		EurysCore.console(LBM.getModName(), "Registering items...");
 		LBCore.addItems();
-		GameRegistry.registerTileEntity(TileEntityLittleBlocks.class,
+		GameRegistry.registerTileEntity(
+				TileEntityLittleBlocks.class,
 				"littleBlocks");
 		LBM.getProxy().registerRenderInformation();
 		LBM.getProxy().registerTileEntitySpecialRenderer(

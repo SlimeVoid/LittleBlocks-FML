@@ -3,13 +3,9 @@ package littleblocks.tileentities;
 import java.util.ArrayList;
 import java.util.List;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Side;
-
 import littleblocks.core.LBCore;
 import littleblocks.network.packets.PacketTileEntityLB;
 import littleblocks.world.LittleWorld;
-import net.minecraft.src.Block;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagInt;
@@ -22,6 +18,8 @@ import net.minecraft.src.World;
 import net.minecraft.src.WorldProviderSurface;
 import net.minecraft.src.EurysMods.network.packets.core.PacketPayload;
 import net.minecraft.src.EurysMods.network.packets.core.PacketUpdate;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Side;
 
 public class TileEntityLittleBlocks extends TileEntity {
 	public static int size = 8;
@@ -31,18 +29,19 @@ public class TileEntityLittleBlocks extends TileEntity {
 	private boolean upToDate = false;
 
 	private static LittleWorld littleWorld;
-    
+
 	@Override
 	public void onDataPacket(NetworkManager net, Packet132TileEntityData pkt) {
 		if (FMLCommonHandler.instance().getSide().isClient()) {
-			ModLoader.getMinecraftInstance().thePlayer.addChatMessage("Data Packet");
+			ModLoader.getMinecraftInstance().thePlayer
+					.addChatMessage("Data Packet");
 		}
-    }
+	}
 
 	@Override
 	public void func_70308_a(World par1World) {
 		this.worldObj = par1World;
-		this.littleWorld = getLittleWorld(this.worldObj);
+		TileEntityLittleBlocks.littleWorld = getLittleWorld(this.worldObj);
 	}
 
 	public TileEntityLittleBlocks() {
@@ -84,13 +83,21 @@ public class TileEntityLittleBlocks extends TileEntity {
 		if (littleWorld == null || littleWorld.isOutdated(worldObj)) {
 			if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
 				if (!this.worldObj.isRemote) {
-					littleWorld = new LittleWorld(new WorldProviderSurface(), this.worldObj);
+					littleWorld = new LittleWorld(
+							new WorldProviderSurface(),
+							this.worldObj);
 				}
-				if (!ModLoader.getMinecraftInstance().isIntegratedServerRunning()) {
-					littleWorld = new LittleWorld(new WorldProviderSurface(), this.worldObj);
+				if (!ModLoader
+						.getMinecraftInstance()
+							.isIntegratedServerRunning()) {
+					littleWorld = new LittleWorld(
+							new WorldProviderSurface(),
+							this.worldObj);
 				}
 			} else {
-				littleWorld = new LittleWorld(this.worldObj, new WorldProviderSurface());
+				littleWorld = new LittleWorld(
+						this.worldObj,
+						new WorldProviderSurface());
 			}
 		}
 		return littleWorld;
@@ -103,10 +110,16 @@ public class TileEntityLittleBlocks extends TileEntity {
 			}
 			if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
 				if (!world.isRemote) {
-					littleWorld = new LittleWorld(new WorldProviderSurface(), world);
+					littleWorld = new LittleWorld(
+							new WorldProviderSurface(),
+							world);
 				}
-				if (!ModLoader.getMinecraftInstance().isIntegratedServerRunning()) {
-					littleWorld = new LittleWorld(new WorldProviderSurface(), world);
+				if (!ModLoader
+						.getMinecraftInstance()
+							.isIntegratedServerRunning()) {
+					littleWorld = new LittleWorld(
+							new WorldProviderSurface(),
+							world);
 				}
 			} else {
 				littleWorld = new LittleWorld(world, new WorldProviderSurface());
@@ -117,31 +130,46 @@ public class TileEntityLittleBlocks extends TileEntity {
 
 	public int getMetadata(int x, int y, int z) {
 		if (x >= size | y >= size | z >= size) {
-			if (worldObj.getBlockId(xCoord + (x >= size ? 1 : 0), yCoord
-					+ (y >= size ? 1 : 0), zCoord + (z >= size ? 1 : 0)) == LBCore.littleBlocksID) {
+			if (worldObj.getBlockId(
+					xCoord + (x >= size ? 1 : 0),
+					yCoord + (y >= size ? 1 : 0),
+					zCoord + (z >= size ? 1 : 0)) == LBCore.littleBlocksID) {
 				TileEntityLittleBlocks tile = (TileEntityLittleBlocks) worldObj
-						.getBlockTileEntity(xCoord + (x >= size ? 1 : 0),
-								yCoord + (y >= size ? 1 : 0), zCoord
-										+ (z >= size ? 1 : 0));
-				return tile.getMetadata(x >= size ? x - size : x, y >= size ? y
-						- size : y, z >= size ? z - size : z);
+						.getBlockTileEntity(
+								xCoord + (x >= size ? 1 : 0),
+								yCoord + (y >= size ? 1 : 0),
+								zCoord + (z >= size ? 1 : 0));
+				return tile.getMetadata(
+						x >= size ? x - size : x,
+						y >= size ? y - size : y,
+						z >= size ? z - size : z);
 			}
-			if (worldObj.getBlockId(xCoord + (x >= size ? 1 : 0), yCoord
-					+ (y >= size ? 1 : 0), zCoord + (z >= size ? 1 : 0)) == 0) {
+			if (worldObj.getBlockId(
+					xCoord + (x >= size ? 1 : 0),
+					yCoord + (y >= size ? 1 : 0),
+					zCoord + (z >= size ? 1 : 0)) == 0) {
 				return 0;
 			}
 			return -1;
 		} else if (x < 0 | z < 0 | y < 0) {
-			if (worldObj.getBlockId(xCoord - (x < 0 ? 1 : 0), yCoord
-					- (y < 0 ? 1 : 0), zCoord - (z < 0 ? 1 : 0)) == LBCore.littleBlocksID) {
+			if (worldObj.getBlockId(
+					xCoord - (x < 0 ? 1 : 0),
+					yCoord - (y < 0 ? 1 : 0),
+					zCoord - (z < 0 ? 1 : 0)) == LBCore.littleBlocksID) {
 				TileEntityLittleBlocks tile = (TileEntityLittleBlocks) worldObj
-						.getBlockTileEntity(xCoord - (x < 0 ? 1 : 0), yCoord
-								- (y < 0 ? 1 : 0), zCoord - (z < 0 ? 1 : 0));
-				return tile.getMetadata(x < 0 ? x + size : x, y < 0 ? y + size
-						: y, z < 0 ? z + size : z);
+						.getBlockTileEntity(
+								xCoord - (x < 0 ? 1 : 0),
+								yCoord - (y < 0 ? 1 : 0),
+								zCoord - (z < 0 ? 1 : 0));
+				return tile.getMetadata(
+						x < 0 ? x + size : x,
+						y < 0 ? y + size : y,
+						z < 0 ? z + size : z);
 			}
-			if (worldObj.getBlockId(xCoord - (x < 0 ? 1 : 0), yCoord
-					- (y < 0 ? 1 : 0), zCoord - (z < 0 ? 1 : 0)) == 0) {
+			if (worldObj.getBlockId(
+					xCoord - (x < 0 ? 1 : 0),
+					yCoord - (y < 0 ? 1 : 0),
+					zCoord - (z < 0 ? 1 : 0)) == 0) {
 				return 0;
 			}
 			return -1;
@@ -152,31 +180,46 @@ public class TileEntityLittleBlocks extends TileEntity {
 
 	public int getContent(int x, int y, int z) {
 		if (x >= size | y >= size | z >= size) {
-			if (worldObj.getBlockId(xCoord + (x >= size ? 1 : 0), yCoord
-					+ (y >= size ? 1 : 0), zCoord + (z >= size ? 1 : 0)) == LBCore.littleBlocksID) {
+			if (worldObj.getBlockId(
+					xCoord + (x >= size ? 1 : 0),
+					yCoord + (y >= size ? 1 : 0),
+					zCoord + (z >= size ? 1 : 0)) == LBCore.littleBlocksID) {
 				TileEntityLittleBlocks tile = (TileEntityLittleBlocks) worldObj
-						.getBlockTileEntity(xCoord + (x >= size ? 1 : 0),
-								yCoord + (y >= size ? 1 : 0), zCoord
-										+ (z >= size ? 1 : 0));
-				return tile.getContent(x >= size ? x - size : x, y >= size ? y
-						- size : y, z >= size ? z - size : z);
+						.getBlockTileEntity(
+								xCoord + (x >= size ? 1 : 0),
+								yCoord + (y >= size ? 1 : 0),
+								zCoord + (z >= size ? 1 : 0));
+				return tile.getContent(
+						x >= size ? x - size : x,
+						y >= size ? y - size : y,
+						z >= size ? z - size : z);
 			}
-			if (worldObj.getBlockId(xCoord + (x >= size ? 1 : 0), yCoord
-					+ (y >= size ? 1 : 0), zCoord + (z >= size ? 1 : 0)) == 0) {
+			if (worldObj.getBlockId(
+					xCoord + (x >= size ? 1 : 0),
+					yCoord + (y >= size ? 1 : 0),
+					zCoord + (z >= size ? 1 : 0)) == 0) {
 				return 0;
 			}
 			return -1;
 		} else if (x < 0 | z < 0 | y < 0) {
-			if (worldObj.getBlockId(xCoord - (x < 0 ? 1 : 0), yCoord
-					- (y < 0 ? 1 : 0), zCoord - (z < 0 ? 1 : 0)) == LBCore.littleBlocksID) {
+			if (worldObj.getBlockId(
+					xCoord - (x < 0 ? 1 : 0),
+					yCoord - (y < 0 ? 1 : 0),
+					zCoord - (z < 0 ? 1 : 0)) == LBCore.littleBlocksID) {
 				TileEntityLittleBlocks tile = (TileEntityLittleBlocks) worldObj
-						.getBlockTileEntity(xCoord - (x < 0 ? 1 : 0), yCoord
-								- (y < 0 ? 1 : 0), zCoord - (z < 0 ? 1 : 0));
-				return tile.getContent(x < 0 ? x + size : x, y < 0 ? y + size
-						: y, z < 0 ? z + size : z);
+						.getBlockTileEntity(
+								xCoord - (x < 0 ? 1 : 0),
+								yCoord - (y < 0 ? 1 : 0),
+								zCoord - (z < 0 ? 1 : 0));
+				return tile.getContent(
+						x < 0 ? x + size : x,
+						y < 0 ? y + size : y,
+						z < 0 ? z + size : z);
 			}
-			if (worldObj.getBlockId(xCoord - (x < 0 ? 1 : 0), yCoord
-					- (y < 0 ? 1 : 0), zCoord - (z < 0 ? 1 : 0)) == 0) {
+			if (worldObj.getBlockId(
+					xCoord - (x < 0 ? 1 : 0),
+					yCoord - (y < 0 ? 1 : 0),
+					zCoord - (z < 0 ? 1 : 0)) == 0) {
 				return 0;
 			}
 			return -1;
@@ -187,36 +230,57 @@ public class TileEntityLittleBlocks extends TileEntity {
 
 	public void setContent(int x, int y, int z, int id) {
 		if (x >= size | y >= size | z >= size) {
-			if (worldObj.getBlockId(xCoord + (x >= size ? 1 : 0), yCoord
-					+ (y >= size ? 1 : 0), zCoord + (z >= size ? 1 : 0)) == 0) {
-				worldObj.setBlockWithNotify(xCoord + (x >= size ? 1 : 0),
-						yCoord + (y >= size ? 1 : 0), zCoord
-								+ (z >= size ? 1 : 0), LBCore.littleBlocksID);
+			if (worldObj.getBlockId(
+					xCoord + (x >= size ? 1 : 0),
+					yCoord + (y >= size ? 1 : 0),
+					zCoord + (z >= size ? 1 : 0)) == 0) {
+				worldObj.setBlockWithNotify(
+						xCoord + (x >= size ? 1 : 0),
+						yCoord + (y >= size ? 1 : 0),
+						zCoord + (z >= size ? 1 : 0),
+						LBCore.littleBlocksID);
 			}
-			if (worldObj.getBlockId(xCoord + (x >= size ? 1 : 0), yCoord
-					+ (y >= size ? 1 : 0), zCoord + (z >= size ? 1 : 0)) == LBCore.littleBlocksID) {
+			if (worldObj.getBlockId(
+					xCoord + (x >= size ? 1 : 0),
+					yCoord + (y >= size ? 1 : 0),
+					zCoord + (z >= size ? 1 : 0)) == LBCore.littleBlocksID) {
 				TileEntityLittleBlocks tile = (TileEntityLittleBlocks) worldObj
-						.getBlockTileEntity(xCoord + (x >= size ? 1 : 0),
-								yCoord + (y >= size ? 1 : 0), zCoord
-										+ (z >= size ? 1 : 0));
-				tile.setContent(x >= size ? x - size : x, y >= size ? y - size
-						: y, z >= size ? z - size : z, id);
+						.getBlockTileEntity(
+								xCoord + (x >= size ? 1 : 0),
+								yCoord + (y >= size ? 1 : 0),
+								zCoord + (z >= size ? 1 : 0));
+				tile.setContent(
+						x >= size ? x - size : x,
+						y >= size ? y - size : y,
+						z >= size ? z - size : z,
+						id);
 			}
 			return;
 		} else if (x < 0 | z < 0 | y < 0) {
-			if (worldObj.getBlockId(xCoord - (x < 0 ? 1 : 0), yCoord
-					- (y < 0 ? 1 : 0), zCoord - (z < 0 ? 1 : 0)) == 0) {
-				worldObj.setBlockWithNotify(xCoord - (x < 0 ? 1 : 0), yCoord
-						- (y < 0 ? 1 : 0), zCoord - (z < 0 ? 1 : 0),
+			if (worldObj.getBlockId(
+					xCoord - (x < 0 ? 1 : 0),
+					yCoord - (y < 0 ? 1 : 0),
+					zCoord - (z < 0 ? 1 : 0)) == 0) {
+				worldObj.setBlockWithNotify(
+						xCoord - (x < 0 ? 1 : 0),
+						yCoord - (y < 0 ? 1 : 0),
+						zCoord - (z < 0 ? 1 : 0),
 						LBCore.littleBlocksID);
 			}
-			if (worldObj.getBlockId(xCoord - (x < 0 ? 1 : 0), yCoord
-					- (y < 0 ? 1 : 0), zCoord - (z < 0 ? 1 : 0)) == LBCore.littleBlocksID) {
+			if (worldObj.getBlockId(
+					xCoord - (x < 0 ? 1 : 0),
+					yCoord - (y < 0 ? 1 : 0),
+					zCoord - (z < 0 ? 1 : 0)) == LBCore.littleBlocksID) {
 				TileEntityLittleBlocks tile = (TileEntityLittleBlocks) worldObj
-						.getBlockTileEntity(xCoord - (x < 0 ? 1 : 0), yCoord
-								- (y < 0 ? 1 : 0), zCoord - (z < 0 ? 1 : 0));
-				tile.setContent(x < 0 ? x + size : x, y < 0 ? y + size : y,
-						z < 0 ? z + size : z, id);
+						.getBlockTileEntity(
+								xCoord - (x < 0 ? 1 : 0),
+								yCoord - (y < 0 ? 1 : 0),
+								zCoord - (z < 0 ? 1 : 0));
+				tile.setContent(
+						x < 0 ? x + size : x,
+						y < 0 ? y + size : y,
+						z < 0 ? z + size : z,
+						id);
 			}
 			return;
 		}
@@ -225,87 +289,146 @@ public class TileEntityLittleBlocks extends TileEntity {
 		setMetadata(x, y, z, 0);
 
 		if (lastId != id) {
-			littleWorld.idModified((this.xCoord << 3) + x, (this.yCoord << 3)
-					+ y, (this.zCoord << 3) + z, 0, 0, 0, 0, lastId, id);
+			littleWorld.idModified(
+					(this.xCoord << 3) + x,
+					(this.yCoord << 3) + y,
+					(this.zCoord << 3) + z,
+					0,
+					0,
+					0,
+					0,
+					lastId,
+					id);
 		}
 	}
 
 	public void setMetadata(int x, int y, int z, int metadata) {
 		if (x >= size | y >= size | z >= size) {
-			if (worldObj.getBlockId(xCoord + (x >= size ? 1 : 0), yCoord
-					+ (y >= size ? 1 : 0), zCoord + (z >= size ? 1 : 0)) == 0) {
-				worldObj.setBlockWithNotify(xCoord + (x >= size ? 1 : 0),
-						yCoord + (y >= size ? 1 : 0), zCoord
-								+ (z >= size ? 1 : 0), LBCore.littleBlocksID);
+			if (worldObj.getBlockId(
+					xCoord + (x >= size ? 1 : 0),
+					yCoord + (y >= size ? 1 : 0),
+					zCoord + (z >= size ? 1 : 0)) == 0) {
+				worldObj.setBlockWithNotify(
+						xCoord + (x >= size ? 1 : 0),
+						yCoord + (y >= size ? 1 : 0),
+						zCoord + (z >= size ? 1 : 0),
+						LBCore.littleBlocksID);
 			}
-			if (worldObj.getBlockId(xCoord + (x >= size ? 1 : 0), yCoord
-					+ (y >= size ? 1 : 0), zCoord + (z >= size ? 1 : 0)) == LBCore.littleBlocksID) {
+			if (worldObj.getBlockId(
+					xCoord + (x >= size ? 1 : 0),
+					yCoord + (y >= size ? 1 : 0),
+					zCoord + (z >= size ? 1 : 0)) == LBCore.littleBlocksID) {
 				TileEntityLittleBlocks tile = (TileEntityLittleBlocks) worldObj
-						.getBlockTileEntity(xCoord + (x >= size ? 1 : 0),
-								yCoord + (y >= size ? 1 : 0), zCoord
-										+ (z >= size ? 1 : 0));
-				tile.setMetadata(x >= size ? x - size : x, y >= size ? y - size
-						: y, z >= size ? z - size : z, metadata);
+						.getBlockTileEntity(
+								xCoord + (x >= size ? 1 : 0),
+								yCoord + (y >= size ? 1 : 0),
+								zCoord + (z >= size ? 1 : 0));
+				tile.setMetadata(
+						x >= size ? x - size : x,
+						y >= size ? y - size : y,
+						z >= size ? z - size : z,
+						metadata);
 			}
 			return;
 		} else if (x < 0 | z < 0 | y < 0) {
-			if (worldObj.getBlockId(xCoord - (x < 0 ? 1 : 0), yCoord
-					- (y < 0 ? 1 : 0), zCoord - (z < 0 ? 1 : 0)) == 0) {
-				worldObj.setBlockWithNotify(xCoord - (x < 0 ? 1 : 0), yCoord
-						- (y < 0 ? 1 : 0), zCoord - (z < 0 ? 1 : 0),
+			if (worldObj.getBlockId(
+					xCoord - (x < 0 ? 1 : 0),
+					yCoord - (y < 0 ? 1 : 0),
+					zCoord - (z < 0 ? 1 : 0)) == 0) {
+				worldObj.setBlockWithNotify(
+						xCoord - (x < 0 ? 1 : 0),
+						yCoord - (y < 0 ? 1 : 0),
+						zCoord - (z < 0 ? 1 : 0),
 						LBCore.littleBlocksID);
 			}
-			if (worldObj.getBlockId(xCoord - (x < 0 ? 1 : 0), yCoord
-					- (y < 0 ? 1 : 0), zCoord - (z < 0 ? 1 : 0)) == LBCore.littleBlocksID) {
+			if (worldObj.getBlockId(
+					xCoord - (x < 0 ? 1 : 0),
+					yCoord - (y < 0 ? 1 : 0),
+					zCoord - (z < 0 ? 1 : 0)) == LBCore.littleBlocksID) {
 				TileEntityLittleBlocks tile = (TileEntityLittleBlocks) worldObj
-						.getBlockTileEntity(xCoord - (x < 0 ? 1 : 0), yCoord
-								- (y < 0 ? 1 : 0), zCoord - (z < 0 ? 1 : 0));
-				tile.setMetadata(x < 0 ? x + size : x, y < 0 ? y + size : y,
-						z < 0 ? z + size : z, metadata);
+						.getBlockTileEntity(
+								xCoord - (x < 0 ? 1 : 0),
+								yCoord - (y < 0 ? 1 : 0),
+								zCoord - (z < 0 ? 1 : 0));
+				tile.setMetadata(
+						x < 0 ? x + size : x,
+						y < 0 ? y + size : y,
+						z < 0 ? z + size : z,
+						metadata);
 			}
 			return;
 		}
 		metadatas[x][y][z] = metadata;
 
 		if (metadatas[x][y][z] != metadata) {
-			littleWorld.metadataModified((this.xCoord << 3) + x,
-					(this.yCoord << 3) + y, (this.zCoord << 3) + z, 0, 0, 0, 0,
-					metadatas[x][y][z], metadata);
+			littleWorld.metadataModified(
+					(this.xCoord << 3) + x,
+					(this.yCoord << 3) + y,
+					(this.zCoord << 3) + z,
+					0,
+					0,
+					0,
+					0,
+					metadatas[x][y][z],
+					metadata);
 		}
 	}
 
 	public void setContent(int x, int y, int z, int id, int metadata) {
 		if (x >= size | y >= size | z >= size) {
-			if (worldObj.getBlockId(xCoord + (x >= size ? 1 : 0), yCoord
-					+ (y >= size ? 1 : 0), zCoord + (z >= size ? 1 : 0)) == 0) {
-				worldObj.setBlockWithNotify(xCoord + (x >= size ? 1 : 0),
-						yCoord + (y >= size ? 1 : 0), zCoord
-								+ (z >= size ? 1 : 0), LBCore.littleBlocksID);
+			if (worldObj.getBlockId(
+					xCoord + (x >= size ? 1 : 0),
+					yCoord + (y >= size ? 1 : 0),
+					zCoord + (z >= size ? 1 : 0)) == 0) {
+				worldObj.setBlockWithNotify(
+						xCoord + (x >= size ? 1 : 0),
+						yCoord + (y >= size ? 1 : 0),
+						zCoord + (z >= size ? 1 : 0),
+						LBCore.littleBlocksID);
 			}
-			if (worldObj.getBlockId(xCoord + (x >= size ? 1 : 0), yCoord
-					+ (y >= size ? 1 : 0), zCoord + (z >= size ? 1 : 0)) == LBCore.littleBlocksID) {
+			if (worldObj.getBlockId(
+					xCoord + (x >= size ? 1 : 0),
+					yCoord + (y >= size ? 1 : 0),
+					zCoord + (z >= size ? 1 : 0)) == LBCore.littleBlocksID) {
 				TileEntityLittleBlocks tile = (TileEntityLittleBlocks) worldObj
-						.getBlockTileEntity(xCoord + (x >= size ? 1 : 0),
-								yCoord + (y >= size ? 1 : 0), zCoord
-										+ (z >= size ? 1 : 0));
-				tile.setContent(x >= size ? x - size : x, y >= size ? y - size
-						: y, z >= size ? z - size : z, id, metadata);
+						.getBlockTileEntity(
+								xCoord + (x >= size ? 1 : 0),
+								yCoord + (y >= size ? 1 : 0),
+								zCoord + (z >= size ? 1 : 0));
+				tile.setContent(
+						x >= size ? x - size : x,
+						y >= size ? y - size : y,
+						z >= size ? z - size : z,
+						id,
+						metadata);
 			}
 			return;
 		} else if (x < 0 | z < 0 | y < 0) {
-			if (worldObj.getBlockId(xCoord - (x < 0 ? 1 : 0), yCoord
-					- (y < 0 ? 1 : 0), zCoord - (z < 0 ? 1 : 0)) == 0) {
-				worldObj.setBlockWithNotify(xCoord - (x < 0 ? 1 : 0), yCoord
-						- (y < 0 ? 1 : 0), zCoord - (z < 0 ? 1 : 0),
+			if (worldObj.getBlockId(
+					xCoord - (x < 0 ? 1 : 0),
+					yCoord - (y < 0 ? 1 : 0),
+					zCoord - (z < 0 ? 1 : 0)) == 0) {
+				worldObj.setBlockWithNotify(
+						xCoord - (x < 0 ? 1 : 0),
+						yCoord - (y < 0 ? 1 : 0),
+						zCoord - (z < 0 ? 1 : 0),
 						LBCore.littleBlocksID);
 			}
-			if (worldObj.getBlockId(xCoord - (x < 0 ? 1 : 0), yCoord
-					- (y < 0 ? 1 : 0), zCoord - (z < 0 ? 1 : 0)) == LBCore.littleBlocksID) {
+			if (worldObj.getBlockId(
+					xCoord - (x < 0 ? 1 : 0),
+					yCoord - (y < 0 ? 1 : 0),
+					zCoord - (z < 0 ? 1 : 0)) == LBCore.littleBlocksID) {
 				TileEntityLittleBlocks tile = (TileEntityLittleBlocks) worldObj
-						.getBlockTileEntity(xCoord - (x < 0 ? 1 : 0), yCoord
-								- (y < 0 ? 1 : 0), zCoord - (z < 0 ? 1 : 0));
-				tile.setContent(x < 0 ? x + size : x, y < 0 ? y + size : y,
-						z < 0 ? z + size : z, id, metadata);
+						.getBlockTileEntity(
+								xCoord - (x < 0 ? 1 : 0),
+								yCoord - (y < 0 ? 1 : 0),
+								zCoord - (z < 0 ? 1 : 0));
+				tile.setContent(
+						x < 0 ? x + size : x,
+						y < 0 ? y + size : y,
+						z < 0 ? z + size : z,
+						id,
+						metadata);
 			}
 			return;
 		}
@@ -315,13 +438,28 @@ public class TileEntityLittleBlocks extends TileEntity {
 		metadatas[x][y][z] = metadata;
 
 		if (lastData != metadata) {
-			littleWorld.metadataModified((this.xCoord << 3) + x,
-					(this.yCoord << 3) + y, (this.zCoord << 3) + z, 0, 0, 0, 0,
-					lastData, metadata);
+			littleWorld.metadataModified(
+					(this.xCoord << 3) + x,
+					(this.yCoord << 3) + y,
+					(this.zCoord << 3) + z,
+					0,
+					0,
+					0,
+					0,
+					lastData,
+					metadata);
 		}
 		if (lastId != id) {
-			littleWorld.idModified((this.xCoord << 3) + x, (this.yCoord << 3)
-					+ y, (this.zCoord << 3) + z, 0, 0, 0, 0, lastId, id);
+			littleWorld.idModified(
+					(this.xCoord << 3) + x,
+					(this.yCoord << 3) + y,
+					(this.zCoord << 3) + z,
+					0,
+					0,
+					0,
+					0,
+					lastId,
+					id);
 		}
 	}
 
@@ -341,9 +479,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 
 	public TileEntity getTileEntity(int x, int y, int z) {
 		for (TileEntity tile : tiles) {
-			if (tile.xCoord == (xCoord << 3) + x
-					&& tile.yCoord == (yCoord << 3) + y
-					&& tile.zCoord == (zCoord << 3) + z) {
+			if (tile.xCoord == (xCoord << 3) + x && tile.yCoord == (yCoord << 3) + y && tile.zCoord == (zCoord << 3) + z) {
 				return tile;
 			}
 		}
@@ -380,8 +516,8 @@ public class TileEntityLittleBlocks extends TileEntity {
 		for (int x = 0; x < content.length; x++) {
 			for (int y = 0; y < content[x].length; y++) {
 				for (int z = 0; z < content[x][y].length; z++) {
-					content[x][y][z] = ((NBTTagInt) list.tagAt((x << 6)
-							+ (y << 3) + z)).data;
+					content[x][y][z] = ((NBTTagInt) list
+							.tagAt((x << 6) + (y << 3) + z)).data;
 				}
 			}
 		}
@@ -389,8 +525,8 @@ public class TileEntityLittleBlocks extends TileEntity {
 		for (int x = 0; x < metadatas.length; x++) {
 			for (int y = 0; y < metadatas[x].length; y++) {
 				for (int z = 0; z < metadatas[x][y].length; z++) {
-					metadatas[x][y][z] = ((NBTTagInt) list2.tagAt((x << 6)
-							+ (y << 3) + z)).data;
+					metadatas[x][y][z] = ((NBTTagInt) list2
+							.tagAt((x << 6) + (y << 3) + z)).data;
 				}
 			}
 		}
@@ -400,7 +536,10 @@ public class TileEntityLittleBlocks extends TileEntity {
 		for (int i = 0; i < tilesTag.tagCount(); i++) {
 			TileEntity tile = TileEntity
 					.createAndLoadEntity((NBTTagCompound) tilesTag.tagAt(i));
-			setTileEntity(tile.xCoord & 7, tile.yCoord & 7, tile.zCoord & 7,
+			setTileEntity(
+					tile.xCoord & 7,
+					tile.yCoord & 7,
+					tile.zCoord & 7,
 					tile);
 		}
 	}
@@ -462,9 +601,9 @@ public class TileEntityLittleBlocks extends TileEntity {
 			}
 		}
 		int[] dataInt;
-		//if (upToDate) {
-		//	dataInt = new int[] { 0, 0 };
-		//} else
+		// if (upToDate) {
+		// dataInt = new int[] { 0, 0 };
+		// } else
 		if (numberOfLittleBlocks > 204) {
 			// (3 /* POS */ + 2 /* ID & DATA */)x > 8*8*8*2 /* ID & DATA */ <=>
 			// 5x > 1024 <=> x > 204.8
@@ -507,9 +646,10 @@ public class TileEntityLittleBlocks extends TileEntity {
 			}
 		}
 
-		//upToDate = false;
+		// upToDate = false;
 		PacketPayload p = new PacketPayload(dataInt.length, 0, 1, 0);
-		p.setStringPayload(0,
+		p.setStringPayload(
+				0,
 				String.valueOf(getMetadata(xCoord, yCoord, zCoord)));
 		for (int i = 0; i < dataInt.length; i++) {
 			p.setIntPayload(i, dataInt[i]);
