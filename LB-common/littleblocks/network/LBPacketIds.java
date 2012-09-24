@@ -1,6 +1,8 @@
 package littleblocks.network;
 
 public class LBPacketIds {
-	public static int CLIENT = 1000;
-	public static int SERVER = 2000;
+	public static final int FETCH = 200;
+	public static final int SETTINGS = 300;
+	public static final int CLIENT = 1000;
+	public static final int SERVER = 2000;
 }

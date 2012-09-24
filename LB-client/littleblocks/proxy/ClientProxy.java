@@ -4,6 +4,8 @@ import littleblocks.blocks.BlockLittleBlocks;
 import littleblocks.core.CommonTickHandler;
 import littleblocks.core.LBCore;
 import littleblocks.network.ClientPacketHandler;
+import littleblocks.network.LBPacketIds;
+import littleblocks.network.packets.PacketLittleBlocksSettings;
 import littleblocks.render.BlockLittleBlocksRenderer;
 import littleblocks.render.TileEntityLittleBlocksRenderer;
 import littleblocks.tileentities.TileEntityLittleBlocks;
@@ -13,6 +15,10 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemBucket;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
+import net.minecraft.src.NetClientHandler;
+import net.minecraft.src.NetHandler;
+import net.minecraft.src.NetworkManager;
+import net.minecraft.src.Packet1Login;
 import net.minecraft.src.PlayerControllerMP;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.Vec3;
@@ -52,5 +58,32 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void registerTickHandler() {
 		TickRegistry.registerTickHandler(new CommonTickHandler(), Side.CLIENT);
+	}
+	
+	@Override
+	public void login(NetHandler handler, NetworkManager manager, Packet1Login login) {
+		World world = getWorld(handler);
+		if (world != null) {
+			PacketLittleBlocksSettings packet = new PacketLittleBlocksSettings();
+			packet.setCommand(LBPacketIds.FETCH);
+			ClientPacketHandler.sendPacket(packet.getPacket());
+		}
+	}
+	
+	@Override
+	public World getWorld() {
+		return ModLoader.getMinecraftInstance().theWorld;
+	}
+
+	@Override
+	public EntityPlayer getPlayer() {
+		return ModLoader.getMinecraftInstance().thePlayer;
+	}
+	
+	public World getWorld(NetHandler handler) {
+		if (handler instanceof NetClientHandler) {
+			return ((NetClientHandler)handler).getPlayer().worldObj;
+		}
+		return null;
 	}
 }

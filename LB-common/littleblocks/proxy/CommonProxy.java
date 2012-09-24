@@ -3,7 +3,9 @@ package littleblocks.proxy;
 import littleblocks.api.ILBCommonProxy;
 import littleblocks.blocks.BlockLittleBlocks;
 import littleblocks.core.CommonTickHandler;
+import littleblocks.core.LBCore;
 import littleblocks.network.CommonPacketHandler;
+import littleblocks.network.packets.PacketLittleBlocksSettings;
 import littleblocks.tileentities.TileEntityLittleBlocks;
 import net.minecraft.src.Block;
 import net.minecraft.src.EntityPlayer;
@@ -12,7 +14,9 @@ import net.minecraft.src.EnumGameType;
 import net.minecraft.src.ItemBucket;
 import net.minecraft.src.ItemInWorldManager;
 import net.minecraft.src.ItemStack;
+import net.minecraft.src.NetHandler;
 import net.minecraft.src.NetworkManager;
+import net.minecraft.src.Packet1Login;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
@@ -76,6 +80,28 @@ public class CommonProxy implements ILBCommonProxy {
 
 	@Override
 	public IPacketHandling getPacketHandler() {
+		return null;
+	}
+
+	@Override
+	public void login(NetHandler handler, NetworkManager manager, Packet1Login login) {
+	}
+
+	@Override
+	public World getWorld() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public World getWorld(NetHandler handler) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public EntityPlayer getPlayer() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 }

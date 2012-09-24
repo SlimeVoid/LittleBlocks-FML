@@ -358,6 +358,9 @@ public class BlockLittleBlocks extends BlockContainer {
 	@Override
 	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int i,
 			int j, int k) {
+		if (LBCore.littleBlocksClip) {
+			return super.getCollisionBoundingBoxFromPool(world, i, j, k);
+		}
 		return null;
 	}
 
@@ -394,35 +397,36 @@ public class BlockLittleBlocks extends BlockContainer {
 			}
 		}
 	}
-
-	@SuppressWarnings("rawtypes")
+	
 	@Override
 	public void addCollidingBlockToList(World world, int i, int j, int k,
 			AxisAlignedBB axisalignedbb, List list, Entity entity) {
-		TileEntityLittleBlocks tile = (TileEntityLittleBlocks) world
-				.getBlockTileEntity(i, j, k);
-
-		int[][][] content = tile.getContent();
-		float m = TileEntityLittleBlocks.size;
-
-		for (int x = 0; x < content.length; x++) {
-			for (int y = 0; y < content[x].length; y++) {
-				for (int z = 0; z < content[x][y].length; z++) {
-					if (content[x][y][z] > 0) {
-						Block block = Block.blocksList[content[x][y][z]];
-						setBlockBounds((float) (x + block.minX) / m,
-								(float) (y + block.minY) / m,
-								(float) (z + block.minZ) / m,
-								(float) (x + block.maxX) / m,
-								(float) (y + block.maxY) / m,
-								(float) (z + block.maxZ) / m);
-						super.addCollidingBlockToList(world, i, j, k,
-								axisalignedbb, list, entity);
+		TileEntity tileentity = world.getBlockTileEntity(i, j, k);
+		if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
+			TileEntityLittleBlocks tile = (TileEntityLittleBlocks) tileentity;
+	
+			int[][][] content = tile.getContent();
+			float m = TileEntityLittleBlocks.size;
+	
+			for (int x = 0; x < content.length; x++) {
+				for (int y = 0; y < content[x].length; y++) {
+					for (int z = 0; z < content[x][y].length; z++) {
+						if (content[x][y][z] > 0) {
+							Block block = Block.blocksList[content[x][y][z]];
+							setBlockBounds((float) (x + block.minX) / m,
+									(float) (y + block.minY) / m,
+									(float) (z + block.minZ) / m,
+									(float) (x + block.maxX) / m,
+									(float) (y + block.maxY) / m,
+									(float) (z + block.maxZ) / m);
+							super.addCollidingBlockToList(world, i, j, k,
+									axisalignedbb, list, entity);
+						}
 					}
 				}
 			}
+			setBlockBoundsBasedOnSelection(world, i, j, k);
 		}
-		setBlockBoundsBasedOnSelection(world, i, j, k);
 	}
 
 	@Override

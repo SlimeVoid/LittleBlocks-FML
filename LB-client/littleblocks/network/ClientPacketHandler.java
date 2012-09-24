@@ -4,13 +4,16 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 
 import littleblocks.blocks.BlockLittleBlocks;
+import littleblocks.core.LBCore;
 import littleblocks.network.packets.PacketLittleBlocks;
+import littleblocks.network.packets.PacketLittleBlocksSettings;
 import littleblocks.network.packets.PacketTileEntityLB;
 import littleblocks.tileentities.TileEntityLittleBlocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.NetworkManager;
+import net.minecraft.src.Packet;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
@@ -22,7 +25,20 @@ import cpw.mods.fml.common.asm.SideOnly;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
 
-public class ClientPacketHandler extends CommonPacketHandler {
+public class ClientPacketHandler implements IPacketHandler {
+
+	public static void sendPacket(Packet packet) {
+		ModLoader.getMinecraftInstance().getSendQueue().addToSendQueue(packet);
+	}
+
+	private static void handleLogin(PacketLittleBlocksSettings settings, EntityPlayer entityplayer, World world) {
+		if (settings.getCommand() == LBPacketIds.SETTINGS) {
+			ModLoader.getLogger().severe("BeforeClip:" + LBCore.littleBlocksClip);
+			ModLoader.getLogger().severe("PacketClip:" + settings.getClipMode());
+			LBCore.littleBlocksClip = settings.getClipMode();
+			ModLoader.getLogger().severe("AfterClip:" + LBCore.littleBlocksClip);
+		}
+	}
 
 	public static void handleTileEntityPacket(PacketTileEntity packet,
 			EntityPlayer entityplayer, World world) {
@@ -127,7 +143,6 @@ public class ClientPacketHandler extends CommonPacketHandler {
 		}
 	}
 
-	//@SideOnly(Side.CLIENT)
 	@Override
 	public void onPacketData(NetworkManager manager,
 			Packet250CustomPayload packet, Player player) {
@@ -138,16 +153,21 @@ public class ClientPacketHandler extends CommonPacketHandler {
 		try {
 			int packetID = data.read();
 			switch (packetID) {
+			case PacketIds.LOGIN:
+				PacketLittleBlocksSettings settings = new PacketLittleBlocksSettings();
+				settings.readData(data);
+				this.handleLogin(settings, entityplayer, world);
+				break;
 			case PacketIds.TILE:
 				PacketTileEntityLB packetTileLB = new PacketTileEntityLB();
 				packetTileLB.readData(data);
-				ClientPacketHandler.handleTileEntityPacket(packetTileLB,
+				this.handleTileEntityPacket(packetTileLB,
 						entityplayer, world);
 				break;
 			case PacketIds.UPDATE:
 				PacketLittleBlocks packetLB = new PacketLittleBlocks();
 				packetLB.readData(data);
-				ClientPacketHandler.handlePacket(packetLB, entityplayer, world);
+				this.handlePacket(packetLB, entityplayer, world);
 				break;
 			}
 		} catch (Exception ex) {

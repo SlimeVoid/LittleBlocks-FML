@@ -22,12 +22,14 @@ public class LBCore {
 	public static String blockActivateCommand = "BLOCKACTIVATE";
 	public static Block littleBlocks;
 	public static int littleBlocksID;
+	public static boolean littleBlocksClip;
 	public static int renderingMethod;
 	public static int renderType;
 	public static boolean optifine;
 
 	public static void initialize(ICommonProxy proxy) {
 		LBInit.initialize(proxy);
+		ModLoader.getLogger().severe("Clip:" + littleBlocksClip);
 	}
 
 	public static void addItems() {
@@ -55,6 +57,7 @@ public class LBCore {
 		configuration.load();
 		littleBlocksID = Integer.parseInt(configuration.getOrCreateIntProperty(
 				"littleBlocksID", Configuration.CATEGORY_BLOCK, 140).value);
+		littleBlocksClip = Boolean.parseBoolean(configuration.getOrCreateBooleanProperty("littleBlocksClip", Configuration.CATEGORY_GENERAL, true).value);
 		renderingMethod = Integer.parseInt(configuration
 				.getOrCreateIntProperty("renderingMethod",
 						Configuration.CATEGORY_GENERAL, 0).value);

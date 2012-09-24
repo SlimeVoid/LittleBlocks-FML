@@ -6,9 +6,11 @@ import java.io.DataInputStream;
 import littleblocks.blocks.BlockLittleBlocks;
 import littleblocks.core.LBCore;
 import littleblocks.network.packets.PacketLittleBlocks;
+import littleblocks.network.packets.PacketLittleBlocksSettings;
 import littleblocks.world.LittleWorld;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.EntityPlayerMP;
+import net.minecraft.src.ModLoader;
 import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet;
 import net.minecraft.src.Packet250CustomPayload;
@@ -20,6 +22,15 @@ import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
 
 public class CommonPacketHandler implements IPacketHandler {
+
+	private static void handleLogin(PacketLittleBlocksSettings settings, EntityPlayer entityplayer, World world) {
+		if (settings.getCommand() == LBPacketIds.FETCH) {
+			PacketLittleBlocksSettings packet = new PacketLittleBlocksSettings();
+			packet.setCommand(LBPacketIds.SETTINGS);
+			packet.setClipMode(LBCore.littleBlocksClip);
+			CommonPacketHandler.sendTo(entityplayer, packet);
+		}
+	}
 
 	public static void metadataModified(LittleWorld littleWorld, int x, int y,
 			int z, int side, float vecX, float vecY, float vecZ,
@@ -87,6 +98,12 @@ public class CommonPacketHandler implements IPacketHandler {
 		}
 	}
 
+	public static void sendTo(EntityPlayer entityplayer, PacketUpdate packet) {
+		if (entityplayer != null && entityplayer instanceof EntityPlayerMP) {
+			((EntityPlayerMP)entityplayer).serverForThisPlayer.sendPacketToPlayer(packet.getPacket());
+		}
+	}
+
 	public static void sendToAll(PacketUpdate packet) {
 		sendToAllWorlds(null, packet.getPacket(), packet.xPosition,
 				packet.yPosition, packet.zPosition, true);
@@ -132,11 +149,16 @@ public class CommonPacketHandler implements IPacketHandler {
 		try {
 			int packetID = data.read();
 			switch (packetID) {
-			case PacketIds.UPDATE:
-				PacketLittleBlocks packetLB = new PacketLittleBlocks();
-				packetLB.readData(data);
-				CommonPacketHandler.handlePacket(packetLB, entityplayer, world);
-				break;
+				case PacketIds.LOGIN:
+					PacketLittleBlocksSettings settings = new PacketLittleBlocksSettings();
+					settings.readData(data);
+					CommonPacketHandler.handleLogin(settings, entityplayer, world);
+					break;
+				case PacketIds.UPDATE:
+					PacketLittleBlocks packetLB = new PacketLittleBlocks();
+					packetLB.readData(data);
+					CommonPacketHandler.handlePacket(packetLB, entityplayer, world);
+					break;
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();

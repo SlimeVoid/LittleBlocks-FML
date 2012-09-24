@@ -2,6 +2,7 @@ package littleblocks.core;
 
 import littleblocks.network.ClientPacketHandler;
 import littleblocks.network.CommonPacketHandler;
+import littleblocks.network.LBConnectionHandler;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.EurysMods.api.ICommonProxy;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -26,6 +27,7 @@ import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
 		serverPacketHandlerSpec = @SidedPacketHandler(
 				channels = { "LITTLEBLOCKS" },
 				packetHandler = CommonPacketHandler.class),
+		connectionHandler = LBConnectionHandler.class,
 		versionBounds = "[1.3]")
 public class LittleBlocks {
 	@SidedProxy(

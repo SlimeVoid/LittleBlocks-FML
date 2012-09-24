@@ -1,5 +1,8 @@
 package littleblocks.network;
 
+import littleblocks.core.LBCore;
+import littleblocks.core.LBInit;
+import littleblocks.core.LittleBlocks;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.NetHandler;
 import net.minecraft.src.NetLoginHandler;
@@ -12,8 +15,6 @@ public class LBConnectionHandler implements IConnectionHandler {
 
 	@Override
 	public void playerLoggedIn(Player player, NetHandler netHandler, NetworkManager manager) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -42,8 +43,7 @@ public class LBConnectionHandler implements IConnectionHandler {
 
 	@Override
 	public void clientLoggedIn(NetHandler clientHandler, NetworkManager manager, Packet1Login login) {
-		// TODO Auto-generated method stub
-		
+		LBInit.LBM.getProxy().login(clientHandler, manager, login);
 	}
 
 }
