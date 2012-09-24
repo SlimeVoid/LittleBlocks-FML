@@ -29,7 +29,6 @@ public class LBCore {
 
 	public static void initialize(ICommonProxy proxy) {
 		LBInit.initialize(proxy);
-		ModLoader.getLogger().severe("Clip:" + littleBlocksClip);
 	}
 
 	public static void addItems() {

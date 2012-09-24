@@ -33,10 +33,7 @@ public class ClientPacketHandler implements IPacketHandler {
 
 	private static void handleLogin(PacketLittleBlocksSettings settings, EntityPlayer entityplayer, World world) {
 		if (settings.getCommand() == LBPacketIds.SETTINGS) {
-			ModLoader.getLogger().severe("BeforeClip:" + LBCore.littleBlocksClip);
-			ModLoader.getLogger().severe("PacketClip:" + settings.getClipMode());
 			LBCore.littleBlocksClip = settings.getClipMode();
-			ModLoader.getLogger().severe("AfterClip:" + LBCore.littleBlocksClip);
 		}
 	}
 
