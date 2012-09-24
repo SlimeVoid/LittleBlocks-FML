@@ -30,6 +30,9 @@ public class ClientPacketHandler extends CommonPacketHandler {
 				packet.yPosition, packet.zPosition);
 		if (packet instanceof PacketTileEntityLB) {
 			PacketTileEntityLB packetLB = (PacketTileEntityLB) packet;
+			if (packetLB.getSender() == LBPacketIds.CLIENT) {
+				return;
+			}
 			if (tileentity != null
 					&& tileentity instanceof TileEntityLittleBlocks) {
 				TileEntityLittleBlocks tileentitylb = (TileEntityLittleBlocks) tileentity;
@@ -91,6 +94,7 @@ public class ClientPacketHandler extends CommonPacketHandler {
 		PacketLittleBlocks packetLB = new PacketLittleBlocks(command, x, y, z,
 				q, a, b, c, block.xSelected, block.ySelected, block.zSelected,
 				block.blockID, block.side);
+		packetLB.setSender(LBPacketIds.CLIENT);
 		ModLoader.sendPacket(packetLB.getPacket());
 	}
 	
@@ -98,6 +102,9 @@ public class ClientPacketHandler extends CommonPacketHandler {
 			EntityPlayer entityplayer, World world) {
 		if (packet instanceof PacketLittleBlocks) {
 			PacketLittleBlocks packetLB = (PacketLittleBlocks) packet;
+			if (packetLB.getSender() == LBPacketIds.CLIENT) {
+				CommonPacketHandler.handlePacket(packet, entityplayer, world);
+			}
 			if (packetLB.targetExists(world)) {
 				TileEntity tileentity = packetLB.getTileEntity(world);
 				if (tileentity != null

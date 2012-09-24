@@ -12,10 +12,6 @@ public class CommonTickHandler implements ITickHandler {
 
 	@Override
 	public void tickStart(EnumSet<TickType> type, Object... tickData) {
-	}
-
-	@Override
-	public void tickEnd(EnumSet<TickType> type, Object... tickData) {
 		if (type.equals(EnumSet.of(TickType.SERVER))
 				|| type.equals(TickType.CLIENT)) {
 			World[] worlds = DimensionManager.getWorlds();
@@ -26,13 +22,17 @@ public class CommonTickHandler implements ITickHandler {
 	}
 
 	@Override
+	public void tickEnd(EnumSet<TickType> type, Object... tickData) {
+	}
+
+	@Override
 	public EnumSet<TickType> ticks() {
 		return EnumSet.of(TickType.SERVER, TickType.CLIENT);
 	}
 
 	@Override
 	public String getLabel() {
-		return null;
+		return "LittleBlocks Tick Handler";
 	}
 
 }

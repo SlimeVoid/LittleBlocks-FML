@@ -71,7 +71,7 @@ public class CommonProxy implements ILBCommonProxy {
 
 	@Override
 	public void registerTickHandler() {
-		//TickRegistry.registerTickHandler(new CommonTickHandler(), Side.SERVER);
+		TickRegistry.registerTickHandler(new CommonTickHandler(), Side.SERVER);
 	}
 
 	@Override

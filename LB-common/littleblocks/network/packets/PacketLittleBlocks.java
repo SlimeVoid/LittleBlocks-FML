@@ -1,5 +1,9 @@
 package littleblocks.network.packets;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 import littleblocks.core.LBInit;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
@@ -8,7 +12,21 @@ import net.minecraft.src.EurysMods.network.packets.core.PacketPayload;
 import net.minecraft.src.EurysMods.network.packets.core.PacketUpdate;
 
 public class PacketLittleBlocks extends PacketUpdate {
+	
+	private int sender;
 
+	@Override
+	public void writeData(DataOutputStream data) throws IOException {
+		super.writeData(data);
+		data.writeInt(sender);
+	}
+
+	@Override
+	public void readData(DataInputStream data) throws IOException {
+		super.readData(data);
+		sender = data.readInt();
+	}
+	
 	public PacketLittleBlocks() {
 		super(PacketIds.UPDATE);
 		this.setChannel(LBInit.LBM.getModChannel());
@@ -94,5 +112,13 @@ public class PacketLittleBlocks extends PacketUpdate {
 
 	public int getSelectedZ() {
 		return this.payload.getIntPayload(4);
+	}
+	
+	public int getSender() {
+		return this.sender;
+	}
+	
+	public void setSender(int sender) {
+		this.sender = sender;
 	}
 }

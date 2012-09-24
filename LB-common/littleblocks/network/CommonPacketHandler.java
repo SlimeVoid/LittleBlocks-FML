@@ -43,7 +43,9 @@ public class CommonPacketHandler implements IPacketHandler {
 			EntityPlayer entityplayer, World world) {
 		if (packet instanceof PacketLittleBlocks) {
 			PacketLittleBlocks packetLB = (PacketLittleBlocks) packet;
+			System.out.println("Server handler");
 			if (packetLB.getCommand().equals(LBCore.blockActivateCommand)) {
+				System.out.println("Server activate");
 				if (world.getBlockId(packetLB.xPosition, packetLB.yPosition,
 						packetLB.zPosition) == LBCore.littleBlocksID) {
 					((BlockLittleBlocks) LBCore.littleBlocks).xSelected = packetLB
@@ -65,6 +67,7 @@ public class CommonPacketHandler implements IPacketHandler {
 				}
 			}
 			if (packetLB.getCommand().equals(LBCore.blockClickCommand)) {
+				System.out.println("Server click");
 				if (world.getBlockId(packetLB.xPosition, packetLB.yPosition,
 						packetLB.zPosition) == LBCore.littleBlocksID) {
 					((BlockLittleBlocks) LBCore.littleBlocks).xSelected = packetLB
@@ -120,11 +123,6 @@ public class CommonPacketHandler implements IPacketHandler {
 				}
 			}
 		}
-	}
-
-	public static void blockUpdate(World world, EntityPlayer entityplayer, int x,
-			int y, int z, int q, float a, float b, float c,
-			BlockLittleBlocks block, String blockActivateCommand) {
 	}
 
 	@Override

@@ -2,7 +2,9 @@ package littleblocks.core;
 
 import littleblocks.network.ClientPacketHandler;
 import littleblocks.network.CommonPacketHandler;
+import net.minecraft.src.ModLoader;
 import net.minecraft.src.EurysMods.api.ICommonProxy;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.PostInit;
@@ -34,8 +36,6 @@ public class LittleBlocks {
 
 	@Init
 	public void LittleBlocksInit(FMLInitializationEvent event) {
-		instance = this;
-		LBCore.initialize(proxy);
 	}
 
 	@PreInit
@@ -44,5 +44,7 @@ public class LittleBlocks {
 
 	@PostInit
 	public void LittleBlocksPostInit(FMLPostInitializationEvent event) {
+		instance = this;
+		LBCore.initialize(proxy);
 	}
 }

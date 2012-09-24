@@ -1,5 +1,8 @@
 package littleblocks.world;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import littleblocks.core.LBCore;
 import littleblocks.network.CommonPacketHandler;
 import littleblocks.tileentities.TileEntityLittleBlocks;
@@ -20,6 +23,23 @@ import net.minecraft.src.WorldSettings;
 public class LittleWorld extends World {
 
 	private final World realWorld;
+	
+	public LittleWorld(WorldProvider worldprovider, World world) {
+		super(
+				world.getSaveHandler(),
+				"LittleBlockWorld",
+				worldprovider,
+				new WorldSettings(
+						world.getWorldInfo().getSeed(),
+						world.getWorldInfo().getGameType(),
+						world.getWorldInfo().isMapFeaturesEnabled(),
+						world.getWorldInfo().isHardcoreModeEnabled(),
+						world.getWorldInfo().getTerrainType()),
+				null
+		);
+
+		this.realWorld = world;
+	}
 
 	public LittleWorld(World world, WorldProvider worldprovider) {
 		super(
@@ -254,11 +274,7 @@ public class LittleWorld extends World {
 			k >>= 3;
 			world = realWorld;
 		}
-		// if(realWorld.editingBlocks || realWorld.isRemote ||
-		// this.editingBlocks || this.isRemote) {
-		// return;
-		// } Client
-		if (realWorld.editingBlocks || this.editingBlocks) {
+		if (realWorld.editingBlocks || this.editingBlocks || (FMLCommonHandler.instance().getSide() == Side.CLIENT && this.isRemote)) {
 			return;
 		}
 		Block block = Block.blocksList[world.getBlockId(i, j, k)];
@@ -266,7 +282,7 @@ public class LittleWorld extends World {
 			block.onNeighborBlockChange(world, i, j, k, l);
 
 			if (world == this) {
-				realWorld.markBlockNeedsUpdate(i >> 3, j >> 3, k >> 3);
+				this.markBlockNeedsUpdate(i, j, k);
 			}
 		}
 	}
@@ -278,22 +294,36 @@ public class LittleWorld extends World {
 		}
 		realWorld.updateAllLightTypes(x, y, z);
 		if (newId != 0) {
-			//if(!this.isRemote) {
-			Block.blocksList[newId].onBlockAdded(this, x, y, z);
-			//}// Client
+			if (!this.isRemote) {
+				Block.blocksList[newId].onBlockAdded(this, x, y, z);
+			}
 		}
-		if (!this.isRemote)
-		CommonPacketHandler.idModified(x, y, z, side, vecX, vecY, vecZ, lastId,
-				newId, this);
+		if (!this.isRemote) {
+			CommonPacketHandler
+				.idModified(
+					x, y, z, side,
+					vecX, vecY, vecZ,
+					lastId,
+					newId,
+					this
+				);
+		}
 
 		notifyBlockChange(x, y, z, newId);
 	}
 
 	public void metadataModified(int x, int y, int z, int side, float vecX,
 			float vecY, float vecZ, int lastMetadata, int newMetadata) {
-		if (!this.isRemote)
-		CommonPacketHandler.metadataModified(this, x, y, z, side, vecX, vecY,
-				vecZ, lastMetadata, newMetadata);
+		if (!this.isRemote) {
+			CommonPacketHandler
+				.metadataModified(
+						this,
+						x, y, z, side,
+						vecX, vecY,	vecZ,
+						lastMetadata,
+						newMetadata
+				);
+		}
 	}
 
 	@Override
@@ -403,8 +433,6 @@ public class LittleWorld extends World {
 		Vec31.zCoord *= 8;
 		return super.rayTraceBlocks_do_do(Vec3, Vec31, flag, flag1);
 	}
-
-	public static int xx = 0, yy = 0, zz = 0;
 
 	@Override
 	protected IChunkProvider createChunkProvider() {

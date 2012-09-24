@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Side;
 
 import littleblocks.core.LBCore;
 import littleblocks.network.packets.PacketTileEntityLB;
@@ -32,8 +33,8 @@ public class TileEntityLittleBlocks extends TileEntity {
 	private static LittleWorld littleWorld;
     
 	@Override
-	public void onDataPacket(NetworkManager net, Packet132TileEntityData pkt)
-    {
+	public void onDataPacket(NetworkManager net, Packet132TileEntityData pkt) {
+		System.out.println("onDataPacket");
 		if (FMLCommonHandler.instance().getSide().isClient()) {
 			ModLoader.getMinecraftInstance().thePlayer.addChatMessage("Data Packet");
 		}
@@ -41,11 +42,13 @@ public class TileEntityLittleBlocks extends TileEntity {
 
 	@Override
 	public void func_70308_a(World par1World) {
+		System.out.println("LBSetWorld");
 		this.worldObj = par1World;
 		this.littleWorld = getLittleWorld(this.worldObj);
 	}
 
 	public TileEntityLittleBlocks() {
+		System.out.println("LBTileConstruct");
 		for (int x = 0; x < content.length; x++) {
 			for (int y = 0; y < content[x].length; y++) {
 				for (int z = 0; z < content[x][y].length; z++) {
@@ -73,6 +76,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 				}
 			}
 		}
+		System.out.println("isEmpty");
 		return true;
 	}
 
@@ -82,18 +86,36 @@ public class TileEntityLittleBlocks extends TileEntity {
 
 	public LittleWorld getLittleWorld() {
 		if (littleWorld == null || littleWorld.isOutdated(worldObj)) {
-			littleWorld = new LittleWorld(this.worldObj,
-					new WorldProviderSurface());
+			if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+				if (!this.worldObj.isRemote) {
+					littleWorld = new LittleWorld(new WorldProviderSurface(), this.worldObj);
+				}
+				if (!ModLoader.getMinecraftInstance().isIntegratedServerRunning()) {
+					littleWorld = new LittleWorld(new WorldProviderSurface(), this.worldObj);
+				}
+			} else {
+				littleWorld = new LittleWorld(this.worldObj, new WorldProviderSurface());
+			}
 		}
 		return littleWorld;
 	}
 
 	public static LittleWorld getLittleWorld(World world) {
+		System.out.println("getLittleWorld("+world+")");
 		if (littleWorld == null) {
 			if (world == null) {
 				return null;
 			}
-			littleWorld = new LittleWorld(world, new WorldProviderSurface());
+			if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+				if (!world.isRemote) {
+					littleWorld = new LittleWorld(new WorldProviderSurface(), world);
+				}
+				if (!ModLoader.getMinecraftInstance().isIntegratedServerRunning()) {
+					littleWorld = new LittleWorld(new WorldProviderSurface(), world);
+				}
+			} else {
+				littleWorld = new LittleWorld(world, new WorldProviderSurface());
+			}
 		}
 		return littleWorld;
 	}
@@ -169,6 +191,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 	}
 
 	public void setContent(int x, int y, int z, int id) {
+		System.out.println("setContent");
 		if (x >= size | y >= size | z >= size) {
 			if (worldObj.getBlockId(xCoord + (x >= size ? 1 : 0), yCoord
 					+ (y >= size ? 1 : 0), zCoord + (z >= size ? 1 : 0)) == 0) {
@@ -214,6 +237,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 	}
 
 	public void setMetadata(int x, int y, int z, int metadata) {
+		System.out.println("setMetadata");
 		if (x >= size | y >= size | z >= size) {
 			if (worldObj.getBlockId(xCoord + (x >= size ? 1 : 0), yCoord
 					+ (y >= size ? 1 : 0), zCoord + (z >= size ? 1 : 0)) == 0) {
@@ -258,6 +282,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 	}
 
 	public void setContent(int x, int y, int z, int id, int metadata) {
+		System.out.println("setContentwMeta");
 		if (x >= size | y >= size | z >= size) {
 			if (worldObj.getBlockId(xCoord + (x >= size ? 1 : 0), yCoord
 					+ (y >= size ? 1 : 0), zCoord + (z >= size ? 1 : 0)) == 0) {
@@ -359,6 +384,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
+		System.out.println("readFromNBT");
 		NBTTagList list = nbttagcompound.getTagList("Content");
 		for (int x = 0; x < content.length; x++) {
 			for (int y = 0; y < content[x].length; y++) {
@@ -391,10 +417,14 @@ public class TileEntityLittleBlocks extends TileEntity {
 	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
+		System.out.println("writeToNBT");
 		NBTTagList list = new NBTTagList();
 		for (int x = 0; x < content.length; x++) {
 			for (int y = 0; y < content[x].length; y++) {
 				for (int z = 0; z < content[x][y].length; z++) {
+					if (content[x][y][z] != 0) {
+						System.out.println("Content: " + Block.blocksList[content[x][y][z]].getBlockName());
+					}
 					list.appendTag(new NBTTagInt(null, content[x][y][z]));
 				}
 			}
@@ -444,7 +474,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 				}
 			}
 		}
-		System.out.println("Littleblocks: " + numberOfLittleBlocks);
+		System.out.println("Number of Littleblocks: " + numberOfLittleBlocks);
 		int[] dataInt;
 		if (upToDate) {
 			dataInt = new int[] { 0, 0 };

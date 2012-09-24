@@ -12,6 +12,7 @@ import littleblocks.core.LBCore;
 import littleblocks.core.LBInit;
 import littleblocks.network.ClientPacketHandler;
 import littleblocks.network.CommonPacketHandler;
+import littleblocks.network.LBPacketIds;
 import littleblocks.network.packets.PacketLittleBlocks;
 import littleblocks.tileentities.TileEntityLittleBlocks;
 import net.minecraft.src.AxisAlignedBB;
@@ -126,17 +127,48 @@ public class BlockLittleBlocks extends BlockContainer {
 			}
 		}
 		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
-			if (ModLoader.getMinecraftInstance().isSingleplayer()) {
-				System.out.println("IServer");
-				this.onServerBlockActivated(world, x, y, z, entityplayer, q, a, b, c);
-			} else {
+			if(world.isRemote) {
 				ClientPacketHandler.blockUpdate(world, entityplayer, x, y, z, q, a, b,
 						c, this, LBCore.blockActivateCommand);
 			}
+			//this.onClientBlockActivated(world, x, y, z, entityplayer, q, a, b, c);
 		}
 		return true;
 	}
 	
+	private boolean onClientBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int q, float a, float b, float c) {
+		if (this.xSelected == - 10) {
+			return true;
+		}
+		TileEntity tileentity = world.getBlockTileEntity(x,  y,  z);
+		if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
+			TileEntityLittleBlocks tileentitylittleblocks = (TileEntityLittleBlocks) tileentity;
+			if (entityplayer instanceof EntityPlayerMP) {
+				EntityPlayerMP player = (EntityPlayerMP) entityplayer;
+			
+				ItemInWorldManager itemManager = player.theItemInWorldManager;
+				if (itemManager.activateBlockOrUseItem(entityplayer,
+						TileEntityLittleBlocks.getLittleWorld(world),
+						entityplayer.getCurrentEquippedItem(), (x << 3)
+								+ this.xSelected, (y << 3) + this.ySelected,
+						(z << 3) + this.zSelected, this.side, a, b, c)) {
+					tileentitylittleblocks.onInventoryChanged();
+					world.markBlockAsNeedsUpdate(x, y, z);
+					return true;
+				} else if (entityplayer.getCurrentEquippedItem() != null
+						&& entityplayer.getCurrentEquippedItem().getItem() instanceof ItemBucket) {
+					itemManager.tryUseItem(entityplayer,
+							TileEntityLittleBlocks.getLittleWorld(world),
+							entityplayer.getCurrentEquippedItem());
+					tileentitylittleblocks.onInventoryChanged();
+					world.markBlockAsNeedsUpdate(x, y, z);
+					return true;
+				}
+			}
+		}
+		return true;
+	}
+
 	public boolean onServerBlockActivated(World world,
 			int x, int y, int z, EntityPlayer entityplayer, int q, float a,
 			float b, float c) {
@@ -145,8 +177,7 @@ public class BlockLittleBlocks extends BlockContainer {
 		}
 		TileEntity tileentity = world.getBlockTileEntity(x, y, z);
 		if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
-			TileEntityLittleBlocks tileEntityLittleBlocks = (TileEntityLittleBlocks) tileentity;
-			System.out.println("Content:" + tileEntityLittleBlocks.getContent(this.xSelected, this.ySelected, this.zSelected));
+			TileEntityLittleBlocks tileentitylittleblocks = (TileEntityLittleBlocks) tileentity;
 			if (entityplayer instanceof EntityPlayerMP) {
 				EntityPlayerMP player = (EntityPlayerMP) entityplayer;
 	
@@ -156,7 +187,7 @@ public class BlockLittleBlocks extends BlockContainer {
 						entityplayer.getCurrentEquippedItem(), (x << 3)
 								+ this.xSelected, (y << 3) + this.ySelected,
 						(z << 3) + this.zSelected, this.side, a, b, c)) {
-					tileEntityLittleBlocks.onInventoryChanged();
+					tileentitylittleblocks.onInventoryChanged();
 					world.markBlockNeedsUpdate(x, y, z);
 					return true;
 				} else if (entityplayer.getCurrentEquippedItem() != null
@@ -164,7 +195,7 @@ public class BlockLittleBlocks extends BlockContainer {
 					itemManager.tryUseItem(entityplayer,
 							TileEntityLittleBlocks.getLittleWorld(world),
 							entityplayer.getCurrentEquippedItem());
-					tileEntityLittleBlocks.onInventoryChanged();
+					tileentitylittleblocks.onInventoryChanged();
 					world.markBlockNeedsUpdate(x, y, z);
 					return true;
 				}
@@ -177,13 +208,11 @@ public class BlockLittleBlocks extends BlockContainer {
 	public void onBlockClicked(World world, int x, int y, int z,
 			EntityPlayer entityplayer) {
 		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
-			if (ModLoader.getMinecraftInstance().isSingleplayer()) {
-				this.onServerBlockClicked(world, x, y, z, entityplayer);
-			} else {
+			if (world.isRemote) {
 				ClientPacketHandler.blockUpdate(world, entityplayer, x, y, z, 0, 0, 0,
 						0, this, LBCore.blockClickCommand);
-				this.onClientBlockClicked(world, x, y, z, entityplayer);
 			}
+			//this.onClientBlockClicked(world, x, y, z, entityplayer);
 		}
 	}
 	
@@ -273,18 +302,20 @@ public class BlockLittleBlocks extends BlockContainer {
 			tile.onInventoryChanged();
 			world.markBlockNeedsUpdate(x, y, z);
 		}
+		PacketLittleBlocks packetLB = new PacketLittleBlocks(
+				"UPDATECLIENT",
+				x, y, z, 0,
+				0, 0, 0,
+				this.xSelected,
+				this.ySelected,
+				this.zSelected,
+				0, 0
+		);
+		packetLB.setSender(LBPacketIds.SERVER);
 		CommonPacketHandler.sendToAllPlayers(
 				world,
 				entityplayer,
-				new PacketLittleBlocks(
-						"UPDATECLIENT",
-						x, y, z, 0,
-						0, 0, 0,
-						this.xSelected,
-						this.ySelected,
-						this.zSelected,
-						0, 0
-				).getPacket(),
+				packetLB.getPacket(),
 				x,
 				y,
 				z,
@@ -303,9 +334,9 @@ public class BlockLittleBlocks extends BlockContainer {
         {
             return (TileEntity)this.clazz.newInstance();
         }
-        catch (Exception var3)
+        catch (Exception e)
         {
-            throw new RuntimeException(var3);
+            throw new RuntimeException(e);
         }
     }
 
