@@ -302,7 +302,7 @@ public class BlockLittleBlocks extends BlockContainer {
 	private boolean isCreative(EntityPlayer entityplayer, World world) {
 		if (entityplayer instanceof EntityClientPlayerMP) {
 			if (ModLoader.getMinecraftInstance().playerController
-					.isInCreativeMode()) {
+					.isInCreativeMode() || world.getWorldInfo().getGameType() == EnumGameType.CREATIVE) {
 				return true;
 			}
 		}
@@ -310,9 +310,10 @@ public class BlockLittleBlocks extends BlockContainer {
 	}
 	
 	private boolean isCreative(EntityPlayer entityplayer) {
-		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
-			return isCreative(entityplayer, null);
-		} else	if (entityplayer != null && entityplayer instanceof EntityPlayerMP) {
+		if (entityplayer.worldObj.isRemote) {
+			return isCreative(entityplayer, entityplayer.worldObj);
+		}
+		if (entityplayer != null && entityplayer instanceof EntityPlayerMP) {
 			if (((EntityPlayerMP) entityplayer).theItemInWorldManager
 					.getGameType() == EnumGameType.CREATIVE) {
 				return true;
