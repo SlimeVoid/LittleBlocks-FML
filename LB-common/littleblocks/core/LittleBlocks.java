@@ -26,7 +26,7 @@ import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
 				channels = { "LITTLEBLOCKS" },
 				packetHandler = CommonPacketHandler.class),
 		connectionHandler = LBConnectionHandler.class,
-		versionBounds = "[1.3]")
+		versionBounds = "[1.3.2]")
 public class LittleBlocks {
 	@SidedProxy(
 			clientSide = "littleblocks.proxy.ClientProxy",

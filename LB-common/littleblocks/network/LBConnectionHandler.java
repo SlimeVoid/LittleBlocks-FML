@@ -17,26 +17,19 @@ public class LBConnectionHandler implements IConnectionHandler {
 
 	@Override
 	public String connectionReceived(NetLoginHandler netHandler, NetworkManager manager) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void connectionOpened(NetHandler netClientHandler, String server, int port, NetworkManager manager) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void connectionOpened(NetHandler netClientHandler, MinecraftServer server, NetworkManager manager) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void connectionClosed(NetworkManager manager) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override

@@ -17,6 +17,7 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.EnumGameType;
 import net.minecraft.src.IBlockAccess;
+import net.minecraft.src.ItemBlock;
 import net.minecraft.src.ItemBucket;
 import net.minecraft.src.ItemInWorldManager;
 import net.minecraft.src.ItemStack;
@@ -39,14 +40,12 @@ public class BlockLittleBlocks extends BlockContainer {
 	public BlockLittleBlocks(int id, Class clazz, Material material, float hardness, boolean selfNotify) {
 		super(id, material);
 		this.clazz = clazz;
-		setHardness(hardness/** 2F */
-		);
+		setHardness(hardness);
 		if (selfNotify) {
 			setRequiresSelfNotify();
 		}
 	}
 
-	// Eury START
 	@Override
 	public boolean removeBlockByPlayer(World world, EntityPlayer player, int x, int y, int z) {
 		int id = world.getBlockId(x, y, z);
@@ -126,49 +125,6 @@ public class BlockLittleBlocks extends BlockContainer {
 						this,
 						LBCore.blockActivateCommand);
 			}
-			// this.onClientBlockActivated(world, x, y, z, entityplayer, q, a,
-			// b, c);
-		}
-		return true;
-	}
-
-	private boolean onClientBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int q, float a, float b, float c) {
-		if (this.xSelected == -10) {
-			return true;
-		}
-		TileEntity tileentity = world.getBlockTileEntity(x, y, z);
-		if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
-			TileEntityLittleBlocks tileentitylittleblocks = (TileEntityLittleBlocks) tileentity;
-			if (entityplayer instanceof EntityPlayerMP) {
-				EntityPlayerMP player = (EntityPlayerMP) entityplayer;
-
-				ItemInWorldManager itemManager = player.theItemInWorldManager;
-				if (itemManager.activateBlockOrUseItem(
-						entityplayer,
-						TileEntityLittleBlocks.getLittleWorld(world),
-						entityplayer.getCurrentEquippedItem(),
-						(x << 3) + this.xSelected,
-						(y << 3) + this.ySelected,
-						(z << 3) + this.zSelected,
-						this.side,
-						a,
-						b,
-						c)) {
-					tileentitylittleblocks.onInventoryChanged();
-					world.markBlockAsNeedsUpdate(x, y, z);
-					return true;
-				} else if (entityplayer.getCurrentEquippedItem() != null && entityplayer
-						.getCurrentEquippedItem()
-							.getItem() instanceof ItemBucket) {
-					itemManager.tryUseItem(
-							entityplayer,
-							TileEntityLittleBlocks.getLittleWorld(world),
-							entityplayer.getCurrentEquippedItem());
-					tileentitylittleblocks.onInventoryChanged();
-					world.markBlockAsNeedsUpdate(x, y, z);
-					return true;
-				}
-			}
 		}
 		return true;
 	}
@@ -231,75 +187,64 @@ public class BlockLittleBlocks extends BlockContainer {
 						this,
 						LBCore.blockClickCommand);
 			}
-			// this.onClientBlockClicked(world, x, y, z, entityplayer);
 		}
-	}
-
-	public void onClientBlockClicked(World world, int x, int y, int z, EntityPlayer entityplayer) {
-		TileEntityLittleBlocks tile = (TileEntityLittleBlocks) world
-				.getBlockTileEntity(x, y, z);
-
-		int content = tile.getContent(
-				this.xSelected,
-				this.ySelected,
-				this.zSelected);
-		if (content > 0 && Block.blocksList[content] != null) {
-			int idDropped = Block.blocksList[content].idDropped(
-					tile.getMetadata(
-							this.xSelected,
-							this.ySelected,
-							this.zSelected),
-					world.rand,
-					0);
-			int quantityDropped = Block.blocksList[content]
-					.quantityDropped(world.rand);
-			if (idDropped > 0 && quantityDropped > 0) {
-				this.dropLittleBlockAsItem_do(
-						world,
-						x,
-						y,
-						z,
-						new ItemStack(idDropped, quantityDropped, tile
-								.getMetadata(
-										this.xSelected,
-										this.ySelected,
-										this.zSelected)));
-			}
-		}
-		tile.setContent(this.xSelected, this.ySelected, this.zSelected, 0);
-		tile.onInventoryChanged();
-		world.markBlockNeedsUpdate(x, y, z);
 	}
 
 	public void onServerBlockClicked(World world, int x, int y, int z, EntityPlayer entityplayer) {
 		TileEntityLittleBlocks tile = (TileEntityLittleBlocks) world
 				.getBlockTileEntity(x, y, z);
-
+		boolean isCreative = false;
+		if (entityplayer != null && entityplayer instanceof EntityPlayerMP) {
+			if (((EntityPlayerMP) entityplayer).theItemInWorldManager
+					.getGameType() == EnumGameType.CREATIVE) {
+				isCreative = true;
+			}
+		}
 		int content = tile.getContent(
+				this.xSelected,
+				this.ySelected,
+				this.zSelected);
+		int contentMeta = tile.getMetadata(
 				this.xSelected,
 				this.ySelected,
 				this.zSelected);
 		if (content > 0 && Block.blocksList[content] != null) {
 			int idDropped = Block.blocksList[content].idDropped(
-					tile.getMetadata(
-							this.xSelected,
-							this.ySelected,
-							this.zSelected),
+					contentMeta,
 					world.rand,
 					0);
 			int quantityDropped = Block.blocksList[content]
 					.quantityDropped(world.rand);
+			List<ItemStack> items = Block.blocksList[content].getBlockDropped(
+					world,
+					x,
+					y,
+					z,
+					contentMeta,
+					0);
+			ItemStack itemstack = null;
+			if (items.get(0) != null) {
+				itemstack = items.get(0);
+			}
+			if (itemstack == null) {
+				itemstack = new ItemStack(
+						idDropped,
+						quantityDropped,
+						contentMeta);
+			}
+
 			if (idDropped > 0 && quantityDropped > 0) {
-				this.dropLittleBlockAsItem_do(
-						world,
-						x,
-						y,
-						z,
-						new ItemStack(idDropped, quantityDropped, tile
-								.getMetadata(
-										this.xSelected,
-										this.ySelected,
-										this.zSelected)));
+				if (!isCreative) {
+					if (itemstack != null) {
+						this
+								.dropLittleBlockAsItem_do(
+										world,
+										x,
+										y,
+										z,
+										itemstack);
+					}
+				}
 			}
 			tile.setContent(this.xSelected, this.ySelected, this.zSelected, 0);
 			tile.onInventoryChanged();
