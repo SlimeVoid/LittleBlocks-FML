@@ -4,7 +4,7 @@ import littleblocks.blocks.BlockLittleBlocks;
 import littleblocks.world.LittleWorld;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.World;
-import net.minecraft.src.EurysMods.api.IPacketHandling;
+import eurysmods.api.IPacketHandling;
 
 public interface ILBPacketHandling extends IPacketHandling {
 	public void metadataModified(LittleWorld littleWorld, int x, int y, int z, int side, float vecX, float vecY, float vecZ, int lastMetadata, int newMetadata);

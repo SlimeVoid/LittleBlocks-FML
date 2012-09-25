@@ -12,16 +12,19 @@ import littleblocks.tileentities.TileEntityLittleBlocks;
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
 import net.minecraft.src.BlockContainer;
+import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.Entity;
+import net.minecraft.src.EntityClientPlayerMP;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.EnumGameType;
 import net.minecraft.src.IBlockAccess;
-import net.minecraft.src.ItemBlock;
+import net.minecraft.src.Item;
 import net.minecraft.src.ItemBucket;
 import net.minecraft.src.ItemInWorldManager;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
+import net.minecraft.src.ModLoader;
 import net.minecraft.src.MovingObjectPosition;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.Vec3;
@@ -44,54 +47,87 @@ public class BlockLittleBlocks extends BlockContainer {
 		if (selfNotify) {
 			setRequiresSelfNotify();
 		}
+		this.setCreativeTab(CreativeTabs.tabDeco);
 	}
 
 	@Override
-	public boolean removeBlockByPlayer(World world, EntityPlayer player, int x, int y, int z) {
+	public boolean removeBlockByPlayer(World world, EntityPlayer entityplayer, int x, int y, int z) {
 		int id = world.getBlockId(x, y, z);
 		if (id == LBCore.littleBlocksID) {
 			TileEntityLittleBlocks tile = (TileEntityLittleBlocks) world
 					.getBlockTileEntity(x, y, z);
 			if (tile.isEmpty()) {
-				return super.removeBlockByPlayer(world, player, x, y, z);
+				return super.removeBlockByPlayer(world, entityplayer, x, y, z);
 			} else {
 				if (world.getWorldInfo().getGameType() == EnumGameType.CREATIVE) {
-					this.onBlockClicked(world, x, y, z, player);
-					return false;
+					this.onBlockClicked(world, x, y, z, entityplayer);
+					if (isCreative(entityplayer)) {
+						return false;
+					}
 				}
 				int[][][] content = tile.getContent();
 				for (int x1 = 0; x1 < content.length; x1++) {
 					for (int y1 = 0; y1 < content[x1].length; y1++) {
 						for (int z1 = 0; z1 < content[x1][y1].length; z1++) {
-							if (content[x1][y1][z1] > 0 && Block.blocksList[content[x1][y1][z1]] != null) {
-								int idDropped = Block.blocksList[content[x1][y1][z1]]
-										.idDropped(tile.getMetadata(
-												this.xSelected,
-												this.ySelected,
-												this.zSelected), world.rand, 0);
-								int quantityDropped = Block.blocksList[content[x1][y1][z1]]
-										.quantityDropped(world.rand);
-								if (idDropped > 0 && quantityDropped > 0) {
+							int blockId = content[x1][y1][z1];
+							int contentMeta = tile.getMetadata(x1, y1, z1);
+							if (blockId > 0 && Block.blocksList[blockId] != null) {
+								System.out.println("BlockID: " + blockId);
+								ItemStack blockToDrop = destroyLittleBlock(
+										world,
+										x,
+										y,
+										z,
+										blockId,
+										contentMeta);
+								if (blockToDrop != null) {
 									this.dropLittleBlockAsItem_do(
 											world,
 											x,
 											y,
 											z,
-											new ItemStack(
-													idDropped,
-													quantityDropped,
-													tile.getMetadata(
-															this.xSelected,
-															this.ySelected,
-															this.zSelected)));
+											blockToDrop);
 								}
 							}
+							tile.setContent(x1, y1, z1, 0);
+							tile.onInventoryChanged();
+							world.markBlockNeedsUpdate(x, y, z);
 						}
 					}
 				}
 			}
 		}
-		return world.setBlockWithNotify(x, y, z, 0);
+		return super.removeBlockByPlayer(world, entityplayer, x, y, z);
+	}
+
+	private ItemStack destroyLittleBlock(World world, int x, int y, int z, int blockId, int metaData) {
+		int idDropped = Block.blocksList[blockId].idDropped(
+				metaData,
+				world.rand,
+				0);
+		int quantityDropped = Block.blocksList[blockId]
+				.quantityDropped(world.rand);
+		List<ItemStack> items = Block.blocksList[blockId].getBlockDropped(
+				world,
+				x,
+				y,
+				z,
+				metaData,
+				0);
+		ItemStack itemstack = null;
+		if (items != null && items.size() > 0) {
+			if (items.get(0) != null) {
+				itemstack = items.get(0);
+			}
+		}
+		if (itemstack == null) {
+			itemstack = new ItemStack(idDropped, quantityDropped, metaData);
+		}
+
+		if (idDropped > 0 && quantityDropped > 0) {
+			return itemstack;
+		}
+		return null;
 	}
 
 	@Override
@@ -99,15 +135,34 @@ public class BlockLittleBlocks extends BlockContainer {
 		if (entityplayer.getCurrentEquippedItem() != null) {
 			int itemID = entityplayer.getCurrentEquippedItem().itemID;
 			Block[] blocks = Block.blocksList;
-			for (int i = 0; i < blocks.length; i++) {
-				if (blocks[i] != null && blocks[i].blockID == itemID) {
-					Block theBlock = blocks[i];
-					if (theBlock.hasTileEntity(0)) {
-						entityplayer
-								.addChatMessage("Sorry, you cannot place that here!");
-						return false;
+			boolean denyPlacement = false;
+			String placementMessage = "";
+			if (blocks[itemID] != null) {
+				Block theBlock = blocks[itemID];
+				if (theBlock.hasTileEntity(0)) {
+					denyPlacement = true;
+					placementMessage = LBCore.denyBlockMessage;
+				}
+				if (theBlock.getRenderType() == 1) {
+					denyPlacement = true;
+					placementMessage = LBCore.denyBlockMessage;
+				}
+				if (theBlock.getBlockName() != null) {
+					if (theBlock.getBlockName().equals("tile.pistonBase") || theBlock
+							.getBlockName()
+								.equals("tile.pistonStickyBase")) {
+						denyPlacement = true;
+						placementMessage = LBCore.denyBlockMessage;
 					}
 				}
+			}
+			if (itemID == Item.hoeDiamond.shiftedIndex || itemID == Item.hoeGold.shiftedIndex || itemID == Item.hoeSteel.shiftedIndex || itemID == Item.hoeStone.shiftedIndex || itemID == Item.hoeWood.shiftedIndex) {
+				denyPlacement = true;
+				placementMessage = LBCore.denyUseMessage;
+			}
+			if (denyPlacement) {
+				entityplayer.addChatMessage(placementMessage);
+				return true;
 			}
 		}
 		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
@@ -138,7 +193,6 @@ public class BlockLittleBlocks extends BlockContainer {
 			TileEntityLittleBlocks tileentitylittleblocks = (TileEntityLittleBlocks) tileentity;
 			if (entityplayer instanceof EntityPlayerMP) {
 				EntityPlayerMP player = (EntityPlayerMP) entityplayer;
-
 				ItemInWorldManager itemManager = player.theItemInWorldManager;
 				if (itemManager.activateBlockOrUseItem(
 						entityplayer,
@@ -193,13 +247,7 @@ public class BlockLittleBlocks extends BlockContainer {
 	public void onServerBlockClicked(World world, int x, int y, int z, EntityPlayer entityplayer) {
 		TileEntityLittleBlocks tile = (TileEntityLittleBlocks) world
 				.getBlockTileEntity(x, y, z);
-		boolean isCreative = false;
-		if (entityplayer != null && entityplayer instanceof EntityPlayerMP) {
-			if (((EntityPlayerMP) entityplayer).theItemInWorldManager
-					.getGameType() == EnumGameType.CREATIVE) {
-				isCreative = true;
-			}
-		}
+		boolean isCreative = isCreative(entityplayer);
 		int content = tile.getContent(
 				this.xSelected,
 				this.ySelected,
@@ -209,41 +257,16 @@ public class BlockLittleBlocks extends BlockContainer {
 				this.ySelected,
 				this.zSelected);
 		if (content > 0 && Block.blocksList[content] != null) {
-			int idDropped = Block.blocksList[content].idDropped(
-					contentMeta,
-					world.rand,
-					0);
-			int quantityDropped = Block.blocksList[content]
-					.quantityDropped(world.rand);
-			List<ItemStack> items = Block.blocksList[content].getBlockDropped(
+			ItemStack blockToDrop = destroyLittleBlock(
 					world,
 					x,
 					y,
 					z,
-					contentMeta,
-					0);
-			ItemStack itemstack = null;
-			if (items.get(0) != null) {
-				itemstack = items.get(0);
-			}
-			if (itemstack == null) {
-				itemstack = new ItemStack(
-						idDropped,
-						quantityDropped,
-						contentMeta);
-			}
-
-			if (idDropped > 0 && quantityDropped > 0) {
+					content,
+					contentMeta);
+			if (blockToDrop != null) {
 				if (!isCreative) {
-					if (itemstack != null) {
-						this
-								.dropLittleBlockAsItem_do(
-										world,
-										x,
-										y,
-										z,
-										itemstack);
-					}
+					this.dropLittleBlockAsItem_do(world, x, y, z, blockToDrop);
 				}
 			}
 			tile.setContent(this.xSelected, this.ySelected, this.zSelected, 0);
@@ -273,6 +296,22 @@ public class BlockLittleBlocks extends BlockContainer {
 				y,
 				z,
 				true);
+	}
+
+	private boolean isCreative(EntityPlayer entityplayer) {
+		if (entityplayer != null && entityplayer instanceof EntityPlayerMP) {
+			if (((EntityPlayerMP) entityplayer).theItemInWorldManager
+					.getGameType() == EnumGameType.CREATIVE) {
+				return true;
+			}
+		}
+		if (entityplayer instanceof EntityClientPlayerMP) {
+			if (ModLoader.getMinecraftInstance().playerController
+					.isInCreativeMode()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public void dropLittleBlockAsItem_do(World world, int x, int y, int z, ItemStack itemStack) {

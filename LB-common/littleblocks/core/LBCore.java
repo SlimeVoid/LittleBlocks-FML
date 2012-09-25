@@ -8,10 +8,10 @@ import net.minecraft.src.Block;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.ModLoader;
-import net.minecraft.src.EurysMods.api.ICommonProxy;
 import net.minecraftforge.common.Configuration;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
+import eurysmods.api.ICommonProxy;
 
 public class LBCore {
 	public static File configFile;
@@ -26,6 +26,8 @@ public class LBCore {
 	public static int renderingMethod;
 	public static int renderType;
 	public static boolean optifine;
+	public static String denyBlockMessage = "Sorry, you cannot place that here!";
+	public static String denyUseMessage = "Sorry, you cannot use that item here!";
 
 	public static void initialize(ICommonProxy proxy) {
 		LBInit.initialize(proxy);

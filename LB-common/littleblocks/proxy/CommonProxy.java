@@ -9,10 +9,10 @@ import net.minecraft.src.Packet1Login;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.EurysMods.api.IPacketHandling;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.common.registry.TickRegistry;
+import eurysmods.api.IPacketHandling;
 
 public class CommonProxy implements ILBCommonProxy {
 

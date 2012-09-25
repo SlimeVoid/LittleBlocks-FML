@@ -2,9 +2,9 @@ package littleblocks.network.packets;
 
 import littleblocks.core.LBInit;
 import net.minecraft.src.World;
-import net.minecraft.src.EurysMods.network.packets.core.PacketIds;
-import net.minecraft.src.EurysMods.network.packets.core.PacketPayload;
-import net.minecraft.src.EurysMods.network.packets.core.PacketUpdate;
+import eurysmods.network.packets.core.PacketIds;
+import eurysmods.network.packets.core.PacketPayload;
+import eurysmods.network.packets.core.PacketUpdate;
 
 public class PacketLittleBlocksSettings extends PacketUpdate {
 

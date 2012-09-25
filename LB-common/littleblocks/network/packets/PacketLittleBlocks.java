@@ -7,9 +7,9 @@ import java.io.IOException;
 import littleblocks.core.LBInit;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.EurysMods.network.packets.core.PacketIds;
-import net.minecraft.src.EurysMods.network.packets.core.PacketPayload;
-import net.minecraft.src.EurysMods.network.packets.core.PacketUpdate;
+import eurysmods.network.packets.core.PacketIds;
+import eurysmods.network.packets.core.PacketPayload;
+import eurysmods.network.packets.core.PacketUpdate;
 
 public class PacketLittleBlocks extends PacketUpdate {
 

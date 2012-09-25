@@ -14,11 +14,11 @@ import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.World;
-import net.minecraft.src.EurysMods.network.packets.core.PacketIds;
-import net.minecraft.src.EurysMods.network.packets.core.PacketUpdate;
 import net.minecraftforge.common.DimensionManager;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
+import eurysmods.network.packets.core.PacketIds;
+import eurysmods.network.packets.core.PacketUpdate;
 
 public class CommonPacketHandler implements IPacketHandler {
 

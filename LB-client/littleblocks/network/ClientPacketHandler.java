@@ -16,11 +16,11 @@ import net.minecraft.src.Packet;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.EurysMods.network.packets.core.PacketIds;
-import net.minecraft.src.EurysMods.network.packets.core.PacketTileEntity;
-import net.minecraft.src.EurysMods.network.packets.core.PacketUpdate;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
+import eurysmods.network.packets.core.PacketIds;
+import eurysmods.network.packets.core.PacketTileEntity;
+import eurysmods.network.packets.core.PacketUpdate;
 
 public class ClientPacketHandler implements IPacketHandler {
 

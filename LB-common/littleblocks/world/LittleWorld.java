@@ -14,12 +14,12 @@ import net.minecraft.src.Vec3;
 import net.minecraft.src.World;
 import net.minecraft.src.WorldProvider;
 import net.minecraft.src.WorldSettings;
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 
 public class LittleWorld extends World {
 
-	private final World realWorld;
+	private World realWorld;
 
 	public LittleWorld(WorldProvider worldprovider, World world) {
 		super(
@@ -34,18 +34,26 @@ public class LittleWorld extends World {
 						.getWorldInfo()
 							.isHardcoreModeEnabled(), world
 						.getWorldInfo()
-							.getTerrainType()), null);
+							.getTerrainType()), world.theProfiler);
 
 		this.realWorld = world;
 	}
 
 	public LittleWorld(World world, WorldProvider worldprovider) {
-		super(world.getSaveHandler(), "LittleBlockWorld", new WorldSettings(
-				world.getWorldInfo().getSeed(),
-				world.getWorldInfo().getGameType(),
-				world.getWorldInfo().isMapFeaturesEnabled(),
-				world.getWorldInfo().isHardcoreModeEnabled(),
-				world.getWorldInfo().getTerrainType()), worldprovider, null);
+		super(
+				world.getSaveHandler(),
+				"LittleBlockWorld",
+				new WorldSettings(world.getWorldInfo().getSeed(), world
+						.getWorldInfo()
+							.getGameType(), world
+						.getWorldInfo()
+							.isMapFeaturesEnabled(), world
+						.getWorldInfo()
+							.isHardcoreModeEnabled(), world
+						.getWorldInfo()
+							.getTerrainType()),
+				worldprovider,
+				world.theProfiler);
 
 		this.realWorld = world;
 	}
@@ -59,9 +67,13 @@ public class LittleWorld extends World {
 				l);
 	}
 
+	@SideOnly(Side.CLIENT)
 	@Override
 	public float getBrightness(int i, int j, int k, int l) {
-		return realWorld.getBrightness(i >> 3, j >> 3, k >> 3, l);
+		if (realWorld != null) {
+			return realWorld.getBrightness(i >> 3, j >> 3, k >> 3, l);
+		}
+		return 0;
 	}
 
 	@Override
@@ -96,9 +108,13 @@ public class LittleWorld extends World {
 		}
 	}
 
+	@SideOnly(Side.CLIENT)
 	@Override
 	public int getBlockLightValue(int i, int j, int k) {
-		return realWorld.getBlockLightValue(i >> 3, j >> 3, k >> 3);
+		if (realWorld != null) {
+			return realWorld.getBlockLightValue(i >> 3, j >> 3, k >> 3);
+		}
+		return 0;
 	}
 
 	@Override
@@ -282,9 +298,7 @@ public class LittleWorld extends World {
 			k >>= 3;
 			world = realWorld;
 		}
-		if (realWorld.editingBlocks || this.editingBlocks || (FMLCommonHandler
-				.instance()
-					.getSide() == Side.CLIENT && this.isRemote)) {
+		if (realWorld.editingBlocks || this.editingBlocks || this.isRemote || realWorld.isRemote) {
 			return;
 		}
 		Block block = Block.blocksList[world.getBlockId(i, j, k)];
@@ -444,6 +458,10 @@ public class LittleWorld extends World {
 
 	@Override
 	protected IChunkProvider createChunkProvider() {
-		return new LBChunkProvider(this.realWorld);
+		return new LBChunkProvider(this);
+	}
+
+	public World getRealWorld() {
+		return this.realWorld;
 	}
 }

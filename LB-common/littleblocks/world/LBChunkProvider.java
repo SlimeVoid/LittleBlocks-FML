@@ -10,10 +10,14 @@ import net.minecraft.src.IProgressUpdate;
 import net.minecraft.src.World;
 
 public class LBChunkProvider implements IChunkProvider {
-	private World worldObj;
+	private World realWorld;
+	private World littleWorld;
 
-	public LBChunkProvider(World realWorld) {
-		this.worldObj = realWorld;
+	public LBChunkProvider(LittleWorld littleWorld) {
+		this.realWorld = littleWorld.getRealWorld();
+		this.littleWorld = littleWorld;
+		System.out.println("RealWorld: " + this.realWorld);
+		System.out.println("LittleWorld: " + this.littleWorld);
 	}
 
 	private void generate(byte[] par1ArrayOfByte) {
@@ -34,7 +38,7 @@ public class LBChunkProvider implements IChunkProvider {
 	public Chunk provideChunk(int par1, int par2) {
 		byte[] var3 = new byte[32768];
 		this.generate(var3);
-		Chunk var4 = new Chunk(this.worldObj, var3, par1, par2);
+		Chunk var4 = new Chunk(this.realWorld, var3, par1, par2);
 		return var4;
 	}
 
@@ -80,7 +84,7 @@ public class LBChunkProvider implements IChunkProvider {
 	 * Converts the instance data to a readable string.
 	 */
 	public String makeString() {
-		return worldObj.getProviderName() + "[LB]";
+		return realWorld.getProviderName() + "[LB]";
 	}
 
 	/**
@@ -100,6 +104,6 @@ public class LBChunkProvider implements IChunkProvider {
 	}
 
 	public int getLoadedChunkCount() {
-		return 0;
+		return 1;
 	}
 }

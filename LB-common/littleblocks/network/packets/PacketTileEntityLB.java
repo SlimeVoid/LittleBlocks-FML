@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import littleblocks.core.LBInit;
 import littleblocks.tileentities.TileEntityLittleBlocks;
-import net.minecraft.src.EurysMods.network.packets.core.PacketTileEntity;
+import eurysmods.network.packets.core.PacketTileEntity;
 
 public class PacketTileEntityLB extends PacketTileEntity {
 

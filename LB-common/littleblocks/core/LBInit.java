@@ -4,12 +4,12 @@ import java.io.File;
 
 import littleblocks.api.ILBCommonProxy;
 import littleblocks.tileentities.TileEntityLittleBlocks;
-import net.minecraft.src.EurysMods.api.ICommonProxy;
-import net.minecraft.src.EurysMods.api.ICore;
-import net.minecraft.src.EurysMods.core.Core;
-import net.minecraft.src.EurysMods.core.EurysCore;
 import net.minecraftforge.common.Configuration;
 import cpw.mods.fml.common.registry.GameRegistry;
+import eurysmods.api.ICommonProxy;
+import eurysmods.api.ICore;
+import eurysmods.core.Core;
+import eurysmods.core.EurysCore;
 
 public class LBInit {
 	public static ICore LBM;
@@ -18,6 +18,7 @@ public class LBInit {
 	public static void initialize(ICommonProxy proxy) {
 		if (initialized)
 			return;
+		initialized = true;
 		LBM = new Core(proxy);
 		LBM.setModName("LittleBlocks");
 		LBM.setModChannel("LITTLEBLOCKS");

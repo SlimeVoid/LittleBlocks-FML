@@ -16,10 +16,10 @@ import net.minecraft.src.Packet132TileEntityData;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.WorldProviderSurface;
-import net.minecraft.src.EurysMods.network.packets.core.PacketPayload;
-import net.minecraft.src.EurysMods.network.packets.core.PacketUpdate;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Side;
+import eurysmods.network.packets.core.PacketPayload;
+import eurysmods.network.packets.core.PacketUpdate;
 
 public class TileEntityLittleBlocks extends TileEntity {
 	public static int size = 8;
@@ -82,14 +82,13 @@ public class TileEntityLittleBlocks extends TileEntity {
 	public LittleWorld getLittleWorld() {
 		if (littleWorld == null || littleWorld.isOutdated(worldObj)) {
 			if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
-				if (!this.worldObj.isRemote) {
-					littleWorld = new LittleWorld(
-							new WorldProviderSurface(),
-							this.worldObj);
-				}
 				if (!ModLoader
 						.getMinecraftInstance()
 							.isIntegratedServerRunning()) {
+					littleWorld = new LittleWorld(
+							new WorldProviderSurface(),
+							this.worldObj);
+				} else if (!this.worldObj.isRemote) {
 					littleWorld = new LittleWorld(
 							new WorldProviderSurface(),
 							this.worldObj);
@@ -109,18 +108,19 @@ public class TileEntityLittleBlocks extends TileEntity {
 				return null;
 			}
 			if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
-				if (!world.isRemote) {
-					littleWorld = new LittleWorld(
-							new WorldProviderSurface(),
-							world);
-				}
-				if (!ModLoader
-						.getMinecraftInstance()
-							.isIntegratedServerRunning()) {
-					littleWorld = new LittleWorld(
-							new WorldProviderSurface(),
-							world);
-				}
+				littleWorld = new LittleWorld(world, new WorldProviderSurface());
+				// if (!world.isRemote) {
+				// littleWorld = new LittleWorld(
+				// new WorldProviderSurface(),
+				// world);
+				// }
+				// if (!ModLoader
+				// .getMinecraftInstance()
+				// .isIntegratedServerRunning()) {
+				// littleWorld = new LittleWorld(
+				// new WorldProviderSurface(),
+				// world);
+				// }
 			} else {
 				littleWorld = new LittleWorld(world, new WorldProviderSurface());
 			}
