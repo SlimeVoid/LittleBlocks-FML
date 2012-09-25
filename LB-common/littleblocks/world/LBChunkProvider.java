@@ -16,8 +16,6 @@ public class LBChunkProvider implements IChunkProvider {
 	public LBChunkProvider(LittleWorld littleWorld) {
 		this.realWorld = littleWorld.getRealWorld();
 		this.littleWorld = littleWorld;
-		System.out.println("RealWorld: " + this.realWorld);
-		System.out.println("LittleWorld: " + this.littleWorld);
 	}
 
 	private void generate(byte[] par1ArrayOfByte) {
