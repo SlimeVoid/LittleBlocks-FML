@@ -31,6 +31,7 @@ import net.minecraft.src.Vec3;
 import net.minecraft.src.World;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 
 public class BlockLittleBlocks extends BlockContainer {
 
@@ -72,7 +73,6 @@ public class BlockLittleBlocks extends BlockContainer {
 							int blockId = content[x1][y1][z1];
 							int contentMeta = tile.getMetadata(x1, y1, z1);
 							if (blockId > 0 && Block.blocksList[blockId] != null) {
-								System.out.println("BlockID: " + blockId);
 								ItemStack blockToDrop = destroyLittleBlock(
 										world,
 										x,
@@ -298,16 +298,23 @@ public class BlockLittleBlocks extends BlockContainer {
 				true);
 	}
 
-	private boolean isCreative(EntityPlayer entityplayer) {
-		if (entityplayer != null && entityplayer instanceof EntityPlayerMP) {
-			if (((EntityPlayerMP) entityplayer).theItemInWorldManager
-					.getGameType() == EnumGameType.CREATIVE) {
-				return true;
-			}
-		}
+	@SideOnly(Side.CLIENT)
+	private boolean isCreative(EntityPlayer entityplayer, World world) {
 		if (entityplayer instanceof EntityClientPlayerMP) {
 			if (ModLoader.getMinecraftInstance().playerController
 					.isInCreativeMode()) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean isCreative(EntityPlayer entityplayer) {
+		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+			return isCreative(entityplayer, null);
+		} else	if (entityplayer != null && entityplayer instanceof EntityPlayerMP) {
+			if (((EntityPlayerMP) entityplayer).theItemInWorldManager
+					.getGameType() == EnumGameType.CREATIVE) {
 				return true;
 			}
 		}
