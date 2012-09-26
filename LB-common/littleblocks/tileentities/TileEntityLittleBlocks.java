@@ -39,7 +39,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 	@Override
 	public void func_70308_a(World par1World) {
 		this.worldObj = par1World;
-		LBCore.setLittleWorld(LBCore.getLittleWorld(this.worldObj));
+		LBCore.setLittleWorld(LBCore.getLittleWorld(this.worldObj, false));
 	}
 
 	public TileEntityLittleBlocks() {
@@ -78,7 +78,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 	}
 
 	public LittleWorld getLittleWorld() {
-		return LBCore.getLittleWorld(this.worldObj);
+		return LBCore.getLittleWorld(this.worldObj, false);
 	}
 
 	public int getMetadata(int x, int y, int z) {

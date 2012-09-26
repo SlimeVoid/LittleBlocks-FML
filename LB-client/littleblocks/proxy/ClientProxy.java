@@ -1,6 +1,8 @@
 package littleblocks.proxy;
 
-import littleblocks.core.CommonTickHandler;
+import littleblocks.tickhandlers.ClientTickHandler;
+import littleblocks.tickhandlers.CommonTickHandler;
+import littleblocks.core.LBCore;
 import littleblocks.network.ClientPacketHandler;
 import littleblocks.network.LBPacketIds;
 import littleblocks.network.packets.PacketLittleBlocksSettings;

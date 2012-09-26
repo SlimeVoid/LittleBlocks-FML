@@ -60,11 +60,12 @@ public class BlockLittleBlocks extends BlockContainer {
 			if (tile.isEmpty()) {
 				return super.removeBlockByPlayer(world, entityplayer, x, y, z);
 			} else {
-				if (world.getWorldInfo().getGameType() == EnumGameType.CREATIVE) {
+				if (FMLCommonHandler.instance().getSide() == Side.CLIENT && ModLoader.getMinecraftInstance().playerController.isInCreativeMode()) {
 					this.onBlockClicked(world, x, y, z, entityplayer);
-					if (isCreative(entityplayer)) {
-						return false;
-					}
+					return false;
+				} else if (isCreative(entityplayer)) {
+					this.onBlockClicked(world, x, y, z, entityplayer);
+					return false;
 				}
 				int[][][] content = tile.getContent();
 				for (int x1 = 0; x1 < content.length; x1++) {
@@ -73,21 +74,13 @@ public class BlockLittleBlocks extends BlockContainer {
 							int blockId = content[x1][y1][z1];
 							int contentMeta = tile.getMetadata(x1, y1, z1);
 							if (blockId > 0 && Block.blocksList[blockId] != null) {
-								ItemStack blockToDrop = destroyLittleBlock(
+								destroyLittleBlock(
 										world,
 										x,
 										y,
 										z,
 										blockId,
 										contentMeta);
-								if (blockToDrop != null) {
-									this.dropLittleBlockAsItem_do(
-											world,
-											x,
-											y,
-											z,
-											blockToDrop);
-								}
 							}
 							tile.setContent(x1, y1, z1, 0);
 							tile.onInventoryChanged();
@@ -100,7 +93,7 @@ public class BlockLittleBlocks extends BlockContainer {
 		return super.removeBlockByPlayer(world, entityplayer, x, y, z);
 	}
 
-	private ItemStack destroyLittleBlock(World world, int x, int y, int z, int blockId, int metaData) {
+	private void destroyLittleBlock(World world, int x, int y, int z, int blockId, int metaData) {
 		int idDropped = Block.blocksList[blockId].idDropped(
 				metaData,
 				world.rand,
@@ -125,9 +118,13 @@ public class BlockLittleBlocks extends BlockContainer {
 		}
 
 		if (idDropped > 0 && quantityDropped > 0) {
-			return itemstack;
+			this.dropLittleBlockAsItem_do(
+					world,
+					x,
+					y,
+					z,
+					itemstack);
 		}
-		return null;
 	}
 
 	@Override
@@ -203,7 +200,7 @@ public class BlockLittleBlocks extends BlockContainer {
 				ItemInWorldManager itemManager = player.theItemInWorldManager;
 				if (itemManager.activateBlockOrUseItem(
 						entityplayer,
-						LBCore.getLittleWorld(world),
+						LBCore.getLittleWorld(world, false),
 						entityplayer.getCurrentEquippedItem(),
 						(x << 3) + this.xSelected,
 						(y << 3) + this.ySelected,
@@ -220,7 +217,7 @@ public class BlockLittleBlocks extends BlockContainer {
 							.getItem() instanceof ItemBucket) {
 					itemManager.tryUseItem(
 							entityplayer,
-							LBCore.getLittleWorld(world),
+							LBCore.getLittleWorld(world, false),
 							entityplayer.getCurrentEquippedItem());
 					tileentitylittleblocks.onInventoryChanged();
 					world.markBlockNeedsUpdate(x, y, z);
@@ -254,7 +251,6 @@ public class BlockLittleBlocks extends BlockContainer {
 	public void onServerBlockClicked(World world, int x, int y, int z, EntityPlayer entityplayer) {
 		TileEntityLittleBlocks tile = (TileEntityLittleBlocks) world
 				.getBlockTileEntity(x, y, z);
-		boolean isCreative = isCreative(entityplayer);
 		int content = tile.getContent(
 				this.xSelected,
 				this.ySelected,
@@ -264,17 +260,14 @@ public class BlockLittleBlocks extends BlockContainer {
 				this.ySelected,
 				this.zSelected);
 		if (content > 0 && Block.blocksList[content] != null) {
-			ItemStack blockToDrop = destroyLittleBlock(
-					world,
-					x,
-					y,
-					z,
-					content,
-					contentMeta);
-			if (blockToDrop != null) {
-				if (!isCreative) {
-					this.dropLittleBlockAsItem_do(world, x, y, z, blockToDrop);
-				}
+			if (!isCreative(entityplayer)) {
+				destroyLittleBlock(
+						world,
+						x,
+						y,
+						z,
+						content,
+						contentMeta);
 			}
 			tile.setContent(this.xSelected, this.ySelected, this.zSelected, 0);
 			tile.onInventoryChanged();

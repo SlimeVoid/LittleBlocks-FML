@@ -6,6 +6,7 @@ import littleblocks.blocks.BlockLittleBlocks;
 import littleblocks.tileentities.TileEntityLittleBlocks;
 import littleblocks.world.LittleWorld;
 import net.minecraft.src.Block;
+import net.minecraft.src.EnumGameType;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.ModLoader;
@@ -86,7 +87,10 @@ public class LBCore {
 		return littleWorld;
 	}
 	
-	public static LittleWorld getLittleWorld(World world) {
+	public static LittleWorld getLittleWorld(World world, boolean needsRefresh) {
+		if (needsRefresh) {
+			littleWorld = null;
+		}
 		if (littleWorld == null || littleWorld.isOutdated(world)) {
 			if (world == null) {
 				return null;

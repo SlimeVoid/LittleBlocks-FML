@@ -1,7 +1,7 @@
 package littleblocks.proxy;
 
 import littleblocks.api.ILBCommonProxy;
-import littleblocks.core.CommonTickHandler;
+import littleblocks.tickhandlers.CommonTickHandler;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.NetHandler;
 import net.minecraft.src.NetworkManager;

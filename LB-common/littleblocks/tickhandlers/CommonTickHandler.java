@@ -1,7 +1,8 @@
-package littleblocks.core;
+package littleblocks.tickhandlers;
 
 import java.util.EnumSet;
 
+import littleblocks.core.LBCore;
 import littleblocks.tileentities.TileEntityLittleBlocks;
 import net.minecraft.src.World;
 import net.minecraftforge.common.DimensionManager;
@@ -16,7 +17,7 @@ public class CommonTickHandler implements ITickHandler {
 				.equals(EnumSet.of(TickType.CLIENT))) {
 			World[] worlds = DimensionManager.getWorlds();
 			for (World world : worlds) {
-				LBCore.getLittleWorld(world).tickUpdates(false);
+				LBCore.getLittleWorld(world, false).tickUpdates(false);
 			}
 		}
 	}
