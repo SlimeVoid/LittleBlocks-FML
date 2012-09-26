@@ -4,12 +4,17 @@ import java.io.File;
 
 import littleblocks.blocks.BlockLittleBlocks;
 import littleblocks.tileentities.TileEntityLittleBlocks;
+import littleblocks.world.LittleWorld;
 import net.minecraft.src.Block;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.ModLoader;
+import net.minecraft.src.World;
+import net.minecraft.src.WorldProviderSurface;
 import net.minecraftforge.common.Configuration;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.registry.GameRegistry;
 import eurysmods.api.ICommonProxy;
 
@@ -21,6 +26,7 @@ public class LBCore {
 	public static String blockClickCommand = "BLOCKCLICK";
 	public static String blockActivateCommand = "BLOCKACTIVATE";
 	public static Block littleBlocks;
+	private static LittleWorld littleWorld;
 	public static int littleBlocksID;
 	public static boolean littleBlocksClip;
 	public static int renderingMethod;
@@ -74,5 +80,39 @@ public class LBCore {
 		renderType = RenderingRegistry.getNextAvailableRenderId();
 		configuration.save();
 		return littleBlocksID;
+	}
+
+	public static LittleWorld getLittleWorld() {
+		return littleWorld;
+	}
+	
+	public static LittleWorld getLittleWorld(World world) {
+		if (littleWorld == null || littleWorld.isOutdated(world)) {
+			if (world == null) {
+				return null;
+			}
+			if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+				littleWorld = new LittleWorld(world, new WorldProviderSurface());
+				// if (!world.isRemote) {
+				// littleWorld = new LittleWorld(
+				// new WorldProviderSurface(),
+				// world);
+				// }
+				// if (!ModLoader
+				// .getMinecraftInstance()
+				// .isIntegratedServerRunning()) {
+				// littleWorld = new LittleWorld(
+				// new WorldProviderSurface(),
+				// world);
+				// }
+			} else {
+				littleWorld = new LittleWorld(world, new WorldProviderSurface());
+			}
+		}
+		return littleWorld;
+	}
+
+	public static void setLittleWorld(LittleWorld littleWorld) {
+		LBCore.littleWorld = littleWorld;
 	}
 }

@@ -2,17 +2,20 @@ package littleblocks.network;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
+import java.util.List;
 
 import littleblocks.blocks.BlockLittleBlocks;
 import littleblocks.core.LBCore;
 import littleblocks.network.packets.PacketLittleBlocks;
 import littleblocks.network.packets.PacketLittleBlocksSettings;
+import littleblocks.tileentities.TileEntityLittleBlocks;
 import littleblocks.world.LittleWorld;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet;
 import net.minecraft.src.Packet250CustomPayload;
+import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraftforge.common.DimensionManager;
 import cpw.mods.fml.common.network.IPacketHandler;
@@ -28,6 +31,13 @@ public class CommonPacketHandler implements IPacketHandler {
 			packet.setCommand(LBPacketIds.SETTINGS);
 			packet.setClipMode(LBCore.littleBlocksClip);
 			CommonPacketHandler.sendTo(entityplayer, packet);
+			List<TileEntity> tileEntities = world.loadedTileEntityList;
+			for (TileEntity tileentity : tileEntities) {
+				if (tileentity instanceof TileEntityLittleBlocks) {
+					tileentity.onInventoryChanged();
+					world.markBlockNeedsUpdate(tileentity.xCoord, tileentity.yCoord+1, tileentity.zCoord);
+				}
+			}
 		}
 	}
 

@@ -38,7 +38,7 @@ public class LBInit {
 		LBM.getProxy().registerRenderInformation();
 		LBM.getProxy().registerTileEntitySpecialRenderer(
 				TileEntityLittleBlocks.class);
-		((ILBCommonProxy) LBM.getProxy()).registerTickHandler();
+		LBM.getProxy().registerTickHandler();
 		EurysCore.console(LBM.getModName(), "Naming items...");
 		LBCore.addNames();
 		EurysCore.console(LBM.getModName(), "Registering recipes...");

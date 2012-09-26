@@ -9,14 +9,14 @@ import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
 
 public class CommonTickHandler implements ITickHandler {
-
+	
 	@Override
 	public void tickStart(EnumSet<TickType> type, Object... tickData) {
 		if (type.equals(EnumSet.of(TickType.SERVER)) || type
-				.equals(TickType.CLIENT)) {
+				.equals(EnumSet.of(TickType.CLIENT))) {
 			World[] worlds = DimensionManager.getWorlds();
 			for (World world : worlds) {
-				TileEntityLittleBlocks.getLittleWorld(world).tickUpdates(false);
+				LBCore.getLittleWorld(world).tickUpdates(false);
 			}
 		}
 	}

@@ -135,25 +135,32 @@ public class BlockLittleBlocks extends BlockContainer {
 		if (entityplayer.getCurrentEquippedItem() != null) {
 			int itemID = entityplayer.getCurrentEquippedItem().itemID;
 			Block[] blocks = Block.blocksList;
+			Item[] items = Item.itemsList;
 			boolean denyPlacement = false;
 			String placementMessage = "";
-			if (blocks[itemID] != null) {
-				Block theBlock = blocks[itemID];
-				if (theBlock.hasTileEntity(0)) {
-					denyPlacement = true;
-					placementMessage = LBCore.denyBlockMessage;
-				}
-				if (theBlock.getRenderType() == 1) {
-					denyPlacement = true;
-					placementMessage = LBCore.denyBlockMessage;
-				}
-				if (theBlock.getBlockName() != null) {
-					if (theBlock.getBlockName().equals("tile.pistonBase") || theBlock
-							.getBlockName()
-								.equals("tile.pistonStickyBase")) {
+			if (itemID < blocks.length) {
+				if (blocks[itemID] != null) {
+					Block theBlock = blocks[itemID];
+					if (theBlock.hasTileEntity(0)) {
 						denyPlacement = true;
 						placementMessage = LBCore.denyBlockMessage;
 					}
+					if (theBlock.getRenderType() == 1) {
+						denyPlacement = true;
+						placementMessage = LBCore.denyBlockMessage;
+					}
+					if (theBlock.getBlockName() != null) {
+						if (theBlock.getBlockName().equals("tile.pistonBase") || theBlock
+								.getBlockName()
+									.equals("tile.pistonStickyBase")) {
+							denyPlacement = true;
+							placementMessage = LBCore.denyBlockMessage;
+						}
+					}
+				}
+			} else {
+				if(itemID < items.length) {
+					
 				}
 			}
 			if (itemID == Item.hoeDiamond.shiftedIndex || itemID == Item.hoeGold.shiftedIndex || itemID == Item.hoeSteel.shiftedIndex || itemID == Item.hoeStone.shiftedIndex || itemID == Item.hoeWood.shiftedIndex) {
@@ -196,7 +203,7 @@ public class BlockLittleBlocks extends BlockContainer {
 				ItemInWorldManager itemManager = player.theItemInWorldManager;
 				if (itemManager.activateBlockOrUseItem(
 						entityplayer,
-						TileEntityLittleBlocks.getLittleWorld(world),
+						LBCore.getLittleWorld(world),
 						entityplayer.getCurrentEquippedItem(),
 						(x << 3) + this.xSelected,
 						(y << 3) + this.ySelected,
@@ -213,7 +220,7 @@ public class BlockLittleBlocks extends BlockContainer {
 							.getItem() instanceof ItemBucket) {
 					itemManager.tryUseItem(
 							entityplayer,
-							TileEntityLittleBlocks.getLittleWorld(world),
+							LBCore.getLittleWorld(world),
 							entityplayer.getCurrentEquippedItem());
 					tileentitylittleblocks.onInventoryChanged();
 					world.markBlockNeedsUpdate(x, y, z);

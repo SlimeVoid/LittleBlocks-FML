@@ -28,8 +28,6 @@ public class TileEntityLittleBlocks extends TileEntity {
 	private List<TileEntity> tiles = new ArrayList<TileEntity>();
 	private boolean upToDate = false;
 
-	private static LittleWorld littleWorld;
-
 	@Override
 	public void onDataPacket(NetworkManager net, Packet132TileEntityData pkt) {
 		if (FMLCommonHandler.instance().getSide().isClient()) {
@@ -41,7 +39,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 	@Override
 	public void func_70308_a(World par1World) {
 		this.worldObj = par1World;
-		TileEntityLittleBlocks.littleWorld = getLittleWorld(this.worldObj);
+		LBCore.setLittleWorld(LBCore.getLittleWorld(this.worldObj));
 	}
 
 	public TileEntityLittleBlocks() {
@@ -80,52 +78,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 	}
 
 	public LittleWorld getLittleWorld() {
-		if (littleWorld == null || littleWorld.isOutdated(worldObj)) {
-			if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
-				if (!ModLoader
-						.getMinecraftInstance()
-							.isIntegratedServerRunning()) {
-					littleWorld = new LittleWorld(
-							new WorldProviderSurface(),
-							this.worldObj);
-				} else if (!this.worldObj.isRemote) {
-					littleWorld = new LittleWorld(
-							new WorldProviderSurface(),
-							this.worldObj);
-				}
-			} else {
-				littleWorld = new LittleWorld(
-						this.worldObj,
-						new WorldProviderSurface());
-			}
-		}
-		return littleWorld;
-	}
-
-	public static LittleWorld getLittleWorld(World world) {
-		if (littleWorld == null) {
-			if (world == null) {
-				return null;
-			}
-			if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
-				littleWorld = new LittleWorld(world, new WorldProviderSurface());
-				// if (!world.isRemote) {
-				// littleWorld = new LittleWorld(
-				// new WorldProviderSurface(),
-				// world);
-				// }
-				// if (!ModLoader
-				// .getMinecraftInstance()
-				// .isIntegratedServerRunning()) {
-				// littleWorld = new LittleWorld(
-				// new WorldProviderSurface(),
-				// world);
-				// }
-			} else {
-				littleWorld = new LittleWorld(world, new WorldProviderSurface());
-			}
-		}
-		return littleWorld;
+		return LBCore.getLittleWorld(this.worldObj);
 	}
 
 	public int getMetadata(int x, int y, int z) {
@@ -289,7 +242,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 		setMetadata(x, y, z, 0);
 
 		if (lastId != id) {
-			littleWorld.idModified(
+			LBCore.getLittleWorld().idModified(
 					(this.xCoord << 3) + x,
 					(this.yCoord << 3) + y,
 					(this.zCoord << 3) + z,
@@ -361,7 +314,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 		metadatas[x][y][z] = metadata;
 
 		if (metadatas[x][y][z] != metadata) {
-			littleWorld.metadataModified(
+			LBCore.getLittleWorld().metadataModified(
 					(this.xCoord << 3) + x,
 					(this.yCoord << 3) + y,
 					(this.zCoord << 3) + z,
@@ -438,7 +391,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 		metadatas[x][y][z] = metadata;
 
 		if (lastData != metadata) {
-			littleWorld.metadataModified(
+			LBCore.getLittleWorld().metadataModified(
 					(this.xCoord << 3) + x,
 					(this.yCoord << 3) + y,
 					(this.zCoord << 3) + z,
@@ -450,7 +403,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 					metadata);
 		}
 		if (lastId != id) {
-			littleWorld.idModified(
+			LBCore.getLittleWorld().idModified(
 					(this.xCoord << 3) + x,
 					(this.yCoord << 3) + y,
 					(this.zCoord << 3) + z,
