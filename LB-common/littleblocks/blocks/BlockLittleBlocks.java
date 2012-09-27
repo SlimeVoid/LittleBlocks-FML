@@ -2,6 +2,7 @@ package littleblocks.blocks;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import littleblocks.core.LBCore;
 import littleblocks.network.ClientPacketHandler;
@@ -9,9 +10,14 @@ import littleblocks.network.CommonPacketHandler;
 import littleblocks.network.LBPacketIds;
 import littleblocks.network.packets.PacketLittleBlocks;
 import littleblocks.tileentities.TileEntityLittleBlocks;
+import littleblocks.world.LittleWorld;
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
+import net.minecraft.src.BlockButton;
 import net.minecraft.src.BlockContainer;
+import net.minecraft.src.BlockRedstoneLight;
+import net.minecraft.src.BlockRedstoneTorch;
+import net.minecraft.src.BlockRedstoneWire;
 import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityClientPlayerMP;
@@ -46,12 +52,52 @@ public class BlockLittleBlocks extends BlockContainer {
 		super(id, material);
 		this.clazz = clazz;
 		setHardness(hardness);
+        this.setTickRandomly(true);
 		if (selfNotify) {
 			setRequiresSelfNotify();
 		}
 		this.setCreativeTab(CreativeTabs.tabDeco);
 	}
+	
+    /**
+     * How many world ticks before ticking
+     */
+    public int tickRate()
+    {
+        return 20;
+    }
+    
+	@Override
+    public void updateTick(World world, int x, int y, int z, Random rand)  {
+		//if (world.isRemote) {
+	    	TileEntity tileentity = world.getBlockTileEntity(x, y, z);
+	    	if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
+	    		TileEntityLittleBlocks tile = (TileEntityLittleBlocks) tileentity;
+	    		int [][][] content = tile.getContent();
+	    		for (int xx = 0; xx < tile.size; xx++) {
+	    			for (int yy = 0; yy < tile.size; yy++) {
+	    				for (int zz = 0; zz < tile.size; zz++) {
+	    					int blockId = content[xx][yy][zz];
+	    					if (blockId > 0) {
+	        					this.littleUpdateTick(tile.getLittleWorld(), Block.blocksList[blockId], (x << 3) + xx, (y << 3) + yy, (z << 3) + zz, rand);
+	    					}
+	    				}
+	    			}
+	    		}
+	    	}
+		//}
+    }
 
+    public void littleUpdateTick(LittleWorld world, Block block, int xx, int yy, int zz, Random rand)  {
+		if(block instanceof BlockButton
+				|| block instanceof BlockRedstoneTorch
+				|| block instanceof BlockRedstoneLight
+				|| block instanceof BlockRedstoneWire) {
+			block.updateTick(world, xx, yy, zz, rand);
+			world.notifyBlocksOfNeighborChange(xx, yy, zz, block.blockID);
+		}
+    }
+    
 	@Override
 	public boolean removeBlockByPlayer(World world, EntityPlayer entityplayer, int x, int y, int z) {
 		int id = world.getBlockId(x, y, z);
@@ -75,7 +121,7 @@ public class BlockLittleBlocks extends BlockContainer {
 							int blockId = content[x1][y1][z1];
 							int contentMeta = tile.getMetadata(x1, y1, z1);
 							if (blockId > 0 && Block.blocksList[blockId] != null) {
-								destroyLittleBlock(
+								dropLittleBlockAsNormalBlock(
 										world,
 										x,
 										y,
@@ -94,7 +140,7 @@ public class BlockLittleBlocks extends BlockContainer {
 		return super.removeBlockByPlayer(world, entityplayer, x, y, z);
 	}
 
-	private void destroyLittleBlock(World world, int x, int y, int z, int blockId, int metaData) {
+	private void dropLittleBlockAsNormalBlock(World world, int x, int y, int z, int blockId, int metaData) {
 		int idDropped = Block.blocksList[blockId].idDropped(
 				metaData,
 				world.rand,
@@ -194,6 +240,7 @@ public class BlockLittleBlocks extends BlockContainer {
 						LBCore.blockActivateCommand);
 			}
 		}
+		world.scheduleBlockUpdate(x, y, z, this.blockID, this.tickRate());
 		return true;
 	}
 
@@ -214,22 +261,29 @@ public class BlockLittleBlocks extends BlockContainer {
 		TileEntity tileentity = world.getBlockTileEntity(x, y, z);
 		if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
 			TileEntityLittleBlocks tileentitylittleblocks = (TileEntityLittleBlocks) tileentity;
+			int	xx = (x << 3) + this.xSelected,
+				yy = (y << 3) + this.ySelected,
+				zz = (z << 3) + this.zSelected;
+			LittleWorld littleWorld = LBCore.getLittleWorld(world, false);
+			int blockId = tileentitylittleblocks.getContent(
+					this.xSelected, this.ySelected, this.zSelected);
 			if (entityplayer instanceof EntityPlayerMP) {
 				EntityPlayerMP player = (EntityPlayerMP) entityplayer;
 				ItemInWorldManager itemManager = player.theItemInWorldManager;
 				if (itemManager.activateBlockOrUseItem(
 						entityplayer,
-						LBCore.getLittleWorld(world, false),
+						littleWorld,
 						entityplayer.getCurrentEquippedItem(),
-						(x << 3) + this.xSelected,
-						(y << 3) + this.ySelected,
-						(z << 3) + this.zSelected,
+						xx,
+						yy,
+						zz,
 						this.side,
 						a,
 						b,
 						c)) {
 					tileentitylittleblocks.onInventoryChanged();
 					world.markBlockNeedsUpdate(x, y, z);
+					world.notifyBlocksOfNeighborChange(x, y, z, this.blockID);
 					return true;
 				} else if (entityplayer.getCurrentEquippedItem() != null && entityplayer
 						.getCurrentEquippedItem()
@@ -240,6 +294,7 @@ public class BlockLittleBlocks extends BlockContainer {
 							entityplayer.getCurrentEquippedItem());
 					tileentitylittleblocks.onInventoryChanged();
 					world.markBlockNeedsUpdate(x, y, z);
+					world.notifyBlocksOfNeighborChange(x, y, z, this.blockID);
 					return true;
 				}
 			}
@@ -265,6 +320,7 @@ public class BlockLittleBlocks extends BlockContainer {
 						LBCore.blockClickCommand);
 			}
 		}
+		world.scheduleBlockUpdate(x, y, z, this.blockID, this.tickRate());
 	}
 
 	public void onServerBlockClicked(World world, int x, int y, int z, EntityPlayer entityplayer) {
@@ -278,9 +334,12 @@ public class BlockLittleBlocks extends BlockContainer {
 				this.xSelected,
 				this.ySelected,
 				this.zSelected);
+			int	xx = (x << 3) + this.xSelected,
+				yy = (y << 3) + this.ySelected,
+				zz = (z << 3) + this.zSelected;
 		if (content > 0 && Block.blocksList[content] != null) {
 			if (!isCreative(entityplayer)) {
-				destroyLittleBlock(
+				dropLittleBlockAsNormalBlock(
 						world,
 						x,
 						y,
@@ -291,6 +350,7 @@ public class BlockLittleBlocks extends BlockContainer {
 			tile.setContent(this.xSelected, this.ySelected, this.zSelected, 0);
 			tile.onInventoryChanged();
 			world.markBlockNeedsUpdate(x, y, z);
+			world.notifyBlocksOfNeighborChange(x, y, z, this.blockID);
 		}
 		PacketLittleBlocks packetLB = new PacketLittleBlocks(
 				"UPDATECLIENT",
@@ -871,7 +931,7 @@ public class BlockLittleBlocks extends BlockContainer {
 			TileEntityLittleBlocks tile = (TileEntityLittleBlocks) world
 					.getBlockTileEntity(i, j, k);
 			int[][][] content = tile.getContent();
-			int maX = 8, maY = 8, maZ = 8;
+			int maX = tile.size, maY = tile.size, maZ = tile.size;
 			int startX = 0, startY = 0, startZ = 0;
 			for (int side = 0; side < 6; side++) {
 				switch (side) {
@@ -904,12 +964,11 @@ public class BlockLittleBlocks extends BlockContainer {
 					for (int y = startY; y < maY; y++) {
 						for (int z = startZ; z < maZ; z++) {
 							if (content[x][y][z] > 0) {
-								Block.blocksList[content[x][y][z]]
-										.onNeighborBlockChange(
-												tile.getLittleWorld(),
+								tile.getLittleWorld()
+										.notifyBlocksOfNeighborChange(
 												(i << 3) + x,
 												(j << 3) + y,
-												(k << 3) + z,
+												(k << 3) + z, 
 												l);
 							}
 						}

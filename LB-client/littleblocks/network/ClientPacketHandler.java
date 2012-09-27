@@ -121,7 +121,9 @@ public class ClientPacketHandler implements IPacketHandler {
 			if (packetLB.getSender() == LBPacketIds.CLIENT) {
 				CommonPacketHandler.handlePacket(packet, entityplayer, world);
 			}
-			if (packetLB.targetExists(world)) {
+			if (packetLB.getCommand().equals(LBCore.littleNotifyCommand)) {
+				System.out.println("littleNotify");
+			} else if (packetLB.targetExists(world)) {
 				TileEntity tileentity = packetLB.getTileEntity(world);
 				if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
 					TileEntityLittleBlocks tileentitylb = (TileEntityLittleBlocks) tileentity;

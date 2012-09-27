@@ -35,6 +35,7 @@ public class LBCore {
 	public static boolean optifine;
 	public static String denyBlockMessage = "Sorry, you cannot place that here!";
 	public static String denyUseMessage = "Sorry, you cannot use that here!";
+	public static String littleNotifyCommand = "LITTLENOTIFY";
 
 	public static void initialize(ICommonProxy proxy) {
 		LBInit.initialize(proxy);

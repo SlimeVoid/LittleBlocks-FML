@@ -1,7 +1,11 @@
 package littleblocks.world;
 
+import org.lwjgl.opengl.GL11;
+
 import littleblocks.core.LBCore;
 import littleblocks.network.CommonPacketHandler;
+import littleblocks.network.LBPacketIds;
+import littleblocks.network.packets.PacketLittleBlocks;
 import littleblocks.tileentities.TileEntityLittleBlocks;
 import net.minecraft.src.Block;
 import net.minecraft.src.Chunk;
@@ -280,12 +284,20 @@ public class LittleWorld extends World {
 
 	@Override
 	public void notifyBlocksOfNeighborChange(int i, int j, int k, int l) {
-		notifyBlockOfNeighborChange(i - 1, j, k, l);
-		notifyBlockOfNeighborChange(i + 1, j, k, l);
-		notifyBlockOfNeighborChange(i, j - 1, k, l);
-		notifyBlockOfNeighborChange(i, j + 1, k, l);
-		notifyBlockOfNeighborChange(i, j, k - 1, l);
-		notifyBlockOfNeighborChange(i, j, k + 1, l);
+		//if (!this.isRemote) {
+			notifyBlockOfNeighborChange(i - 1, j, k, l);
+			notifyBlockOfNeighborChange(i + 1, j, k, l);
+			notifyBlockOfNeighborChange(i, j - 1, k, l);
+			notifyBlockOfNeighborChange(i, j + 1, k, l);
+			notifyBlockOfNeighborChange(i, j, k - 1, l);
+			notifyBlockOfNeighborChange(i, j, k + 1, l);
+/*			if (this.realWorld.getBlockId(x, y, z) == LBCore.littleBlocksID) {
+				PacketLittleBlocks packet = new PacketLittleBlocks(
+						LBCore.littleNotifyCommand, x, y, z, 0, 0, 0, 0, i, j, k, l, this.getBlockMetadata(i , j , k));
+				packet.setSender(LBPacketIds.SERVER);
+				CommonPacketHandler.sendToAllPlayers(realWorld, null, packet.getPacket(), i >> 3, j >> 3, k >> 3, true);
+			}*/
+		//}
 	}
 
 	private void notifyBlockOfNeighborChange(int i, int j, int k, int l) {
@@ -298,7 +310,7 @@ public class LittleWorld extends World {
 			k >>= 3;
 			world = realWorld;
 		}
-		if (realWorld.editingBlocks || this.editingBlocks || this.isRemote || realWorld.isRemote) {
+		if (realWorld.editingBlocks || this.editingBlocks) {
 			return;
 		}
 		Block block = Block.blocksList[world.getBlockId(i, j, k)];
