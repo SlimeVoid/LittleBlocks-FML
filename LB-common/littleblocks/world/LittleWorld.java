@@ -34,7 +34,7 @@ public class LittleWorld extends World {
 						.getWorldInfo()
 							.isHardcoreModeEnabled(), world
 						.getWorldInfo()
-							.getTerrainType()), world.theProfiler);
+							.getTerrainType()), null);
 
 		this.realWorld = world;
 	}
@@ -53,7 +53,7 @@ public class LittleWorld extends World {
 						.getWorldInfo()
 							.getTerrainType()),
 				worldprovider,
-				world.theProfiler);
+				null);
 
 		this.realWorld = world;
 	}
@@ -159,7 +159,7 @@ public class LittleWorld extends World {
 
 	@Override
 	public int getHeight() {
-		return super.getHeight() * 8;
+		return super.getHeight() * TileEntityLittleBlocks.size;
 	}
 
 	@Override

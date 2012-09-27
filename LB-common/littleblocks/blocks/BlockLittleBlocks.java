@@ -20,6 +20,7 @@ import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.EnumGameType;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Item;
+import net.minecraft.src.ItemBlock;
 import net.minecraft.src.ItemBucket;
 import net.minecraft.src.ItemInWorldManager;
 import net.minecraft.src.ItemStack;
@@ -136,12 +137,12 @@ public class BlockLittleBlocks extends BlockContainer {
 			boolean denyPlacement = false;
 			String placementMessage = "";
 			if (itemID < blocks.length) {
+				if (hasTile(itemID)) {
+					denyPlacement = true;
+					placementMessage = LBCore.denyBlockMessage;
+				}
 				if (blocks[itemID] != null) {
 					Block theBlock = blocks[itemID];
-					if (theBlock.hasTileEntity(0)) {
-						denyPlacement = true;
-						placementMessage = LBCore.denyBlockMessage;
-					}
 					if (theBlock.getRenderType() == 1) {
 						denyPlacement = true;
 						placementMessage = LBCore.denyBlockMessage;
@@ -157,7 +158,13 @@ public class BlockLittleBlocks extends BlockContainer {
 				}
 			} else {
 				if(itemID < items.length) {
-					
+					if (Item.itemsList[itemID] instanceof ItemBlock) {
+						int itemBlockId = ((ItemBlock)Item.itemsList[itemID]).getBlockID();
+						if (hasTile(itemBlockId)) {
+							denyPlacement = true;
+							placementMessage = LBCore.denyBlockMessage;
+						}
+					}
 				}
 			}
 			if (itemID == Item.hoeDiamond.shiftedIndex || itemID == Item.hoeGold.shiftedIndex || itemID == Item.hoeSteel.shiftedIndex || itemID == Item.hoeStone.shiftedIndex || itemID == Item.hoeWood.shiftedIndex) {
@@ -165,7 +172,9 @@ public class BlockLittleBlocks extends BlockContainer {
 				placementMessage = LBCore.denyUseMessage;
 			}
 			if (denyPlacement) {
-				entityplayer.addChatMessage(placementMessage);
+				if (world.isRemote) {
+					entityplayer.addChatMessage(placementMessage);
+				}
 				return true;
 			}
 		}
@@ -186,6 +195,16 @@ public class BlockLittleBlocks extends BlockContainer {
 			}
 		}
 		return true;
+	}
+
+	private boolean hasTile(int itemBlockId) {
+		if (Block.blocksList[itemBlockId] != null) {
+			Block theBlock = Block.blocksList[itemBlockId];
+			if (theBlock.hasTileEntity(0)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public boolean onServerBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int q, float a, float b, float c) {
@@ -355,11 +374,6 @@ public class BlockLittleBlocks extends BlockContainer {
 			return super.getCollisionBoundingBoxFromPool(world, i, j, k);
 		}
 		return null;
-	}
-
-	@Override
-	public void onBlockAdded(World world, int i, int j, int k) {
-		super.onBlockAdded(world, i, j, k);
 	}
 
 	public void setBlockBoundsBasedOnSelection(World world, int x, int y, int z) {

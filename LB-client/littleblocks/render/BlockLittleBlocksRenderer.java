@@ -38,8 +38,8 @@ public class BlockLittleBlocksRenderer implements ISimpleBlockRenderingHandler {
 			
 			int[][][] content = tile.getContent();
 			
-			BlockLittleBlocksLittleRenderer blocksToRender =
-			BlockLittleBlocksLittleRenderer.getInstance(tile.getLittleWorld());
+			//BlockLittleBlocksLittleRenderer blocksToRender =
+			//BlockLittleBlocksLittleRenderer.getInstance(tile.getLittleWorld());
 
 			RenderBlocks littleRenderer = new RenderBlocks(tile.getLittleWorld());
 
@@ -51,47 +51,74 @@ public class BlockLittleBlocksRenderer implements ISimpleBlockRenderingHandler {
 					tessellator.draw();
 					tessellator.startDrawingQuads();
 				}
-				double xS = -((x >> 4) << 4), yS = -((y >> 4) << 4), zS = -((z >> 4) << 4);
+				double
+					xS = -((x >> 4) << 4),
+					yS = -((y >> 4) << 4),
+					zS = -((z >> 4) << 4);
+				
 				GL11.glTranslated(xS, yS, zS);
 				GL11.glEnable(32826 /* GL_RESCALE_NORMAL_EXT */);
-				float scale = 1 / 8F;
+				float scale = 1 / (float)TileEntityLittleBlocks.size;
 				GL11.glScalef(scale, scale, scale);
 				GL11.glTranslated(-xS, -yS, -zS);
-				
-				int i = 0;
+				if (tessellator.isDrawing) {
+					tessellator.draw();
+				}
+				if (!tessellator.isDrawing) {
+					tessellator.startDrawingQuads();
+				}
+				//int i = 0;
 				for (int x1 = 0; x1 < content.length; x1++) {
 					for (int y1 = 0; y1 < content[x1].length; y1++) {
 						for (int z1 = 0; z1 < content[x1][y1].length; z1++) {
 							int blockId = content[x1][y1][z1];
 							if (blockId > 0) {
-								Block littleBlock = Block.blocksList[blockId];
-								int[] coords = {(x << 3) + x1, (y << 3) + y1, (z << 3) + z1};
-								if (tessellator.isDrawing) {
-									tessellator.draw();
+								if (!tessellator.isDrawing) {
 									tessellator.startDrawingQuads();
 								}
-								MinecraftForgeClient.renderBlock(
-										littleRenderer, 
-										littleBlock,
-										coords[0],
-										coords[1],
-										coords[2]);
-								blocksToRender.addMem(i, coords, littleBlock);
-								i++;
-								if (tessellator.isDrawing) {
-									tessellator.draw();
+								Block littleBlock = Block.blocksList[blockId];
+								int[] coords = {(x << 3) + x1, (y << 3) + y1, (z << 3) + z1};
+								int texture = ModLoader.getMinecraftInstance().renderEngine.getTexture("/terrain.png");
+								if (!littleBlock.isDefaultTexture) {
+									if (tessellator.isDrawing) {
+										tessellator.draw();
+									}
 									tessellator.startDrawingQuads();
+									texture = ModLoader.getMinecraftInstance().renderEngine.getTexture(littleBlock.getTextureFile());
+									GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
+									littleRenderer.renderBlockByRenderType(
+											littleBlock,
+											coords[0],
+											coords[1],
+											coords[2]);
+									tessellator.draw();
+									texture = ModLoader.getMinecraftInstance().renderEngine.getTexture("/terrain.png");
+									GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
+									//blocksToRender.addMem(i, coords, littleBlock);
+									//i++;
+								} else {
+									littleRenderer.renderBlockByRenderType(
+											littleBlock,
+											coords[0],
+											coords[1],
+											coords[2]);
 								}
 							}
 						}
 					}
 				}
-				//System.out.println("Blocks to render: " + blocksToRender.getSize());
-				for (int index = 0; index < blocksToRender.getSize(); index++) {
-					int[] theCoords = blocksToRender.getCoords(index);
-					Block theBlock = blocksToRender.getBlock(index);
+				if(tessellator.isDrawing) {
+					tessellator.draw();
 				}
-				blocksToRender.getInstance(tile.getLittleWorld()).clear();
+				if (!tessellator.isDrawing) {
+					tessellator.startDrawingQuads();
+				}
+				//System.out.println("Blocks to render: " + blocksToRender.getSize());
+				//for (int index = 0; index < blocksToRender.getSize(); index++) {
+				//	int[] theCoords = blocksToRender.getCoords(index);
+				//	Block theBlock = blocksToRender.getBlock(index);
+				//}
+				//blocksToRender.getInstance(tile.getLittleWorld()).clear();
 				GL11.glDisable(32826 /* GL_RESCALE_NORMAL_EXT */);
 
 			GL11.glPopMatrix();

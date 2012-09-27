@@ -10,15 +10,20 @@ import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
 
 public class CommonTickHandler implements ITickHandler {
+	private int ticked = 0;
 	
 	@Override
 	public void tickStart(EnumSet<TickType> type, Object... tickData) {
 		if (type.equals(EnumSet.of(TickType.SERVER)) || type
 				.equals(EnumSet.of(TickType.CLIENT))) {
-			World[] worlds = DimensionManager.getWorlds();
-			for (World world : worlds) {
-				LBCore.getLittleWorld(world, false).tickUpdates(false);
+			if (ticked >= 40) {
+				World[] worlds = DimensionManager.getWorlds();
+				for (World world : worlds) {
+					LBCore.getLittleWorld(world, false).tickUpdates(false);
+				}
+				ticked = 0;
 			}
+			ticked++;
 		}
 	}
 
