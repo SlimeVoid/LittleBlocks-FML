@@ -534,9 +534,9 @@ public class BlockLittleBlocks extends BlockContainer {
 
 		List<Object[]> returns = new ArrayList<Object[]>();
 
-		returns = CollisionRayTrace.RayTraceLittleBlocks(this, player, view, i, j, k, returns, content, tile);
+		returns = CollisionRayTrace.rayTraceLittleBlocks(this, player, view, i, j, k, returns, content, tile);
 
-		returns = CollisionRayTrace.CollisionRayTracer(this, world, player, view, i, j, k, returns);
+		returns = CollisionRayTrace.collisionRayTracer(this, world, player, view, i, j, k, returns);
 		
 		if (!returns.isEmpty()) {
 			Object[] min = null;

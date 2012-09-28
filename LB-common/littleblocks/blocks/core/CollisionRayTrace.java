@@ -13,7 +13,7 @@ import net.minecraft.src.World;
 
 public class CollisionRayTrace {
 
-	public static List<Object[]> RayTraceLittleBlocks(BlockLittleBlocks littleBlocks, Vec3 player, Vec3 view, int i, int j, int k, List<Object[]> returns, int[][][] content, TileEntityLittleBlocks tile) {
+	public static List<Object[]> rayTraceLittleBlocks(BlockLittleBlocks littleBlocks, Vec3 player, Vec3 view, int i, int j, int k, List<Object[]> returns, int[][][] content, TileEntityLittleBlocks tile) {
 		float m = LBCore.littleBlocksSize;
 		for (int x = 0; x < content.length; x++) {
 			for (int y = 0; y < content[x].length; y++) {
@@ -56,7 +56,7 @@ public class CollisionRayTrace {
 		return returns;
 	}
 	
-	public static List<Object[]> CollisionRayTracerX(BlockLittleBlocks littleBlocks, World world, Vec3 player, Vec3 view, int x, int y, int z, int xx, List<Object[]> returns) {
+	public static List<Object[]> collisionRayTracerX(BlockLittleBlocks littleBlocks, World world, Vec3 player, Vec3 view, int x, int y, int z, int xx, List<Object[]> returns) {
 		int m = LBCore.littleBlocksSize;
 		int block = world.getBlockId(x, y, z); // -X
 		if (block > 0 && Block.blocksList[block].isOpaqueCube()) {
@@ -84,7 +84,7 @@ public class CollisionRayTrace {
 		return returns;
 	}
 	
-	public static List<Object[]> CollisionRayTracerY(BlockLittleBlocks littleBlocks, World world, Vec3 player, Vec3 view, int x, int y, int z, int yy, List<Object[]> returns) {
+	public static List<Object[]> collisionRayTracerY(BlockLittleBlocks littleBlocks, World world, Vec3 player, Vec3 view, int x, int y, int z, int yy, List<Object[]> returns) {
 		int m = LBCore.littleBlocksSize;
 		int block = world.getBlockId(x, y, z); // DOWN
 		if (block > 0 && Block.blocksList[block].isOpaqueCube()) {
@@ -112,7 +112,7 @@ public class CollisionRayTrace {
 		return returns;
 	}
 	
-	public static List<Object[]> CollisionRayTracerZ(BlockLittleBlocks littleBlocks, World world, Vec3 player, Vec3 view, int x, int y, int z, int zz, List<Object[]> returns) {
+	public static List<Object[]> collisionRayTracerZ(BlockLittleBlocks littleBlocks, World world, Vec3 player, Vec3 view, int x, int y, int z, int zz, List<Object[]> returns) {
 		int m = LBCore.littleBlocksSize;
 		int block = world.getBlockId(x, y, z); // -Z
 		if (block > 0 && Block.blocksList[block].isOpaqueCube()) {
@@ -140,14 +140,32 @@ public class CollisionRayTrace {
 		return returns;
 	}
 	
-	public static List<Object[]> CollisionRayTracer(BlockLittleBlocks littleBlocks, World world, Vec3 player, Vec3 view, int x, int y, int z, List<Object[]> returns) {
+	public static List<Object[]> collisionRayTracer(BlockLittleBlocks littleBlocks, World world, Vec3 player, Vec3 view, int x, int y, int z, List<Object[]> returns) {
 		int m = LBCore.littleBlocksSize;
-		returns = CollisionRayTracerY(littleBlocks, world, player, view, x, y - 1, z, -1, returns);
-		returns = CollisionRayTracerY(littleBlocks, world, player, view, x, y + 1, z, m, returns);
-		returns = CollisionRayTracerX(littleBlocks, world, player, view, x - 1, y, z, -1, returns);
-		returns = CollisionRayTracerX(littleBlocks, world, player, view, x + 1, y, z, m, returns);
-		returns = CollisionRayTracerZ(littleBlocks, world, player, view, x, y, z - 1, -1, returns);
-		returns = CollisionRayTracerZ(littleBlocks, world, player, view, x, y, z + 1, m, returns);
+		/*
+		 * UP
+		 */
+		returns = collisionRayTracerY(littleBlocks, world, player, view, x, y - 1, z, -1, returns);
+		/*
+		 * DOWN
+		 */
+		returns = collisionRayTracerY(littleBlocks, world, player, view, x, y + 1, z, m, returns);
+		/*
+		 * -X
+		 */
+		returns = collisionRayTracerX(littleBlocks, world, player, view, x - 1, y, z, -1, returns);
+		/*
+		 * +X
+		 */
+		returns = collisionRayTracerX(littleBlocks, world, player, view, x + 1, y, z, m, returns);
+		/*
+		 * -Z
+		 */
+		returns = collisionRayTracerZ(littleBlocks, world, player, view, x, y, z - 1, -1, returns);
+		/*
+		 * +Z
+		 */
+		returns = collisionRayTracerZ(littleBlocks, world, player, view, x, y, z + 1, m, returns);
 		return returns;
 	}
 }
