@@ -35,65 +35,91 @@ public class ClientPacketHandler implements IPacketHandler {
 	}
 
 	public static void handleTileEntityPacket(PacketTileEntity packet, EntityPlayer entityplayer, World world) {
-		TileEntity tileentity = world.getBlockTileEntity(
-				packet.xPosition,
-				packet.yPosition,
-				packet.zPosition);
 		if (packet instanceof PacketTileEntityLB) {
 			PacketTileEntityLB packetLB = (PacketTileEntityLB) packet;
 			if (packetLB.getSender() == LBPacketIds.CLIENT) {
 				return;
 			}
+			TileEntity tileentity = packet.getTileEntity(world);
 			if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
 				TileEntityLittleBlocks tileentitylb = (TileEntityLittleBlocks) tileentity;
-				switch (packetLB.payload.getIntPayload(0)) {
-				case 0:
-					int[][][] content = tileentitylb.getContent();
-					switch (packetLB.payload.getIntPayload(1)) {
-					case 0:
-						break;
-					case 1:
-						for (int xx = 0; xx < 8; xx++) {
-							for (int yy = 0; yy < 8; yy++) {
-								for (int zz = 0; zz < 8; zz++) {
-									tileentitylb
-											.setContent(
-													xx,
-													yy,
-													zz,
-													packetLB.payload
-															.getIntPayload(1 + xx + yy * 8 + zz * 8 * 8),
-													packetLB.payload
-															.getIntPayload(1 + 8 * 8 * 8 + xx + yy * 8 + zz * 8 * 8));
-								}
-							}
+				int[][][] content = new int[tileentitylb.size][tileentitylb.size][tileentitylb.size];
+				int[][][] metadata = new int[tileentitylb.size][tileentitylb.size][tileentitylb.size];
+				for (int xx = 0; xx < content.length; xx++) {
+					for (int yy = 0; yy < content[xx].length; yy++) {
+						for (int zz = 0; zz < content[xx][yy].length; zz++) {
+							int blockId = packetLB.payload
+								.getIntPayload(
+										xx + 
+										(yy * tileentitylb.size) + 
+										(zz * tileentitylb.size * tileentitylb.size));
+							int blockMeta = packetLB.payload
+								.getIntPayload(
+										(tileentitylb.size * tileentitylb.size * tileentitylb.size) + 
+										xx + 
+										(yy * tileentitylb.size) + 
+										(zz * tileentitylb.size * tileentitylb.size));
+							System.out.println(
+									"ContentRec: " + blockId);
+							content[xx][yy][zz] = blockId;
+							metadata[xx][yy][zz] = blockMeta;
 						}
-						break;
-					case 2:
-						for (int i = 0; i < (packetLB.payload.getIntSize() - 2) / 5; i++) {
-							int xx = packetLB.payload
-									.getIntPayload(2 + i * 5 + 0);
-							int yy = packetLB.payload
-									.getIntPayload(2 + i * 5 + 1);
-							int zz = packetLB.payload
-									.getIntPayload(2 + i * 5 + 2);
-							int id = packetLB.payload
-									.getIntPayload(2 + i * 5 + 3);
-							int data = packetLB.payload
-									.getIntPayload(2 + i * 5 + 4);
-							tileentitylb.setContent(xx, yy, zz, id, data);
-						}
-						break;
 					}
-					tileentitylb.onInventoryChanged();
-					world.markBlockNeedsUpdate(
-							packet.xPosition,
-							packet.yPosition,
-							packet.zPosition);
-					break;
 				}
+				tileentitylb.setContent(content);
+				tileentitylb.setMetadata(metadata);
+				tileentitylb.onInventoryChanged();
+				world.markBlockNeedsUpdate(
+						packet.xPosition,
+						packet.yPosition,
+						packet.zPosition);
 			}
 		}
+	}
+	
+	public void handleLittleData(PacketUpdate packetLB, TileEntity tileentitylittleblocks) {
+		/*switch (packetLB.payload.getIntPayload(0)) {
+		case 0:
+			switch (packetLB.payload.getIntPayload(1)) {
+			case 0:
+				break;
+			case 1:
+				for (int xx = 0; xx < tileentitylb.size; xx++) {
+					for (int yy = 0; yy < tileentitylb.size; yy++) {
+						for (int zz = 0; zz < tileentitylb.size; zz++) {
+							System.out.println("ContentRec: " + packetLB.payload
+													.getIntPayload(1 + xx + yy * tileentitylb.size + zz * tileentitylb.size * tileentitylb.size));
+							tileentitylb
+									.setContent(
+											xx,
+											yy,
+											zz,
+											packetLB.payload
+													.getIntPayload(1 + xx + yy * tileentitylb.size + zz * tileentitylb.size * tileentitylb.size),
+											packetLB.payload
+													.getIntPayload(1 + tileentitylb.size * tileentitylb.size * tileentitylb.size + xx + yy * tileentitylb.size + zz * tileentitylb.size * tileentitylb.size));
+						}
+					}
+				}
+				break;
+			case 2:
+				for (int i = 0; i < (packetLB.payload.getIntSize() - 2) / 5; i++) {
+					int xx = packetLB.payload
+							.getIntPayload(2 + i * 5 + 0);
+					int yy = packetLB.payload
+							.getIntPayload(2 + i * 5 + 1);
+					int zz = packetLB.payload
+							.getIntPayload(2 + i * 5 + 2);
+					int id = packetLB.payload
+							.getIntPayload(2 + i * 5 + 3);
+					int data = packetLB.payload
+							.getIntPayload(2 + i * 5 + 4);
+					tileentitylb.setContent(xx, yy, zz, id, data);
+				}
+				break;
+			}
+			break;
+		}*/
 	}
 
 	public static void blockUpdate(World world, EntityPlayer entityplayer, int x, int y, int z, int q, float a, float b, float c, BlockLittleBlocks block, String command) {
@@ -125,20 +151,40 @@ public class ClientPacketHandler implements IPacketHandler {
 				System.out.println("littleNotify");
 			} else if (packetLB.targetExists(world)) {
 				TileEntity tileentity = packetLB.getTileEntity(world);
+				int	xx = (packetLB.xPosition << 3) + packetLB.getSelectedX(),
+					yy = (packetLB.yPosition << 3) + packetLB.getSelectedY(),
+					zz = (packetLB.zPosition << 3) + packetLB.getSelectedZ();
 				if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
 					TileEntityLittleBlocks tileentitylb = (TileEntityLittleBlocks) tileentity;
-					if (packetLB.getCommand().equals("UPDATECLIENT")) {
+					if (packetLB.getCommand().equals(LBCore.idModifiedCommand)) {
 						tileentitylb.setContent(
 								packetLB.getSelectedX(),
 								packetLB.getSelectedY(),
 								packetLB.getSelectedZ(),
 								packetLB.getBlockID());
-						tileentitylb.onInventoryChanged();
-						world.markBlockAsNeedsUpdate(
-								packetLB.xPosition,
-								packetLB.yPosition,
-								packetLB.zPosition);
 					}
+					if (packetLB.getCommand().equals(LBCore.metaDataModifiedCommand)) {
+						tileentitylb.setMetadata(
+								packetLB.getSelectedX(),
+								packetLB.getSelectedY(),
+								packetLB.getSelectedZ(),
+								packetLB.getMetadata());
+					}
+					if (packetLB.getCommand().equals(LBCore.updateClientCommand)) {
+						tileentitylb.setContent(
+								packetLB.getSelectedX(),
+								packetLB.getSelectedY(),
+								packetLB.getSelectedZ(),
+								packetLB.getBlockID(),
+								packetLB.getMetadata());
+						
+					}
+					tileentitylb.onInventoryChanged();
+					world.markBlockAsNeedsUpdate(
+							packetLB.xPosition,
+							packetLB.yPosition,
+							packetLB.zPosition);
+					tileentitylb.getLittleWorld().notifyBlocksOfNeighborChange(xx, yy, zz, packetLB.getBlockID());
 				}
 			}
 		}

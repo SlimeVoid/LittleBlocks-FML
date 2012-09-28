@@ -163,7 +163,7 @@ public class LittleWorld extends World {
 
 	@Override
 	public int getHeight() {
-		return super.getHeight() * TileEntityLittleBlocks.size;
+		return super.getHeight() * LBCore.littleBlocksSize;
 	}
 
 	@Override
@@ -291,12 +291,6 @@ public class LittleWorld extends World {
 			notifyBlockOfNeighborChange(i, j + 1, k, l);
 			notifyBlockOfNeighborChange(i, j, k - 1, l);
 			notifyBlockOfNeighborChange(i, j, k + 1, l);
-/*			if (this.realWorld.getBlockId(x, y, z) == LBCore.littleBlocksID) {
-				PacketLittleBlocks packet = new PacketLittleBlocks(
-						LBCore.littleNotifyCommand, x, y, z, 0, 0, 0, 0, i, j, k, l, this.getBlockMetadata(i , j , k));
-				packet.setSender(LBPacketIds.SERVER);
-				CommonPacketHandler.sendToAllPlayers(realWorld, null, packet.getPacket(), i >> 3, j >> 3, k >> 3, true);
-			}*/
 		//}
 	}
 
@@ -310,15 +304,14 @@ public class LittleWorld extends World {
 			k >>= 3;
 			world = realWorld;
 		}
-		if (realWorld.editingBlocks || this.editingBlocks) {
-			return;
-		}
-		Block block = Block.blocksList[world.getBlockId(i, j, k)];
-		if (block != null) {
-			block.onNeighborBlockChange(world, i, j, k, l);
-
-			if (world == this) {
-				this.markBlockNeedsUpdate(i, j, k);
+		if ((!realWorld.editingBlocks && !realWorld.isRemote)) {
+			Block block = Block.blocksList[world.getBlockId(i, j, k)];
+			if (block != null) {
+				block.onNeighborBlockChange(world, i, j, k, l);
+	
+				if (world == this) {
+					realWorld.markBlockNeedsUpdate(i, j, k);
+				}
 			}
 		}
 	}

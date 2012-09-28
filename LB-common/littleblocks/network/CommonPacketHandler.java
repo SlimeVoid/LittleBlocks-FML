@@ -36,7 +36,7 @@ public class CommonPacketHandler implements IPacketHandler {
 			for (TileEntity tileentity : tileEntities) {
 				if (tileentity instanceof TileEntityLittleBlocks) {
 					tileentity.onInventoryChanged();
-					world.markBlockNeedsUpdate(tileentity.xCoord, tileentity.yCoord+1, tileentity.zCoord);
+					//world.markBlockNeedsUpdate(tileentity.xCoord, tileentity.yCoord+1, tileentity.zCoord);
 				}
 			}
 		}

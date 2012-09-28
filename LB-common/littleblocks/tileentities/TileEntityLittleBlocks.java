@@ -22,7 +22,7 @@ import eurysmods.network.packets.core.PacketPayload;
 import eurysmods.network.packets.core.PacketUpdate;
 
 public class TileEntityLittleBlocks extends TileEntity {
-	public static int size = 8;
+	public int size = LBCore.littleBlocksSize;
 	private int content[][][] = new int[size][size][size];
 	private int metadatas[][][] = new int[size][size][size];
 	private List<TileEntity> tiles = new ArrayList<TileEntity>();
@@ -240,7 +240,6 @@ public class TileEntityLittleBlocks extends TileEntity {
 		int lastId = content[x][y][z];
 		content[x][y][z] = id;
 		setMetadata(x, y, z, 0);
-
 		if (lastId != id) {
 			LBCore.getLittleWorld().idModified(
 					(this.xCoord << 3) + x,
@@ -253,6 +252,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 					lastId,
 					id);
 		}
+		this.onInventoryChanged();
 	}
 
 	public void setMetadata(int x, int y, int z, int metadata) {
@@ -325,6 +325,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 					metadatas[x][y][z],
 					metadata);
 		}
+		this.onInventoryChanged();
 	}
 
 	public void setContent(int x, int y, int z, int id, int metadata) {
@@ -414,6 +415,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 					lastId,
 					id);
 		}
+		this.onInventoryChanged();
 	}
 
 	public void setContent(int[][][] content) {
@@ -428,6 +430,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 		removeTileEntity(x, y, z);
 		tile.validate();
 		addTileEntity(tile);
+		this.onInventoryChanged();
 	}
 
 	public TileEntity getTileEntity(int x, int y, int z) {
@@ -543,6 +546,38 @@ public class TileEntityLittleBlocks extends TileEntity {
 	}
 
 	public PacketPayload getTileEntityPayload() {
+		return getPayload();
+	}
+	
+	public PacketPayload getPayload() {
+		PacketPayload p = new PacketPayload((size * size * size) * 2, 0, 0, 0);
+		for (int x = 0; x < content.length; x++) {
+			for (int y = 0; y < content[x].length; y++) {
+				for (int z = 0; z < content[x][y].length; z++) {
+					p.setIntPayload(x + (y * size) + (z * size * size), content[x][y][z]);
+					if (content[x][y][z] > 0) {
+						System.out.println("Content: " + p.getIntPayload(1 + x + (y * 8) + (z * 8 * 8)));
+					}
+				}
+			}
+		}
+	
+		for (int x = 0; x < metadatas.length; x++) {
+			for (int y = 0; y < metadatas[x].length; y++) {
+				for (int z = 0; z < metadatas[x][y].length; z++) {
+					p.setIntPayload((size * size * size) + x + (y * size) + (z * size * size), metadatas[x][y][z]);
+				}
+			}
+		}
+		return p;
+	}
+
+	public void setMetadata(int[][][] metadata) {
+		this.metadatas = metadata;
+	}
+	
+/*	public PacketPayload getPayload() {
+		PacketPayload p = new PacketPayload(2 + (size * size * size) * 2, 0, 0, 0);
 		int numberOfLittleBlocks = 0;
 		for (int x = 0; x < content.length; x++) {
 			for (int y = 0; y < content[x].length; y++) {
@@ -554,30 +589,16 @@ public class TileEntityLittleBlocks extends TileEntity {
 			}
 		}
 		int[] dataInt;
-		// if (upToDate) {
-		// dataInt = new int[] { 0, 0 };
-		// } else
-		if (numberOfLittleBlocks > 204) {
-			// (3 /* POS */ + 2 /* ID & DATA */)x > 8*8*8*2 /* ID & DATA */ <=>
-			// 5x > 1024 <=> x > 204.8
-			dataInt = new int[2 + 8 * 8 * 8 * 2];
+		if (upToDate) {
+			dataInt = new int[] { 0, 0 };
+		} else
+			if (numberOfLittleBlocks > 204) {
+			 //(3  POS  + 2  ID & DATA )x > 8*8*8*2  ID & DATA <=> 5x > 1024 <=> x > 204.8
+			dataInt = new int[2 + ((size * size * size) * 2)];
 			dataInt[0] = 0;
 			dataInt[1] = 1;
-			for (int x = 0; x < content.length; x++) {
-				for (int y = 0; y < content[x].length; y++) {
-					for (int z = 0; z < content[x][y].length; z++) {
-						dataInt[1 + x + y * 8 + z * 8 * 8] = content[x][y][z];
-					}
-				}
-			}
-
-			for (int x = 0; x < metadatas.length; x++) {
-				for (int y = 0; y < metadatas[x].length; y++) {
-					for (int z = 0; z < metadatas[x][y].length; z++) {
-						dataInt[1 + 8 * 8 * 8 + x + y * 8 + z * 8 * 8] = metadatas[x][y][z];
-					}
-				}
-			}
+			p.setIntPayload(0, 0);
+			p.setIntPayload(0, 1);
 		} else {
 			dataInt = new int[2 + numberOfLittleBlocks * 5];
 			dataInt[0] = 0;
@@ -598,15 +619,12 @@ public class TileEntityLittleBlocks extends TileEntity {
 				}
 			}
 		}
-
-		// upToDate = false;
-		PacketPayload p = new PacketPayload(dataInt.length, 0, 1, 0);
+		upToDate = false;
 		p.setStringPayload(
 				0,
 				String.valueOf(getMetadata(xCoord, yCoord, zCoord)));
 		for (int i = 0; i < dataInt.length; i++) {
 			p.setIntPayload(i, dataInt[i]);
 		}
-		return p;
-	}
+	}*/
 }

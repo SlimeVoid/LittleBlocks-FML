@@ -37,7 +37,7 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 
 		GL11.glEnable(32826 /* GL_RESCALE_NORMAL_EXT */);
 
-		float scale = 1F / TileEntityLittleBlocks.size;
+		float scale = 1F / LBCore.littleBlocksSize;
 		GL11.glScaled(scale, scale, scale);
 
 		int[][][] content = tile.getContent();

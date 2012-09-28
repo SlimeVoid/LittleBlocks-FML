@@ -26,6 +26,8 @@ public class LBCore {
 	public static String idModifiedCommand = "IDMOD";
 	public static String blockClickCommand = "BLOCKCLICK";
 	public static String blockActivateCommand = "BLOCKACTIVATE";
+	public static String littleNotifyCommand = "LITTLENOTIFY";
+	public static String updateClientCommand = "UPDATECLIENT";
 	public static Block littleBlocks;
 	private static LittleWorld littleWorld;
 	public static int littleBlocksID;
@@ -35,7 +37,7 @@ public class LBCore {
 	public static boolean optifine;
 	public static String denyBlockMessage = "Sorry, you cannot place that here!";
 	public static String denyUseMessage = "Sorry, you cannot use that here!";
-	public static String littleNotifyCommand = "LITTLENOTIFY";
+	public static int littleBlocksSize = 8;
 
 	public static void initialize(ICommonProxy proxy) {
 		LBInit.initialize(proxy);

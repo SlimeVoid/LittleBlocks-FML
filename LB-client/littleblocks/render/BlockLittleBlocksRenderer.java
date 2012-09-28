@@ -58,7 +58,7 @@ public class BlockLittleBlocksRenderer implements ISimpleBlockRenderingHandler {
 				
 				GL11.glTranslated(xS, yS, zS);
 				GL11.glEnable(32826 /* GL_RESCALE_NORMAL_EXT */);
-				float scale = 1 / (float)TileEntityLittleBlocks.size;
+				float scale = 1 / (float)LBCore.littleBlocksSize;
 				GL11.glScalef(scale, scale, scale);
 				GL11.glTranslated(-xS, -yS, -zS);
 				if (tessellator.isDrawing) {

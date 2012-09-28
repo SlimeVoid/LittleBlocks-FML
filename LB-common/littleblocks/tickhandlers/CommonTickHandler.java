@@ -4,7 +4,9 @@ import java.util.EnumSet;
 
 import littleblocks.core.LBCore;
 import littleblocks.tileentities.TileEntityLittleBlocks;
+import net.minecraft.src.ModLoader;
 import net.minecraft.src.World;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.DimensionManager;
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
@@ -14,16 +16,9 @@ public class CommonTickHandler implements ITickHandler {
 	
 	@Override
 	public void tickStart(EnumSet<TickType> type, Object... tickData) {
-		if (type.equals(EnumSet.of(TickType.SERVER)) || type
-				.equals(EnumSet.of(TickType.CLIENT))) {
-			if (ticked >= 40) {
-				World[] worlds = DimensionManager.getWorlds();
-				for (World world : worlds) {
-					LBCore.getLittleWorld(world, false).tickUpdates(false);
-				}
-				ticked = 0;
-			}
-			ticked++;
+		World[] worlds = DimensionManager.getWorlds();
+		for (World world : worlds) {
+			LBCore.getLittleWorld(world, false).tickUpdates(false);
 		}
 	}
 
@@ -33,7 +28,7 @@ public class CommonTickHandler implements ITickHandler {
 
 	@Override
 	public EnumSet<TickType> ticks() {
-		return EnumSet.of(TickType.SERVER, TickType.CLIENT);
+		return EnumSet.of(TickType.SERVER);
 	}
 
 	@Override

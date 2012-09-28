@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import littleblocks.blocks.core.CollisionRayTrace;
 import littleblocks.core.LBCore;
 import littleblocks.network.ClientPacketHandler;
 import littleblocks.network.CommonPacketHandler;
 import littleblocks.network.LBPacketIds;
 import littleblocks.network.packets.PacketLittleBlocks;
+import littleblocks.network.packets.PacketTileEntityLB;
 import littleblocks.tileentities.TileEntityLittleBlocks;
 import littleblocks.world.LittleWorld;
 import net.minecraft.src.AxisAlignedBB;
@@ -52,17 +54,19 @@ public class BlockLittleBlocks extends BlockContainer {
 		super(id, material);
 		this.clazz = clazz;
 		setHardness(hardness);
-        this.setTickRandomly(true);
+        //this.setTickRandomly(true);
 		if (selfNotify) {
 			setRequiresSelfNotify();
 		}
 		this.setCreativeTab(CreativeTabs.tabDeco);
 	}
 	
-    /**
-     * How many world ticks before ticking
-     */
-    public int tickRate()
+	@Override
+	public void onBlockAdded(World world, int x, int y, int z) {
+		super.onBlockAdded(world, x, y, z);
+	}
+	
+/*    public int tickRate()
     {
         return 20;
     }
@@ -96,7 +100,7 @@ public class BlockLittleBlocks extends BlockContainer {
 			block.updateTick(world, xx, yy, zz, rand);
 			world.notifyBlocksOfNeighborChange(xx, yy, zz, block.blockID);
 		}
-    }
+    }*/
     
 	@Override
 	public boolean removeBlockByPlayer(World world, EntityPlayer entityplayer, int x, int y, int z) {
@@ -240,7 +244,7 @@ public class BlockLittleBlocks extends BlockContainer {
 						LBCore.blockActivateCommand);
 			}
 		}
-		world.scheduleBlockUpdate(x, y, z, this.blockID, this.tickRate());
+		//world.scheduleBlockUpdate(x, y, z, this.blockID, this.tickRate());
 		return true;
 	}
 
@@ -283,7 +287,7 @@ public class BlockLittleBlocks extends BlockContainer {
 						c)) {
 					tileentitylittleblocks.onInventoryChanged();
 					world.markBlockNeedsUpdate(x, y, z);
-					world.notifyBlocksOfNeighborChange(x, y, z, this.blockID);
+					//world.notifyBlocksOfNeighborChange(x, y, z, this.blockID);
 					return true;
 				} else if (entityplayer.getCurrentEquippedItem() != null && entityplayer
 						.getCurrentEquippedItem()
@@ -294,7 +298,7 @@ public class BlockLittleBlocks extends BlockContainer {
 							entityplayer.getCurrentEquippedItem());
 					tileentitylittleblocks.onInventoryChanged();
 					world.markBlockNeedsUpdate(x, y, z);
-					world.notifyBlocksOfNeighborChange(x, y, z, this.blockID);
+					//world.notifyBlocksOfNeighborChange(x, y, z, this.blockID);
 					return true;
 				}
 			}
@@ -320,7 +324,7 @@ public class BlockLittleBlocks extends BlockContainer {
 						LBCore.blockClickCommand);
 			}
 		}
-		world.scheduleBlockUpdate(x, y, z, this.blockID, this.tickRate());
+		//world.scheduleBlockUpdate(x, y, z, this.blockID, this.tickRate());
 	}
 
 	public void onServerBlockClicked(World world, int x, int y, int z, EntityPlayer entityplayer) {
@@ -349,10 +353,11 @@ public class BlockLittleBlocks extends BlockContainer {
 			}
 			tile.setContent(this.xSelected, this.ySelected, this.zSelected, 0);
 			tile.onInventoryChanged();
-			world.markBlockNeedsUpdate(x, y, z);
-			world.notifyBlocksOfNeighborChange(x, y, z, this.blockID);
 		}
-		PacketLittleBlocks packetLB = new PacketLittleBlocks(
+		tile.getLittleWorld().notifyBlocksOfNeighborChange(xx, yy, zz, content);
+		world.notifyBlocksOfNeighborChange(x, y, z, content);
+		PacketTileEntityLB packetLB = new PacketTileEntityLB(tile);
+/*		PacketLittleBlocks packetLB = new PacketLittleBlocks(
 				"UPDATECLIENT",
 				x,
 				y,
@@ -365,7 +370,7 @@ public class BlockLittleBlocks extends BlockContainer {
 				this.ySelected,
 				this.zSelected,
 				0,
-				0);
+				0);*/
 		packetLB.setSender(LBPacketIds.SERVER);
 		CommonPacketHandler.sendToAllPlayers(
 				world,
@@ -437,7 +442,7 @@ public class BlockLittleBlocks extends BlockContainer {
 	}
 
 	public void setBlockBoundsBasedOnSelection(World world, int x, int y, int z) {
-		float m = TileEntityLittleBlocks.size;
+		float m = LBCore.littleBlocksSize;
 		if (xSelected == -10) {
 			setBlockBounds(0f, 0f, 0f, 0f, 0f, 0f);
 		} else {
@@ -484,7 +489,7 @@ public class BlockLittleBlocks extends BlockContainer {
 			TileEntityLittleBlocks tile = (TileEntityLittleBlocks) tileentity;
 
 			int[][][] content = tile.getContent();
-			float m = TileEntityLittleBlocks.size;
+			float m = LBCore.littleBlocksSize;
 
 			for (int x = 0; x < content.length; x++) {
 				for (int y = 0; y < content[x].length; y++) {
@@ -526,201 +531,13 @@ public class BlockLittleBlocks extends BlockContainer {
 		}
 
 		int[][][] content = tile.getContent();
-		float m = TileEntityLittleBlocks.size;
 
 		List<Object[]> returns = new ArrayList<Object[]>();
 
-		for (int x = 0; x < content.length; x++) {
-			for (int y = 0; y < content[x].length; y++) {
-				for (int z = 0; z < content[x][y].length; z++) {
-					if (content[x][y][z] > 0) {
-						Block block = Block.blocksList[content[x][y][z]];
-						block.collisionRayTrace(
-								tile.getLittleWorld(),
-								(i << 3) + x,
-								(j << 3) + y,
-								(k << 3) + z,
-								player,
-								view);
-						Object[] ret = rayTraceBound(
-								AxisAlignedBB.getBoundingBox(
-										(x + block.minX) / m,
-										(y + block.minY) / m,
-										(z + block.minZ) / m,
-										(x + block.maxX) / m,
-										(y + block.maxY) / m,
-										(z + block.maxZ) / m),
-								i,
-								j,
-								k,
-								player,
-								view);
-						if (ret != null) {
-							returns.add(new Object[] {
-									ret[0],
-									ret[1],
-									ret[2],
-									x,
-									y,
-									z });
-						}
-					}
-				}
-			}
-		}
+		returns = CollisionRayTrace.RayTraceLittleBlocks(this, player, view, i, j, k, returns, content, tile);
 
-		int max = TileEntityLittleBlocks.size;
-
-		int block = world.getBlockId(i, j - 1, k); // DOWN
-		if (block > 0 && Block.blocksList[block].isOpaqueCube()) {
-			for (int x = 0; x < max; x++) {
-				for (int z = 0; z < max; z++) {
-					int y = -1;
-					Object[] ret = rayTraceBound(AxisAlignedBB.getBoundingBox(
-							x / m,
-							y / m,
-							z / m,
-							(x + 1) / m,
-							(y + 1) / m,
-							(z + 1) / m), i, j, k, player, view);
-					if (ret != null) {
-						returns.add(new Object[] {
-								ret[0],
-								ret[1],
-								ret[2],
-								x,
-								y,
-								z });
-					}
-				}
-			}
-		}
-
-		block = world.getBlockId(i, j + 1, k); // UP
-		if (block > 0 && Block.blocksList[block].isOpaqueCube()) {
-			for (int x = 0; x < max; x++) {
-				for (int z = 0; z < max; z++) {
-					int y = max;
-					Object[] ret = rayTraceBound(AxisAlignedBB.getBoundingBox(
-							x / m,
-							y / m,
-							z / m,
-							(x + 1) / m,
-							(y + 1) / m,
-							(z + 1) / m), i, j, k, player, view);
-					if (ret != null) {
-						returns.add(new Object[] {
-								ret[0],
-								ret[1],
-								ret[2],
-								x,
-								y,
-								z });
-					}
-				}
-			}
-		}
-
-		block = world.getBlockId(i - 1, j, k); // -X
-		if (block > 0 && Block.blocksList[block].isOpaqueCube()) {
-			for (int y = 0; y < max; y++) {
-				for (int z = 0; z < max; z++) {
-					int x = -1;
-					Object[] ret = rayTraceBound(AxisAlignedBB.getBoundingBox(
-							x / m,
-							y / m,
-							z / m,
-							(x + 1) / m,
-							(y + 1) / m,
-							(z + 1) / m), i, j, k, player, view);
-					if (ret != null) {
-						returns.add(new Object[] {
-								ret[0],
-								ret[1],
-								ret[2],
-								x,
-								y,
-								z });
-					}
-				}
-			}
-		}
-
-		block = world.getBlockId(i + 1, j, k); // +X
-		if (block > 0 && Block.blocksList[block].isOpaqueCube()) {
-			for (int y = 0; y < max; y++) {
-				for (int z = 0; z < max; z++) {
-					int x = max;
-					Object[] ret = rayTraceBound(AxisAlignedBB.getBoundingBox(
-							x / m,
-							y / m,
-							z / m,
-							(x + 1) / m,
-							(y + 1) / m,
-							(z + 1) / m), i, j, k, player, view);
-					if (ret != null) {
-						returns.add(new Object[] {
-								ret[0],
-								ret[1],
-								ret[2],
-								x,
-								y,
-								z });
-					}
-				}
-			}
-		}
-
-		block = world.getBlockId(i, j, k - 1); // -Z
-		if (block > 0 && Block.blocksList[block].isOpaqueCube()) {
-			for (int y = 0; y < max; y++) {
-				for (int x = 0; x < max; x++) {
-					int z = -1;
-					Object[] ret = rayTraceBound(AxisAlignedBB.getBoundingBox(
-							x / m,
-							y / m,
-							z / m,
-							(x + 1) / m,
-							(y + 1) / m,
-							(z + 1) / m), i, j, k, player, view);
-					if (ret != null) {
-						returns.add(new Object[] {
-								ret[0],
-								ret[1],
-								ret[2],
-								x,
-								y,
-								z });
-					}
-				}
-			}
-		}
-
-		block = world.getBlockId(i, j, k + 1); // +Z
-		if (block > 0 && Block.blocksList[block].isOpaqueCube()) {
-			for (int y = 0; y < max; y++) {
-				for (int x = 0; x < max; x++) {
-					int z = max;
-					Object[] ret = rayTraceBound(AxisAlignedBB.getBoundingBox(
-							x / m,
-							y / m,
-							z / m,
-							(x + 1) / m,
-							(y + 1) / m,
-							(z + 1) / m), i, j, k, player, view);
-					if (ret != null) {
-						returns.add(new Object[] {
-								ret[0],
-								ret[1],
-								ret[2],
-								x,
-								y,
-								z });
-					}
-				}
-			}
-		}
-
+		returns = CollisionRayTrace.CollisionRayTracer(this, world, player, view, i, j, k, returns);
+		
 		if (!returns.isEmpty()) {
 			Object[] min = null;
 			double distMin = 0;
@@ -766,7 +583,7 @@ public class BlockLittleBlocks extends BlockContainer {
 		return null;
 	}
 
-	private Object[] rayTraceBound(AxisAlignedBB bound, int i, int j, int k, Vec3 player, Vec3 view) {
+	public Object[] rayTraceBound(AxisAlignedBB bound, int i, int j, int k, Vec3 player, Vec3 view) {
 		Vec3 Vec32 = player.getIntermediateWithXValue(view, bound.minX);
 		Vec3 Vec33 = player.getIntermediateWithXValue(view, bound.maxX);
 		Vec3 Vec34 = player.getIntermediateWithYValue(view, bound.minY);
@@ -925,11 +742,11 @@ public class BlockLittleBlocks extends BlockContainer {
 	}
 
 	@Override
-	public void onNeighborBlockChange(World world, int i, int j, int k, int l) {
-		super.onNeighborBlockChange(world, i, j, k, l);
+	public void onNeighborBlockChange(World world, int x, int y, int z, int blockId) {
+		super.onNeighborBlockChange(world, x, y, z, blockId);
 		if (updateEveryone) {
 			TileEntityLittleBlocks tile = (TileEntityLittleBlocks) world
-					.getBlockTileEntity(i, j, k);
+					.getBlockTileEntity(x, y, z);
 			int[][][] content = tile.getContent();
 			int maX = tile.size, maY = tile.size, maZ = tile.size;
 			int startX = 0, startY = 0, startZ = 0;
@@ -960,21 +777,24 @@ public class BlockLittleBlocks extends BlockContainer {
 					break;
 				}
 
-				for (int x = startX; x < maX; x++) {
-					for (int y = startY; y < maY; y++) {
-						for (int z = startZ; z < maZ; z++) {
-							if (content[x][y][z] > 0) {
-								tile.getLittleWorld()
-										.notifyBlocksOfNeighborChange(
-												(i << 3) + x,
-												(j << 3) + y,
-												(k << 3) + z, 
-												l);
+				for (int xx = startX; xx < maX; xx++) {
+					for (int yy = startY; yy < maY; yy++) {
+						for (int zz = startZ; zz < maZ; zz++) {
+							if (content[xx][yy][zz] > 0) {
+								Block.blocksList[content[xx][yy][zz]]
+										.onNeighborBlockChange(
+												tile.getLittleWorld(),
+												(x << 3) + xx,
+												(y << 3) + yy,
+												(z << 3) + zz,
+												blockId);
 							}
 						}
 					}
 				}
 			}
+			tile.onInventoryChanged();
+			world.markBlockNeedsUpdate(x, y, z);
 		}
 	}
 }

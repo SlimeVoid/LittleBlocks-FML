@@ -18,17 +18,9 @@ public class ClientTickHandler implements ITickHandler {
 	
 	@Override
 	public void tickStart(EnumSet<TickType> type, Object... tickData) {
-		if (type.equals(EnumSet.of(TickType.CLIENT))) {
-			if (this.tickedCount >= 40) {
-				EntityPlayer entityplayer = ModLoader.getMinecraftInstance().thePlayer;
-				if (entityplayer != null && entityplayer instanceof EntityClientPlayerMP) {
-					World world = ((EntityClientPlayerMP)entityplayer).worldObj;
-					if (world != null) {
-					}
-				}
-				this.tickedCount = 0;
-			}
-			tickedCount++;
+		World world = ModLoader.getMinecraftInstance().theWorld;
+		if (world != null) {
+			LBCore.getLittleWorld(world, false).tickUpdates(false);
 		}
 	}
 
