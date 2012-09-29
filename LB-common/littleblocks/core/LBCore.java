@@ -11,6 +11,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.World;
+import net.minecraft.src.WorldClient;
 import net.minecraft.src.WorldProviderSurface;
 import net.minecraftforge.common.Configuration;
 import cpw.mods.fml.client.registry.RenderingRegistry;
@@ -29,7 +30,8 @@ public class LBCore {
 	public static String littleNotifyCommand = "LITTLENOTIFY";
 	public static String updateClientCommand = "UPDATECLIENT";
 	public static Block littleBlocks;
-	private static LittleWorld littleWorld;
+	public static LittleWorld littleWorldClient;
+	public static LittleWorld littleWorldServer;
 	public static int littleBlocksID;
 	public static boolean littleBlocksClip;
 	public static int renderingMethod;
@@ -84,30 +86,5 @@ public class LBCore {
 		renderType = RenderingRegistry.getNextAvailableRenderId();
 		configuration.save();
 		return littleBlocksID;
-	}
-
-	public static LittleWorld getLittleWorld() {
-		return littleWorld;
-	}
-	
-	public static LittleWorld getLittleWorld(World world, boolean needsRefresh) {
-		if (needsRefresh) {
-			littleWorld = null;
-		}
-		if (littleWorld == null) {
-			if (world == null) {
-				return null;
-			}
-			if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
-				littleWorld = new LittleWorld(world, new WorldProviderSurface());
-			} else {
-				littleWorld = new LittleWorld(world, new WorldProviderSurface());
-			}
-		}
-		return littleWorld;
-	}
-
-	public static void setLittleWorld(LittleWorld newlittleWorld) {
-		littleWorld = newlittleWorld;
 	}
 }

@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import littleblocks.api.ILBCommonProxy;
 import littleblocks.blocks.core.CollisionRayTrace;
 import littleblocks.core.LBCore;
+import littleblocks.core.LBInit;
 import littleblocks.network.ClientPacketHandler;
 import littleblocks.network.CommonPacketHandler;
 import littleblocks.network.LBPacketIds;
@@ -268,7 +270,7 @@ public class BlockLittleBlocks extends BlockContainer {
 			int	xx = (x << 3) + this.xSelected,
 				yy = (y << 3) + this.ySelected,
 				zz = (z << 3) + this.zSelected;
-			LittleWorld littleWorld = LBCore.getLittleWorld(world, false);
+			LittleWorld littleWorld = ((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(world, false);
 			int blockId = tileentitylittleblocks.getContent(
 					this.xSelected, this.ySelected, this.zSelected);
 			if (entityplayer instanceof EntityPlayerMP) {
@@ -294,7 +296,7 @@ public class BlockLittleBlocks extends BlockContainer {
 							.getItem() instanceof ItemBucket) {
 					itemManager.tryUseItem(
 							entityplayer,
-							LBCore.getLittleWorld(world, false),
+							((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(world, false),
 							entityplayer.getCurrentEquippedItem());
 					tileentitylittleblocks.onInventoryChanged();
 					world.markBlockNeedsUpdate(x, y, z);

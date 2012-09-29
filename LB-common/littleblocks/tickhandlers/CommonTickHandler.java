@@ -2,7 +2,9 @@ package littleblocks.tickhandlers;
 
 import java.util.EnumSet;
 
+import littleblocks.api.ILBCommonProxy;
 import littleblocks.core.LBCore;
+import littleblocks.core.LBInit;
 import littleblocks.tileentities.TileEntityLittleBlocks;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.ModLoader;
@@ -17,10 +19,11 @@ public class CommonTickHandler implements ITickHandler {
 	
 	@Override
 	public void tickStart(EnumSet<TickType> type, Object... tickData) {
-		//World[] worlds = DimensionManager.getWorlds();
-		//for (World world : worlds) {
-			LBCore.getLittleWorld(MinecraftServer.getServer().worldServerForDimension(0), false).tickUpdates(false);
-		//}
+		World world = DimensionManager.getWorld(0);
+		if (world != null) {
+			((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(world, false).tickUpdates(false);
+		}
+		System.out.println("WorldServer: " + LBCore.littleWorldServer);
 	}
 
 	@Override

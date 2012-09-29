@@ -23,9 +23,11 @@ import net.minecraft.src.DedicatedServer;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EnumSkyBlock;
 import net.minecraft.src.IChunkProvider;
+import net.minecraft.src.ISaveHandler;
 import net.minecraft.src.IntHashMap;
 import net.minecraft.src.MovingObjectPosition;
 import net.minecraft.src.NextTickListEntry;
+import net.minecraft.src.Profiler;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.Vec3;
 import net.minecraft.src.World;
@@ -46,8 +48,37 @@ public class LittleWorld extends World {
     private Set scheduledTickSet;
     
 	private World realWorld;
+	
+	@SideOnly(Side.CLIENT)
+	public LittleWorld(World world) {
+		super(
+				world.getSaveHandler(),
+				"LittleBlocksWorld",
+				world.provider,
+				new WorldSettings(world.getWorldInfo().getSeed(), world
+						.getWorldInfo()
+							.getGameType(), world
+						.getWorldInfo()
+							.isMapFeaturesEnabled(), world
+						.getWorldInfo()
+							.isHardcoreModeEnabled(), world
+						.getWorldInfo()
+							.getTerrainType()),
+				world.theProfiler);
 
-	public LittleWorld(World world, WorldProvider worldprovider) {
+        if (this.scheduledTickSet == null)
+        {
+            this.scheduledTickSet = new HashSet();
+        }
+
+        if (this.pendingTickListEntries == null)
+        {
+            this.pendingTickListEntries = new TreeSet();
+        }
+		this.realWorld = world;
+	}
+	
+	public LittleWorld(World world, WorldProvider worldprovider) {	
 		super(
 				world.getSaveHandler(),
 				"LittleBlocksWorld",
@@ -95,6 +126,7 @@ public class LittleWorld extends World {
 	@Override
     public boolean tickUpdates(boolean tick)
     {
+		if (this.isRemote) return false;
         int numberOfUpdates = this.pendingTickListEntries.size();
 
         if (numberOfUpdates != this.scheduledTickSet.size())
@@ -112,7 +144,7 @@ public class LittleWorld extends World {
             {
                 NextTickListEntry nextTick = (NextTickListEntry)this.pendingTickListEntries.first();
 
-                if (!tick && (nextTick.scheduledTime - 2) > this.worldInfo.getWorldTime())
+                if (!tick && (nextTick.scheduledTime) > this.worldInfo.getWorldTime())
                 {
                     break;
                 }
@@ -183,6 +215,7 @@ public class LittleWorld extends World {
 	@Override
     public void scheduleBlockUpdate(int x, int y, int z, int blockId, int tickRate)
     {
+		if (this.isRemote) return;
         NextTickListEntry nextTick = new NextTickListEntry(x, y, z, blockId);
         byte max = 8;
 
@@ -222,6 +255,7 @@ public class LittleWorld extends World {
 	@Override
     public void scheduleBlockUpdateFromLoad(int x, int y, int z, int blockId, int tickRate)
     {
+		if (this.isRemote) return;
         NextTickListEntry nextTick = new NextTickListEntry(x, y, z, blockId);
 
         if (blockId > 0)
@@ -259,7 +293,8 @@ public class LittleWorld extends World {
 	}
 
 	public boolean isOutdated(World world) {
-		return realWorld != world;
+		boolean outdated = !realWorld.equals(world);
+		return outdated;
 	}
 
 	@Override

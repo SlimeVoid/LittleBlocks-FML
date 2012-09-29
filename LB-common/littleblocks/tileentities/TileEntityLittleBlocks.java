@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import littleblocks.core.LBCore;
+import littleblocks.core.LBInit;
 import littleblocks.network.packets.PacketTileEntityLB;
 import littleblocks.world.LittleWorld;
 import net.minecraft.src.ModLoader;
@@ -15,6 +16,7 @@ import net.minecraft.src.Packet;
 import net.minecraft.src.Packet132TileEntityData;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import littleblocks.api.ILBCommonProxy;
 import net.minecraft.src.WorldProviderSurface;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Side;
@@ -39,7 +41,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 	@Override
 	public void func_70308_a(World par1World) {
 		this.worldObj = par1World;
-		LBCore.setLittleWorld(LBCore.getLittleWorld(this.worldObj, false));
+		((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(this.worldObj, false);
 	}
 
 	public TileEntityLittleBlocks() {
@@ -78,7 +80,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 	}
 
 	public LittleWorld getLittleWorld() {
-		return LBCore.getLittleWorld(this.worldObj, false);
+		return ((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(this.worldObj, false);
 	}
 
 	public int getMetadata(int x, int y, int z) {
@@ -241,7 +243,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 		content[x][y][z] = id;
 		setMetadata(x, y, z, 0);
 		if (lastId != id) {
-			LBCore.getLittleWorld().idModified(
+			((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(this.worldObj, false).idModified(
 					(this.xCoord << 3) + x,
 					(this.yCoord << 3) + y,
 					(this.zCoord << 3) + z,
@@ -314,7 +316,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 		metadatas[x][y][z] = metadata;
 
 		if (metadatas[x][y][z] != metadata) {
-			LBCore.getLittleWorld().metadataModified(
+			((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(this.worldObj, false).metadataModified(
 					(this.xCoord << 3) + x,
 					(this.yCoord << 3) + y,
 					(this.zCoord << 3) + z,
@@ -392,7 +394,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 		metadatas[x][y][z] = metadata;
 
 		if (lastData != metadata) {
-			LBCore.getLittleWorld().metadataModified(
+			((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(this.worldObj, false).metadataModified(
 					(this.xCoord << 3) + x,
 					(this.yCoord << 3) + y,
 					(this.zCoord << 3) + z,
@@ -404,7 +406,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 					metadata);
 		}
 		if (lastId != id) {
-			LBCore.getLittleWorld().idModified(
+			((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(this.worldObj, false).idModified(
 					(this.xCoord << 3) + x,
 					(this.yCoord << 3) + y,
 					(this.zCoord << 3) + z,

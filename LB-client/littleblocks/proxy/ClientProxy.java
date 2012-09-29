@@ -2,6 +2,7 @@ package littleblocks.proxy;
 
 import littleblocks.tickhandlers.ClientTickHandler;
 import littleblocks.tickhandlers.CommonTickHandler;
+import littleblocks.world.LittleWorld;
 import littleblocks.core.LBCore;
 import littleblocks.network.ClientPacketHandler;
 import littleblocks.network.LBPacketIds;
@@ -17,6 +18,7 @@ import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet1Login;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import net.minecraft.src.WorldClient;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.Side;
@@ -60,6 +62,21 @@ public class ClientProxy extends CommonProxy {
 			packet.setCommand(LBPacketIds.FETCH);
 			ClientPacketHandler.sendPacket(packet.getPacket());
 		}
+	}
+	
+	@Override
+	public LittleWorld getLittleWorld(World world, boolean needsRefresh) {
+		if (world != null) {
+			if (world instanceof WorldClient) {
+				if (LBCore.littleWorldClient == null || LBCore.littleWorldClient.isOutdated(world)) {
+					LBCore.littleWorldClient = new LittleWorld(world);
+				}
+				return LBCore.littleWorldClient;
+			} else {
+				return super.getLittleWorld(world, needsRefresh);
+			}
+		}
+		return null;
 	}
 
 	@Override

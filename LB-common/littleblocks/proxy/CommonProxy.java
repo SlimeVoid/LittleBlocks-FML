@@ -1,7 +1,9 @@
 package littleblocks.proxy;
 
 import littleblocks.api.ILBCommonProxy;
+import littleblocks.core.LBCore;
 import littleblocks.tickhandlers.CommonTickHandler;
+import littleblocks.world.LittleWorld;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.NetHandler;
 import net.minecraft.src.NetworkManager;
@@ -75,6 +77,16 @@ public class CommonProxy implements ILBCommonProxy {
 	public World getWorld() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public LittleWorld getLittleWorld(World world, boolean needsRefresh) {
+		if (world != null) {
+			if (LBCore.littleWorldServer == null || LBCore.littleWorldServer.isOutdated(world) || needsRefresh) {
+				LBCore.littleWorldServer = new LittleWorld(world, world.provider);
+			}
+		}
+		return LBCore.littleWorldServer;
 	}
 
 	@Override
