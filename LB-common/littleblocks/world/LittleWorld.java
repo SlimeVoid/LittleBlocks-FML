@@ -1,5 +1,12 @@
 package littleblocks.world;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
 import org.lwjgl.opengl.GL11;
 
 import littleblocks.core.LBCore;
@@ -7,46 +14,43 @@ import littleblocks.network.CommonPacketHandler;
 import littleblocks.network.LBPacketIds;
 import littleblocks.network.packets.PacketLittleBlocks;
 import littleblocks.tileentities.TileEntityLittleBlocks;
+import net.minecraft.client.Minecraft;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.Block;
 import net.minecraft.src.Chunk;
+import net.minecraft.src.ChunkCoordIntPair;
+import net.minecraft.src.DedicatedServer;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EnumSkyBlock;
 import net.minecraft.src.IChunkProvider;
+import net.minecraft.src.IntHashMap;
 import net.minecraft.src.MovingObjectPosition;
+import net.minecraft.src.NextTickListEntry;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.Vec3;
 import net.minecraft.src.World;
 import net.minecraft.src.WorldProvider;
 import net.minecraft.src.WorldSettings;
+import net.minecraftforge.common.DimensionManager;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
 
 public class LittleWorld extends World {
 
+    /**
+     * TreeSet of scheduled ticks which is used as a priority queue for the ticks
+     */
+    private TreeSet pendingTickListEntries;
+
+    /** Set of scheduled ticks (used for checking if a tick already exists) */
+    private Set scheduledTickSet;
+    
 	private World realWorld;
-
-	public LittleWorld(WorldProvider worldprovider, World world) {
-		super(
-				world.getSaveHandler(),
-				"LittleBlockWorld",
-				worldprovider,
-				new WorldSettings(world.getWorldInfo().getSeed(), world
-						.getWorldInfo()
-							.getGameType(), world
-						.getWorldInfo()
-							.isMapFeaturesEnabled(), world
-						.getWorldInfo()
-							.isHardcoreModeEnabled(), world
-						.getWorldInfo()
-							.getTerrainType()), null);
-
-		this.realWorld = world;
-	}
 
 	public LittleWorld(World world, WorldProvider worldprovider) {
 		super(
 				world.getSaveHandler(),
-				"LittleBlockWorld",
+				"LittleBlocksWorld",
 				new WorldSettings(world.getWorldInfo().getSeed(), world
 						.getWorldInfo()
 							.getGameType(), world
@@ -59,8 +63,178 @@ public class LittleWorld extends World {
 				worldprovider,
 				null);
 
+        if (this.scheduledTickSet == null)
+        {
+            this.scheduledTickSet = new HashSet();
+        }
+
+        if (this.pendingTickListEntries == null)
+        {
+            this.pendingTickListEntries = new TreeSet();
+        }
 		this.realWorld = world;
 	}
+	
+	@Override
+    protected void initialize(WorldSettings worldSettings)
+    {
+        if (this.scheduledTickSet == null)
+        {
+            this.scheduledTickSet = new HashSet();
+        }
+        if (this.pendingTickListEntries == null)
+        {
+            this.pendingTickListEntries = new TreeSet();
+        }
+        super.initialize(worldSettings);
+    }
+
+    /**
+     * Runs through the list of updates to run and ticks them
+     */
+	@Override
+    public boolean tickUpdates(boolean tick)
+    {
+        int numberOfUpdates = this.pendingTickListEntries.size();
+
+        if (numberOfUpdates != this.scheduledTickSet.size())
+        {
+            throw new IllegalStateException("TickNextTick list out of synch");
+        }
+        else
+        {
+            if (numberOfUpdates > 1000)
+            {
+                numberOfUpdates = 1000;
+            }
+
+            for (int update = 0; update < numberOfUpdates; ++update)
+            {
+                NextTickListEntry nextTick = (NextTickListEntry)this.pendingTickListEntries.first();
+
+                if (!tick && (nextTick.scheduledTime - 2) > this.worldInfo.getWorldTime())
+                {
+                    break;
+                }
+
+                this.pendingTickListEntries.remove(nextTick);
+                this.scheduledTickSet.remove(nextTick);
+                byte max = 8;
+
+                if (this.checkChunksExist(nextTick.xCoord - max, nextTick.yCoord - max, nextTick.zCoord - max, nextTick.xCoord + max, nextTick.yCoord + max, nextTick.zCoord + max))
+                {
+                    int blockId = this.getBlockId(nextTick.xCoord, nextTick.yCoord, nextTick.zCoord);
+
+                    if (blockId == nextTick.blockID && blockId > 0)
+                    {
+                        Block.blocksList[blockId].updateTick(this, nextTick.xCoord, nextTick.yCoord, nextTick.zCoord, this.rand);
+                        TileEntity tileentity = this.realWorld.getBlockTileEntity(nextTick.xCoord >> 3, nextTick.yCoord >> 3, nextTick.zCoord >> 3);
+                        if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
+                        	tileentity.onInventoryChanged();
+                        	this.realWorld.markBlockNeedsUpdate(nextTick.xCoord >> 3, nextTick.yCoord >> 3, nextTick.zCoord >> 3);
+                        }
+                    }
+                }
+            }
+
+            return !this.pendingTickListEntries.isEmpty();
+        }
+    }
+
+	@Override
+    public List getPendingBlockUpdates(Chunk chunk, boolean forceRemove)
+    {
+        ArrayList pendingUpdates = null;
+        ChunkCoordIntPair chunkPair = chunk.getChunkCoordIntPair();
+        int x = chunkPair.chunkXPos << 4;
+        int maxX = x + 16;
+        int z = chunkPair.chunkZPos << 4;
+        int maxZ = z + 16;
+        Iterator pendingTicks = this.pendingTickListEntries.iterator();
+
+        while (pendingTicks.hasNext())
+        {
+            NextTickListEntry nextTick = (NextTickListEntry)pendingTicks.next();
+
+            if (nextTick.xCoord >= x && nextTick.xCoord < maxX && nextTick.zCoord >= z && nextTick.zCoord < maxZ)
+            {
+                if (forceRemove)
+                {
+                	System.out.println("Removing");
+                    this.scheduledTickSet.remove(nextTick);
+                    pendingTicks.remove();
+                }
+
+                if (pendingUpdates == null)
+                {
+                    pendingUpdates = new ArrayList();
+                }
+
+                pendingUpdates.add(nextTick);
+            }
+        }
+
+        return pendingUpdates;
+    }
+
+    /**
+     * Schedules a tick to a block with a delay (Most commonly the tick rate)
+     */
+	@Override
+    public void scheduleBlockUpdate(int x, int y, int z, int blockId, int tickRate)
+    {
+        NextTickListEntry nextTick = new NextTickListEntry(x, y, z, blockId);
+        byte max = 8;
+
+        if (this.scheduledUpdatesAreImmediate)
+        {
+            if (this.checkChunksExist(nextTick.xCoord - max, nextTick.yCoord - max, nextTick.zCoord - max, nextTick.xCoord + max, nextTick.yCoord + max, nextTick.zCoord + max))
+            {
+                int var8 = this.getBlockId(nextTick.xCoord, nextTick.yCoord, nextTick.zCoord);
+
+                if (var8 == nextTick.blockID && var8 > 0)
+                {
+                    Block.blocksList[var8].updateTick(this, nextTick.xCoord, nextTick.yCoord, nextTick.zCoord, this.rand);
+                }
+            }
+        }
+        else
+        {
+            if (this.checkChunksExist(x - max, y - max, z - max, x + max, y + max, z + max))
+            {
+                if (blockId > 0)
+                {
+                    nextTick.setScheduledTime((long)tickRate + this.worldInfo.getWorldTime());
+                }
+
+                if (!this.scheduledTickSet.contains(nextTick))
+                {
+                    this.scheduledTickSet.add(nextTick);
+                    this.pendingTickListEntries.add(nextTick);
+                }
+            }
+        }
+    }
+
+    /**
+     * Schedules a block update from the saved information in a chunk. Called when the chunk is loaded.
+     */
+	@Override
+    public void scheduleBlockUpdateFromLoad(int x, int y, int z, int blockId, int tickRate)
+    {
+        NextTickListEntry nextTick = new NextTickListEntry(x, y, z, blockId);
+
+        if (blockId > 0)
+        {
+            nextTick.setScheduledTime((long)tickRate + this.worldInfo.getWorldTime());
+        }
+
+        if (!this.scheduledTickSet.contains(nextTick))
+        {
+            this.scheduledTickSet.add(nextTick);
+            this.pendingTickListEntries.add(nextTick);
+        }
+    }
 
 	@Override
 	public int getLightBrightnessForSkyBlocks(int i, int j, int k, int l) {
@@ -262,8 +436,9 @@ public class LittleWorld extends World {
 		}
 	}
 
+	@Override
 	public int getSkyBlockTypeBrightness(EnumSkyBlock enumskyblock, int i, int j, int k) {
-		return 15;
+		return super.getSkyBlockTypeBrightness(enumskyblock, i, j, k);
 	}
 
 	@Override
@@ -425,6 +600,7 @@ public class LittleWorld extends World {
 		}
 	}
 
+	@Override
 	public void markBlockNeedsUpdate(int i, int j, int k) {
 		realWorld.markBlockNeedsUpdate(i >> 3, j >> 3, k >> 3);
 	}

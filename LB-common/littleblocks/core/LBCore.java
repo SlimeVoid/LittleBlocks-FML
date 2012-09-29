@@ -94,24 +94,12 @@ public class LBCore {
 		if (needsRefresh) {
 			littleWorld = null;
 		}
-		if (littleWorld == null || littleWorld.isOutdated(world)) {
+		if (littleWorld == null) {
 			if (world == null) {
 				return null;
 			}
 			if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
 				littleWorld = new LittleWorld(world, new WorldProviderSurface());
-				// if (!world.isRemote) {
-				// littleWorld = new LittleWorld(
-				// new WorldProviderSurface(),
-				// world);
-				// }
-				// if (!ModLoader
-				// .getMinecraftInstance()
-				// .isIntegratedServerRunning()) {
-				// littleWorld = new LittleWorld(
-				// new WorldProviderSurface(),
-				// world);
-				// }
 			} else {
 				littleWorld = new LittleWorld(world, new WorldProviderSurface());
 			}
@@ -119,7 +107,7 @@ public class LBCore {
 		return littleWorld;
 	}
 
-	public static void setLittleWorld(LittleWorld littleWorld) {
-		LBCore.littleWorld = littleWorld;
+	public static void setLittleWorld(LittleWorld newlittleWorld) {
+		littleWorld = newlittleWorld;
 	}
 }

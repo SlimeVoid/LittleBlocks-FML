@@ -555,9 +555,6 @@ public class TileEntityLittleBlocks extends TileEntity {
 			for (int y = 0; y < content[x].length; y++) {
 				for (int z = 0; z < content[x][y].length; z++) {
 					p.setIntPayload(x + (y * size) + (z * size * size), content[x][y][z]);
-					if (content[x][y][z] > 0) {
-						System.out.println("Content: " + p.getIntPayload(1 + x + (y * 8) + (z * 8 * 8)));
-					}
 				}
 			}
 		}

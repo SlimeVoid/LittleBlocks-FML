@@ -4,22 +4,23 @@ import java.util.EnumSet;
 
 import littleblocks.core.LBCore;
 import littleblocks.tileentities.TileEntityLittleBlocks;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.World;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.DimensionManager;
+import cpw.mods.fml.common.IScheduledTickHandler;
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
 
 public class CommonTickHandler implements ITickHandler {
-	private int ticked = 0;
 	
 	@Override
 	public void tickStart(EnumSet<TickType> type, Object... tickData) {
-		World[] worlds = DimensionManager.getWorlds();
-		for (World world : worlds) {
-			LBCore.getLittleWorld(world, false).tickUpdates(false);
-		}
+		//World[] worlds = DimensionManager.getWorlds();
+		//for (World world : worlds) {
+			LBCore.getLittleWorld(MinecraftServer.getServer().worldServerForDimension(0), false).tickUpdates(false);
+		//}
 	}
 
 	@Override

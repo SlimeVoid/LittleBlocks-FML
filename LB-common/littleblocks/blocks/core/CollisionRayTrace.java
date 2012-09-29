@@ -63,12 +63,12 @@ public class CollisionRayTrace {
 			for (int yy = 0; yy < m; yy++) {
 				for (int zz = 0; zz < m; zz++) {
 					Object[] ret = littleBlocks.rayTraceBound(AxisAlignedBB.getBoundingBox(
-							xx / m,
-							yy / m,
-							zz / m,
-							(xx + 1) / m,
-							(yy + 1) / m,
-							(zz + 1) / m), x, y, z, player, view);
+							xx / (float)m,
+							yy / (float)m,
+							zz / (float)m,
+							(xx + 1) / (float)m,
+							(yy + 1) / (float)m,
+							(zz + 1) / (float)m), x, y, z, player, view);
 					if (ret != null) {
 						returns.add(new Object[] {
 								ret[0],

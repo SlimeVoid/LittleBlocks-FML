@@ -59,8 +59,6 @@ public class ClientPacketHandler implements IPacketHandler {
 										xx + 
 										(yy * tileentitylb.size) + 
 										(zz * tileentitylb.size * tileentitylb.size));
-							System.out.println(
-									"ContentRec: " + blockId);
 							content[xx][yy][zz] = blockId;
 							metadata[xx][yy][zz] = blockMeta;
 						}

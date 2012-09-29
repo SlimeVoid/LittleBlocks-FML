@@ -18,6 +18,10 @@ public class LBChunkProvider implements IChunkProvider {
 		this.littleWorld = littleWorld;
 	}
 
+	public LBChunkProvider() {
+		// TODO Auto-generated constructor stub
+	}
+
 	private void generate(byte[] par1ArrayOfByte) {
 	}
 
