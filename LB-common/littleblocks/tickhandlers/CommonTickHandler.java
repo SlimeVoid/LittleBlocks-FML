@@ -21,9 +21,8 @@ public class CommonTickHandler implements ITickHandler {
 	public void tickStart(EnumSet<TickType> type, Object... tickData) {
 		World world = DimensionManager.getWorld(0);
 		if (world != null) {
-			((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(world, false).tickUpdates(false);
+			((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(world, false).tick();
 		}
-		System.out.println("WorldServer: " + LBCore.littleWorldServer);
 	}
 
 	@Override

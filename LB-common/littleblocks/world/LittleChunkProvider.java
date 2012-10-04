@@ -9,27 +9,20 @@ import net.minecraft.src.IChunkProvider;
 import net.minecraft.src.IProgressUpdate;
 import net.minecraft.src.World;
 
-public class LBChunkProvider implements IChunkProvider {
+public class LittleChunkProvider implements IChunkProvider {
 	private World realWorld;
 	private World littleWorld;
 
-	public LBChunkProvider(LittleWorld littleWorld) {
+	public LittleChunkProvider(LittleWorld littleWorld) {
 		this.realWorld = littleWorld.getRealWorld();
 		this.littleWorld = littleWorld;
-	}
-
-	public LBChunkProvider() {
-		// TODO Auto-generated constructor stub
-	}
-
-	private void generate(byte[] par1ArrayOfByte) {
 	}
 
 	/**
 	 * loads or generates the chunk at the chunk location specified
 	 */
-	public Chunk loadChunk(int par1, int par2) {
-		return this.provideChunk(par1, par2);
+	public Chunk loadChunk(int x, int y) {
+		return this.provideChunk(x, y);
 	}
 
 	/**
@@ -37,11 +30,10 @@ public class LBChunkProvider implements IChunkProvider {
 	 * will generates all the blocks for the specified chunk from the map seed
 	 * and chunk seed
 	 */
-	public Chunk provideChunk(int par1, int par2) {
-		byte[] var3 = new byte[32768];
-		this.generate(var3);
-		Chunk var4 = new Chunk(this.realWorld, var3, par1, par2);
-		return var4;
+	public Chunk provideChunk(int x, int y) {
+		byte[] bytes = new byte[32768];
+		Chunk chunk = new Chunk(this.littleWorld, bytes, x, y);
+		return chunk;
 	}
 
 	/**
@@ -86,7 +78,7 @@ public class LBChunkProvider implements IChunkProvider {
 	 * Converts the instance data to a readable string.
 	 */
 	public String makeString() {
-		return realWorld.getProviderName() + "[LB]";
+		return  "[LB]" + realWorld.getProviderName();
 	}
 
 	/**

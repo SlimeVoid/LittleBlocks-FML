@@ -22,16 +22,10 @@ public class ClientTickHandler implements ITickHandler {
 	
 	@Override
 	public void tickStart(EnumSet<TickType> type, Object... tickData) {
-		World world = ModLoader.getMinecraftInstance().theWorld;
+		World world = DimensionManager.getWorld(0);
 		if (world != null) {
-			if (world.isRemote) {
-				((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(world, false);
-			} else {
-				((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(world, false).tickUpdates(false);
-			}
+			((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(world, false).tick();
 		}
-		System.out.println("WorldClient: " + LBCore.littleWorldClient);
-		System.out.println("WorldServer: " + LBCore.littleWorldServer);
 	}
 
 	@Override

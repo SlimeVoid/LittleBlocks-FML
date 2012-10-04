@@ -5,6 +5,7 @@ import java.io.DataInputStream;
 import java.util.List;
 
 import littleblocks.blocks.BlockLittleBlocks;
+import littleblocks.blocks.BlockLittleBlocksBlock;
 import littleblocks.core.LBCore;
 import littleblocks.network.packets.PacketLittleBlocks;
 import littleblocks.network.packets.PacketLittleBlocksSettings;
@@ -31,7 +32,7 @@ public class CommonPacketHandler implements IPacketHandler {
 			PacketLittleBlocksSettings packet = new PacketLittleBlocksSettings();
 			packet.setCommand(LBPacketIds.SETTINGS);
 			packet.setClipMode(LBCore.littleBlocksClip);
-			CommonPacketHandler.sendTo(entityplayer, packet);
+			CommonPacketHandler.sendTo(entityplayer, packet.getPacket());
 			List<TileEntity> tileEntities = world.loadedTileEntityList;
 			for (TileEntity tileentity : tileEntities) {
 				if (tileentity instanceof TileEntityLittleBlocks) {
@@ -42,33 +43,16 @@ public class CommonPacketHandler implements IPacketHandler {
 		}
 	}
 
-	public static void metadataModified(LittleWorld littleWorld, int x, int y, int z, int side, float vecX, float vecY, float vecZ, int lastMetadata, int newMetadata) {
-		PacketLittleBlocks packetLB = new PacketLittleBlocks(
-				LBCore.metaDataModifiedCommand,
-				x,
-				y,
-				z,
-				side,
-				vecX,
-				vecY,
-				vecZ,
-				littleWorld.getBlockId(x, y, z),
-				newMetadata);
+	public static void metadataModified(LittleWorld littleWorld, BlockLittleBlocksBlock lbb, int metadata) {
+		PacketLittleBlocks packetLB = new PacketLittleBlocks(LBCore.metaDataModifiedCommand, lbb);
+		packetLB.setMetadata(metadata);
+		packetLB.setSender(LBPacketIds.SERVER);
 		sendToAll(packetLB);
 	}
 
-	public static void idModified(int x, int y, int z, int side, float vecX, float vecY, float vecZ, int lastId, int newId, LittleWorld littleWorld) {
-		PacketLittleBlocks packetLB = new PacketLittleBlocks(
-				LBCore.idModifiedCommand,
-				x,
-				y,
-				z,
-				side,
-				vecX,
-				vecY,
-				vecZ,
-				newId,
-				littleWorld.getBlockMetadata(x, y, z));
+	public static void idModified(LittleWorld littleWorld, BlockLittleBlocksBlock lbb) {
+		PacketLittleBlocks packetLB = new PacketLittleBlocks(LBCore.idModifiedCommand, lbb);
+		packetLB.setSender(LBPacketIds.SERVER);
 		sendToAll(packetLB);
 	}
 
@@ -134,10 +118,10 @@ public class CommonPacketHandler implements IPacketHandler {
 		}
 	}
 
-	public static void sendTo(EntityPlayer entityplayer, PacketUpdate packet) {
+	public static void sendTo(EntityPlayer entityplayer, Packet packet) {
 		if (entityplayer != null && entityplayer instanceof EntityPlayerMP) {
 			((EntityPlayerMP) entityplayer).serverForThisPlayer
-					.sendPacketToPlayer(packet.getPacket());
+					.sendPacketToPlayer(packet);
 		}
 	}
 
@@ -181,8 +165,7 @@ public class CommonPacketHandler implements IPacketHandler {
 						if (Math.abs(entityplayermp.posX - x) <= 16 && Math
 								.abs(entityplayermp.posY - y) <= 16 && Math
 								.abs(entityplayermp.posZ - z) <= 16) {
-							entityplayermp.serverForThisPlayer
-									.sendPacketToPlayer(packet);
+							sendTo(entityplayermp, packet);
 						}
 					}
 				} else if (thePlayer instanceof EntityClientPlayerMP) {

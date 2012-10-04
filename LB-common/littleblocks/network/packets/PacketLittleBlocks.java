@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import littleblocks.blocks.BlockLittleBlocksBlock;
 import littleblocks.core.LBInit;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
@@ -43,14 +44,15 @@ public class PacketLittleBlocks extends PacketUpdate {
 		this.setSelectedXYZ(selectedX, selectedY, selectedZ);
 	}
 
-	public PacketLittleBlocks(String command, int x, int y, int z, int side, float vecX, float vecY, float vecZ, int blockId, int newMetadata) {
+	public PacketLittleBlocks(String command, BlockLittleBlocksBlock lbb) {
 		this();
-		this.setPosition(x, y, z, side);
-		this.setVecs(vecX, vecY, vecZ);
-		this.payload = new PacketPayload(2, 0, 1, 0);
+		this.setPosition(lbb.getParentX(), lbb.getParentY(), lbb.getParentZ(), 0);
+		this.setVecs(0, 0, 0);
+		this.payload = new PacketPayload(5, 0, 1, 0);
 		this.setCommand(command);
-		this.setBlockId(blockId);
-		this.setMetadata(newMetadata);
+		this.setBlockId(lbb.getBlockId());
+		this.setMetadata(lbb.getMetaData());
+		this.setSelectedXYZ(lbb.getLittleX(), lbb.getLittleY(), lbb.getLittleZ());
 	}
 
 	private void setCommand(String command) {
@@ -61,7 +63,7 @@ public class PacketLittleBlocks extends PacketUpdate {
 		return this.payload.getStringPayload(0);
 	}
 
-	private void setSelectedXYZ(int selectedX, int selectedY, int selectedZ) {
+	public void setSelectedXYZ(int selectedX, int selectedY, int selectedZ) {
 		this.payload.setIntPayload(2, selectedX);
 		this.payload.setIntPayload(3, selectedY);
 		this.payload.setIntPayload(4, selectedZ);

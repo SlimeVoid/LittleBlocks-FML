@@ -3,9 +3,11 @@ package littleblocks.core;
 import java.io.File;
 
 import littleblocks.blocks.BlockLittleBlocks;
+import littleblocks.blocks.core.PistonOrientation;
 import littleblocks.tileentities.TileEntityLittleBlocks;
 import littleblocks.world.LittleWorld;
 import net.minecraft.src.Block;
+import net.minecraft.src.BlockPistonBase;
 import net.minecraft.src.EnumGameType;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
@@ -14,6 +16,7 @@ import net.minecraft.src.World;
 import net.minecraft.src.WorldClient;
 import net.minecraft.src.WorldProviderSurface;
 import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Side;
@@ -54,6 +57,7 @@ public class LBCore {
 				2F,
 				true).setBlockName("littleBlocks");
 		GameRegistry.registerBlock(littleBlocks);
+		MinecraftForge.EVENT_BUS.register(new PistonOrientation());
 	}
 
 	public static void addNames() {

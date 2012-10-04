@@ -56,54 +56,12 @@ public class BlockLittleBlocks extends BlockContainer {
 		super(id, material);
 		this.clazz = clazz;
 		setHardness(hardness);
-        //this.setTickRandomly(true);
 		if (selfNotify) {
 			setRequiresSelfNotify();
 		}
 		this.setCreativeTab(CreativeTabs.tabDeco);
 	}
 	
-	@Override
-	public void onBlockAdded(World world, int x, int y, int z) {
-		super.onBlockAdded(world, x, y, z);
-	}
-	
-/*    public int tickRate()
-    {
-        return 20;
-    }
-    
-	@Override
-    public void updateTick(World world, int x, int y, int z, Random rand)  {
-		//if (world.isRemote) {
-	    	TileEntity tileentity = world.getBlockTileEntity(x, y, z);
-	    	if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
-	    		TileEntityLittleBlocks tile = (TileEntityLittleBlocks) tileentity;
-	    		int [][][] content = tile.getContent();
-	    		for (int xx = 0; xx < tile.size; xx++) {
-	    			for (int yy = 0; yy < tile.size; yy++) {
-	    				for (int zz = 0; zz < tile.size; zz++) {
-	    					int blockId = content[xx][yy][zz];
-	    					if (blockId > 0) {
-	        					this.littleUpdateTick(tile.getLittleWorld(), Block.blocksList[blockId], (x << 3) + xx, (y << 3) + yy, (z << 3) + zz, rand);
-	    					}
-	    				}
-	    			}
-	    		}
-	    	}
-		//}
-    }
-
-    public void littleUpdateTick(LittleWorld world, Block block, int xx, int yy, int zz, Random rand)  {
-		if(block instanceof BlockButton
-				|| block instanceof BlockRedstoneTorch
-				|| block instanceof BlockRedstoneLight
-				|| block instanceof BlockRedstoneWire) {
-			block.updateTick(world, xx, yy, zz, rand);
-			world.notifyBlocksOfNeighborChange(xx, yy, zz, block.blockID);
-		}
-    }*/
-    
 	@Override
 	public boolean removeBlockByPlayer(World world, EntityPlayer entityplayer, int x, int y, int z) {
 		int id = world.getBlockId(x, y, z);
@@ -203,8 +161,8 @@ public class BlockLittleBlocks extends BlockContainer {
 						if (theBlock.getBlockName().equals("tile.pistonBase") || theBlock
 								.getBlockName()
 									.equals("tile.pistonStickyBase")) {
-							denyPlacement = true;
-							placementMessage = LBCore.denyBlockMessage;
+							//denyPlacement = true;
+							//placementMessage = LBCore.denyBlockMessage;
 						}
 					}
 				}
@@ -246,7 +204,6 @@ public class BlockLittleBlocks extends BlockContainer {
 						LBCore.blockActivateCommand);
 			}
 		}
-		//world.scheduleBlockUpdate(x, y, z, this.blockID, this.tickRate());
 		return true;
 	}
 
@@ -289,7 +246,6 @@ public class BlockLittleBlocks extends BlockContainer {
 						c)) {
 					tileentitylittleblocks.onInventoryChanged();
 					world.markBlockNeedsUpdate(x, y, z);
-					//world.notifyBlocksOfNeighborChange(x, y, z, this.blockID);
 					return true;
 				} else if (entityplayer.getCurrentEquippedItem() != null && entityplayer
 						.getCurrentEquippedItem()
@@ -300,7 +256,6 @@ public class BlockLittleBlocks extends BlockContainer {
 							entityplayer.getCurrentEquippedItem());
 					tileentitylittleblocks.onInventoryChanged();
 					world.markBlockNeedsUpdate(x, y, z);
-					//world.notifyBlocksOfNeighborChange(x, y, z, this.blockID);
 					return true;
 				}
 			}
@@ -326,7 +281,6 @@ public class BlockLittleBlocks extends BlockContainer {
 						LBCore.blockClickCommand);
 			}
 		}
-		//world.scheduleBlockUpdate(x, y, z, this.blockID, this.tickRate());
 	}
 
 	public void onServerBlockClicked(World world, int x, int y, int z, EntityPlayer entityplayer) {
@@ -354,34 +308,9 @@ public class BlockLittleBlocks extends BlockContainer {
 						contentMeta);
 			}
 			tile.setContent(this.xSelected, this.ySelected, this.zSelected, 0);
-			tile.onInventoryChanged();
 		}
 		tile.getLittleWorld().notifyBlocksOfNeighborChange(xx, yy, zz, content);
 		world.notifyBlocksOfNeighborChange(x, y, z, content);
-		PacketTileEntityLB packetLB = new PacketTileEntityLB(tile);
-/*		PacketLittleBlocks packetLB = new PacketLittleBlocks(
-				"UPDATECLIENT",
-				x,
-				y,
-				z,
-				0,
-				0,
-				0,
-				0,
-				this.xSelected,
-				this.ySelected,
-				this.zSelected,
-				0,
-				0);*/
-		packetLB.setSender(LBPacketIds.SERVER);
-		CommonPacketHandler.sendToAllPlayers(
-				world,
-				entityplayer,
-				packetLB.getPacket(),
-				x,
-				y,
-				z,
-				true);
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -586,78 +515,78 @@ public class BlockLittleBlocks extends BlockContainer {
 	}
 
 	public Object[] rayTraceBound(AxisAlignedBB bound, int i, int j, int k, Vec3 player, Vec3 view) {
-		Vec3 Vec32 = player.getIntermediateWithXValue(view, bound.minX);
-		Vec3 Vec33 = player.getIntermediateWithXValue(view, bound.maxX);
-		Vec3 Vec34 = player.getIntermediateWithYValue(view, bound.minY);
-		Vec3 Vec35 = player.getIntermediateWithYValue(view, bound.maxY);
-		Vec3 Vec36 = player.getIntermediateWithZValue(view, bound.minZ);
-		Vec3 Vec37 = player.getIntermediateWithZValue(view, bound.maxZ);
-		if (!isVecInsideYZBounds(bound, Vec32)) {
-			Vec32 = null;
+		Vec3 minX = player.getIntermediateWithXValue(view, bound.minX);
+		Vec3 maxX = player.getIntermediateWithXValue(view, bound.maxX);
+		Vec3 minY = player.getIntermediateWithYValue(view, bound.minY);
+		Vec3 maxY = player.getIntermediateWithYValue(view, bound.maxY);
+		Vec3 minZ = player.getIntermediateWithZValue(view, bound.minZ);
+		Vec3 maxZ = player.getIntermediateWithZValue(view, bound.maxZ);
+		if (!isVecInsideYZBounds(bound, minX)) {
+			minX = null;
 		}
-		if (!isVecInsideYZBounds(bound, Vec33)) {
-			Vec33 = null;
+		if (!isVecInsideYZBounds(bound, maxX)) {
+			maxX = null;
 		}
-		if (!isVecInsideXZBounds(bound, Vec34)) {
-			Vec34 = null;
+		if (!isVecInsideXZBounds(bound, minY)) {
+			minY = null;
 		}
-		if (!isVecInsideXZBounds(bound, Vec35)) {
-			Vec35 = null;
+		if (!isVecInsideXZBounds(bound, maxY)) {
+			maxY = null;
 		}
-		if (!isVecInsideXYBounds(bound, Vec36)) {
-			Vec36 = null;
+		if (!isVecInsideXYBounds(bound, minZ)) {
+			minZ = null;
 		}
-		if (!isVecInsideXYBounds(bound, Vec37)) {
-			Vec37 = null;
+		if (!isVecInsideXYBounds(bound, maxZ)) {
+			maxZ = null;
 		}
-		Vec3 Vec38 = null;
-		if (Vec32 != null && (Vec38 == null || player.distanceTo(Vec32) < player
-				.distanceTo(Vec38))) {
-			Vec38 = Vec32;
+		Vec3 tracedBound = null;
+		if (minX != null && (tracedBound == null || player.distanceTo(minX) < player
+				.distanceTo(tracedBound))) {
+			tracedBound = minX;
 		}
-		if (Vec33 != null && (Vec38 == null || player.distanceTo(Vec33) < player
-				.distanceTo(Vec38))) {
-			Vec38 = Vec33;
+		if (maxX != null && (tracedBound == null || player.distanceTo(maxX) < player
+				.distanceTo(tracedBound))) {
+			tracedBound = maxX;
 		}
-		if (Vec34 != null && (Vec38 == null || player.distanceTo(Vec34) < player
-				.distanceTo(Vec38))) {
-			Vec38 = Vec34;
+		if (minY != null && (tracedBound == null || player.distanceTo(minY) < player
+				.distanceTo(tracedBound))) {
+			tracedBound = minY;
 		}
-		if (Vec35 != null && (Vec38 == null || player.distanceTo(Vec35) < player
-				.distanceTo(Vec38))) {
-			Vec38 = Vec35;
+		if (maxY != null && (tracedBound == null || player.distanceTo(maxY) < player
+				.distanceTo(tracedBound))) {
+			tracedBound = maxY;
 		}
-		if (Vec36 != null && (Vec38 == null || player.distanceTo(Vec36) < player
-				.distanceTo(Vec38))) {
-			Vec38 = Vec36;
+		if (minZ != null && (tracedBound == null || player.distanceTo(minZ) < player
+				.distanceTo(tracedBound))) {
+			tracedBound = minZ;
 		}
-		if (Vec37 != null && (Vec38 == null || player.distanceTo(Vec37) < player
-				.distanceTo(Vec38))) {
-			Vec38 = Vec37;
+		if (maxZ != null && (tracedBound == null || player.distanceTo(maxZ) < player
+				.distanceTo(tracedBound))) {
+			tracedBound = maxZ;
 		}
-		if (Vec38 == null) {
+		if (tracedBound == null) {
 			return null;
 		}
 		byte side = -1;
-		if (Vec38 == Vec32) {
+		if (tracedBound == minX) {
 			side = 4;
 		}
-		if (Vec38 == Vec33) {
+		if (tracedBound == maxX) {
 			side = 5;
 		}
-		if (Vec38 == Vec34) {
+		if (tracedBound == minY) {
 			side = 0;
 		}
-		if (Vec38 == Vec35) {
+		if (tracedBound == maxY) {
 			side = 1;
 		}
-		if (Vec38 == Vec36) {
+		if (tracedBound == minZ) {
 			side = 2;
 		}
-		if (Vec38 == Vec37) {
+		if (tracedBound == maxZ) {
 			side = 3;
 		}
-		return new Object[] { Vec38, side, player.distanceTo(Vec38) };
+		return new Object[] { tracedBound, side, player.distanceTo(tracedBound) };
 	}
 
 	private boolean isVecInsideYZBounds(AxisAlignedBB bound, Vec3 Vec3) {
@@ -795,8 +724,6 @@ public class BlockLittleBlocks extends BlockContainer {
 					}
 				}
 			}
-			tile.onInventoryChanged();
-			world.markBlockNeedsUpdate(x, y, z);
 		}
 	}
 }

@@ -3,6 +3,7 @@ package littleblocks.tileentities;
 import java.util.ArrayList;
 import java.util.List;
 
+import littleblocks.blocks.BlockLittleBlocksBlock;
 import littleblocks.core.LBCore;
 import littleblocks.core.LBInit;
 import littleblocks.network.packets.PacketTileEntityLB;
@@ -243,16 +244,11 @@ public class TileEntityLittleBlocks extends TileEntity {
 		content[x][y][z] = id;
 		setMetadata(x, y, z, 0);
 		if (lastId != id) {
+			BlockLittleBlocksBlock lbb = new BlockLittleBlocksBlock(id, 0, x, y, z);
+			lbb.setGlobalBlockCoords(this.xCoord, this.yCoord, this.zCoord);
 			((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(this.worldObj, false).idModified(
-					(this.xCoord << 3) + x,
-					(this.yCoord << 3) + y,
-					(this.zCoord << 3) + z,
-					0,
-					0,
-					0,
-					0,
-					lastId,
-					id);
+					lbb,
+					lastId);
 		}
 		this.onInventoryChanged();
 	}
@@ -316,18 +312,13 @@ public class TileEntityLittleBlocks extends TileEntity {
 		metadatas[x][y][z] = metadata;
 
 		if (metadatas[x][y][z] != metadata) {
+			BlockLittleBlocksBlock lbb = new BlockLittleBlocksBlock(content[x][y][z], metadatas[x][y][z], x, y, z);
+			lbb.setGlobalBlockCoords(this.xCoord, this.yCoord, this.zCoord);
 			((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(this.worldObj, false).metadataModified(
-					(this.xCoord << 3) + x,
-					(this.yCoord << 3) + y,
-					(this.zCoord << 3) + z,
-					0,
-					0,
-					0,
-					0,
-					metadatas[x][y][z],
-					metadata);
+					lbb,
+					metadata
+			);
 		}
-		this.onInventoryChanged();
 	}
 
 	public void setContent(int x, int y, int z, int id, int metadata) {
@@ -394,30 +385,21 @@ public class TileEntityLittleBlocks extends TileEntity {
 		metadatas[x][y][z] = metadata;
 
 		if (lastData != metadata) {
+			BlockLittleBlocksBlock lbb = new BlockLittleBlocksBlock(id, metadata, x, y, z);
+			lbb.setGlobalBlockCoords(this.xCoord, this.yCoord, this.zCoord);
 			((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(this.worldObj, false).metadataModified(
-					(this.xCoord << 3) + x,
-					(this.yCoord << 3) + y,
-					(this.zCoord << 3) + z,
-					0,
-					0,
-					0,
-					0,
-					lastData,
-					metadata);
+					lbb,
+					lastData
+			);
 		}
 		if (lastId != id) {
+			BlockLittleBlocksBlock lbb = new BlockLittleBlocksBlock(id, metadata, x, y, z);
+			lbb.setGlobalBlockCoords(this.xCoord, this.yCoord, this.zCoord);
 			((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(this.worldObj, false).idModified(
-					(this.xCoord << 3) + x,
-					(this.yCoord << 3) + y,
-					(this.zCoord << 3) + z,
-					0,
-					0,
-					0,
-					0,
-					lastId,
-					id);
+					lbb,
+					lastId
+			);
 		}
-		this.onInventoryChanged();
 	}
 
 	public void setContent(int[][][] content) {
@@ -552,7 +534,11 @@ public class TileEntityLittleBlocks extends TileEntity {
 	}
 	
 	public PacketPayload getPayload() {
-		PacketPayload p = new PacketPayload((size * size * size) * 2, 0, 0, 0);
+		int MAX_SIZE = (size * size * size) * 2;
+		System.out.println("Preping");
+		
+		PacketPayload p = new PacketPayload(MAX_SIZE, 0, 0, 0);
+		
 		for (int x = 0; x < content.length; x++) {
 			for (int y = 0; y < content[x].length; y++) {
 				for (int z = 0; z < content[x][y].length; z++) {
@@ -574,56 +560,4 @@ public class TileEntityLittleBlocks extends TileEntity {
 	public void setMetadata(int[][][] metadata) {
 		this.metadatas = metadata;
 	}
-	
-/*	public PacketPayload getPayload() {
-		PacketPayload p = new PacketPayload(2 + (size * size * size) * 2, 0, 0, 0);
-		int numberOfLittleBlocks = 0;
-		for (int x = 0; x < content.length; x++) {
-			for (int y = 0; y < content[x].length; y++) {
-				for (int z = 0; z < content[x][y].length; z++) {
-					if (content[x][y][z] > 0) {
-						numberOfLittleBlocks++;
-					}
-				}
-			}
-		}
-		int[] dataInt;
-		if (upToDate) {
-			dataInt = new int[] { 0, 0 };
-		} else
-			if (numberOfLittleBlocks > 204) {
-			 //(3  POS  + 2  ID & DATA )x > 8*8*8*2  ID & DATA <=> 5x > 1024 <=> x > 204.8
-			dataInt = new int[2 + ((size * size * size) * 2)];
-			dataInt[0] = 0;
-			dataInt[1] = 1;
-			p.setIntPayload(0, 0);
-			p.setIntPayload(0, 1);
-		} else {
-			dataInt = new int[2 + numberOfLittleBlocks * 5];
-			dataInt[0] = 0;
-			dataInt[1] = 2;
-			int i = 0;
-			for (int x = 0; x < content.length; x++) {
-				for (int y = 0; y < content[x].length; y++) {
-					for (int z = 0; z < content[x][y].length; z++) {
-						if (content[x][y][z] > 0) {
-							dataInt[2 + i * 5 + 0] = x;
-							dataInt[2 + i * 5 + 1] = y;
-							dataInt[2 + i * 5 + 2] = z;
-							dataInt[2 + i * 5 + 3] = content[x][y][z];
-							dataInt[2 + i * 5 + 4] = metadatas[x][y][z];
-							i++;
-						}
-					}
-				}
-			}
-		}
-		upToDate = false;
-		p.setStringPayload(
-				0,
-				String.valueOf(getMetadata(xCoord, yCoord, zCoord)));
-		for (int i = 0; i < dataInt.length; i++) {
-			p.setIntPayload(i, dataInt[i]);
-		}
-	}*/
 }

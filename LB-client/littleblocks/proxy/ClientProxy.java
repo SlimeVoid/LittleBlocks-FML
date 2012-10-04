@@ -67,8 +67,8 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public LittleWorld getLittleWorld(World world, boolean needsRefresh) {
 		if (world != null) {
-			if (world instanceof WorldClient) {
-				if (LBCore.littleWorldClient == null || LBCore.littleWorldClient.isOutdated(world)) {
+			if (world.isRemote) {
+				if (LBCore.littleWorldClient == null || LBCore.littleWorldClient.isOutdated(world) || needsRefresh) {
 					LBCore.littleWorldClient = new LittleWorld(world);
 				}
 				return LBCore.littleWorldClient;
