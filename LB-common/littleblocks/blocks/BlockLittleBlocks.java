@@ -2,26 +2,17 @@ package littleblocks.blocks;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import littleblocks.api.ILBCommonProxy;
 import littleblocks.blocks.core.CollisionRayTrace;
 import littleblocks.core.LBCore;
 import littleblocks.core.LBInit;
 import littleblocks.network.ClientPacketHandler;
-import littleblocks.network.CommonPacketHandler;
-import littleblocks.network.LBPacketIds;
-import littleblocks.network.packets.PacketLittleBlocks;
-import littleblocks.network.packets.PacketTileEntityLB;
 import littleblocks.tileentities.TileEntityLittleBlocks;
 import littleblocks.world.LittleWorld;
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
-import net.minecraft.src.BlockButton;
 import net.minecraft.src.BlockContainer;
-import net.minecraft.src.BlockRedstoneLight;
-import net.minecraft.src.BlockRedstoneTorch;
-import net.minecraft.src.BlockRedstoneWire;
 import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityClientPlayerMP;
@@ -61,7 +52,7 @@ public class BlockLittleBlocks extends BlockContainer {
 		}
 		this.setCreativeTab(CreativeTabs.tabDeco);
 	}
-	
+
 	@Override
 	public boolean removeBlockByPlayer(World world, EntityPlayer entityplayer, int x, int y, int z) {
 		int id = world.getBlockId(x, y, z);
@@ -71,7 +62,9 @@ public class BlockLittleBlocks extends BlockContainer {
 			if (tile.isEmpty()) {
 				return super.removeBlockByPlayer(world, entityplayer, x, y, z);
 			} else {
-				if (FMLCommonHandler.instance().getSide() == Side.CLIENT && ModLoader.getMinecraftInstance().playerController.isInCreativeMode()) {
+				if (FMLCommonHandler.instance().getSide() == Side.CLIENT && ModLoader
+						.getMinecraftInstance().playerController
+						.isInCreativeMode()) {
 					this.onBlockClicked(world, x, y, z, entityplayer);
 					return false;
 				} else if (isCreative(entityplayer)) {
@@ -129,12 +122,7 @@ public class BlockLittleBlocks extends BlockContainer {
 		}
 
 		if (idDropped > 0 && quantityDropped > 0) {
-			this.dropLittleBlockAsItem_do(
-					world,
-					x,
-					y,
-					z,
-					itemstack);
+			this.dropLittleBlockAsItem_do(world, x, y, z, itemstack);
 		}
 	}
 
@@ -161,15 +149,16 @@ public class BlockLittleBlocks extends BlockContainer {
 						if (theBlock.getBlockName().equals("tile.pistonBase") || theBlock
 								.getBlockName()
 									.equals("tile.pistonStickyBase")) {
-							//denyPlacement = true;
-							//placementMessage = LBCore.denyBlockMessage;
+							// denyPlacement = true;
+							// placementMessage = LBCore.denyBlockMessage;
 						}
 					}
 				}
 			} else {
-				if(itemID < items.length) {
+				if (itemID < items.length) {
 					if (Item.itemsList[itemID] instanceof ItemBlock) {
-						int itemBlockId = ((ItemBlock)Item.itemsList[itemID]).getBlockID();
+						int itemBlockId = ((ItemBlock) Item.itemsList[itemID])
+								.getBlockID();
 						if (hasTile(itemBlockId)) {
 							denyPlacement = true;
 							placementMessage = LBCore.denyBlockMessage;
@@ -224,12 +213,13 @@ public class BlockLittleBlocks extends BlockContainer {
 		TileEntity tileentity = world.getBlockTileEntity(x, y, z);
 		if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
 			TileEntityLittleBlocks tileentitylittleblocks = (TileEntityLittleBlocks) tileentity;
-			int	xx = (x << 3) + this.xSelected,
-				yy = (y << 3) + this.ySelected,
-				zz = (z << 3) + this.zSelected;
-			LittleWorld littleWorld = ((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(world, false);
+			int xx = (x << 3) + this.xSelected, yy = (y << 3) + this.ySelected, zz = (z << 3) + this.zSelected;
+			LittleWorld littleWorld = ((ILBCommonProxy) LBInit.LBM.getProxy())
+					.getLittleWorld(world, false);
 			int blockId = tileentitylittleblocks.getContent(
-					this.xSelected, this.ySelected, this.zSelected);
+					this.xSelected,
+					this.ySelected,
+					this.zSelected);
 			if (entityplayer instanceof EntityPlayerMP) {
 				EntityPlayerMP player = (EntityPlayerMP) entityplayer;
 				ItemInWorldManager itemManager = player.theItemInWorldManager;
@@ -252,7 +242,8 @@ public class BlockLittleBlocks extends BlockContainer {
 							.getItem() instanceof ItemBucket) {
 					itemManager.tryUseItem(
 							entityplayer,
-							((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(world, false),
+							((ILBCommonProxy) LBInit.LBM.getProxy())
+									.getLittleWorld(world, false),
 							entityplayer.getCurrentEquippedItem());
 					tileentitylittleblocks.onInventoryChanged();
 					world.markBlockNeedsUpdate(x, y, z);
@@ -294,9 +285,7 @@ public class BlockLittleBlocks extends BlockContainer {
 				this.xSelected,
 				this.ySelected,
 				this.zSelected);
-			int	xx = (x << 3) + this.xSelected,
-				yy = (y << 3) + this.ySelected,
-				zz = (z << 3) + this.zSelected;
+		int xx = (x << 3) + this.xSelected, yy = (y << 3) + this.ySelected, zz = (z << 3) + this.zSelected;
 		if (content > 0 && Block.blocksList[content] != null) {
 			if (!isCreative(entityplayer)) {
 				dropLittleBlockAsNormalBlock(
@@ -323,7 +312,7 @@ public class BlockLittleBlocks extends BlockContainer {
 		}
 		return false;
 	}
-	
+
 	private boolean isCreative(EntityPlayer entityplayer) {
 		if (entityplayer.worldObj.isRemote) {
 			return isCreative(entityplayer, entityplayer.worldObj);
@@ -465,10 +454,27 @@ public class BlockLittleBlocks extends BlockContainer {
 
 		List<Object[]> returns = new ArrayList<Object[]>();
 
-		returns = CollisionRayTrace.rayTraceLittleBlocks(this, player, view, i, j, k, returns, content, tile);
+		returns = CollisionRayTrace.rayTraceLittleBlocks(
+				this,
+				player,
+				view,
+				i,
+				j,
+				k,
+				returns,
+				content,
+				tile);
 
-		returns = CollisionRayTrace.collisionRayTracer(this, world, player, view, i, j, k, returns);
-		
+		returns = CollisionRayTrace.collisionRayTracer(
+				this,
+				world,
+				player,
+				view,
+				i,
+				j,
+				k,
+				returns);
+
 		if (!returns.isEmpty()) {
 			Object[] min = null;
 			double distMin = 0;

@@ -1,14 +1,13 @@
 package littleblocks.proxy;
 
-import littleblocks.tickhandlers.ClientTickHandler;
-import littleblocks.tickhandlers.CommonTickHandler;
-import littleblocks.world.LittleWorld;
 import littleblocks.core.LBCore;
 import littleblocks.network.ClientPacketHandler;
 import littleblocks.network.LBPacketIds;
 import littleblocks.network.packets.PacketLittleBlocksSettings;
 import littleblocks.render.BlockLittleBlocksRenderer;
 import littleblocks.render.TileEntityLittleBlocksRenderer;
+import littleblocks.tickhandlers.ClientTickHandler;
+import littleblocks.world.LittleWorld;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ModLoader;
@@ -18,7 +17,6 @@ import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet1Login;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.WorldClient;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.Side;
@@ -63,12 +61,13 @@ public class ClientProxy extends CommonProxy {
 			ClientPacketHandler.sendPacket(packet.getPacket());
 		}
 	}
-	
+
 	@Override
 	public LittleWorld getLittleWorld(World world, boolean needsRefresh) {
 		if (world != null) {
 			if (world.isRemote) {
-				if (LBCore.littleWorldClient == null || LBCore.littleWorldClient.isOutdated(world) || needsRefresh) {
+				if (LBCore.littleWorldClient == null || LBCore.littleWorldClient
+						.isOutdated(world) || needsRefresh) {
 					LBCore.littleWorldClient = new LittleWorld(world);
 				}
 				return LBCore.littleWorldClient;

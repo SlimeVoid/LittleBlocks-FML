@@ -78,7 +78,7 @@ public class LittleChunkProvider implements IChunkProvider {
 	 * Converts the instance data to a readable string.
 	 */
 	public String makeString() {
-		return  "[LB]" + realWorld.getProviderName();
+		return "[LB]" + realWorld.getProviderName();
 	}
 
 	/**

@@ -2,7 +2,6 @@ package littleblocks.core;
 
 import java.io.File;
 
-import littleblocks.api.ILBCommonProxy;
 import littleblocks.tileentities.TileEntityLittleBlocks;
 import net.minecraftforge.common.Configuration;
 import cpw.mods.fml.common.registry.GameRegistry;

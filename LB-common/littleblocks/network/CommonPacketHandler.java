@@ -37,21 +37,26 @@ public class CommonPacketHandler implements IPacketHandler {
 			for (TileEntity tileentity : tileEntities) {
 				if (tileentity instanceof TileEntityLittleBlocks) {
 					tileentity.onInventoryChanged();
-					//world.markBlockNeedsUpdate(tileentity.xCoord, tileentity.yCoord+1, tileentity.zCoord);
+					// world.markBlockNeedsUpdate(tileentity.xCoord,
+					// tileentity.yCoord+1, tileentity.zCoord);
 				}
 			}
 		}
 	}
 
 	public static void metadataModified(LittleWorld littleWorld, BlockLittleBlocksBlock lbb, int metadata) {
-		PacketLittleBlocks packetLB = new PacketLittleBlocks(LBCore.metaDataModifiedCommand, lbb);
+		PacketLittleBlocks packetLB = new PacketLittleBlocks(
+				LBCore.metaDataModifiedCommand,
+				lbb);
 		packetLB.setMetadata(metadata);
 		packetLB.setSender(LBPacketIds.SERVER);
 		sendToAll(packetLB);
 	}
 
 	public static void idModified(LittleWorld littleWorld, BlockLittleBlocksBlock lbb) {
-		PacketLittleBlocks packetLB = new PacketLittleBlocks(LBCore.idModifiedCommand, lbb);
+		PacketLittleBlocks packetLB = new PacketLittleBlocks(
+				LBCore.idModifiedCommand,
+				lbb);
 		packetLB.setSender(LBPacketIds.SERVER);
 		sendToAll(packetLB);
 	}
@@ -151,14 +156,14 @@ public class CommonPacketHandler implements IPacketHandler {
 
 	public static void sendToAllPlayers(World world, EntityPlayer entityplayer, Packet packet, int x, int y, int z, boolean sendToPlayer) {
 		for (int j = 0; j < world.playerEntities.size(); j++) {
-			EntityPlayer thePlayer = (EntityPlayer) world.playerEntities
-					.get(j);
+			EntityPlayer thePlayer = (EntityPlayer) world.playerEntities.get(j);
 			if (thePlayer != null) {
 				if (thePlayer instanceof EntityPlayerMP) {
-					EntityPlayerMP entityplayermp = (EntityPlayerMP) thePlayer; 
+					EntityPlayerMP entityplayermp = (EntityPlayerMP) thePlayer;
 					boolean shouldSendToPlayer = true;
 					if (entityplayer != null) {
-						if (entityplayer.username.equals(entityplayermp.username) && !sendToPlayer)
+						if (entityplayer.username
+								.equals(entityplayermp.username) && !sendToPlayer)
 							shouldSendToPlayer = false;
 					}
 					if (shouldSendToPlayer) {
@@ -169,10 +174,11 @@ public class CommonPacketHandler implements IPacketHandler {
 						}
 					}
 				} else if (thePlayer instanceof EntityClientPlayerMP) {
-					EntityClientPlayerMP entityplayermp = (EntityClientPlayerMP) thePlayer; 
+					EntityClientPlayerMP entityplayermp = (EntityClientPlayerMP) thePlayer;
 					boolean shouldSendToPlayer = true;
 					if (entityplayer != null) {
-						if (entityplayer.username.equals(entityplayermp.username) && !sendToPlayer)
+						if (entityplayer.username
+								.equals(entityplayermp.username) && !sendToPlayer)
 							shouldSendToPlayer = false;
 					}
 					if (shouldSendToPlayer) {

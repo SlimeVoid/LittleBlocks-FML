@@ -3,6 +3,7 @@ package littleblocks.tileentities;
 import java.util.ArrayList;
 import java.util.List;
 
+import littleblocks.api.ILBCommonProxy;
 import littleblocks.blocks.BlockLittleBlocksBlock;
 import littleblocks.core.LBCore;
 import littleblocks.core.LBInit;
@@ -17,10 +18,7 @@ import net.minecraft.src.Packet;
 import net.minecraft.src.Packet132TileEntityData;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import littleblocks.api.ILBCommonProxy;
-import net.minecraft.src.WorldProviderSurface;
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Side;
 import eurysmods.network.packets.core.PacketPayload;
 import eurysmods.network.packets.core.PacketUpdate;
 
@@ -42,7 +40,9 @@ public class TileEntityLittleBlocks extends TileEntity {
 	@Override
 	public void func_70308_a(World par1World) {
 		this.worldObj = par1World;
-		((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(this.worldObj, false);
+		((ILBCommonProxy) LBInit.LBM.getProxy()).getLittleWorld(
+				this.worldObj,
+				false);
 	}
 
 	public TileEntityLittleBlocks() {
@@ -81,7 +81,9 @@ public class TileEntityLittleBlocks extends TileEntity {
 	}
 
 	public LittleWorld getLittleWorld() {
-		return ((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(this.worldObj, false);
+		return ((ILBCommonProxy) LBInit.LBM.getProxy()).getLittleWorld(
+				this.worldObj,
+				false);
 	}
 
 	public int getMetadata(int x, int y, int z) {
@@ -244,11 +246,16 @@ public class TileEntityLittleBlocks extends TileEntity {
 		content[x][y][z] = id;
 		setMetadata(x, y, z, 0);
 		if (lastId != id) {
-			BlockLittleBlocksBlock lbb = new BlockLittleBlocksBlock(id, 0, x, y, z);
+			BlockLittleBlocksBlock lbb = new BlockLittleBlocksBlock(
+					id,
+					0,
+					x,
+					y,
+					z);
 			lbb.setGlobalBlockCoords(this.xCoord, this.yCoord, this.zCoord);
-			((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(this.worldObj, false).idModified(
-					lbb,
-					lastId);
+			((ILBCommonProxy) LBInit.LBM.getProxy()).getLittleWorld(
+					this.worldObj,
+					false).idModified(lbb, lastId);
 		}
 		this.onInventoryChanged();
 	}
@@ -312,12 +319,16 @@ public class TileEntityLittleBlocks extends TileEntity {
 		metadatas[x][y][z] = metadata;
 
 		if (metadatas[x][y][z] != metadata) {
-			BlockLittleBlocksBlock lbb = new BlockLittleBlocksBlock(content[x][y][z], metadatas[x][y][z], x, y, z);
+			BlockLittleBlocksBlock lbb = new BlockLittleBlocksBlock(
+					content[x][y][z],
+					metadatas[x][y][z],
+					x,
+					y,
+					z);
 			lbb.setGlobalBlockCoords(this.xCoord, this.yCoord, this.zCoord);
-			((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(this.worldObj, false).metadataModified(
-					lbb,
-					metadata
-			);
+			((ILBCommonProxy) LBInit.LBM.getProxy()).getLittleWorld(
+					this.worldObj,
+					false).metadataModified(lbb, metadata);
 		}
 	}
 
@@ -385,20 +396,28 @@ public class TileEntityLittleBlocks extends TileEntity {
 		metadatas[x][y][z] = metadata;
 
 		if (lastData != metadata) {
-			BlockLittleBlocksBlock lbb = new BlockLittleBlocksBlock(id, metadata, x, y, z);
+			BlockLittleBlocksBlock lbb = new BlockLittleBlocksBlock(
+					id,
+					metadata,
+					x,
+					y,
+					z);
 			lbb.setGlobalBlockCoords(this.xCoord, this.yCoord, this.zCoord);
-			((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(this.worldObj, false).metadataModified(
-					lbb,
-					lastData
-			);
+			((ILBCommonProxy) LBInit.LBM.getProxy()).getLittleWorld(
+					this.worldObj,
+					false).metadataModified(lbb, lastData);
 		}
 		if (lastId != id) {
-			BlockLittleBlocksBlock lbb = new BlockLittleBlocksBlock(id, metadata, x, y, z);
+			BlockLittleBlocksBlock lbb = new BlockLittleBlocksBlock(
+					id,
+					metadata,
+					x,
+					y,
+					z);
 			lbb.setGlobalBlockCoords(this.xCoord, this.yCoord, this.zCoord);
-			((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(this.worldObj, false).idModified(
-					lbb,
-					lastId
-			);
+			((ILBCommonProxy) LBInit.LBM.getProxy()).getLittleWorld(
+					this.worldObj,
+					false).idModified(lbb, lastId);
 		}
 	}
 
@@ -532,25 +551,30 @@ public class TileEntityLittleBlocks extends TileEntity {
 	public PacketPayload getTileEntityPayload() {
 		return getPayload();
 	}
-	
+
 	public PacketPayload getPayload() {
 		int MAX_SIZE = (size * size * size) * 2;
 		System.out.println("Preping");
-		
+
 		PacketPayload p = new PacketPayload(MAX_SIZE, 0, 0, 0);
-		
+
 		for (int x = 0; x < content.length; x++) {
 			for (int y = 0; y < content[x].length; y++) {
 				for (int z = 0; z < content[x][y].length; z++) {
-					p.setIntPayload(x + (y * size) + (z * size * size), content[x][y][z]);
+					p.setIntPayload(
+							x + (y * size) + (z * size * size),
+							content[x][y][z]);
 				}
 			}
 		}
-	
+
 		for (int x = 0; x < metadatas.length; x++) {
 			for (int y = 0; y < metadatas[x].length; y++) {
 				for (int z = 0; z < metadatas[x][y].length; z++) {
-					p.setIntPayload((size * size * size) + x + (y * size) + (z * size * size), metadatas[x][y][z]);
+					p
+							.setIntPayload(
+									(size * size * size) + x + (y * size) + (z * size * size),
+									metadatas[x][y][z]);
 				}
 			}
 		}

@@ -7,36 +7,24 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.lwjgl.opengl.GL11;
-
 import littleblocks.blocks.BlockLittleBlocksBlock;
 import littleblocks.core.LBCore;
 import littleblocks.network.CommonPacketHandler;
-import littleblocks.network.LBPacketIds;
-import littleblocks.network.packets.PacketLittleBlocks;
 import littleblocks.tileentities.TileEntityLittleBlocks;
-import net.minecraft.client.Minecraft;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.Block;
 import net.minecraft.src.BlockEventData;
 import net.minecraft.src.Chunk;
 import net.minecraft.src.ChunkCoordIntPair;
-import net.minecraft.src.DedicatedServer;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EnumSkyBlock;
 import net.minecraft.src.IChunkProvider;
-import net.minecraft.src.ISaveHandler;
-import net.minecraft.src.IntHashMap;
 import net.minecraft.src.MovingObjectPosition;
 import net.minecraft.src.NextTickListEntry;
-import net.minecraft.src.Packet54PlayNoteBlock;
-import net.minecraft.src.Profiler;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.Vec3;
 import net.minecraft.src.World;
 import net.minecraft.src.WorldProvider;
 import net.minecraft.src.WorldSettings;
-import net.minecraftforge.common.DimensionManager;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
@@ -51,8 +39,9 @@ public class LittleWorld extends World {
 
 	/** Set of scheduled ticks (used for checking if a tick already exists) */
 	private Set scheduledTickSet;
-	
+
 	private int ticksInWorld = 0;
+	private static final int MAX_TICKS_IN_WORLD = 20;
 
 	private World realWorld;
 	/**
@@ -135,7 +124,7 @@ public class LittleWorld extends World {
 				this.sendAndApplyBlockEvents();
 			}
 		}
-		if (this.ticksInWorld >= 40) {
+		if (this.ticksInWorld >= MAX_TICKS_IN_WORLD) {
 			this.ticksInWorld = 0;
 		}
 	}
@@ -167,8 +156,10 @@ public class LittleWorld extends World {
 							eventData.getY() >> 3,
 							eventData.getZ() >> 3);
 					if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
-						if (!tileentities.contains((TileEntityLittleBlocks)tileentity)) {
-							tileentities.add((TileEntityLittleBlocks)tileentity);
+						if (!tileentities
+								.contains(tileentity)) {
+							tileentities
+									.add((TileEntityLittleBlocks) tileentity);
 						}
 					}
 				}
@@ -244,7 +235,7 @@ public class LittleWorld extends World {
 	public boolean tickUpdates(boolean tick) {
 		if (this.isRemote)
 			return false;
-		Set<TileEntityLittleBlocks> littleBlockTiles = new HashSet();
+		Set<TileEntity> littleBlockTiles = new HashSet();
 		int numberOfUpdates = this.pendingTickListEntries.size();
 
 		if (numberOfUpdates != this.scheduledTickSet.size()) {
@@ -278,7 +269,28 @@ public class LittleWorld extends World {
 							nextTick.yCoord,
 							nextTick.zCoord);
 
-					if (blockId == nextTick.blockID && blockId > 0 /*&& blockId != Block.waterMoving.blockID && blockId != Block.waterStill.blockID && blockId != Block.lavaMoving.blockID && blockId != Block.lavaStill.blockID*/) {
+					if (blockId == nextTick.blockID && blockId > 0 /*
+																	 * &&
+																	 * blockId
+																	 * != Block.
+																	 * waterMoving
+																	 * .blockID
+																	 * &&
+																	 * blockId
+																	 * != Block.
+																	 * waterStill
+																	 * .blockID
+																	 * &&
+																	 * blockId
+																	 * != Block.
+																	 * lavaMoving
+																	 * .blockID
+																	 * &&
+																	 * blockId
+																	 * != Block.
+																	 * lavaStill
+																	 * .blockID
+																	 */) {
 						Block.blocksList[blockId].updateTick(
 								this,
 								nextTick.xCoord,
@@ -292,16 +304,16 @@ public class LittleWorld extends World {
 										nextTick.zCoord >> 3);
 						if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
 							if (!littleBlockTiles
-									.contains((TileEntityLittleBlocks) tileentity)) {
+									.contains(tileentity)) {
 								littleBlockTiles
-										.add((TileEntityLittleBlocks) tileentity);
+										.add(tileentity);
 							}
 						}
 					}
 				}
 			}
-			if (this.ticksInWorld >= 40) {
-				for (TileEntityLittleBlocks tile : littleBlockTiles) {
+			if (this.ticksInWorld >= MAX_TICKS_IN_WORLD) {
+				for (TileEntity tile : littleBlockTiles) {
 					this.realWorld.markBlockNeedsUpdate(
 							tile.xCoord,
 							tile.yCoord,
@@ -384,7 +396,7 @@ public class LittleWorld extends World {
 					y + max,
 					z + max)) {
 				if (blockId > 0) {
-					nextTick.setScheduledTime((long) tickRate + this.worldInfo
+					nextTick.setScheduledTime(tickRate + this.worldInfo
 							.getWorldTime());
 				}
 
@@ -407,7 +419,7 @@ public class LittleWorld extends World {
 		NextTickListEntry nextTick = new NextTickListEntry(x, y, z, blockId);
 
 		if (blockId > 0) {
-			nextTick.setScheduledTime((long) tickRate + this.worldInfo
+			nextTick.setScheduledTime(tickRate + this.worldInfo
 					.getWorldTime());
 		}
 
@@ -419,7 +431,11 @@ public class LittleWorld extends World {
 
 	@Override
 	public int getSkyBlockTypeBrightness(EnumSkyBlock enumskyblock, int i, int j, int k) {
-		return super.getSkyBlockTypeBrightness(enumskyblock, i >> 3, j >> 3, k >> 3);
+		return super.getSkyBlockTypeBrightness(
+				enumskyblock,
+				i >> 3,
+				j >> 3,
+				k >> 3);
 	}
 
 	@Override
@@ -671,12 +687,8 @@ public class LittleWorld extends World {
 
 	@Override
 	public boolean checkChunksExist(int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
-		int xDiff = (maxX - minX) >> 1,
-			yDiff = (maxY - minY) >> 1,
-			zDiff = (maxZ - minZ) >> 1;
-		int xMid = (minX + maxX) >> 1,
-			yMid = (minY + maxY) >> 1,
-			zMid = (minZ + maxZ) >> 1;
+		int xDiff = (maxX - minX) >> 1, yDiff = (maxY - minY) >> 1, zDiff = (maxZ - minZ) >> 1;
+		int xMid = (minX + maxX) >> 1, yMid = (minY + maxY) >> 1, zMid = (minZ + maxZ) >> 1;
 
 		boolean flag = realWorld.checkChunksExist(
 				(xMid >> 3) - xDiff,
@@ -718,12 +730,21 @@ public class LittleWorld extends World {
 				block.onNeighborBlockChange(world, x, y, z, side);
 
 				if (world == this) {
-					TileEntity tileentity = realWorld.getBlockTileEntity(x >> 3, z >> 3, z >> 3);
+					TileEntity tileentity = realWorld.getBlockTileEntity(
+							x >> 3,
+							z >> 3,
+							z >> 3);
 					if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
-						TileEntityLittleBlocks tile = (TileEntityLittleBlocks)tileentity;
-						int littleBlockId = tile.getContent(x & 7, y & 7, z & 7);
+						TileEntityLittleBlocks tile = (TileEntityLittleBlocks) tileentity;
+						int littleBlockId = tile
+								.getContent(x & 7, y & 7, z & 7);
 						int newmetadata = tile.getMetadata(x & 7, y & 7, z & 7);
-						BlockLittleBlocksBlock lbb = new BlockLittleBlocksBlock(littleBlockId, x & 7, y & 7, z & 7, newmetadata);
+						BlockLittleBlocksBlock lbb = new BlockLittleBlocksBlock(
+								littleBlockId,
+								x & 7,
+								y & 7,
+								z & 7,
+								newmetadata);
 						this.metadataModified(lbb, newmetadata);
 					}
 					realWorld.markBlockNeedsUpdate(x, y, z);
@@ -767,40 +788,20 @@ public class LittleWorld extends World {
 				lbb.getBlockId());
 	}
 
-/*	public void idModified(int x, int y, int z, int side, float vecX, float vecY, float vecZ, int lastId, int newId) {
-		if (lastId != 0) {
-			Block.blocksList[lastId].breakBlock(this, x, y, z, 0, 0);
-		}
-		realWorld.updateAllLightTypes(x, y, z);
-		if (newId != 0) {
-			if (!this.isRemote) {
-				Block.blocksList[newId].onBlockAdded(this, x, y, z);
-			}
-		}
-		if (!this.isRemote) {
-			CommonPacketHandler.idModified(
-					x,
-					y,
-					z,
-					side,
-					vecX,
-					vecY,
-					vecZ,
-					lastId,
-					newId,
-					this);
-		}
-
-		notifyBlockChange(x, y, z, newId);
-	}*/
+	/*
+	 * public void idModified(int x, int y, int z, int side, float vecX, float
+	 * vecY, float vecZ, int lastId, int newId) { if (lastId != 0) {
+	 * Block.blocksList[lastId].breakBlock(this, x, y, z, 0, 0); }
+	 * realWorld.updateAllLightTypes(x, y, z); if (newId != 0) { if
+	 * (!this.isRemote) { Block.blocksList[newId].onBlockAdded(this, x, y, z); }
+	 * } if (!this.isRemote) { CommonPacketHandler.idModified( x, y, z, side,
+	 * vecX, vecY, vecZ, lastId, newId, this); } notifyBlockChange(x, y, z,
+	 * newId); }
+	 */
 
 	public void metadataModified(BlockLittleBlocksBlock lbb, int metadata) {
 		if (!this.isRemote) {
-			CommonPacketHandler.metadataModified(
-					this,
-					lbb,
-					metadata
-			);
+			CommonPacketHandler.metadataModified(this, lbb, metadata);
 		}
 	}
 

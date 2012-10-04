@@ -46,13 +46,20 @@ public class PacketLittleBlocks extends PacketUpdate {
 
 	public PacketLittleBlocks(String command, BlockLittleBlocksBlock lbb) {
 		this();
-		this.setPosition(lbb.getParentX(), lbb.getParentY(), lbb.getParentZ(), 0);
+		this.setPosition(
+				lbb.getParentX(),
+				lbb.getParentY(),
+				lbb.getParentZ(),
+				0);
 		this.setVecs(0, 0, 0);
 		this.payload = new PacketPayload(5, 0, 1, 0);
 		this.setCommand(command);
 		this.setBlockId(lbb.getBlockId());
 		this.setMetadata(lbb.getMetaData());
-		this.setSelectedXYZ(lbb.getLittleX(), lbb.getLittleY(), lbb.getLittleZ());
+		this.setSelectedXYZ(
+				lbb.getLittleX(),
+				lbb.getLittleY(),
+				lbb.getLittleZ());
 	}
 
 	private void setCommand(String command) {

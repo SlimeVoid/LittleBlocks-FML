@@ -78,12 +78,15 @@ public class CommonProxy implements ILBCommonProxy {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
 	public LittleWorld getLittleWorld(World world, boolean needsRefresh) {
 		if (world != null) {
-			if (LBCore.littleWorldServer == null || LBCore.littleWorldServer.isOutdated(world) || needsRefresh) {
-				LBCore.littleWorldServer = new LittleWorld(world, world.provider);
+			if (LBCore.littleWorldServer == null || LBCore.littleWorldServer
+					.isOutdated(world) || needsRefresh) {
+				LBCore.littleWorldServer = new LittleWorld(
+						world,
+						world.provider);
 			}
 		}
 		return LBCore.littleWorldServer;
