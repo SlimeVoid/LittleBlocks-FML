@@ -234,7 +234,7 @@ public class BlockLittleBlocks extends BlockContainer {
 						a,
 						b,
 						c)) {
-					//tile.onInventoryChanged();
+					// tile.onInventoryChanged();
 					world.markBlockNeedsUpdate(x, y, z);
 					return true;
 				} else if (entityplayer.getCurrentEquippedItem() != null && entityplayer
@@ -245,7 +245,7 @@ public class BlockLittleBlocks extends BlockContainer {
 							((ILBCommonProxy) LBInit.LBM.getProxy())
 									.getLittleWorld(world, false),
 							entityplayer.getCurrentEquippedItem());
-					//tile.onInventoryChanged();
+					// tile.onInventoryChanged();
 					world.markBlockNeedsUpdate(x, y, z);
 					return true;
 				}

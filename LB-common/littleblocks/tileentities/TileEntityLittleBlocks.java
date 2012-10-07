@@ -532,14 +532,13 @@ public class TileEntityLittleBlocks extends TileEntity {
 		}
 		nbttagcompound.setTag("Tiles", tilesTag);
 	}
-	
+
 	@Override
-    public void onInventoryChanged()
-    {
-		//new Exception().printStackTrace();
+	public void onInventoryChanged() {
+		// new Exception().printStackTrace();
 		this.upToDate = false;
 		super.onInventoryChanged();
-    }
+	}
 
 	@Override
 	public Packet getAuxillaryInfoPacket() {
@@ -560,7 +559,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 
 	public PacketPayload getPayload() {
 		int MAX_SIZE = ((size * size * size) * 2) * 3;
-	
+
 		int[] data = new int[MAX_SIZE];
 		int position = 0;
 		int numberOfBlocks = 0;
@@ -569,27 +568,27 @@ public class TileEntityLittleBlocks extends TileEntity {
 				for (int z = 0; z < content[x][y].length; z++) {
 					if (content[x][y][z] > 0) {
 						data[position] = content[x][y][z];
-						data[position+1] = metadatas[x][y][z];
-						data[position+2] = x;
-						data[position+3] = y;
-						data[position+4] = z;
+						data[position + 1] = metadatas[x][y][z];
+						data[position + 2] = x;
+						data[position + 3] = y;
+						data[position + 4] = z;
 						position += 5;
 						numberOfBlocks += 1;
 					}
 				}
 			}
 		}
-	
-		PacketPayload p = new PacketPayload(numberOfBlocks*5 + 1, 0, 0, 0);
+
+		PacketPayload p = new PacketPayload(numberOfBlocks * 5 + 1, 0, 0, 0);
 		p.setIntPayload(0, numberOfBlocks);
 		int position2 = 0;
 		int index = 1;
-		for (int i = 1; i <= numberOfBlocks*5; i+=5) {
+		for (int i = 1; i <= numberOfBlocks * 5; i += 5) {
 			p.setIntPayload(i, data[position2]);
-			p.setIntPayload(i+1, data[position2+1]);
-			p.setIntPayload(i+2, data[position2+2]);
-			p.setIntPayload(i+3, data[position2+3]);
-			p.setIntPayload(i+4, data[position2+4]);
+			p.setIntPayload(i + 1, data[position2 + 1]);
+			p.setIntPayload(i + 2, data[position2 + 2]);
+			p.setIntPayload(i + 3, data[position2 + 3]);
+			p.setIntPayload(i + 4, data[position2 + 4]);
 			position2 += 5;
 		}
 		this.upToDate = true;

@@ -7,9 +7,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Side;
-
 import littleblocks.blocks.BlockLittleBlocksBlock;
 import littleblocks.core.LBCore;
 import littleblocks.network.CommonPacketHandler;
@@ -21,11 +18,12 @@ import net.minecraft.src.BlockEventData;
 import net.minecraft.src.Chunk;
 import net.minecraft.src.ChunkCoordIntPair;
 import net.minecraft.src.NextTickListEntry;
-import net.minecraft.src.Packet54PlayNoteBlock;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.WorldProvider;
 import net.minecraft.src.WorldSettings;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Side;
 
 public class LittleWorldServer extends LittleWorld {
 
@@ -37,7 +35,7 @@ public class LittleWorldServer extends LittleWorld {
 
 	/** Set of scheduled ticks (used for checking if a tick already exists) */
 	private Set scheduledTickSet;
-	
+
 	/**
 	 * Double buffer of ServerBlockEventList[] for holding pending
 	 * BlockEventData's
@@ -75,17 +73,17 @@ public class LittleWorldServer extends LittleWorld {
 		}
 		super.initialize(worldSettings);
 	}
-	
+
 	@Override
 	public void tick() {
-        this.theProfiler.startSection("chunkSection");
+		this.theProfiler.startSection("chunkSection");
 		this.sendAndApplyBlockEvents();
 		this.worldInfo.setWorldTime(this.worldInfo.getWorldTime() + 1L);
-        this.theProfiler.endStartSection("tickPending");
+		this.theProfiler.endStartSection("tickPending");
 		this.tickUpdates(false);
-        this.theProfiler.endStartSection("tickTiles");
+		this.theProfiler.endStartSection("tickTiles");
 		this.sendAndApplyBlockEvents();
-        this.theProfiler.endSection();
+		this.theProfiler.endSection();
 	}
 
 	@Override
@@ -131,17 +129,16 @@ public class LittleWorldServer extends LittleWorld {
 								nextTick.yCoord,
 								nextTick.zCoord,
 								this.rand);
-						TileEntity tileentity = this.getRealWorld()
-								.getBlockTileEntity(
-										nextTick.xCoord >> 3,
-										nextTick.yCoord >> 3,
-										nextTick.zCoord >> 3);
+						TileEntity tileentity = this
+								.getRealWorld()
+									.getBlockTileEntity(
+											nextTick.xCoord >> 3,
+											nextTick.yCoord >> 3,
+											nextTick.zCoord >> 3);
 						if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
-							//tileentity.onInventoryChanged();
-							if (!littleBlockTiles
-									.contains(tileentity)) {
-								littleBlockTiles
-										.add(tileentity);
+							// tileentity.onInventoryChanged();
+							if (!littleBlockTiles.contains(tileentity)) {
+								littleBlockTiles.add(tileentity);
 							}
 						}
 					}
@@ -150,10 +147,10 @@ public class LittleWorldServer extends LittleWorld {
 			if (this.ticksInWorld >= MAX_TICKS_IN_WORLD) {
 				for (TileEntity tile : littleBlockTiles) {
 					System.out.println("LittleBlocks");
-					/*this.getRealWorld().markBlockNeedsUpdate(
-							tile.xCoord,
-							tile.yCoord,
-							tile.zCoord);*/
+					/*
+					 * this.getRealWorld().markBlockNeedsUpdate( tile.xCoord,
+					 * tile.yCoord, tile.zCoord);
+					 */
 				}
 			}
 			return !this.pendingTickListEntries.isEmpty();
@@ -174,15 +171,13 @@ public class LittleWorldServer extends LittleWorld {
 			while (blockEvent.hasNext()) {
 				BlockEventData eventData = (BlockEventData) blockEvent.next();
 				if (this.onBlockEventReceived(eventData)) {
-					int x = eventData.getX() >> 3,
-						y = eventData.getY() >> 3,
-						z = eventData.getZ() >> 3;
-					TileEntity tileentity = this.getRealWorld().getBlockTileEntity(
-							x,
-							y,
-							z);
+					int x = eventData.getX() >> 3, y = eventData.getY() >> 3, z = eventData
+							.getZ() >> 3;
+					TileEntity tileentity = this
+							.getRealWorld()
+								.getBlockTileEntity(x, y, z);
 					if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
-						TileEntityLittleBlocks tile = (TileEntityLittleBlocks)tileentity;
+						TileEntityLittleBlocks tile = (TileEntityLittleBlocks) tileentity;
 						BlockLittleBlocksBlock lbb = new BlockLittleBlocksBlock(
 								eventData.getBlockID(),
 								this.getBlockMetadata(
@@ -192,13 +187,19 @@ public class LittleWorldServer extends LittleWorld {
 								(eventData.getX() & 7),
 								(eventData.getY() & 7),
 								(eventData.getZ() & 7));
-						lbb.setGlobalBlockCoords(
+						lbb.setGlobalBlockCoords(x, y, z);
+						PacketLittleBlocks packet = new PacketLittleBlocks(
+								LBCore.updateClientCommand,
+								lbb);
+						packet.setSender(LBPacketIds.SERVER);
+						CommonPacketHandler.sendToAllPlayers(
+								this.getRealWorld(),
+								null,
+								packet.getPacket(),
 								x,
 								y,
-								z);
-						PacketLittleBlocks packet = new PacketLittleBlocks(LBCore.updateClientCommand, lbb);
-						packet.setSender(LBPacketIds.SERVER);
-						CommonPacketHandler.sendToAllPlayers(this.getRealWorld(), null, packet.getPacket(), x, y, z, false);
+								z,
+								false);
 					}
 				}
 			}
@@ -353,8 +354,7 @@ public class LittleWorldServer extends LittleWorld {
 		NextTickListEntry nextTick = new NextTickListEntry(x, y, z, blockId);
 
 		if (blockId > 0) {
-			nextTick.setScheduledTime(tickRate + this.worldInfo
-					.getWorldTime());
+			nextTick.setScheduledTime(tickRate + this.worldInfo.getWorldTime());
 		}
 
 		if (!this.scheduledTickSet.contains(nextTick)) {

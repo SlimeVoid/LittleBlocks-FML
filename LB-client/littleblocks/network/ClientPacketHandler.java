@@ -44,7 +44,7 @@ public class ClientPacketHandler implements IPacketHandler {
 			if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
 				TileEntityLittleBlocks tileentitylb = (TileEntityLittleBlocks) tileentity;
 				handleLittleTilePacket(world, packetLB, tileentitylb);
-				//handleBigTilePacket(world, packetLB, tileentitylb);
+				// handleBigTilePacket(world, packetLB, tileentitylb);
 			}
 		}
 	}
@@ -53,11 +53,11 @@ public class ClientPacketHandler implements IPacketHandler {
 		int numberOfBlocks = packetLB.payload.getIntPayload(0);
 		int index = 1;
 		for (int i = 0; i < numberOfBlocks; i++) {
-			int id = packetLB.payload.getIntPayload(index),
-				meta = packetLB.payload.getIntPayload(index+1),
-				x = packetLB.payload.getIntPayload(index+2),
-				y = packetLB.payload.getIntPayload(index+3),
-				z = packetLB.payload.getIntPayload(index+4);
+			int id = packetLB.payload.getIntPayload(index), meta = packetLB.payload
+					.getIntPayload(index + 1), x = packetLB.payload
+					.getIntPayload(index + 2), y = packetLB.payload
+					.getIntPayload(index + 3), z = packetLB.payload
+					.getIntPayload(index + 4);
 			tileentitylb.setContent(x, y, z, id, meta);
 			index += 5;
 		}
@@ -151,8 +151,9 @@ public class ClientPacketHandler implements IPacketHandler {
 								packetLB.getSelectedZ(),
 								packetLB.getMetadata());
 					}
-					if (packetLB.getCommand().equals(
-							LBCore.updateClientCommand)) {
+					if (packetLB
+							.getCommand()
+								.equals(LBCore.updateClientCommand)) {
 						tileentitylb.setContent(
 								packetLB.getSelectedX(),
 								packetLB.getSelectedY(),
