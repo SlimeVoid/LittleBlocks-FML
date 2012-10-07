@@ -43,29 +43,51 @@ public class ClientPacketHandler implements IPacketHandler {
 			TileEntity tileentity = packet.getTileEntity(world);
 			if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
 				TileEntityLittleBlocks tileentitylb = (TileEntityLittleBlocks) tileentity;
-				int[][][] content = new int[tileentitylb.size][tileentitylb.size][tileentitylb.size];
-				int[][][] metadata = new int[tileentitylb.size][tileentitylb.size][tileentitylb.size];
-				for (int xx = 0; xx < content.length; xx++) {
-					for (int yy = 0; yy < content[xx].length; yy++) {
-						for (int zz = 0; zz < content[xx][yy].length; zz++) {
-							int blockId = packetLB.payload
-									.getIntPayload(xx + (yy * tileentitylb.size) + (zz * tileentitylb.size * tileentitylb.size));
-							int blockMeta = packetLB.payload
-									.getIntPayload((tileentitylb.size * tileentitylb.size * tileentitylb.size) + xx + (yy * tileentitylb.size) + (zz * tileentitylb.size * tileentitylb.size));
-							content[xx][yy][zz] = blockId;
-							metadata[xx][yy][zz] = blockMeta;
-						}
-					}
-				}
-				tileentitylb.setContent(content);
-				tileentitylb.setMetadata(metadata);
-				// tileentitylb.onInventoryChanged();
-				world.markBlockNeedsUpdate(
-						packet.xPosition,
-						packet.yPosition,
-						packet.zPosition);
+				handleLittleTilePacket(world, packetLB, tileentitylb);
+				//handleBigTilePacket(world, packetLB, tileentitylb);
 			}
 		}
+	}
+
+	private static void handleLittleTilePacket(World world, PacketTileEntityLB packetLB, TileEntityLittleBlocks tileentitylb) {
+		int numberOfBlocks = packetLB.payload.getIntPayload(0);
+		int index = 1;
+		for (int i = 0; i < numberOfBlocks; i++) {
+			int id = packetLB.payload.getIntPayload(index),
+				meta = packetLB.payload.getIntPayload(index+1),
+				x = packetLB.payload.getIntPayload(index+2),
+				y = packetLB.payload.getIntPayload(index+3),
+				z = packetLB.payload.getIntPayload(index+4);
+			tileentitylb.setContent(x, y, z, id, meta);
+			index += 5;
+		}
+		world.markBlockNeedsUpdate(
+				packetLB.xPosition,
+				packetLB.yPosition,
+				packetLB.zPosition);
+	}
+
+	private static void handleBigTilePacket(World world, PacketTileEntityLB packetLB, TileEntityLittleBlocks tileentitylb) {
+		int[][][] content = new int[tileentitylb.size][tileentitylb.size][tileentitylb.size];
+		int[][][] metadata = new int[tileentitylb.size][tileentitylb.size][tileentitylb.size];
+		for (int xx = 0; xx < content.length; xx++) {
+			for (int yy = 0; yy < content[xx].length; yy++) {
+				for (int zz = 0; zz < content[xx][yy].length; zz++) {
+					int blockId = packetLB.payload
+							.getIntPayload(xx + (yy * tileentitylb.size) + (zz * tileentitylb.size * tileentitylb.size));
+					int blockMeta = packetLB.payload
+							.getIntPayload((tileentitylb.size * tileentitylb.size * tileentitylb.size) + xx + (yy * tileentitylb.size) + (zz * tileentitylb.size * tileentitylb.size));
+					content[xx][yy][zz] = blockId;
+					metadata[xx][yy][zz] = blockMeta;
+				}
+			}
+		}
+		tileentitylb.setContent(content);
+		tileentitylb.setMetadata(metadata);
+		world.markBlockNeedsUpdate(
+				packetLB.xPosition,
+				packetLB.yPosition,
+				packetLB.zPosition);
 	}
 
 	public void handleLittleData(PacketUpdate packetLB, TileEntity tileentitylittleblocks) {
@@ -92,7 +114,6 @@ public class ClientPacketHandler implements IPacketHandler {
 
 	public static void handlePacket(PacketUpdate packet, EntityPlayer entityplayer, World world) {
 		if (packet instanceof PacketLittleBlocks) {
-			System.out.println("PacketLittleBlocks");
 			PacketLittleBlocks packetLB = (PacketLittleBlocks) packet;
 			if (packetLB.getSender() == LBPacketIds.CLIENT) {
 				CommonPacketHandler.handlePacket(packet, entityplayer, world);
@@ -130,7 +151,19 @@ public class ClientPacketHandler implements IPacketHandler {
 								packetLB.getSelectedZ(),
 								packetLB.getMetadata());
 					}
-					// tileentitylb.onInventoryChanged();
+					if (packetLB.getCommand().equals(
+							LBCore.updateClientCommand)) {
+						tileentitylb.setContent(
+								packetLB.getSelectedX(),
+								packetLB.getSelectedY(),
+								packetLB.getSelectedZ(),
+								packetLB.getBlockID());
+						tileentitylb.setMetadata(
+								packetLB.getSelectedX(),
+								packetLB.getSelectedY(),
+								packetLB.getSelectedZ(),
+								packetLB.getMetadata());
+					}
 					world.markBlockNeedsUpdate(
 							packetLB.xPosition,
 							packetLB.yPosition,

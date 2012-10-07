@@ -212,11 +212,11 @@ public class BlockLittleBlocks extends BlockContainer {
 		}
 		TileEntity tileentity = world.getBlockTileEntity(x, y, z);
 		if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
-			TileEntityLittleBlocks tileentitylittleblocks = (TileEntityLittleBlocks) tileentity;
+			TileEntityLittleBlocks tile = (TileEntityLittleBlocks) tileentity;
 			int xx = (x << 3) + this.xSelected, yy = (y << 3) + this.ySelected, zz = (z << 3) + this.zSelected;
 			LittleWorld littleWorld = ((ILBCommonProxy) LBInit.LBM.getProxy())
 					.getLittleWorld(world, false);
-			int blockId = tileentitylittleblocks.getContent(
+			int blockId = tile.getContent(
 					this.xSelected,
 					this.ySelected,
 					this.zSelected);
@@ -234,7 +234,7 @@ public class BlockLittleBlocks extends BlockContainer {
 						a,
 						b,
 						c)) {
-					tileentitylittleblocks.onInventoryChanged();
+					//tile.onInventoryChanged();
 					world.markBlockNeedsUpdate(x, y, z);
 					return true;
 				} else if (entityplayer.getCurrentEquippedItem() != null && entityplayer
@@ -245,7 +245,7 @@ public class BlockLittleBlocks extends BlockContainer {
 							((ILBCommonProxy) LBInit.LBM.getProxy())
 									.getLittleWorld(world, false),
 							entityplayer.getCurrentEquippedItem());
-					tileentitylittleblocks.onInventoryChanged();
+					//tile.onInventoryChanged();
 					world.markBlockNeedsUpdate(x, y, z);
 					return true;
 				}
@@ -300,6 +300,7 @@ public class BlockLittleBlocks extends BlockContainer {
 		}
 		tile.getLittleWorld().notifyBlocksOfNeighborChange(xx, yy, zz, content);
 		world.notifyBlocksOfNeighborChange(x, y, z, content);
+		world.markBlockNeedsUpdate(x, y, z);
 	}
 
 	@SideOnly(Side.CLIENT)

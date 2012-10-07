@@ -11,15 +11,19 @@ import littleblocks.blocks.BlockLittleBlocksBlock;
 import littleblocks.core.LBCore;
 import littleblocks.network.CommonPacketHandler;
 import littleblocks.tileentities.TileEntityLittleBlocks;
+import net.minecraft.src.BiomeGenBase;
 import net.minecraft.src.Block;
 import net.minecraft.src.BlockEventData;
 import net.minecraft.src.Chunk;
 import net.minecraft.src.ChunkCoordIntPair;
 import net.minecraft.src.Entity;
+import net.minecraft.src.EntityLightningBolt;
 import net.minecraft.src.EnumSkyBlock;
+import net.minecraft.src.ExtendedBlockStorage;
 import net.minecraft.src.IChunkProvider;
 import net.minecraft.src.MovingObjectPosition;
 import net.minecraft.src.NextTickListEntry;
+import net.minecraft.src.Profiler;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.Vec3;
 import net.minecraft.src.World;
@@ -31,26 +35,10 @@ import cpw.mods.fml.common.asm.SideOnly;
 
 public class LittleWorld extends World {
 
-	/**
-	 * TreeSet of scheduled ticks which is used as a priority queue for the
-	 * ticks
-	 */
-	private TreeSet pendingTickListEntries;
-
-	/** Set of scheduled ticks (used for checking if a tick already exists) */
-	private Set scheduledTickSet;
-
-	private int ticksInWorld = 0;
-	private static final int MAX_TICKS_IN_WORLD = 20;
+	protected int ticksInWorld = 0;
+	protected static final int MAX_TICKS_IN_WORLD = 5;
 
 	private World realWorld;
-	/**
-	 * Double buffer of ServerBlockEventList[] for holding pending
-	 * BlockEventData's
-	 */
-	private LittleBlockEventList[] blockEventCache = new LittleBlockEventList[] {
-			new LittleBlockEventList((LittleBlockEvent) null),
-			new LittleBlockEventList((LittleBlockEvent) null) };
 
 	@SideOnly(Side.CLIENT)
 	public LittleWorld(World world) {
@@ -66,15 +54,7 @@ public class LittleWorld extends World {
 						.getWorldInfo()
 							.isHardcoreModeEnabled(), world
 						.getWorldInfo()
-							.getTerrainType()), world.theProfiler);
-
-		if (this.scheduledTickSet == null) {
-			this.scheduledTickSet = new HashSet();
-		}
-
-		if (this.pendingTickListEntries == null) {
-			this.pendingTickListEntries = new TreeSet();
-		}
+							.getTerrainType()), new Profiler());
 		this.realWorld = world;
 	}
 
@@ -84,27 +64,8 @@ public class LittleWorld extends World {
 				world.getWorldInfo().getGameType(),
 				world.getWorldInfo().isMapFeaturesEnabled(),
 				world.getWorldInfo().isHardcoreModeEnabled(),
-				world.getWorldInfo().getTerrainType()), worldprovider, null);
-
-		if (this.scheduledTickSet == null) {
-			this.scheduledTickSet = new HashSet();
-		}
-
-		if (this.pendingTickListEntries == null) {
-			this.pendingTickListEntries = new TreeSet();
-		}
+				world.getWorldInfo().getTerrainType()), worldprovider, new Profiler());
 		this.realWorld = world;
-	}
-
-	@Override
-	protected void initialize(WorldSettings worldSettings) {
-		if (this.scheduledTickSet == null) {
-			this.scheduledTickSet = new HashSet();
-		}
-		if (this.pendingTickListEntries == null) {
-			this.pendingTickListEntries = new TreeSet();
-		}
-		super.initialize(worldSettings);
 	}
 
 	@Override
@@ -114,118 +75,9 @@ public class LittleWorld extends World {
 		if (this.isRemote) {
 			this.setWorldTime(this.getWorldTime() + 1L);
 		}
-		if (!this.isRemote) {
-			if (FMLCommonHandler.instance().getSide() == Side.SERVER) {
-				this.sendAndApplyBlockEvents();
-			}
-			this.worldInfo.setWorldTime(this.worldInfo.getWorldTime() + 1L);
-			this.tickUpdates(false);
-			if (FMLCommonHandler.instance().getSide() == Side.SERVER) {
-				this.sendAndApplyBlockEvents();
-			}
-		}
 		if (this.ticksInWorld >= MAX_TICKS_IN_WORLD) {
 			this.ticksInWorld = 0;
 		}
-	}
-
-	/**
-	 * The index into the blockEventCache; either 0, or 1, toggled in
-	 * sendBlockEventPackets where all BlockEvent are applied locally and send
-	 * to clients.
-	 */
-	private int blockEventCacheIndex = 0;
-
-	/**
-	 * Send and apply locally all pending BlockEvents to each player with 64m
-	 * radius of the event.
-	 */
-	@SideOnly(Side.SERVER)
-	private void sendAndApplyBlockEvents() {
-		Set<TileEntityLittleBlocks> tileentities = new HashSet();
-		while (!this.blockEventCache[this.blockEventCacheIndex].isEmpty()) {
-			int index = this.blockEventCacheIndex;
-			this.blockEventCacheIndex ^= 1;
-			Iterator blockEvent = this.blockEventCache[index].iterator();
-
-			while (blockEvent.hasNext()) {
-				BlockEventData eventData = (BlockEventData) blockEvent.next();
-				if (this.onBlockEventReceived(eventData)) {
-					TileEntity tileentity = this.realWorld.getBlockTileEntity(
-							eventData.getX() >> 3,
-							eventData.getY() >> 3,
-							eventData.getZ() >> 3);
-					if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
-						if (!tileentities
-								.contains(tileentity)) {
-							tileentities
-									.add((TileEntityLittleBlocks) tileentity);
-						}
-					}
-				}
-			}
-
-			this.blockEventCache[index].clear();
-		}
-		for (TileEntityLittleBlocks tileentitylb : tileentities) {
-			tileentitylb.onInventoryChanged();
-		}
-	}
-
-	/**
-	 * Called to apply a pending BlockEvent to apply to the current world.
-	 */
-	@SideOnly(Side.SERVER)
-	private boolean onBlockEventReceived(BlockEventData blockEventData) {
-		int blockId = this.getBlockId(
-				blockEventData.getX(),
-				blockEventData.getY(),
-				blockEventData.getZ());
-
-		if (blockId == blockEventData.getBlockID()) {
-			Block.blocksList[blockId].onBlockEventReceived(
-					this,
-					blockEventData.getX(),
-					blockEventData.getY(),
-					blockEventData.getZ(),
-					blockEventData.getEventID(),
-					blockEventData.getEventParameter());
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	/**
-	 * Adds a block event with the given Args to the blockEventCache. During the
-	 * next tick(), the block specified will have its onBlockEvent handler
-	 * called with the given parameters. Args: X,Y,Z, BlockID, EventID,
-	 * EventParameter
-	 */
-	public void addBlockEvent(int x, int y, int z, int blockID, int eventID, int eventParam) {
-		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
-			super.addBlockEvent(x, y, z, blockID, eventID, eventParam);
-			return;
-		}
-		BlockEventData eventData = new BlockEventData(
-				x,
-				y,
-				z,
-				blockID,
-				eventID,
-				eventParam);
-		Iterator nextEvent = this.blockEventCache[this.blockEventCacheIndex]
-				.iterator();
-		BlockEventData newBlockEvent;
-
-		do {
-			if (!nextEvent.hasNext()) {
-				this.blockEventCache[this.blockEventCacheIndex].add(eventData);
-				return;
-			}
-
-			newBlockEvent = (BlockEventData) nextEvent.next();
-		} while (!newBlockEvent.equals(eventData));
 	}
 
 	/**
@@ -233,200 +85,7 @@ public class LittleWorld extends World {
 	 */
 	@Override
 	public boolean tickUpdates(boolean tick) {
-		if (this.isRemote)
-			return false;
-		Set<TileEntity> littleBlockTiles = new HashSet();
-		int numberOfUpdates = this.pendingTickListEntries.size();
-
-		if (numberOfUpdates != this.scheduledTickSet.size()) {
-			throw new IllegalStateException("TickNextTick list out of synch");
-		} else {
-			if (numberOfUpdates > 1000) {
-				numberOfUpdates = 1000;
-			}
-
-			for (int update = 0; update < numberOfUpdates; ++update) {
-				NextTickListEntry nextTick = (NextTickListEntry) this.pendingTickListEntries
-						.first();
-
-				if (!tick && nextTick.scheduledTime > this.worldInfo
-						.getWorldTime()) {
-					break;
-				}
-
-				this.pendingTickListEntries.remove(nextTick);
-				this.scheduledTickSet.remove(nextTick);
-				byte max = 8;
-				if (this.checkChunksExist(
-						nextTick.xCoord - max,
-						nextTick.yCoord - max,
-						nextTick.zCoord - max,
-						nextTick.xCoord + max,
-						nextTick.yCoord + max,
-						nextTick.zCoord + max)) {
-					int blockId = this.getBlockId(
-							nextTick.xCoord,
-							nextTick.yCoord,
-							nextTick.zCoord);
-
-					if (blockId == nextTick.blockID && blockId > 0 /*
-																	 * &&
-																	 * blockId
-																	 * != Block.
-																	 * waterMoving
-																	 * .blockID
-																	 * &&
-																	 * blockId
-																	 * != Block.
-																	 * waterStill
-																	 * .blockID
-																	 * &&
-																	 * blockId
-																	 * != Block.
-																	 * lavaMoving
-																	 * .blockID
-																	 * &&
-																	 * blockId
-																	 * != Block.
-																	 * lavaStill
-																	 * .blockID
-																	 */) {
-						Block.blocksList[blockId].updateTick(
-								this,
-								nextTick.xCoord,
-								nextTick.yCoord,
-								nextTick.zCoord,
-								this.rand);
-						TileEntity tileentity = this.realWorld
-								.getBlockTileEntity(
-										nextTick.xCoord >> 3,
-										nextTick.yCoord >> 3,
-										nextTick.zCoord >> 3);
-						if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
-							if (!littleBlockTiles
-									.contains(tileentity)) {
-								littleBlockTiles
-										.add(tileentity);
-							}
-						}
-					}
-				}
-			}
-			if (this.ticksInWorld >= MAX_TICKS_IN_WORLD) {
-				for (TileEntity tile : littleBlockTiles) {
-					this.realWorld.markBlockNeedsUpdate(
-							tile.xCoord,
-							tile.yCoord,
-							tile.zCoord);
-				}
-			}
-			return !this.pendingTickListEntries.isEmpty();
-		}
-	}
-
-	@Override
-	public List getPendingBlockUpdates(Chunk chunk, boolean forceRemove) {
-		ArrayList pendingUpdates = null;
-		ChunkCoordIntPair chunkPair = chunk.getChunkCoordIntPair();
-		int x = chunkPair.chunkXPos << 4;
-		int maxX = x + 16;
-		int z = chunkPair.chunkZPos << 4;
-		int maxZ = z + 16;
-		Iterator pendingTicks = this.pendingTickListEntries.iterator();
-
-		while (pendingTicks.hasNext()) {
-			NextTickListEntry nextTick = (NextTickListEntry) pendingTicks
-					.next();
-
-			if (nextTick.xCoord >= x && nextTick.xCoord < maxX && nextTick.zCoord >= z && nextTick.zCoord < maxZ) {
-				if (forceRemove) {
-					this.scheduledTickSet.remove(nextTick);
-					pendingTicks.remove();
-				}
-
-				if (pendingUpdates == null) {
-					pendingUpdates = new ArrayList();
-				}
-
-				pendingUpdates.add(nextTick);
-			}
-		}
-
-		return pendingUpdates;
-	}
-
-	/**
-	 * Schedules a tick to a block with a delay (Most commonly the tick rate)
-	 */
-	@Override
-	public void scheduleBlockUpdate(int x, int y, int z, int blockId, int tickRate) {
-		if (this.isRemote)
-			return;
-		NextTickListEntry nextTick = new NextTickListEntry(x, y, z, blockId);
-		byte max = 8;
-
-		if (this.scheduledUpdatesAreImmediate) {
-			if (this.checkChunksExist(
-					nextTick.xCoord - max,
-					nextTick.yCoord - max,
-					nextTick.zCoord - max,
-					nextTick.xCoord + max,
-					nextTick.yCoord + max,
-					nextTick.zCoord + max)) {
-				int var8 = this.getBlockId(
-						nextTick.xCoord,
-						nextTick.yCoord,
-						nextTick.zCoord);
-
-				if (var8 == nextTick.blockID && var8 > 0) {
-					Block.blocksList[var8].updateTick(
-							this,
-							nextTick.xCoord,
-							nextTick.yCoord,
-							nextTick.zCoord,
-							this.rand);
-				}
-			}
-		} else {
-			if (this.checkChunksExist(
-					x - max,
-					y - max,
-					z - max,
-					x + max,
-					y + max,
-					z + max)) {
-				if (blockId > 0) {
-					nextTick.setScheduledTime(tickRate + this.worldInfo
-							.getWorldTime());
-				}
-
-				if (!this.scheduledTickSet.contains(nextTick)) {
-					this.scheduledTickSet.add(nextTick);
-					this.pendingTickListEntries.add(nextTick);
-				}
-			}
-		}
-	}
-
-	/**
-	 * Schedules a block update from the saved information in a chunk. Called
-	 * when the chunk is loaded.
-	 */
-	@Override
-	public void scheduleBlockUpdateFromLoad(int x, int y, int z, int blockId, int tickRate) {
-		if (this.isRemote)
-			return;
-		NextTickListEntry nextTick = new NextTickListEntry(x, y, z, blockId);
-
-		if (blockId > 0) {
-			nextTick.setScheduledTime(tickRate + this.worldInfo
-					.getWorldTime());
-		}
-
-		if (!this.scheduledTickSet.contains(nextTick)) {
-			this.scheduledTickSet.add(nextTick);
-			this.pendingTickListEntries.add(nextTick);
-		}
+		return false;
 	}
 
 	@Override
@@ -703,14 +362,12 @@ public class LittleWorld extends World {
 
 	@Override
 	public void notifyBlocksOfNeighborChange(int x, int y, int z, int side) {
-		// if (!this.isRemote) {
 		notifyBlockOfNeighborChange(x - 1, y, z, side);
 		notifyBlockOfNeighborChange(x + 1, y, z, side);
 		notifyBlockOfNeighborChange(x, y - 1, z, side);
 		notifyBlockOfNeighborChange(x, y + 1, z, side);
 		notifyBlockOfNeighborChange(x, y, z - 1, side);
 		notifyBlockOfNeighborChange(x, y, z + 1, side);
-		// }
 	}
 
 	private void notifyBlockOfNeighborChange(int x, int y, int z, int side) {
@@ -747,40 +404,17 @@ public class LittleWorld extends World {
 								newmetadata);
 						this.metadataModified(lbb, newmetadata);
 					}
-					realWorld.markBlockNeedsUpdate(x, y, z);
+					realWorld.markBlockNeedsUpdate(x >> 3 , y >> 3, z >> 3);
 				}
 			}
 		}
 	}
 
 	public void idModified(BlockLittleBlocksBlock lbb, int lastId) {
-		if (lastId != 0) {
-			if (!this.isRemote) {
-				Block.blocksList[lastId].breakBlock(
-						this,
-						lbb.getWorldX(),
-						lbb.getWorldY(),
-						lbb.getWorldZ(),
-						0,
-						0);
-			}
-		}
 		realWorld.updateAllLightTypes(
 				lbb.getWorldX(),
 				lbb.getWorldY(),
 				lbb.getWorldZ());
-		if (lbb.getBlockId() != 0) {
-			if (!this.isRemote) {
-				Block.blocksList[lbb.getBlockId()].onBlockAdded(
-						this,
-						lbb.getWorldX(),
-						lbb.getWorldY(),
-						lbb.getWorldZ());
-			}
-		}
-		if (!this.isRemote) {
-			CommonPacketHandler.idModified(this, lbb);
-		}
 		this.notifyBlockChange(
 				lbb.getWorldX(),
 				lbb.getWorldY(),
@@ -788,21 +422,7 @@ public class LittleWorld extends World {
 				lbb.getBlockId());
 	}
 
-	/*
-	 * public void idModified(int x, int y, int z, int side, float vecX, float
-	 * vecY, float vecZ, int lastId, int newId) { if (lastId != 0) {
-	 * Block.blocksList[lastId].breakBlock(this, x, y, z, 0, 0); }
-	 * realWorld.updateAllLightTypes(x, y, z); if (newId != 0) { if
-	 * (!this.isRemote) { Block.blocksList[newId].onBlockAdded(this, x, y, z); }
-	 * } if (!this.isRemote) { CommonPacketHandler.idModified( x, y, z, side,
-	 * vecX, vecY, vecZ, lastId, newId, this); } notifyBlockChange(x, y, z,
-	 * newId); }
-	 */
-
 	public void metadataModified(BlockLittleBlocksBlock lbb, int metadata) {
-		if (!this.isRemote) {
-			CommonPacketHandler.metadataModified(this, lbb, metadata);
-		}
 	}
 
 	@Override

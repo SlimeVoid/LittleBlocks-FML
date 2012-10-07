@@ -4,8 +4,10 @@ import java.util.EnumSet;
 
 import littleblocks.api.ILBCommonProxy;
 import littleblocks.core.LBInit;
+import net.minecraft.src.ModLoader;
 import net.minecraft.src.World;
 import net.minecraftforge.common.DimensionManager;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
 
