@@ -76,7 +76,6 @@ public class CommonProxy implements ILBCommonProxy {
 
 	@Override
 	public World getWorld() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -95,13 +94,11 @@ public class CommonProxy implements ILBCommonProxy {
 
 	@Override
 	public World getWorld(NetHandler handler) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public EntityPlayer getPlayer() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }
