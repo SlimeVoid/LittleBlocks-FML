@@ -15,7 +15,7 @@ import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
 import eurysmods.api.ICommonProxy;
 
-@Mod(modid = "LittleBlocksMod", name = "Little Blocks", version = "1.3.2.0")
+@Mod(modid = "LittleBlocksMod", name = "Little Blocks", version = "2.0.0.0")
 @NetworkMod(
 		clientSideRequired = true,
 		serverSideRequired = false,
@@ -26,7 +26,7 @@ import eurysmods.api.ICommonProxy;
 				channels = { "LITTLEBLOCKS" },
 				packetHandler = CommonPacketHandler.class),
 		connectionHandler = LBConnectionHandler.class,
-		versionBounds = "[1.3.2]")
+		versionBounds = "[2.0.0]")
 public class LittleBlocks {
 	@SidedProxy(
 			clientSide = "littleblocks.proxy.ClientProxy",
