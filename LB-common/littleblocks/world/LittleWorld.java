@@ -15,6 +15,7 @@ import net.minecraft.src.Vec3;
 import net.minecraft.src.World;
 import net.minecraft.src.WorldProvider;
 import net.minecraft.src.WorldSettings;
+import net.minecraftforge.common.ForgeDirection;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
 
@@ -481,6 +482,25 @@ public class LittleWorld extends World {
 			}
 		}
 	}
+
+	@Override
+    public boolean isBlockSolidOnSide(int x, int y, int z, ForgeDirection side, boolean _default) {
+		if (x < 0xfe363c80 || z < 0xfe363c80 || x >= 0x1c9c380 || z >= 0x1c9c380) {
+			return _default;
+		}
+
+		Chunk chunk = realWorld.getChunkFromChunkCoords(x >> 7, z >> 7);
+        if (chunk == null || chunk.isEmpty()) {
+            return _default;
+        }
+
+        Block block = Block.blocksList[getBlockId(x, y, z)];
+        if(block == null) {
+            return false;
+        }
+
+        return block.isBlockSolidOnSide(this, x, y, z, side);
+    }
 
 	@Override
 	public void markBlockNeedsUpdate(int i, int j, int k) {
