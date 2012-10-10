@@ -8,6 +8,7 @@ import littleblocks.tileentities.TileEntityLittleBlocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.Block;
 import net.minecraft.src.BlockContainer;
+import net.minecraft.src.ModLoader;
 import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.RenderHelper;
 import net.minecraft.src.Tessellator;
@@ -42,9 +43,8 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 
 		int[][][] content = tile.getContent();
 
-		RenderBlocks rb = new RenderBlocks(tile.getLittleWorld());
+		RenderBlocks littleRenderer = new RenderBlocks(tile.getLittleWorld());
 
-		bindTextureByName("/terrain.png");
 		RenderHelper.disableStandardItemLighting();
 		GL11.glBlendFunc(770, 771);
 		GL11.glEnable(3042 /* GL_BLEND */);
@@ -55,32 +55,53 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 			GL11.glShadeModel(7424 /* GL_FLAT */);
 		}
 
-		tessellator.startDrawingQuads();
-
-		entitiesToDraw.clear();
+		if (tessellator.isDrawing) {
+			tessellator.draw();
+		}
+		if (!tessellator.isDrawing) {
+			tessellator.startDrawingQuads();
+		}
 		for (int x1 = 0; x1 < content.length; x1++) {
 			for (int y1 = 0; y1 < content[x1].length; y1++) {
 				for (int z1 = 0; z1 < content[x1][y1].length; z1++) {
 					if (content[x1][y1][z1] > 0) {
-						Block block = Block.blocksList[content[x1][y1][z1]];
-						if (LBCore.optifine) {
-							rb.renderBlockByRenderType(
-									block,
+						int blockId = content[x1][y1][z1];
+						if (blockId > 0) {
+							if (!tessellator.isDrawing) {
+								tessellator.startDrawingQuads();
+							}
+							Block littleBlock = Block.blocksList[blockId];
+							int[] coords = {
 									(tile.xCoord << 3) + x1,
 									(tile.yCoord << 3) + y1,
-									(tile.zCoord << 3) + z1);
-						}
-						if (block instanceof BlockContainer) {
-							TileEntity littleTile = tile
-									.getLittleWorld()
-										.getBlockTileEntity(
-												(tile.xCoord << 3) + x1,
-												(tile.yCoord << 3) + y1,
-												(tile.zCoord << 3) + z1);
-							if (littleTile != null) {
-								if (!(littleTile instanceof TileEntityLittleBlocks)) {
-									entitiesToDraw.add(littleTile);
+									(tile.zCoord << 3) + z1};
+							bindTextureByName("/terrain.png");
+							if (!littleBlock.isDefaultTexture) {
+								if (tessellator.isDrawing) {
+									tessellator.draw();
 								}
+								tessellator.startDrawingQuads();
+								bindTextureByName(littleBlock
+												.getTextureFile());
+								if (LBCore.optifine) {
+									littleRenderer.renderBlockByRenderType(
+											littleBlock,
+											coords[0],
+											coords[1],
+											coords[2]);
+								}
+								renderLittleTile(tile, littleBlock, f, x1, y1, z1);
+								tessellator.draw();
+								bindTextureByName("/terrain.png");
+							} else {
+								if (LBCore.optifine) {
+									littleRenderer.renderBlockByRenderType(
+											littleBlock,
+											coords[0],
+											coords[1],
+											coords[2]);
+								}
+								renderLittleTile(tile, littleBlock, f, x1, y1, z1);
 							}
 						}
 					}
@@ -88,18 +109,41 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 			}
 		}
 
-		tessellator.draw();
-
-		for (TileEntity littleTile : entitiesToDraw) {
-			tileEntityRenderer.renderTileEntityAt(
-					littleTile,
-					littleTile.xCoord,
-					littleTile.yCoord,
-					littleTile.zCoord,
-					f);
+		if (tessellator.isDrawing) {
+			tessellator.draw();
 		}
 
 		GL11.glDisable(32826 /* GL_RESCALE_NORMAL_EXT */);
 		GL11.glPopMatrix();
+	}
+	
+	public void renderLittleTile(TileEntityLittleBlocks tile, Block littleBlock, float f, int x1, int y1, int z1) {
+		if (tessellator.isDrawing) {
+			tessellator.draw();
+		}
+		if (littleBlock instanceof BlockContainer) {
+			TileEntity littleTile = tile
+					.getLittleWorld()
+						.getBlockTileEntity(
+								(tile.xCoord << 3) + x1,
+								(tile.yCoord << 3) + y1,
+								(tile.zCoord << 3) + z1);
+			if (littleTile != null) {
+				if (!(littleTile instanceof TileEntityLittleBlocks)) {
+					tileEntityRenderer.renderTileEntityAt(
+							littleTile,
+							littleTile.xCoord,
+							littleTile.yCoord,
+							littleTile.zCoord,
+							f);
+				}
+			}
+		}
+		if (tessellator.isDrawing) {
+			tessellator.draw();
+		}
+		if (!tessellator.isDrawing) {
+			tessellator.startDrawingQuads();
+		}
 	}
 }

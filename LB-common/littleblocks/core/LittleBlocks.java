@@ -36,6 +36,12 @@ public class LittleBlocks {
 	@Init
 	public void LittleBlocksInit(FMLInitializationEvent event) {
 		LBCore.initialize(proxy);
+		try {
+			this.getClass().getClassLoader().loadClass("TextureHDCompassFX");
+			LBCore.optifine = true;
+		} catch (ClassNotFoundException e) {
+			LBCore.optifine = false;
+		}
 	}
 
 	@PreInit
