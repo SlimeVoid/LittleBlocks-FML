@@ -50,7 +50,7 @@ public class LBCore {
 				2F,
 				true).setBlockName("littleBlocks");
 		GameRegistry.registerBlock(littleBlocks);
-		MinecraftForge.EVENT_BUS.register(new PistonOrientation());
+		//MinecraftForge.EVENT_BUS.register(new PistonOrientation());
 	}
 
 	public static void addNames() {

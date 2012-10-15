@@ -25,8 +25,7 @@ import eurysmods.api.ICommonProxy;
 		serverPacketHandlerSpec = @SidedPacketHandler(
 				channels = { "LITTLEBLOCKS" },
 				packetHandler = CommonPacketHandler.class),
-		connectionHandler = LBConnectionHandler.class,
-		versionBounds = "[2.0.0]")
+		connectionHandler = LBConnectionHandler.class)
 public class LittleBlocks {
 	@SidedProxy(
 			clientSide = "littleblocks.proxy.ClientProxy",
