@@ -267,7 +267,7 @@ public class LittleWorld extends World {
 							metadata);
 					flag = true;
 				}
-				realWorld.markBlockNeedsUpdate(x >> 3, y >> 3, z >> 3);
+				//this.markBlockNeedsUpdate(x, y, z);
 			}
 			return flag;
 		}
@@ -377,8 +377,9 @@ public class LittleWorld extends World {
 			Block block = Block.blocksList[world.getBlockId(x, y, z)];
 			if (block != null) {
 				block.onNeighborBlockChange(world, x, y, z, side);
+				world.markBlockNeedsUpdate(x, y, z);
 
-				if (world == this) {
+				/*if (world == this) {
 					TileEntity tileentity = realWorld.getBlockTileEntity(
 							x >> 3,
 							y >> 3,
@@ -397,8 +398,8 @@ public class LittleWorld extends World {
 						lbb.setParentCoordinates(x >> 3, y >> 3, z >> 3);
 						this.metadataModified(lbb, newmetadata);
 					}
-					realWorld.markBlockNeedsUpdate(x >> 3, y >> 3, z >> 3);
-				}
+					this.markBlockNeedsUpdate(x, y, z);
+				}*/
 			}
 		}
 	}
@@ -408,14 +409,9 @@ public class LittleWorld extends World {
 				lbb.getParentX(),
 				lbb.getParentY(),
 				lbb.getParentZ());
-		this.notifyBlockChange(
-				lbb.getWorldX(),
-				lbb.getWorldY(),
-				lbb.getWorldZ(),
-				lbb.getBlockId());
 	}
 
-	public void metadataModified(BlockLittleBlocksBlock lbb, int metadata) {
+	public void metadataModified(BlockLittleBlocksBlock lbb) {
 	}
 
 	@Override
@@ -504,28 +500,28 @@ public class LittleWorld extends World {
     }
 
 	@Override
-	public void markBlockNeedsUpdate(int i, int j, int k) {
-		realWorld.markBlockNeedsUpdate(i >> 3, j >> 3, k >> 3);
+	public void markBlockNeedsUpdate(int x, int y, int z) {
+		this.realWorld.markBlockNeedsUpdate(x >> 3, y >> 3, z >> 3);
 	}
 
 	@Override
 	public void playSoundEffect(double x, double y, double z, String s, float f, float f1) {
-		realWorld.playSoundEffect(x / 8, y / 8, z / 8, s, f, f1);
+		this.realWorld.playSoundEffect(x / 8, y / 8, z / 8, s, f, f1);
 	}
 
 	@Override
 	public void playRecord(String s, int x, int y, int z) {
-		realWorld.playRecord(s, x, y, z);
+		this.realWorld.playRecord(s, x, y, z);
 	}
 
 	@Override
 	public void playAuxSFX(int x, int y, int z, int l, int i1) {
-		realWorld.playAuxSFX(x / 8, y / 8, z / 8, l, i1);
+		this.realWorld.playAuxSFX(x / 8, y / 8, z / 8, l, i1);
 	}
 
 	@Override
 	public void spawnParticle(String s, double x, double y, double z, double d3, double d4, double d5) {
-		realWorld.spawnParticle(s, x / 8, y / 8, z / 8, d3, d4, d5);
+		this.realWorld.spawnParticle(s, x / 8, y / 8, z / 8, d3, d4, d5);
 	}
 
 	@Override

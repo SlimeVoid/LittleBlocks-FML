@@ -315,19 +315,20 @@ public class TileEntityLittleBlocks extends TileEntity {
 			}
 			return;
 		}
+		int lastData = metadatas[x][y][z];
 		metadatas[x][y][z] = metadata;
 
-		if (metadatas[x][y][z] != metadata) {
+		if (lastData != metadata) {
 			BlockLittleBlocksBlock lbb = new BlockLittleBlocksBlock(
 					content[x][y][z],
-					metadatas[x][y][z],
+					metadata,
 					x,
 					y,
 					z);
 			lbb.setParentCoordinates(this.xCoord, this.yCoord, this.zCoord);
 			((ILBCommonProxy) LBInit.LBM.getProxy()).getLittleWorld(
 					this.worldObj,
-					false).metadataModified(lbb, metadata);
+					false).metadataModified(lbb);
 		}
 	}
 
@@ -404,7 +405,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 			lbb.setParentCoordinates(this.xCoord, this.yCoord, this.zCoord);
 			((ILBCommonProxy) LBInit.LBM.getProxy()).getLittleWorld(
 					this.worldObj,
-					false).metadataModified(lbb, lastData);
+					false).metadataModified(lbb);
 		}
 		if (lastId != id) {
 			BlockLittleBlocksBlock lbb = new BlockLittleBlocksBlock(
@@ -535,7 +536,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 
 	@Override
 	public void onInventoryChanged() {
-		// new Exception().printStackTrace();
+		new Exception().printStackTrace();
 		this.upToDate = false;
 		super.onInventoryChanged();
 	}

@@ -44,13 +44,12 @@ public class CommonPacketHandler implements IPacketHandler {
 		}
 	}
 
-	public static void metadataModified(LittleWorld littleWorld, BlockLittleBlocksBlock lbb, int metadata) {
+	public static void metadataModified(LittleWorld littleWorld, BlockLittleBlocksBlock lbb) {
 		PacketLittleBlocks packetLB = new PacketLittleBlocks(
 				LBCore.metaDataModifiedCommand,
 				lbb);
-		packetLB.setMetadata(metadata);
 		packetLB.setSender(LBPacketIds.SERVER);
-		sendToAll(packetLB);
+		sendToAllPlayers(littleWorld.getRealWorld(), null, packetLB.getPacket(), lbb.getParentX(), lbb.getParentY(), lbb.getParentZ(), true);
 	}
 
 	public static void idModified(LittleWorld littleWorld, BlockLittleBlocksBlock lbb) {
@@ -58,7 +57,7 @@ public class CommonPacketHandler implements IPacketHandler {
 				LBCore.idModifiedCommand,
 				lbb);
 		packetLB.setSender(LBPacketIds.SERVER);
-		sendToAll(packetLB);
+		sendToAllPlayers(littleWorld.getRealWorld(), null, packetLB.getPacket(), lbb.getParentX(), lbb.getParentY(), lbb.getParentZ(), true);
 	}
 
 	public static void handlePacket(PacketUpdate packet, EntityPlayer entityplayer, World world) {

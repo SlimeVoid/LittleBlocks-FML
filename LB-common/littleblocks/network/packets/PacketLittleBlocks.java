@@ -4,6 +4,9 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Side;
+
 import littleblocks.blocks.BlockLittleBlocksBlock;
 import littleblocks.core.LBInit;
 import net.minecraft.src.TileEntity;
@@ -30,6 +33,8 @@ public class PacketLittleBlocks extends PacketUpdate {
 
 	public PacketLittleBlocks() {
 		super(PacketIds.UPDATE);
+		if (FMLCommonHandler.instance().getSide() == Side.SERVER)
+			new Exception().printStackTrace();
 		this.setChannel(LBInit.LBM.getModChannel());
 	}
 

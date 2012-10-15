@@ -136,7 +136,6 @@ public class LittleWorldServer extends LittleWorld {
 											nextTick.yCoord >> 3,
 											nextTick.zCoord >> 3);
 						if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
-							// tileentity.onInventoryChanged();
 							if (!littleBlockTiles.contains(tileentity)) {
 								littleBlockTiles.add(tileentity);
 							}
@@ -147,10 +146,6 @@ public class LittleWorldServer extends LittleWorld {
 			if (this.ticksInWorld >= MAX_TICKS_IN_WORLD) {
 				for (TileEntity tile : littleBlockTiles) {
 					System.out.println("LittleBlocks");
-					/*
-					 * this.getRealWorld().markBlockNeedsUpdate( tile.xCoord,
-					 * tile.yCoord, tile.zCoord);
-					 */
 				}
 			}
 			return !this.pendingTickListEntries.isEmpty();
@@ -171,7 +166,7 @@ public class LittleWorldServer extends LittleWorld {
 			while (blockEvent.hasNext()) {
 				BlockEventData eventData = (BlockEventData) blockEvent.next();
 				if (this.onBlockEventReceived(eventData)) {
-					int x = eventData.getX() >> 3, y = eventData.getY() >> 3, z = eventData
+					/*int x = eventData.getX() >> 3, y = eventData.getY() >> 3, z = eventData
 							.getZ() >> 3;
 					TileEntity tileentity = this
 							.getRealWorld()
@@ -200,7 +195,7 @@ public class LittleWorldServer extends LittleWorld {
 								y,
 								z,
 								false);
-					}
+					}*/
 				}
 			}
 
@@ -364,8 +359,8 @@ public class LittleWorldServer extends LittleWorld {
 	}
 
 	@Override
-	public void metadataModified(BlockLittleBlocksBlock lbb, int metadata) {
-		CommonPacketHandler.metadataModified(this, lbb, metadata);
+	public void metadataModified(BlockLittleBlocksBlock lbb) {
+		//CommonPacketHandler.metadataModified(this, lbb);
 	}
 
 	@Override
@@ -387,6 +382,13 @@ public class LittleWorldServer extends LittleWorld {
 					lbb.getWorldZ());
 		}
 		super.idModified(lbb, lastId);
-		CommonPacketHandler.idModified(this, lbb);
+		this.notifyBlockChange(
+				lbb.getWorldX(),
+				lbb.getWorldY(),
+				lbb.getWorldZ(),
+				lbb.getBlockId());
+		if (lastId != 0) {
+			CommonPacketHandler.idModified(this, lbb);
+		}
 	}
 }
