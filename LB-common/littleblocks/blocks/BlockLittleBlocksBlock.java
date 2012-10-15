@@ -8,18 +8,19 @@ public class BlockLittleBlocksBlock {
 	private int metadata;
 	private LittleBlockCoordinates parentBlock;
 	private LittleBlockCoordinates littleBlock;
-	private LittleBlockCoordinates littleWorld;
 
+	public BlockLittleBlocksBlock(int x, int y, int z) {
+		this.littleBlock = new LittleBlockCoordinates(x, y, z);
+	}
+	
 	public BlockLittleBlocksBlock(int blockId, int metadata, int x, int y, int z) {
 		this.blockId = blockId;
 		this.metadata = metadata;
 		this.littleBlock = new LittleBlockCoordinates(x, y, z);
 	}
-
-	public void setGlobalBlockCoords(int superX, int superY, int superZ) {
-		this.parentBlock = new LittleBlockCoordinates(superX, superY, superZ);
-		this.littleWorld = new LittleBlockCoordinates(superX, superY, superZ);
-		LittleBlockDataHandler.shiftCoordsLeft(this.littleWorld, 3);
+	
+	public void setParentCoordinates(int x, int y, int z) {
+		this.parentBlock = new LittleBlockCoordinates(x, y, z);
 	}
 
 	public int getParentX() {
@@ -35,15 +36,15 @@ public class BlockLittleBlocksBlock {
 	}
 
 	public int getWorldX() {
-		return this.littleWorld.x;
+		return (this.parentBlock.x << 3) + this.littleBlock.x;
 	}
 
 	public int getWorldY() {
-		return this.littleWorld.y;
+		return (this.parentBlock.y << 3) + this.littleBlock.y;
 	}
 
 	public int getWorldZ() {
-		return this.littleWorld.z;
+		return (this.parentBlock.z << 3) + this.littleBlock.z;
 	}
 
 	public int getBlockId() {

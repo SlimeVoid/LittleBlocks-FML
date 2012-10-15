@@ -187,7 +187,7 @@ public class LittleWorldServer extends LittleWorld {
 								(eventData.getX() & 7),
 								(eventData.getY() & 7),
 								(eventData.getZ() & 7));
-						lbb.setGlobalBlockCoords(x, y, z);
+						lbb.setParentCoordinates(x, y, z);
 						PacketLittleBlocks packet = new PacketLittleBlocks(
 								LBCore.updateClientCommand,
 								lbb);

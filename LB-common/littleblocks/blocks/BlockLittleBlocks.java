@@ -234,7 +234,6 @@ public class BlockLittleBlocks extends BlockContainer {
 						a,
 						b,
 						c)) {
-					// tile.onInventoryChanged();
 					world.markBlockNeedsUpdate(x, y, z);
 					return true;
 				} else if (entityplayer.getCurrentEquippedItem() != null && entityplayer
@@ -245,7 +244,6 @@ public class BlockLittleBlocks extends BlockContainer {
 							((ILBCommonProxy) LBInit.LBM.getProxy())
 									.getLittleWorld(world, false),
 							entityplayer.getCurrentEquippedItem());
-					// tile.onInventoryChanged();
 					world.markBlockNeedsUpdate(x, y, z);
 					return true;
 				}
@@ -298,8 +296,6 @@ public class BlockLittleBlocks extends BlockContainer {
 			}
 			tile.setContent(this.xSelected, this.ySelected, this.zSelected, 0);
 		}
-		tile.getLittleWorld().notifyBlocksOfNeighborChange(xx, yy, zz, content);
-		world.notifyBlocksOfNeighborChange(x, y, z, content);
 		world.markBlockNeedsUpdate(x, y, z);
 	}
 

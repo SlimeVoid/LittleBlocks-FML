@@ -373,7 +373,7 @@ public class LittleWorld extends World {
 			z >>= 3;
 			world = realWorld;
 		}
-		if ((!realWorld.editingBlocks && !realWorld.isRemote && !this.editingBlocks && !this.isRemote)) {
+		if (!world.editingBlocks && !world.isRemote) {
 			Block block = Block.blocksList[world.getBlockId(x, y, z)];
 			if (block != null) {
 				block.onNeighborBlockChange(world, x, y, z, side);
@@ -381,7 +381,7 @@ public class LittleWorld extends World {
 				if (world == this) {
 					TileEntity tileentity = realWorld.getBlockTileEntity(
 							x >> 3,
-							z >> 3,
+							y >> 3,
 							z >> 3);
 					if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
 						TileEntityLittleBlocks tile = (TileEntityLittleBlocks) tileentity;
@@ -390,10 +390,11 @@ public class LittleWorld extends World {
 						int newmetadata = tile.getMetadata(x & 7, y & 7, z & 7);
 						BlockLittleBlocksBlock lbb = new BlockLittleBlocksBlock(
 								littleBlockId,
-								x & 7,
-								y & 7,
-								z & 7,
-								newmetadata);
+								newmetadata,
+								x,
+								y,
+								z);
+						lbb.setParentCoordinates(x >> 3, y >> 3, z >> 3);
 						this.metadataModified(lbb, newmetadata);
 					}
 					realWorld.markBlockNeedsUpdate(x >> 3, y >> 3, z >> 3);
@@ -404,9 +405,9 @@ public class LittleWorld extends World {
 
 	public void idModified(BlockLittleBlocksBlock lbb, int lastId) {
 		realWorld.updateAllLightTypes(
-				lbb.getWorldX(),
-				lbb.getWorldY(),
-				lbb.getWorldZ());
+				lbb.getParentX(),
+				lbb.getParentY(),
+				lbb.getParentZ());
 		this.notifyBlockChange(
 				lbb.getWorldX(),
 				lbb.getWorldY(),

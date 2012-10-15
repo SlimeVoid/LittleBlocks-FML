@@ -22,4 +22,11 @@ public class LittleBlockDataHandler {
 	public static boolean isLittleWorld(World world) {
 		return world instanceof LittleWorld ? true : false;
 	}
+
+	public static LittleBlockCoordinates AND(LittleBlockCoordinates coordinates, int valueAND) {
+		coordinates.x = coordinates.x & valueAND;
+		coordinates.y = coordinates.y & valueAND;
+		coordinates.z = coordinates.z & valueAND;
+		return coordinates;
+	}
 }

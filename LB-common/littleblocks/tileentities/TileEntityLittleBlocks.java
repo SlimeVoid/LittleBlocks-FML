@@ -252,7 +252,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 					x,
 					y,
 					z);
-			lbb.setGlobalBlockCoords(this.xCoord, this.yCoord, this.zCoord);
+			lbb.setParentCoordinates(this.xCoord, this.yCoord, this.zCoord);
 			((ILBCommonProxy) LBInit.LBM.getProxy()).getLittleWorld(
 					this.worldObj,
 					false).idModified(lbb, lastId);
@@ -324,7 +324,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 					x,
 					y,
 					z);
-			lbb.setGlobalBlockCoords(this.xCoord, this.yCoord, this.zCoord);
+			lbb.setParentCoordinates(this.xCoord, this.yCoord, this.zCoord);
 			((ILBCommonProxy) LBInit.LBM.getProxy()).getLittleWorld(
 					this.worldObj,
 					false).metadataModified(lbb, metadata);
@@ -401,7 +401,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 					x,
 					y,
 					z);
-			lbb.setGlobalBlockCoords(this.xCoord, this.yCoord, this.zCoord);
+			lbb.setParentCoordinates(this.xCoord, this.yCoord, this.zCoord);
 			((ILBCommonProxy) LBInit.LBM.getProxy()).getLittleWorld(
 					this.worldObj,
 					false).metadataModified(lbb, lastData);
@@ -413,7 +413,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 					x,
 					y,
 					z);
-			lbb.setGlobalBlockCoords(this.xCoord, this.yCoord, this.zCoord);
+			lbb.setParentCoordinates(this.xCoord, this.yCoord, this.zCoord);
 			((ILBCommonProxy) LBInit.LBM.getProxy()).getLittleWorld(
 					this.worldObj,
 					false).idModified(lbb, lastId);
