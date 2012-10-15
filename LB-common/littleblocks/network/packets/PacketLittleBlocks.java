@@ -33,8 +33,6 @@ public class PacketLittleBlocks extends PacketUpdate {
 
 	public PacketLittleBlocks() {
 		super(PacketIds.UPDATE);
-		if (FMLCommonHandler.instance().getSide() == Side.SERVER)
-			new Exception().printStackTrace();
 		this.setChannel(LBInit.LBM.getModChannel());
 	}
 

@@ -76,6 +76,11 @@ public class LittleWorldServer extends LittleWorld {
 
 	@Override
 	public void tick() {
+		if (this.worldInfo.getWorldTime() != this.realWorld.getWorldInfo().getWorldTime()) {
+			this.worldInfo.setWorldTime(this.realWorld.getWorldInfo().getWorldTime());
+			this.scheduledTickSet.clear();
+			this.pendingTickListEntries.clear();
+		}
 		this.theProfiler.startSection("chunkSection");
 		this.sendAndApplyBlockEvents();
 		this.worldInfo.setWorldTime(this.worldInfo.getWorldTime() + 1L);

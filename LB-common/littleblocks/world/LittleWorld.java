@@ -24,7 +24,7 @@ public class LittleWorld extends World {
 	protected int ticksInWorld = 0;
 	protected static final int MAX_TICKS_IN_WORLD = 5;
 
-	private World realWorld;
+	protected World realWorld;
 
 	@SideOnly(Side.CLIENT)
 	public LittleWorld(World world) {

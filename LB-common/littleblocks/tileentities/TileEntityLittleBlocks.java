@@ -536,7 +536,6 @@ public class TileEntityLittleBlocks extends TileEntity {
 
 	@Override
 	public void onInventoryChanged() {
-		new Exception().printStackTrace();
 		this.upToDate = false;
 		super.onInventoryChanged();
 	}
