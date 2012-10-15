@@ -1,16 +1,16 @@
 [
 {
-  "modid": "LittleBlocks",
+  "modid": "LittleBlocksMod",
   "name": "Little Blocks",
   "description": "The Little Blocks mod",
-  "version": "2.0.0.0",
+  "version": "2.0.0.1",
   "mcversion": "1.3.2",
   "url": "https://github.com/Eurymachus/LittleBlocks-FML",
   "updateUrl": "",
   "credits": "",
   "authors": ["Eurymachus","Slime Void Crew"],
-  "logoFile": "",
-  "screenshots": [],
+  "logoFile": "littleblocks.png",
+  "screenshots": [""],
   "parent":"",
   "dependencies": ["EurysModsCore"]
 }
