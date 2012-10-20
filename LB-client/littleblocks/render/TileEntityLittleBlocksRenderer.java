@@ -7,8 +7,6 @@ import littleblocks.core.LBCore;
 import littleblocks.tileentities.TileEntityLittleBlocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.Block;
-import net.minecraft.src.BlockContainer;
-import net.minecraft.src.ModLoader;
 import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.RenderHelper;
 import net.minecraft.src.Tessellator;
@@ -74,15 +72,14 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 							int[] coords = {
 									(tile.xCoord << 3) + x1,
 									(tile.yCoord << 3) + y1,
-									(tile.zCoord << 3) + z1};
+									(tile.zCoord << 3) + z1 };
 							bindTextureByName("/terrain.png");
 							if (!littleBlock.isDefaultTexture) {
 								if (tessellator.isDrawing) {
 									tessellator.draw();
 								}
 								tessellator.startDrawingQuads();
-								bindTextureByName(littleBlock
-												.getTextureFile());
+								bindTextureByName(littleBlock.getTextureFile());
 								if (LBCore.optifine) {
 									littleRenderer.renderBlockByRenderType(
 											littleBlock,
@@ -90,7 +87,13 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 											coords[1],
 											coords[2]);
 								}
-								renderLittleTile(tile, littleBlock, f, x1, y1, z1);
+								renderLittleTile(
+										tile,
+										littleBlock,
+										f,
+										coords[0],
+										coords[1],
+										coords[2]);
 								tessellator.draw();
 								bindTextureByName("/terrain.png");
 							} else {
@@ -101,7 +104,13 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 											coords[1],
 											coords[2]);
 								}
-								renderLittleTile(tile, littleBlock, f, x1, y1, z1);
+								renderLittleTile(
+										tile,
+										littleBlock,
+										f,
+										coords[0],
+										coords[1],
+										coords[2]);
 							}
 						}
 					}
@@ -116,18 +125,16 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 		GL11.glDisable(32826 /* GL_RESCALE_NORMAL_EXT */);
 		GL11.glPopMatrix();
 	}
-	
-	public void renderLittleTile(TileEntityLittleBlocks tile, Block littleBlock, float f, int x1, int y1, int z1) {
+
+	public void renderLittleTile(TileEntityLittleBlocks tile, Block littleBlock, float f, int x, int y, int z) {
 		if (tessellator.isDrawing) {
 			tessellator.draw();
 		}
-		if (littleBlock instanceof BlockContainer) {
-			TileEntity littleTile = tile
-					.getLittleWorld()
-						.getBlockTileEntity(
-								(tile.xCoord << 3) + x1,
-								(tile.yCoord << 3) + y1,
-								(tile.zCoord << 3) + z1);
+		if (littleBlock.hasTileEntity(0)) {
+			TileEntity littleTile = tile.getLittleWorld().getBlockTileEntity(
+					x,
+					y,
+					z);
 			if (littleTile != null) {
 				if (!(littleTile instanceof TileEntityLittleBlocks)) {
 					tileEntityRenderer.renderTileEntityAt(

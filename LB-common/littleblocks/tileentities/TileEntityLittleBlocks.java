@@ -463,6 +463,10 @@ public class TileEntityLittleBlocks extends TileEntity {
 	@Override
 	public void updateEntity() {
 		for (int i = 0; i < tiles.size(); i++) {
+			TileEntity tile = tiles.get(i);
+			if (tile.worldObj == null || tile.worldObj != getLittleWorld()) {
+				tile.worldObj = getLittleWorld();
+			}
 			tiles.get(i).updateEntity();
 		}
 	}

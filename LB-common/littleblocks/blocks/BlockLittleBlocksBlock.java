@@ -1,7 +1,6 @@
 package littleblocks.blocks;
 
 import littleblocks.blocks.core.LittleBlockCoordinates;
-import littleblocks.blocks.core.LittleBlockDataHandler;
 
 public class BlockLittleBlocksBlock {
 	private int blockId;
@@ -12,13 +11,13 @@ public class BlockLittleBlocksBlock {
 	public BlockLittleBlocksBlock(int x, int y, int z) {
 		this.littleBlock = new LittleBlockCoordinates(x, y, z);
 	}
-	
+
 	public BlockLittleBlocksBlock(int blockId, int metadata, int x, int y, int z) {
 		this.blockId = blockId;
 		this.metadata = metadata;
 		this.littleBlock = new LittleBlockCoordinates(x, y, z);
 	}
-	
+
 	public void setParentCoordinates(int x, int y, int z) {
 		this.parentBlock = new LittleBlockCoordinates(x, y, z);
 	}

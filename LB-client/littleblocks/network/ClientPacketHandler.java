@@ -9,6 +9,8 @@ import littleblocks.network.packets.PacketLittleBlocks;
 import littleblocks.network.packets.PacketLittleBlocksSettings;
 import littleblocks.network.packets.PacketTileEntityLB;
 import littleblocks.tileentities.TileEntityLittleBlocks;
+import net.minecraft.src.Block;
+import net.minecraft.src.BlockContainer;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.NetworkManager;
@@ -59,6 +61,20 @@ public class ClientPacketHandler implements IPacketHandler {
 					.getIntPayload(index + 3), z = packetLB.payload
 					.getIntPayload(index + 4);
 			tileentitylb.setContent(x, y, z, id, meta);
+			if (id != 0) {
+				Block littleBlock = Block.blocksList[id];
+				System.out.println("Block: " + littleBlock.blockID);
+				if (littleBlock instanceof BlockContainer) {
+					System.out.println("Tile: " + littleBlock.getBlockName());
+					tileentitylb.setTileEntity(
+							x,
+							y,
+							z,
+							Block.blocksList[id].createTileEntity(
+									tileentitylb.getLittleWorld(),
+									meta));
+				}
+			}
 			index += 5;
 		}
 		world.markBlockNeedsUpdate(

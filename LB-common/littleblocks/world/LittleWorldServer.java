@@ -8,10 +8,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import littleblocks.blocks.BlockLittleBlocksBlock;
-import littleblocks.core.LBCore;
 import littleblocks.network.CommonPacketHandler;
-import littleblocks.network.LBPacketIds;
-import littleblocks.network.packets.PacketLittleBlocks;
 import littleblocks.tileentities.TileEntityLittleBlocks;
 import net.minecraft.src.Block;
 import net.minecraft.src.BlockEventData;
@@ -76,8 +73,12 @@ public class LittleWorldServer extends LittleWorld {
 
 	@Override
 	public void tick() {
-		if (this.worldInfo.getWorldTime() != this.realWorld.getWorldInfo().getWorldTime()) {
-			this.worldInfo.setWorldTime(this.realWorld.getWorldInfo().getWorldTime());
+		if (this.worldInfo.getWorldTime() != this.realWorld
+				.getWorldInfo()
+					.getWorldTime()) {
+			this.worldInfo.setWorldTime(this.realWorld
+					.getWorldInfo()
+						.getWorldTime());
 			this.scheduledTickSet.clear();
 			this.pendingTickListEntries.clear();
 		}
@@ -171,36 +172,25 @@ public class LittleWorldServer extends LittleWorld {
 			while (blockEvent.hasNext()) {
 				BlockEventData eventData = (BlockEventData) blockEvent.next();
 				if (this.onBlockEventReceived(eventData)) {
-					/*int x = eventData.getX() >> 3, y = eventData.getY() >> 3, z = eventData
-							.getZ() >> 3;
-					TileEntity tileentity = this
-							.getRealWorld()
-								.getBlockTileEntity(x, y, z);
-					if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
-						TileEntityLittleBlocks tile = (TileEntityLittleBlocks) tileentity;
-						BlockLittleBlocksBlock lbb = new BlockLittleBlocksBlock(
-								eventData.getBlockID(),
-								this.getBlockMetadata(
-										eventData.getX(),
-										eventData.getY(),
-										eventData.getZ()),
-								(eventData.getX() & 7),
-								(eventData.getY() & 7),
-								(eventData.getZ() & 7));
-						lbb.setParentCoordinates(x, y, z);
-						PacketLittleBlocks packet = new PacketLittleBlocks(
-								LBCore.updateClientCommand,
-								lbb);
-						packet.setSender(LBPacketIds.SERVER);
-						CommonPacketHandler.sendToAllPlayers(
-								this.getRealWorld(),
-								null,
-								packet.getPacket(),
-								x,
-								y,
-								z,
-								false);
-					}*/
+					/*
+					 * int x = eventData.getX() >> 3, y = eventData.getY() >> 3,
+					 * z = eventData .getZ() >> 3; TileEntity tileentity = this
+					 * .getRealWorld() .getBlockTileEntity(x, y, z); if
+					 * (tileentity != null && tileentity instanceof
+					 * TileEntityLittleBlocks) { TileEntityLittleBlocks tile =
+					 * (TileEntityLittleBlocks) tileentity;
+					 * BlockLittleBlocksBlock lbb = new BlockLittleBlocksBlock(
+					 * eventData.getBlockID(), this.getBlockMetadata(
+					 * eventData.getX(), eventData.getY(), eventData.getZ()),
+					 * (eventData.getX() & 7), (eventData.getY() & 7),
+					 * (eventData.getZ() & 7)); lbb.setParentCoordinates(x, y,
+					 * z); PacketLittleBlocks packet = new PacketLittleBlocks(
+					 * LBCore.updateClientCommand, lbb);
+					 * packet.setSender(LBPacketIds.SERVER);
+					 * CommonPacketHandler.sendToAllPlayers(
+					 * this.getRealWorld(), null, packet.getPacket(), x, y, z,
+					 * false); }
+					 */
 				}
 			}
 
@@ -365,7 +355,7 @@ public class LittleWorldServer extends LittleWorld {
 
 	@Override
 	public void metadataModified(BlockLittleBlocksBlock lbb) {
-		//CommonPacketHandler.metadataModified(this, lbb);
+		// CommonPacketHandler.metadataModified(this, lbb);
 	}
 
 	@Override

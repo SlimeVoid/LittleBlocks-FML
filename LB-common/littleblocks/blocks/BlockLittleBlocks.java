@@ -135,9 +135,12 @@ public class BlockLittleBlocks extends BlockContainer {
 			boolean denyPlacement = false;
 			String placementMessage = "";
 			if (itemID < blocks.length) {
-				if (hasTile(itemID)) {
-					denyPlacement = true;
-					placementMessage = LBCore.denyBlockMessage;
+				if (LBCore.hasTile(itemID)) {
+					if (!LBCore.isTileEntityAllowed(Block.blocksList[itemID]
+							.createTileEntity(world, 0))) {
+						denyPlacement = true;
+						placementMessage = LBCore.denyBlockMessage;
+					}
 				}
 				if (blocks[itemID] != null) {
 					Block theBlock = blocks[itemID];
@@ -159,9 +162,13 @@ public class BlockLittleBlocks extends BlockContainer {
 					if (Item.itemsList[itemID] instanceof ItemBlock) {
 						int itemBlockId = ((ItemBlock) Item.itemsList[itemID])
 								.getBlockID();
-						if (hasTile(itemBlockId)) {
-							denyPlacement = true;
-							placementMessage = LBCore.denyBlockMessage;
+						if (LBCore.hasTile(itemBlockId)) {
+							if (!LBCore
+									.isTileEntityAllowed(Block.blocksList[itemBlockId]
+											.createTileEntity(world, 0))) {
+								denyPlacement = true;
+								placementMessage = LBCore.denyBlockMessage;
+							}
 						}
 					}
 				}
@@ -196,56 +203,46 @@ public class BlockLittleBlocks extends BlockContainer {
 		return true;
 	}
 
-	private boolean hasTile(int itemBlockId) {
-		if (Block.blocksList[itemBlockId] != null) {
-			Block theBlock = Block.blocksList[itemBlockId];
-			if (theBlock.hasTileEntity(0)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	public boolean onServerBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int q, float a, float b, float c) {
-		if (this.xSelected == -10) {
-			return true;
-		}
-		TileEntity tileentity = world.getBlockTileEntity(x, y, z);
-		if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
-			TileEntityLittleBlocks tile = (TileEntityLittleBlocks) tileentity;
-			int xx = (x << 3) + this.xSelected, yy = (y << 3) + this.ySelected, zz = (z << 3) + this.zSelected;
-			LittleWorld littleWorld = ((ILBCommonProxy) LBInit.LBM.getProxy())
-					.getLittleWorld(world, false);
-			int blockId = tile.getContent(
-					this.xSelected,
-					this.ySelected,
-					this.zSelected);
-			if (entityplayer instanceof EntityPlayerMP) {
-				EntityPlayerMP player = (EntityPlayerMP) entityplayer;
-				ItemInWorldManager itemManager = player.theItemInWorldManager;
-				if (itemManager.activateBlockOrUseItem(
-						entityplayer,
-						littleWorld,
-						entityplayer.getCurrentEquippedItem(),
-						xx,
-						yy,
-						zz,
-						this.side,
-						a,
-						b,
-						c)) {
-					world.markBlockNeedsUpdate(x, y, z);
-					return true;
-				} else if (entityplayer.getCurrentEquippedItem() != null && entityplayer
-						.getCurrentEquippedItem()
-							.getItem() instanceof ItemBucket) {
-					itemManager.tryUseItem(
-							entityplayer,
-							((ILBCommonProxy) LBInit.LBM.getProxy())
-									.getLittleWorld(world, false),
-							entityplayer.getCurrentEquippedItem());
-					world.markBlockNeedsUpdate(x, y, z);
-					return true;
+		if (entityplayer.canPlayerEdit(x, y, z)) {
+			TileEntity tileentity = world.getBlockTileEntity(x, y, z);
+			if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
+				TileEntityLittleBlocks tile = (TileEntityLittleBlocks) tileentity;
+				int xx = (x << 3) + this.xSelected, yy = (y << 3) + this.ySelected, zz = (z << 3) + this.zSelected;
+				LittleWorld littleWorld = ((ILBCommonProxy) LBInit.LBM
+						.getProxy()).getLittleWorld(world, false);
+				int blockId = tile.getContent(
+						this.xSelected,
+						this.ySelected,
+						this.zSelected);
+				if (littleWorld != null) {
+					if (entityplayer instanceof EntityPlayerMP) {
+						EntityPlayerMP player = (EntityPlayerMP) entityplayer;
+						ItemInWorldManager itemManager = player.theItemInWorldManager;
+						if (itemManager.activateBlockOrUseItem(
+								entityplayer,
+								littleWorld,
+								entityplayer.getCurrentEquippedItem(),
+								xx,
+								yy,
+								zz,
+								this.side,
+								a,
+								b,
+								c)) {
+							world.markBlockNeedsUpdate(x, y, z);
+							return true;
+						} else if (entityplayer.getCurrentEquippedItem() != null && entityplayer
+								.getCurrentEquippedItem()
+									.getItem() instanceof ItemBucket) {
+							itemManager.tryUseItem(
+									entityplayer,
+									littleWorld,
+									entityplayer.getCurrentEquippedItem());
+							world.markBlockNeedsUpdate(x, y, z);
+							return true;
+						}
+					}
 				}
 			}
 		}
