@@ -138,7 +138,7 @@ public class CommonPacketHandler implements IPacketHandler {
 
 	public static void sendTo(EntityPlayer entityplayer, Packet packet) {
 		if (entityplayer != null && entityplayer instanceof EntityPlayerMP) {
-			((EntityPlayerMP) entityplayer).serverForThisPlayer
+			((EntityPlayerMP) entityplayer).playerNetServerHandler
 					.sendPacketToPlayer(packet);
 		}
 	}

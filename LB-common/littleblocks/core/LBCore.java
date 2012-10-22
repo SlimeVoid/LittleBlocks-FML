@@ -13,8 +13,11 @@ import net.minecraft.src.Material;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntityNote;
+import net.minecraft.src.WorldProvider;
 import net.minecraftforge.common.Configuration;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import cpw.mods.fml.common.registry.GameRegistry;
 import eurysmods.api.ICommonProxy;
 
@@ -39,6 +42,13 @@ public class LBCore {
 	public static String denyUseMessage = "Sorry, you cannot use that here!";
 	public static int littleBlocksSize = 8;
 	private static Set<Class<? extends TileEntity>> allowedBlockTileEntities = new HashSet();
+	public static int littleDimensionClient = -1;
+	public static int littleProviderTypeClient = -1;
+	
+	public static int littleDimensionServer = -1;
+	public static int littleProviderTypeServer = -1;
+	public static WorldProvider littleProviderClient;
+	public static WorldProvider littleProviderServer;
 
 	public static void initialize(ICommonProxy proxy) {
 		LBInit.initialize(proxy);

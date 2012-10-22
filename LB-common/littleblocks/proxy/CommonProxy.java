@@ -12,6 +12,7 @@ import net.minecraft.src.Packet1Login;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import net.minecraftforge.common.DimensionManager;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.common.registry.TickRegistry;
@@ -82,11 +83,17 @@ public class CommonProxy implements ILBCommonProxy {
 	@Override
 	public LittleWorld getLittleWorld(World world, boolean needsRefresh) {
 		if (world != null) {
+			if (LBCore.littleDimensionServer == -1) {
+				LBCore.littleDimensionServer = DimensionManager.getNextFreeDimId();
+				LBCore.littleProviderTypeServer = DimensionManager.getProviderType(world.provider.dimensionId);
+				DimensionManager.registerDimension(LBCore.littleDimensionServer, LBCore.littleProviderTypeServer);
+				LBCore.littleProviderServer = DimensionManager.createProviderFor(LBCore.littleDimensionServer);
+			}
 			if (LBCore.littleWorldServer == null || LBCore.littleWorldServer
 					.isOutdated(world) || needsRefresh) {
 				LBCore.littleWorldServer = new LittleWorldServer(
 						world,
-						world.provider);
+						LBCore.littleProviderServer);
 			}
 		}
 		return LBCore.littleWorldServer;

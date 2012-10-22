@@ -3,6 +3,7 @@ package littleblocks.world;
 import littleblocks.blocks.BlockLittleBlocksBlock;
 import littleblocks.core.LBCore;
 import littleblocks.tileentities.TileEntityLittleBlocks;
+import net.minecraft.src.BiomeGenBase;
 import net.minecraft.src.Block;
 import net.minecraft.src.Chunk;
 import net.minecraft.src.Entity;
@@ -15,6 +16,7 @@ import net.minecraft.src.Vec3;
 import net.minecraft.src.World;
 import net.minecraft.src.WorldProvider;
 import net.minecraft.src.WorldSettings;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeDirection;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
@@ -31,7 +33,7 @@ public class LittleWorld extends World {
 		super(
 				world.getSaveHandler(),
 				"LittleBlocksWorld",
-				world.provider,
+				WorldProvider.getProviderForDimension(LBCore.littleDimensionClient),
 				new WorldSettings(world.getWorldInfo().getSeed(), world
 						.getWorldInfo()
 							.getGameType(), world
@@ -40,7 +42,7 @@ public class LittleWorld extends World {
 						.getWorldInfo()
 							.isHardcoreModeEnabled(), world
 						.getWorldInfo()
-							.getTerrainType()), new Profiler());
+							.getTerrainType()), null);
 		this.realWorld = world;
 	}
 
@@ -56,7 +58,7 @@ public class LittleWorld extends World {
 						.getWorldInfo()
 							.isHardcoreModeEnabled(), world
 						.getWorldInfo()
-							.getTerrainType()), worldprovider, new Profiler());
+							.getTerrainType()), WorldProvider.getProviderForDimension(LBCore.littleDimensionClient), null);
 		this.realWorld = world;
 	}
 

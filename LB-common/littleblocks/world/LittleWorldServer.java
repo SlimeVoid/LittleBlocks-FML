@@ -82,14 +82,10 @@ public class LittleWorldServer extends LittleWorld {
 			this.scheduledTickSet.clear();
 			this.pendingTickListEntries.clear();
 		}
-		this.theProfiler.startSection("chunkSection");
 		this.sendAndApplyBlockEvents();
 		this.worldInfo.setWorldTime(this.worldInfo.getWorldTime() + 1L);
-		this.theProfiler.endStartSection("tickPending");
 		this.tickUpdates(false);
-		this.theProfiler.endStartSection("tickTiles");
 		this.sendAndApplyBlockEvents();
-		this.theProfiler.endSection();
 	}
 
 	@Override
@@ -172,25 +168,6 @@ public class LittleWorldServer extends LittleWorld {
 			while (blockEvent.hasNext()) {
 				BlockEventData eventData = (BlockEventData) blockEvent.next();
 				if (this.onBlockEventReceived(eventData)) {
-					/*
-					 * int x = eventData.getX() >> 3, y = eventData.getY() >> 3,
-					 * z = eventData .getZ() >> 3; TileEntity tileentity = this
-					 * .getRealWorld() .getBlockTileEntity(x, y, z); if
-					 * (tileentity != null && tileentity instanceof
-					 * TileEntityLittleBlocks) { TileEntityLittleBlocks tile =
-					 * (TileEntityLittleBlocks) tileentity;
-					 * BlockLittleBlocksBlock lbb = new BlockLittleBlocksBlock(
-					 * eventData.getBlockID(), this.getBlockMetadata(
-					 * eventData.getX(), eventData.getY(), eventData.getZ()),
-					 * (eventData.getX() & 7), (eventData.getY() & 7),
-					 * (eventData.getZ() & 7)); lbb.setParentCoordinates(x, y,
-					 * z); PacketLittleBlocks packet = new PacketLittleBlocks(
-					 * LBCore.updateClientCommand, lbb);
-					 * packet.setSender(LBPacketIds.SERVER);
-					 * CommonPacketHandler.sendToAllPlayers(
-					 * this.getRealWorld(), null, packet.getPacket(), x, y, z,
-					 * false); }
-					 */
 				}
 			}
 

@@ -38,7 +38,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 	}
 
 	@Override
-	public void func_70308_a(World par1World) {
+	public void setWorldObj(World par1World) {
 		this.worldObj = par1World;
 		((ILBCommonProxy) LBInit.LBM.getProxy()).getLittleWorld(
 				this.worldObj,
@@ -545,7 +545,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 	}
 
 	@Override
-	public Packet getAuxillaryInfoPacket() {
+	public Packet getDescriptionPacket() {
 		return this.getUpdatePacket();
 	}
 

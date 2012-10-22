@@ -17,6 +17,7 @@ import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet1Login;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import net.minecraftforge.common.DimensionManager;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.Side;
@@ -66,9 +67,16 @@ public class ClientProxy extends CommonProxy {
 	public LittleWorld getLittleWorld(World world, boolean needsRefresh) {
 		if (world != null) {
 			if (world.isRemote) {
+				if (LBCore.littleDimensionClient == -1) {
+					LBCore.littleDimensionClient = DimensionManager.getNextFreeDimId();
+					LBCore.littleProviderTypeClient = DimensionManager.getProviderType(world.provider.dimensionId);
+					DimensionManager.registerDimension(LBCore.littleDimensionClient, LBCore.littleProviderTypeClient);
+					LBCore.littleProviderClient = DimensionManager.createProviderFor(LBCore.littleDimensionClient);
+				}
 				if (LBCore.littleWorldClient == null || LBCore.littleWorldClient
 						.isOutdated(world) || needsRefresh) {
-					LBCore.littleWorldClient = new LittleWorld(world);
+					
+					LBCore.littleWorldClient = new LittleWorld(world, LBCore.littleProviderClient);
 				}
 				return LBCore.littleWorldClient;
 			} else {

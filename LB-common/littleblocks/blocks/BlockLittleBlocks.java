@@ -50,7 +50,7 @@ public class BlockLittleBlocks extends BlockContainer {
 		if (selfNotify) {
 			setRequiresSelfNotify();
 		}
-		this.setCreativeTab(CreativeTabs.tabDeco);
+		this.setCreativeTab(CreativeTabs.tabDecorations);
 	}
 
 	@Override
@@ -219,7 +219,16 @@ public class BlockLittleBlocks extends BlockContainer {
 					if (entityplayer instanceof EntityPlayerMP) {
 						EntityPlayerMP player = (EntityPlayerMP) entityplayer;
 						ItemInWorldManager itemManager = player.theItemInWorldManager;
-						if (itemManager.activateBlockOrUseItem(
+						if (entityplayer.getCurrentEquippedItem() != null && entityplayer
+								.getCurrentEquippedItem()
+									.getItem() instanceof ItemBucket) {
+							itemManager.tryUseItem(
+									entityplayer,
+									littleWorld,
+									entityplayer.getCurrentEquippedItem());
+							world.markBlockNeedsUpdate(x, y, z);
+							return true;
+						} else if (itemManager.activateBlockOrUseItem(
 								entityplayer,
 								littleWorld,
 								entityplayer.getCurrentEquippedItem(),
@@ -230,15 +239,6 @@ public class BlockLittleBlocks extends BlockContainer {
 								a,
 								b,
 								c)) {
-							world.markBlockNeedsUpdate(x, y, z);
-							return true;
-						} else if (entityplayer.getCurrentEquippedItem() != null && entityplayer
-								.getCurrentEquippedItem()
-									.getItem() instanceof ItemBucket) {
-							itemManager.tryUseItem(
-									entityplayer,
-									littleWorld,
-									entityplayer.getCurrentEquippedItem());
 							world.markBlockNeedsUpdate(x, y, z);
 							return true;
 						}
