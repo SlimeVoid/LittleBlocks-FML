@@ -63,9 +63,7 @@ public class ClientPacketHandler implements IPacketHandler {
 			tileentitylb.setContent(x, y, z, id, meta);
 			if (id != 0) {
 				Block littleBlock = Block.blocksList[id];
-				System.out.println("Block: " + littleBlock.blockID);
 				if (littleBlock instanceof BlockContainer) {
-					System.out.println("Tile: " + littleBlock.getBlockName());
 					tileentitylb.setTileEntity(
 							x,
 							y,

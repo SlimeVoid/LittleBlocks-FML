@@ -9,6 +9,9 @@ import littleblocks.core.LBCore;
 import littleblocks.core.LBInit;
 import littleblocks.network.packets.PacketTileEntityLB;
 import littleblocks.world.LittleWorld;
+import net.minecraft.src.Block;
+import net.minecraft.src.BlockFlowing;
+import net.minecraft.src.BlockStationary;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagInt;
@@ -396,6 +399,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 		metadatas[x][y][z] = metadata;
 
 		if (lastData != metadata) {
+			System.out.println("lastMeta: " + lastData + " | newMeta: " + metadata);
 			BlockLittleBlocksBlock lbb = new BlockLittleBlocksBlock(
 					id,
 					metadata,
@@ -408,16 +412,19 @@ public class TileEntityLittleBlocks extends TileEntity {
 					false).metadataModified(lbb);
 		}
 		if (lastId != id) {
-			BlockLittleBlocksBlock lbb = new BlockLittleBlocksBlock(
-					id,
-					metadata,
-					x,
-					y,
-					z);
-			lbb.setParentCoordinates(this.xCoord, this.yCoord, this.zCoord);
-			((ILBCommonProxy) LBInit.LBM.getProxy()).getLittleWorld(
-					this.worldObj,
-					false).idModified(lbb, lastId);
+			if (!(Block.blocksList[lastId] instanceof BlockFlowing || Block.blocksList[lastId] instanceof BlockStationary)) {
+				System.out.println("lastId: " + lastId+ " | newId: " + id);
+				BlockLittleBlocksBlock lbb = new BlockLittleBlocksBlock(
+						id,
+						metadata,
+						x,
+						y,
+						z);
+				lbb.setParentCoordinates(this.xCoord, this.yCoord, this.zCoord);
+				((ILBCommonProxy) LBInit.LBM.getProxy()).getLittleWorld(
+						this.worldObj,
+						false).idModified(lbb, lastId);
+			}
 		}
 	}
 

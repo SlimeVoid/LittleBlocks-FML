@@ -380,20 +380,6 @@ public class LittleWorld extends World {
 			if (block != null) {
 				block.onNeighborBlockChange(world, x, y, z, side);
 				world.markBlockNeedsUpdate(x, y, z);
-
-				/*
-				 * if (world == this) { TileEntity tileentity =
-				 * realWorld.getBlockTileEntity( x >> 3, y >> 3, z >> 3); if
-				 * (tileentity != null && tileentity instanceof
-				 * TileEntityLittleBlocks) { TileEntityLittleBlocks tile =
-				 * (TileEntityLittleBlocks) tileentity; int littleBlockId = tile
-				 * .getContent(x & 7, y & 7, z & 7); int newmetadata =
-				 * tile.getMetadata(x & 7, y & 7, z & 7); BlockLittleBlocksBlock
-				 * lbb = new BlockLittleBlocksBlock( littleBlockId, newmetadata,
-				 * x, y, z); lbb.setParentCoordinates(x >> 3, y >> 3, z >> 3);
-				 * this.metadataModified(lbb, newmetadata); }
-				 * this.markBlockNeedsUpdate(x, y, z); }
-				 */
 			}
 		}
 	}

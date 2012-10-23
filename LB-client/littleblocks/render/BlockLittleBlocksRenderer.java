@@ -29,9 +29,6 @@ public class BlockLittleBlocksRenderer implements ISimpleBlockRenderingHandler {
 
 			int[][][] content = tile.getContent();
 
-			// BlockLittleBlocksLittleRenderer blocksToRender =
-			// BlockLittleBlocksLittleRenderer.getInstance(tile.getLittleWorld());
-
 			RenderBlocks littleRenderer = new RenderBlocks(
 					tile.getLittleWorld());
 
@@ -56,7 +53,6 @@ public class BlockLittleBlocksRenderer implements ISimpleBlockRenderingHandler {
 			if (!tessellator.isDrawing) {
 				tessellator.startDrawingQuads();
 			}
-			// int i = 0;
 			for (int x1 = 0; x1 < content.length; x1++) {
 				for (int y1 = 0; y1 < content[x1].length; y1++) {
 					for (int z1 = 0; z1 < content[x1][y1].length; z1++) {
@@ -90,9 +86,6 @@ public class BlockLittleBlocksRenderer implements ISimpleBlockRenderingHandler {
 								texture = ModLoader.getMinecraftInstance().renderEngine
 										.getTexture("/terrain.png");
 								GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
-								// blocksToRender.addMem(i, coords,
-								// littleBlock);
-								// i++;
 							} else {
 								littleRenderer.renderBlockByRenderType(
 										littleBlock,
@@ -110,13 +103,6 @@ public class BlockLittleBlocksRenderer implements ISimpleBlockRenderingHandler {
 			if (!tessellator.isDrawing) {
 				tessellator.startDrawingQuads();
 			}
-			// System.out.println("Blocks to render: " +
-			// blocksToRender.getSize());
-			// for (int index = 0; index < blocksToRender.getSize(); index++) {
-			// int[] theCoords = blocksToRender.getCoords(index);
-			// Block theBlock = blocksToRender.getBlock(index);
-			// }
-			// blocksToRender.getInstance(tile.getLittleWorld()).clear();
 			GL11.glDisable(32826 /* GL_RESCALE_NORMAL_EXT */);
 
 			GL11.glPopMatrix();

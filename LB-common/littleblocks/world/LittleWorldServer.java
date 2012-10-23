@@ -125,6 +125,7 @@ public class LittleWorldServer extends LittleWorld {
 							nextTick.zCoord);
 
 					if (blockId == nextTick.blockID && blockId > 0) {
+						System.out.println("BlockID: " + blockId);
 						Block.blocksList[blockId].updateTick(
 								this,
 								nextTick.xCoord,
@@ -147,7 +148,6 @@ public class LittleWorldServer extends LittleWorld {
 			}
 			if (this.ticksInWorld >= MAX_TICKS_IN_WORLD) {
 				for (TileEntity tile : littleBlockTiles) {
-					System.out.println("LittleBlocks");
 				}
 			}
 			return !this.pendingTickListEntries.isEmpty();
