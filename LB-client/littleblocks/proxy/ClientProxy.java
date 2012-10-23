@@ -20,9 +20,11 @@ import net.minecraft.src.World;
 import net.minecraftforge.common.DimensionManager;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import cpw.mods.fml.common.registry.TickRegistry;
-
+@SideOnly(Side.CLIENT)
 public class ClientProxy extends CommonProxy {
 
 	@Override
@@ -50,6 +52,12 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void registerTickHandler() {
+		LBCore.littleDimensionClient = -1;
+		LBCore.littleProviderTypeClient = -1;
+		if (FMLCommonHandler.instance().getSide().isClient() && ModLoader.getMinecraftInstance().isSingleplayer()) {
+			LBCore.littleDimensionServer = -1;
+			LBCore.littleProviderTypeServer = -1;
+		}
 		TickRegistry.registerTickHandler(new ClientTickHandler(), Side.CLIENT);
 	}
 

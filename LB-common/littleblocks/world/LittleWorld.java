@@ -33,7 +33,7 @@ public class LittleWorld extends World {
 		super(
 				world.getSaveHandler(),
 				"LittleBlocksWorld",
-				WorldProvider.getProviderForDimension(LBCore.littleDimensionClient),
+				LBCore.littleProviderClient,
 				new WorldSettings(world.getWorldInfo().getSeed(), world
 						.getWorldInfo()
 							.getGameType(), world
@@ -58,7 +58,7 @@ public class LittleWorld extends World {
 						.getWorldInfo()
 							.isHardcoreModeEnabled(), world
 						.getWorldInfo()
-							.getTerrainType()), WorldProvider.getProviderForDimension(LBCore.littleDimensionClient), null);
+							.getTerrainType()), worldprovider, null);
 		this.realWorld = world;
 	}
 

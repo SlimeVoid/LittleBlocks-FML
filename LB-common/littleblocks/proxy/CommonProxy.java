@@ -63,6 +63,8 @@ public class CommonProxy implements ILBCommonProxy {
 
 	@Override
 	public void registerTickHandler() {
+		LBCore.littleDimensionServer = -1;
+		LBCore.littleProviderTypeServer = -1;
 		TickRegistry.registerTickHandler(new CommonTickHandler(), Side.SERVER);
 	}
 

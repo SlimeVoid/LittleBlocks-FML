@@ -42,12 +42,16 @@ public class LBCore {
 	public static String denyUseMessage = "Sorry, you cannot use that here!";
 	public static int littleBlocksSize = 8;
 	private static Set<Class<? extends TileEntity>> allowedBlockTileEntities = new HashSet();
-	public static int littleDimensionClient = -1;
-	public static int littleProviderTypeClient = -1;
 	
-	public static int littleDimensionServer = -1;
-	public static int littleProviderTypeServer = -1;
+	@SideOnly(Side.CLIENT)
+	public static int littleDimensionClient;
+	@SideOnly(Side.CLIENT)
+	public static int littleProviderTypeClient;
+	@SideOnly(Side.CLIENT)
 	public static WorldProvider littleProviderClient;
+	
+	public static int littleDimensionServer;
+	public static int littleProviderTypeServer;
 	public static WorldProvider littleProviderServer;
 
 	public static void initialize(ICommonProxy proxy) {
