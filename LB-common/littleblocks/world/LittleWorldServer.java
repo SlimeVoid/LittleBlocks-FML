@@ -331,36 +331,36 @@ public class LittleWorldServer extends LittleWorld {
 	}
 
 	@Override
-	public void metadataModified(BlockLittleBlocksBlock lbb) {
-		// CommonPacketHandler.metadataModified(this, lbb);
+	public void metadataModified(int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
+		CommonPacketHandler.metadataModified(this, x, y, z, side, littleX, littleY, littleZ, blockId, metadata);
 	}
 
 	@Override
-	public void idModified(BlockLittleBlocksBlock lbb, int lastId) {
-		if (lastId != 0) {
-			Block.blocksList[lastId].breakBlock(
+	public void idModified(int lastBlockId, int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
+		if (lastBlockId != 0) {
+			Block.blocksList[lastBlockId].breakBlock(
 					this,
-					lbb.getWorldX(),
-					lbb.getWorldY(),
-					lbb.getWorldZ(),
+					(x << 3) + littleX,
+					(y << 3) + littleY,
+					(z << 3) + littleZ,
 					0,
 					0);
 		}
-		if (lbb.getBlockId() != 0) {
-			Block.blocksList[lbb.getBlockId()].onBlockAdded(
+		if (blockId != 0) {
+			Block.blocksList[blockId].onBlockAdded(
 					this,
-					lbb.getWorldX(),
-					lbb.getWorldY(),
-					lbb.getWorldZ());
+					(x << 3) + littleX,
+					(y << 3) + littleY,
+					(z << 3) + littleZ);
 		}
-		super.idModified(lbb, lastId);
+		super.idModified(lastBlockId, x, y, z, side, littleX, littleY, littleZ, blockId, metadata);
 		this.notifyBlockChange(
-				lbb.getWorldX(),
-				lbb.getWorldY(),
-				lbb.getWorldZ(),
-				lbb.getBlockId());
-		if (lastId != 0) {
-			CommonPacketHandler.idModified(this, lbb);
+				(x << 3) + littleX,
+				(y << 3) + littleY,
+				(z << 3) + littleZ,
+				blockId);
+		if (lastBlockId != 0) {
+			CommonPacketHandler.idModified(this, lastBlockId, x, y, z, side, littleX, littleY, littleZ, blockId, metadata);
 		}
 	}
 }

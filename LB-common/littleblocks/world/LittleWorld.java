@@ -384,14 +384,21 @@ public class LittleWorld extends World {
 		}
 	}
 
-	public void idModified(BlockLittleBlocksBlock lbb, int lastId) {
+/*	public void idModified(BlockLittleBlocksBlock lbb, int lastId) {
 		realWorld.updateAllLightTypes(
 				lbb.getParentX(),
 				lbb.getParentY(),
 				lbb.getParentZ());
+	}*/
+
+	public void idModified(int lastBlockId, int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
+		realWorld.updateAllLightTypes(x, y, z);
 	}
 
-	public void metadataModified(BlockLittleBlocksBlock lbb) {
+/*	public void metadataModified(BlockLittleBlocksBlock lbb) {
+	}*/
+	
+	public void metadataModified(int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
 	}
 
 	@Override
