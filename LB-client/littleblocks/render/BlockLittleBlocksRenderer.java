@@ -1,5 +1,9 @@
 package littleblocks.render;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+
 import littleblocks.core.LBCore;
 import littleblocks.tileentities.TileEntityLittleBlocks;
 import net.minecraft.src.Block;
@@ -7,6 +11,7 @@ import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.Tessellator;
+import net.minecraft.src.WorldClient;
 
 import org.lwjgl.opengl.GL11;
 
@@ -29,17 +34,14 @@ public class BlockLittleBlocksRenderer implements ISimpleBlockRenderingHandler {
 
 			int[][][] content = tile.getContent();
 
-			RenderBlocks littleRenderer = new RenderBlocks(
-					tile.getLittleWorld());
-
-			Tessellator tessellator = Tessellator.instance;
-
-			GL11.glPushMatrix();
-
+			Tessellator tessellator = Tessellator.instance;		
+			
 			if (tessellator.isDrawing) {
 				tessellator.draw();
-				tessellator.startDrawingQuads();
 			}
+			
+			GL11.glPushMatrix();
+			tessellator.startDrawingQuads();
 			double xS = -((x >> 4) << 4), yS = -((y >> 4) << 4), zS = -((z >> 4) << 4);
 
 			GL11.glTranslated(xS, yS, zS);
@@ -47,47 +49,46 @@ public class BlockLittleBlocksRenderer implements ISimpleBlockRenderingHandler {
 			float scale = 1 / (float) LBCore.littleBlocksSize;
 			GL11.glScalef(scale, scale, scale);
 			GL11.glTranslated(-xS, -yS, -zS);
-			if (tessellator.isDrawing) {
-				tessellator.draw();
-			}
-			if (!tessellator.isDrawing) {
-				tessellator.startDrawingQuads();
-			}
+			
+			int defaultTexture = ModLoader.getMinecraftInstance().renderEngine
+					.getTexture("/terrain.png");
 			for (int x1 = 0; x1 < content.length; x1++) {
 				for (int y1 = 0; y1 < content[x1].length; y1++) {
 					for (int z1 = 0; z1 < content[x1][y1].length; z1++) {
 						int blockId = content[x1][y1][z1];
 						if (blockId > 0) {
-							if (!tessellator.isDrawing) {
-								tessellator.startDrawingQuads();
-							}
 							Block littleBlock = Block.blocksList[blockId];
 							int[] coords = {
 									(x << 3) + x1,
 									(y << 3) + y1,
 									(z << 3) + z1 };
-							int texture = ModLoader.getMinecraftInstance().renderEngine
-									.getTexture("/terrain.png");
 							if (!littleBlock.isDefaultTexture) {
+								System.out.println("Not Default");
 								if (tessellator.isDrawing) {
 									tessellator.draw();
 								}
-								tessellator.startDrawingQuads();
-								texture = ModLoader.getMinecraftInstance().renderEngine
+								if (!tessellator.isDrawing) {
+									tessellator.startDrawingQuads();
+								}
+								int texture = ModLoader.getMinecraftInstance().renderEngine
 										.getTexture(littleBlock
 												.getTextureFile());
 								GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
-								littleRenderer.renderBlockByRenderType(
+								LBCore.getLittleRenderer(tile.worldObj).renderBlockByRenderType(
 										littleBlock,
 										coords[0],
 										coords[1],
 										coords[2]);
-								tessellator.draw();
-								texture = ModLoader.getMinecraftInstance().renderEngine
-										.getTexture("/terrain.png");
-								GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
+								if (tessellator.isDrawing) {
+									tessellator.draw();
+								}
+								GL11.glBindTexture(GL11.GL_TEXTURE_2D, defaultTexture);
 							} else {
-								littleRenderer.renderBlockByRenderType(
+								if (!tessellator.isDrawing) {
+									System.out.println("Not Drawing");
+									tessellator.startDrawingQuads();
+								}
+								LBCore.getLittleRenderer(tile.worldObj).renderBlockByRenderType(
 										littleBlock,
 										coords[0],
 										coords[1],
@@ -100,15 +101,11 @@ public class BlockLittleBlocksRenderer implements ISimpleBlockRenderingHandler {
 			if (tessellator.isDrawing) {
 				tessellator.draw();
 			}
-			if (!tessellator.isDrawing) {
-				tessellator.startDrawingQuads();
-			}
 			GL11.glDisable(32826 /* GL_RESCALE_NORMAL_EXT */);
 
 			GL11.glPopMatrix();
 
-			if (tessellator.isDrawing) {
-				tessellator.draw();
+			if (!tessellator.isDrawing) {
 				tessellator.startDrawingQuads();
 			}
 			return true;

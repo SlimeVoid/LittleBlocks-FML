@@ -4,17 +4,25 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
+import littleblocks.api.ILBCommonProxy;
 import littleblocks.blocks.BlockLittleBlocks;
 import littleblocks.tileentities.TileEntityLittleBlocks;
 import littleblocks.world.LittleWorld;
 import net.minecraft.src.Block;
+import net.minecraft.src.BlockFlowing;
+import net.minecraft.src.BlockFluid;
+import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.ModLoader;
+import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntityNote;
+import net.minecraft.src.World;
+import net.minecraft.src.WorldClient;
 import net.minecraft.src.WorldProvider;
 import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.DimensionManager;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
@@ -42,7 +50,10 @@ public class LBCore {
 	public static String denyUseMessage = "Sorry, you cannot use that here!";
 	public static int littleBlocksSize = 8;
 	private static Set<Class<? extends TileEntity>> allowedBlockTileEntities = new HashSet();
-	
+	private static Set<Class<? extends Block>> disallowedBlocksToTick = new HashSet();
+
+	@SideOnly(Side.CLIENT)
+	private static RenderBlocks littleRenderer;
 	@SideOnly(Side.CLIENT)
 	public static int littleDimensionClient;
 	@SideOnly(Side.CLIENT)
@@ -67,8 +78,23 @@ public class LBCore {
 				2F,
 				true).setBlockName("littleBlocks");
 		GameRegistry.registerBlock(littleBlocks);
+		addDisallowedBlockTick(BlockFluid.class);
+		addDisallowedBlockTick(BlockFlowing.class);
 		addAllowedTile(TileEntityNote.class);
 		// MinecraftForge.EVENT_BUS.register(new PistonOrientation());
+	}
+	
+	public static void addDisallowedBlockTick(Class<? extends Block> blockClass) {
+		if (!disallowedBlocksToTick.contains(blockClass)) {
+			disallowedBlocksToTick.add(blockClass);
+		}
+	}
+
+	public static boolean isBlockAllowedToTick(Block littleBlock) {
+		if (disallowedBlocksToTick.contains(littleBlock.getClass())) {
+			return false;
+		}
+		return true;
 	}
 
 	public static void addAllowedTile(Class<? extends TileEntity> tileclass) {
@@ -108,22 +134,37 @@ public class LBCore {
 
 	public static int configurationProperties() {
 		configuration.load();
-		littleBlocksID = Integer.parseInt(configuration.getOrCreateIntProperty(
-				"littleBlocksID",
+		littleBlocksID = Integer.parseInt(configuration.get(
 				Configuration.CATEGORY_BLOCK,
+				"littleBlocksID",
 				140).value);
-		littleBlocksClip = Boolean.parseBoolean(configuration
-				.getOrCreateBooleanProperty(
-						"littleBlocksClip",
-						Configuration.CATEGORY_GENERAL,
-						true).value);
-		renderingMethod = Integer.parseInt(configuration
-				.getOrCreateIntProperty(
-						"renderingMethod",
-						Configuration.CATEGORY_GENERAL,
-						0).value);
+		littleBlocksClip = Boolean.parseBoolean(configuration.get(
+				Configuration.CATEGORY_GENERAL,
+				"littleBlocksClip",
+				true).value);
+		renderingMethod = Integer.parseInt(configuration.get(
+				Configuration.CATEGORY_GENERAL,
+				"renderingMethod",
+				0).value);
 		renderType = RenderingRegistry.getNextAvailableRenderId();
 		configuration.save();
 		return littleBlocksID;
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static RenderBlocks getLittleRenderer(World world) {
+		if (littleRenderer != null && ((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(world, false).getRealWorld() == world) {
+			return littleRenderer;
+		}
+		return setLittleRenderer(world);
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static RenderBlocks setLittleRenderer(World world) {
+		if (world == null) {
+			return littleRenderer = null;
+		}
+		return littleRenderer = new RenderBlocks(
+				((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(world, false));
 	}
 }

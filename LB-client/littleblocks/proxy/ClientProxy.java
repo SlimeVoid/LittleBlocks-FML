@@ -17,6 +17,7 @@ import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet1Login;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.DimensionManager;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
@@ -34,14 +35,12 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void registerRenderInformation() {
-		RenderingRegistry.registerBlockHandler(new BlockLittleBlocksRenderer());
+		//RenderingRegistry.registerBlockHandler(new BlockLittleBlocksRenderer());
 	}
 
 	@Override
 	public void registerTileEntitySpecialRenderer(Class<? extends TileEntity> clazz) {
-		ClientRegistry.bindTileEntitySpecialRenderer(
-				clazz,
-				new TileEntityLittleBlocksRenderer());
+		ClientRegistry.bindTileEntitySpecialRenderer(clazz,	new TileEntityLittleBlocksRenderer());
 	}
 
 	@Override
@@ -75,15 +74,17 @@ public class ClientProxy extends CommonProxy {
 	public LittleWorld getLittleWorld(World world, boolean needsRefresh) {
 		if (world != null) {
 			if (world.isRemote) {
-				if (LBCore.littleDimensionClient == -1) {
-					LBCore.littleDimensionClient = DimensionManager.getNextFreeDimId();
-					LBCore.littleProviderTypeClient = DimensionManager.getProviderType(world.provider.dimensionId);
-					DimensionManager.registerDimension(LBCore.littleDimensionClient, LBCore.littleProviderTypeClient);
-					LBCore.littleProviderClient = DimensionManager.createProviderFor(LBCore.littleDimensionClient);
-				}
 				if (LBCore.littleWorldClient == null || LBCore.littleWorldClient
 						.isOutdated(world) || needsRefresh) {
-					
+					if (LBCore.littleDimensionClient < 0) {
+						this.setLittleDimension(world, LBCore.configuration, DimensionManager.getNextFreeDimId());
+						LBCore.littleProviderTypeClient = DimensionManager.getProviderType(world.provider.dimensionId);
+						if (LBCore.littleProviderClient == null) {
+							System.out.println("Registering Dimension: " + LBCore.littleDimensionClient);
+							DimensionManager.registerDimension(LBCore.littleDimensionClient, LBCore.littleProviderTypeClient);
+							LBCore.littleProviderClient = DimensionManager.createProviderFor(LBCore.littleDimensionClient);
+						}
+					}
 					LBCore.littleWorldClient = new LittleWorld(world, LBCore.littleProviderClient);
 				}
 				return LBCore.littleWorldClient;
@@ -109,5 +110,36 @@ public class ClientProxy extends CommonProxy {
 			return ((NetClientHandler) handler).getPlayer().worldObj;
 		}
 		return null;
+	}
+
+	@Override
+	public void setLittleDimension(World world, Configuration configuration, int nextFreeDimId) {
+		configuration.load();
+		LBCore.littleDimensionClient = Integer.parseInt(configuration.get(
+		Configuration.CATEGORY_GENERAL,
+		"littleDimensionClient",
+		nextFreeDimId).value);
+		configuration.save();
+		if (!world.isRemote) {
+			super.setLittleDimension(world, configuration, nextFreeDimId);
+		}
+	}
+
+	@Override
+	public int getLittleDimension() {
+		return LBCore.littleDimensionClient;
+	}
+
+	@Override
+	public void resetLittleBlocks() {
+		if (LBCore.littleProviderClient != null) {
+			DimensionManager.unregisterDimension(LBCore.littleDimensionClient);
+			LBCore.littleProviderClient = null;
+			LBCore.littleDimensionClient = -2;
+			if (LBCore.littleProviderServer != null) {
+				super.resetLittleBlocks();
+			}
+		}
+		LBCore.setLittleRenderer(null);
 	}
 }

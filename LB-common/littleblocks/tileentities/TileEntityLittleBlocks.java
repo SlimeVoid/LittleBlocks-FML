@@ -386,14 +386,12 @@ public class TileEntityLittleBlocks extends TileEntity {
 		metadatas[x][y][z] = metadata;
 
 		if (lastData != metadata) {
-			System.out.println("lastMeta: " + lastData + " | newMeta: " + metadata);
 			((ILBCommonProxy) LBInit.LBM.getProxy()).getLittleWorld(
 					this.worldObj,
 					false).metadataModified(this.xCoord, this.yCoord, this.zCoord, 0, x, y, z, id, metadata);
 		}
 		if (lastId != id) {
 			if (!(Block.blocksList[lastId] instanceof BlockFlowing || Block.blocksList[lastId] instanceof BlockStationary)) {
-				System.out.println("lastId: " + lastId+ " | newId: " + id);
 				((ILBCommonProxy) LBInit.LBM.getProxy()).getLittleWorld(
 						this.worldObj,
 						false).idModified(lastId, this.xCoord, this.yCoord, this.zCoord, 0, x, y, z, id, metadata);

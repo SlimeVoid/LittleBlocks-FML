@@ -2,6 +2,7 @@ package littleblocks.proxy;
 
 import littleblocks.api.ILBCommonProxy;
 import littleblocks.core.LBCore;
+import littleblocks.core.LBInit;
 import littleblocks.tickhandlers.CommonTickHandler;
 import littleblocks.world.LittleWorld;
 import littleblocks.world.LittleWorldServer;
@@ -12,6 +13,7 @@ import net.minecraft.src.Packet1Login;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.DimensionManager;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.network.Player;
@@ -86,10 +88,14 @@ public class CommonProxy implements ILBCommonProxy {
 	public LittleWorld getLittleWorld(World world, boolean needsRefresh) {
 		if (world != null) {
 			if (LBCore.littleDimensionServer == -1) {
-				LBCore.littleDimensionServer = DimensionManager.getNextFreeDimId();
+				this.setLittleDimension(world, LBCore.configuration, DimensionManager.getNextFreeDimId());
 				LBCore.littleProviderTypeServer = DimensionManager.getProviderType(world.provider.dimensionId);
 				DimensionManager.registerDimension(LBCore.littleDimensionServer, LBCore.littleProviderTypeServer);
 				LBCore.littleProviderServer = DimensionManager.createProviderFor(LBCore.littleDimensionServer);
+			} else if (LBCore.littleDimensionServer == -2) {
+				this.setLittleDimension(world, LBCore.configuration, DimensionManager.getNextFreeDimId());
+				LBCore.littleProviderTypeServer = DimensionManager.getProviderType(world.provider.dimensionId);
+				LBCore.littleProviderServer = DimensionManager.getProvider(LBCore.littleDimensionServer);
 			}
 			if (LBCore.littleWorldServer == null || LBCore.littleWorldServer
 					.isOutdated(world) || needsRefresh) {
@@ -109,5 +115,29 @@ public class CommonProxy implements ILBCommonProxy {
 	@Override
 	public EntityPlayer getPlayer() {
 		return null;
+	}
+
+	@Override
+	public void setLittleDimension(World world, Configuration configuration, int nextFreeDimId) {
+		configuration.load();
+		LBCore.littleDimensionServer = Integer.parseInt(configuration.get(
+		Configuration.CATEGORY_GENERAL,
+		"littleDimension",
+		nextFreeDimId).value);
+		configuration.save();
+	}
+
+	@Override
+	public int getLittleDimension() {
+		return LBCore.littleDimensionServer;
+	}
+
+	@Override
+	public void resetLittleBlocks() {
+		if (LBCore.littleProviderServer != null) {
+			DimensionManager.unregisterDimension(LBCore.littleDimensionServer);
+			LBCore.littleProviderServer = null;
+			LBCore.littleDimensionServer = -2;
+		}
 	}
 }

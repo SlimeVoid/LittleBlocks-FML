@@ -41,8 +41,6 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 
 		int[][][] content = tile.getContent();
 
-		RenderBlocks littleRenderer = new RenderBlocks(tile.getLittleWorld());
-
 		RenderHelper.disableStandardItemLighting();
 		GL11.glBlendFunc(770, 771);
 		GL11.glEnable(3042 /* GL_BLEND */);
@@ -55,19 +53,15 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 
 		if (tessellator.isDrawing) {
 			tessellator.draw();
-		}
-		if (!tessellator.isDrawing) {
 			tessellator.startDrawingQuads();
 		}
+		
 		for (int x1 = 0; x1 < content.length; x1++) {
 			for (int y1 = 0; y1 < content[x1].length; y1++) {
 				for (int z1 = 0; z1 < content[x1][y1].length; z1++) {
 					if (content[x1][y1][z1] > 0) {
 						int blockId = content[x1][y1][z1];
 						if (blockId > 0) {
-							if (!tessellator.isDrawing) {
-								tessellator.startDrawingQuads();
-							}
 							Block littleBlock = Block.blocksList[blockId];
 							int[] coords = {
 									(tile.xCoord << 3) + x1,
@@ -77,40 +71,47 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 							if (!littleBlock.isDefaultTexture) {
 								if (tessellator.isDrawing) {
 									tessellator.draw();
+									tessellator.startDrawingQuads();
 								}
-								tessellator.startDrawingQuads();
 								bindTextureByName(littleBlock.getTextureFile());
-								if (LBCore.optifine) {
-									littleRenderer.renderBlockByRenderType(
+								//if (LBCore.optifine) {
+									LBCore.getLittleRenderer(tile.getWorldObj()).renderBlockByRenderType(
 											littleBlock,
 											coords[0],
 											coords[1],
 											coords[2]);
+								//}
+								if(littleBlock.hasTileEntity(0)) {
+									renderLittleTile(
+											tile,
+											littleBlock,
+											f,
+											coords[0],
+											coords[1],
+											coords[2]);
 								}
-								renderLittleTile(
-										tile,
-										littleBlock,
-										f,
-										coords[0],
-										coords[1],
-										coords[2]);
 								tessellator.draw();
 								bindTextureByName("/terrain.png");
 							} else {
-								if (LBCore.optifine) {
-									littleRenderer.renderBlockByRenderType(
+								if (!tessellator.isDrawing) {
+									tessellator.startDrawingQuads();
+								}
+								//if (LBCore.optifine) {
+									LBCore.getLittleRenderer(tile.getWorldObj()).renderBlockByRenderType(
 											littleBlock,
 											coords[0],
 											coords[1],
 											coords[2]);
+								//}
+								if(littleBlock.hasTileEntity(0)) {
+									renderLittleTile(
+											tile,
+											littleBlock,
+											f,
+											coords[0],
+											coords[1],
+											coords[2]);
 								}
-								renderLittleTile(
-										tile,
-										littleBlock,
-										f,
-										coords[0],
-										coords[1],
-										coords[2]);
 							}
 						}
 					}
@@ -127,9 +128,6 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 	}
 
 	public void renderLittleTile(TileEntityLittleBlocks tile, Block littleBlock, float f, int x, int y, int z) {
-		if (tessellator.isDrawing) {
-			tessellator.draw();
-		}
 		if (littleBlock.hasTileEntity(0)) {
 			TileEntity littleTile = tile.getLittleWorld().getBlockTileEntity(
 					x,
@@ -145,12 +143,6 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 							f);
 				}
 			}
-		}
-		if (tessellator.isDrawing) {
-			tessellator.draw();
-		}
-		if (!tessellator.isDrawing) {
-			tessellator.startDrawingQuads();
 		}
 	}
 }

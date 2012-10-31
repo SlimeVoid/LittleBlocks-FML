@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import littleblocks.blocks.BlockLittleBlocksBlock;
+import littleblocks.core.LBCore;
 import littleblocks.network.CommonPacketHandler;
 import littleblocks.tileentities.TileEntityLittleBlocks;
 import net.minecraft.src.Block;
@@ -21,6 +22,8 @@ import net.minecraft.src.WorldProvider;
 import net.minecraft.src.WorldSettings;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Side;
+import net.minecraft.src.BlockFluid;
+import net.minecraft.src.BlockFlowing;
 
 public class LittleWorldServer extends LittleWorld {
 
@@ -125,13 +128,15 @@ public class LittleWorldServer extends LittleWorld {
 							nextTick.zCoord);
 
 					if (blockId == nextTick.blockID && blockId > 0) {
-						System.out.println("BlockID: " + blockId);
-						Block.blocksList[blockId].updateTick(
+						Block littleBlock = Block.blocksList[blockId]; 
+						if (LBCore.isBlockAllowedToTick(littleBlock)) {
+							littleBlock.updateTick(
 								this,
 								nextTick.xCoord,
 								nextTick.yCoord,
 								nextTick.zCoord,
 								this.rand);
+						}
 						TileEntity tileentity = this
 								.getRealWorld()
 									.getBlockTileEntity(
