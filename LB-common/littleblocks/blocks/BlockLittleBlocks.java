@@ -34,6 +34,7 @@ import net.minecraft.src.World;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
+import cpw.mods.fml.relauncher.ReflectionHelper;
 
 public class BlockLittleBlocks extends BlockContainer {
 
@@ -204,7 +205,7 @@ public class BlockLittleBlocks extends BlockContainer {
 	}
 
 	public boolean onServerBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int q, float a, float b, float c) {
-		if (entityplayer.canPlayerEdit(x, y, z)) {
+		if (entityplayer.canCurrentToolHarvestBlock/*canPlayerEdit*/(x, y, z)) {
 			TileEntity tileentity = world.getBlockTileEntity(x, y, z);
 			if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
 				TileEntityLittleBlocks tile = (TileEntityLittleBlocks) tileentity;
@@ -379,12 +380,12 @@ public class BlockLittleBlocks extends BlockContainer {
 						(y << 3) + ySelected,
 						(z << 3) + zSelected);
 				AxisAlignedBB bound = AxisAlignedBB.getBoundingBox(
-						(xSelected + block.minX) / m,
-						(ySelected + block.minY) / m,
-						(zSelected + block.minZ) / m,
-						(xSelected + block.maxX) / m,
-						(ySelected + block.maxY) / m,
-						(zSelected + block.maxZ) / m);
+						(xSelected + block.getBlockBoundsMinX()) / m,
+						(ySelected + block.getBlockBoundsMinY()) / m,
+						(zSelected + block.getBlockBoundsMinZ()) / m,
+						(xSelected + block.getBlockBoundsMaxX()) / m,
+						(ySelected + block.getBlockBoundsMaxY()) / m,
+						(zSelected + block.getBlockBoundsMaxZ()) / m);
 				setBlockBounds(
 						(float) bound.minX,
 						(float) bound.minY,
@@ -411,12 +412,12 @@ public class BlockLittleBlocks extends BlockContainer {
 						if (content[x][y][z] > 0) {
 							Block block = Block.blocksList[content[x][y][z]];
 							setBlockBounds(
-									(float) (x + block.minX) / m,
-									(float) (y + block.minY) / m,
-									(float) (z + block.minZ) / m,
-									(float) (x + block.maxX) / m,
-									(float) (y + block.maxY) / m,
-									(float) (z + block.maxZ) / m);
+									(float) (x + block.getBlockBoundsMinX()) / m,
+									(float) (y + block.getBlockBoundsMinY()) / m,
+									(float) (z + block.getBlockBoundsMinZ()) / m,
+									(float) (x + block.getBlockBoundsMaxX()) / m,
+									(float) (y + block.getBlockBoundsMaxY()) / m,
+									(float) (z + block.getBlockBoundsMaxZ()) / m);
 							super.addCollidingBlockToList(
 									world,
 									i,

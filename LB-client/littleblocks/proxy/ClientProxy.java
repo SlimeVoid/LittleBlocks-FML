@@ -10,10 +10,10 @@ import littleblocks.tickhandlers.ClientTickHandler;
 import littleblocks.world.LittleWorld;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.INetworkManager;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.NetClientHandler;
 import net.minecraft.src.NetHandler;
-import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet1Login;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
@@ -61,7 +61,7 @@ public class ClientProxy extends CommonProxy {
 	}
 
 	@Override
-	public void login(NetHandler handler, NetworkManager manager, Packet1Login login) {
+	public void login(NetHandler handler, INetworkManager manager, Packet1Login login) {
 		World world = getWorld(handler);
 		if (world != null) {
 			PacketLittleBlocksSettings packet = new PacketLittleBlocksSettings();

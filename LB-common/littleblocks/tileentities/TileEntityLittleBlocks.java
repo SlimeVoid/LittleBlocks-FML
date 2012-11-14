@@ -16,7 +16,7 @@ import net.minecraft.src.ModLoader;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagInt;
 import net.minecraft.src.NBTTagList;
-import net.minecraft.src.NetworkManager;
+import net.minecraft.src.INetworkManager;
 import net.minecraft.src.Packet;
 import net.minecraft.src.Packet132TileEntityData;
 import net.minecraft.src.TileEntity;
@@ -33,7 +33,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 	private boolean upToDate = false;
 
 	@Override
-	public void onDataPacket(NetworkManager net, Packet132TileEntityData pkt) {
+	public void onDataPacket(INetworkManager net, Packet132TileEntityData pkt) {
 		if (FMLCommonHandler.instance().getSide().isClient()) {
 			ModLoader.getMinecraftInstance().thePlayer
 					.addChatMessage("Data Packet");

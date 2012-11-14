@@ -42,12 +42,12 @@ public class CollisionRayTrace {
 								view);
 						Object[] ret = littleBlocks.rayTraceBound(
 								AxisAlignedBB.getBoundingBox(
-										(x + block.minX) / m,
-										(y + block.minY) / m,
-										(z + block.minZ) / m,
-										(x + block.maxX) / m,
-										(y + block.maxY) / m,
-										(z + block.maxZ) / m),
+										(x + block.getBlockBoundsMinX()) / m,
+										(y + block.getBlockBoundsMinY()) / m,
+										(z + block.getBlockBoundsMinZ()) / m,
+										(x + block.getBlockBoundsMaxX()) / m,
+										(y + block.getBlockBoundsMaxY()) / m,
+										(z + block.getBlockBoundsMaxZ()) / m),
 								i,
 								j,
 								k,

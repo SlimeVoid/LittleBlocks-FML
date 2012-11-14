@@ -531,4 +531,9 @@ public class LittleWorld extends World {
 	public World getRealWorld() {
 		return this.realWorld;
 	}
+
+	@Override
+	public Entity getEntityByID(int var1) {
+		return null;
+	}
 }

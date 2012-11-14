@@ -8,7 +8,7 @@ import littleblocks.world.LittleWorld;
 import littleblocks.world.LittleWorldServer;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.NetHandler;
-import net.minecraft.src.NetworkManager;
+import net.minecraft.src.INetworkManager;
 import net.minecraft.src.Packet1Login;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.TileEntity;
@@ -60,7 +60,7 @@ public class CommonProxy implements ILBCommonProxy {
 	}
 
 	@Override
-	public void onPacketData(NetworkManager manager, Packet250CustomPayload packet, Player player) {
+	public void onPacketData(INetworkManager manager, Packet250CustomPayload packet, Player player) {
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public class CommonProxy implements ILBCommonProxy {
 	}
 
 	@Override
-	public void login(NetHandler handler, NetworkManager manager, Packet1Login login) {
+	public void login(NetHandler handler, INetworkManager manager, Packet1Login login) {
 	}
 
 	@Override

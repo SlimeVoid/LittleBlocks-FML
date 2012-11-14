@@ -100,4 +100,8 @@ public class LittleChunkProvider implements IChunkProvider {
 	public int getLoadedChunkCount() {
 		return 1;
 	}
+
+	@Override
+	public void func_82695_e(int var1, int var2) {		
+	}
 }
