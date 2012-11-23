@@ -138,7 +138,7 @@ public class LBCore {
 		littleBlocksID = Integer.parseInt(configuration.get(
 				Configuration.CATEGORY_BLOCK,
 				"littleBlocksID",
-				140).value);
+				150).value);
 		littleBlocksClip = Boolean.parseBoolean(configuration.get(
 				Configuration.CATEGORY_GENERAL,
 				"littleBlocksClip",
