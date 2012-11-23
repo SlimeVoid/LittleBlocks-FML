@@ -39,6 +39,7 @@ public class LBCore {
 	public static String littleNotifyCommand = "LITTLENOTIFY";
 	public static String updateClientCommand = "UPDATECLIENT";
 	public static Block littleBlocks;
+	@SideOnly(Side.CLIENT)
 	public static LittleWorld littleWorldClient;
 	public static LittleWorld littleWorldServer;
 	public static int littleBlocksID;
