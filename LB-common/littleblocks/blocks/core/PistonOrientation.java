@@ -1,11 +1,11 @@
 package littleblocks.blocks.core;
 
 import net.minecraftforge.event.ForgeSubscribe;
-import net.minecraftforge.event.entity.block.BlockOrientationEvent;
+//import net.minecraftforge.event.entity.block.BlockOrientationEvent;
 
 public class PistonOrientation {
 
-	@ForgeSubscribe
+/*	@ForgeSubscribe
 	public void onPistonPlacement(BlockOrientationEvent event) {
 		LittleBlockCoordinates coords = new LittleBlockCoordinates(
 				event.blockX,
@@ -17,5 +17,5 @@ public class PistonOrientation {
 			event.blockY = coords.y;
 			event.blockZ = coords.z;
 		}
-	}
+	}*/
 }
