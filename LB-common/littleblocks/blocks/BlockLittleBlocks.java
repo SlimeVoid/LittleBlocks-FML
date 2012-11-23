@@ -136,8 +136,12 @@ public class BlockLittleBlocks extends BlockContainer {
 			boolean denyPlacement = false;
 			String placementMessage = "";
 			if (itemID < blocks.length) {
+				if (!LBCore.isBlockAllowed(blocks[itemID])) {
+					denyPlacement = true;
+					placementMessage = LBCore.denyBlockMessage;
+				}
 				if (LBCore.hasTile(itemID)) {
-					if (!LBCore.isTileEntityAllowed(Block.blocksList[itemID]
+					if (!LBCore.isTileEntityAllowed(blocks[itemID]
 							.createTileEntity(world, 0))) {
 						denyPlacement = true;
 						placementMessage = LBCore.denyBlockMessage;

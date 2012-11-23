@@ -11,6 +11,7 @@ import littleblocks.world.LittleWorld;
 import net.minecraft.src.Block;
 import net.minecraft.src.BlockFlowing;
 import net.minecraft.src.BlockFluid;
+import net.minecraft.src.BlockPistonBase;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
@@ -50,6 +51,7 @@ public class LBCore {
 	public static String denyBlockMessage = "Sorry, you cannot place that here!";
 	public static String denyUseMessage = "Sorry, you cannot use that here!";
 	public static int littleBlocksSize = 8;
+	private static Set<Class<? extends Block>> disallowedBlocks = new HashSet();
 	private static Set<Class<? extends TileEntity>> allowedBlockTileEntities = new HashSet();
 	private static Set<Class<? extends Block>> disallowedBlocksToTick = new HashSet();
 
@@ -81,10 +83,17 @@ public class LBCore {
 		GameRegistry.registerBlock(littleBlocks);
 		addDisallowedBlockTick(BlockFluid.class);
 		addDisallowedBlockTick(BlockFlowing.class);
+		addDisallowedBlock(BlockPistonBase.class);
 		addAllowedTile(TileEntityNote.class);
 		// MinecraftForge.EVENT_BUS.register(new PistonOrientation());
 	}
 	
+	private static void addDisallowedBlock(Class<? extends Block> blockClass) {
+		if (!disallowedBlocks.contains(blockClass)) {
+			disallowedBlocks.add(blockClass);
+		}
+	}
+
 	public static void addDisallowedBlockTick(Class<? extends Block> blockClass) {
 		if (!disallowedBlocksToTick.contains(blockClass)) {
 			disallowedBlocksToTick.add(blockClass);
@@ -104,11 +113,17 @@ public class LBCore {
 		}
 	}
 
+	public static boolean isBlockAllowed(Block block) {
+		if (disallowedBlocks.contains(block.getClass())) {
+			return false;
+		}
+		return true;
+	}
+
 	public static boolean isTileEntityAllowed(TileEntity tileentity) {
 		if (allowedBlockTileEntities.contains(tileentity.getClass())) {
 			return true;
 		}
-
 		return false;
 	}
 
