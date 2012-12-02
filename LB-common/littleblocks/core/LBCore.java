@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
+import buildcraft.core.IItemPipe;
+
 import littleblocks.api.ILBCommonProxy;
 import littleblocks.blocks.BlockLittleBlocks;
 import littleblocks.tileentities.TileEntityLittleBlocks;
@@ -13,6 +15,9 @@ import net.minecraft.src.BlockFlowing;
 import net.minecraft.src.BlockFluid;
 import net.minecraft.src.BlockPistonBase;
 import net.minecraft.src.IBlockAccess;
+import net.minecraft.src.Item;
+import net.minecraft.src.ItemHoe;
+import net.minecraft.src.ItemMonsterPlacer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.ModLoader;
@@ -48,9 +53,11 @@ public class LBCore {
 	public static int renderingMethod;
 	public static int renderType;
 	public static boolean optifine;
-	public static String denyBlockMessage = "Sorry, you cannot place that here!";
+	public static String denyPlacementMessage = "Sorry, you cannot place that here!";
 	public static String denyUseMessage = "Sorry, you cannot use that here!";
 	public static int littleBlocksSize = 8;
+	private static Set<Integer> disallowedItemIDs = new HashSet();
+	private static Set<Class<? extends Item>> disallowedItems = new HashSet();
 	private static Set<Class<? extends Block>> disallowedBlocks = new HashSet();
 	private static Set<Class<? extends TileEntity>> allowedBlockTileEntities = new HashSet();
 	private static Set<Class<? extends Block>> disallowedBlocksToTick = new HashSet();
@@ -85,44 +92,91 @@ public class LBCore {
 		addDisallowedBlockTick(BlockFlowing.class);
 		addDisallowedBlock(BlockPistonBase.class);
 		addAllowedTile(TileEntityNote.class);
+		addDisallowedItem(ItemHoe.class);
+		addDisallowedItem(ItemMonsterPlacer.class);
 		// MinecraftForge.EVENT_BUS.register(new PistonOrientation());
-	}
-	
-	private static void addDisallowedBlock(Class<? extends Block> blockClass) {
-		if (!disallowedBlocks.contains(blockClass)) {
-			disallowedBlocks.add(blockClass);
-		}
 	}
 
 	public static void addDisallowedBlockTick(Class<? extends Block> blockClass) {
-		if (!disallowedBlocksToTick.contains(blockClass)) {
-			disallowedBlocksToTick.add(blockClass);
+		if (blockClass != null) {
+			if (!disallowedBlocksToTick.contains(blockClass)) {
+				disallowedBlocksToTick.add(blockClass);
+			}
 		}
 	}
 
 	public static boolean isBlockAllowedToTick(Block littleBlock) {
-		if (disallowedBlocksToTick.contains(littleBlock.getClass())) {
-			return false;
+		if (littleBlock != null) {
+			if (disallowedBlocksToTick.contains(littleBlock.getClass())) {
+				return false;
+			}
 		}
 		return true;
 	}
-
-	public static void addAllowedTile(Class<? extends TileEntity> tileclass) {
-		if (!allowedBlockTileEntities.contains(tileclass)) {
-			allowedBlockTileEntities.add(tileclass);
+	
+	private static void addDisallowedBlock(Class<? extends Block> blockClass) {
+		if (blockClass != null) {
+			if (!disallowedBlocks.contains(blockClass)) {
+				disallowedBlocks.add(blockClass);
+			}
 		}
 	}
 
 	public static boolean isBlockAllowed(Block block) {
-		if (disallowedBlocks.contains(block.getClass())) {
-			return false;
+		if (block != null) {
+			if (disallowedBlocks.contains(block.getClass())) {
+				return false;
+			}
 		}
 		return true;
 	}
+	
+	public static void addDisallowedItemIDs(Integer itemID) {
+		if (itemID > Block.blocksList.length) {
+			if (!disallowedItemIDs.contains(itemID)) {
+				disallowedItemIDs.add(itemID);
+			}
+		}
+	}
+	
+	public static void addDisallowedItem(Class<? extends Item> itemClass) {
+		if (itemClass != null) {
+			if (!disallowedItems.contains(itemClass)) {
+				disallowedItems.add(itemClass);
+			}
+		}
+	}
+
+	public static boolean isItemAllowed(Item item) {
+		boolean isAllowed = false;
+		if (item != null) {
+			isAllowed = true;
+			if (disallowedItems.contains(item.getClass())) {
+				isAllowed = false;
+			}
+			if (disallowedItemIDs.contains(item.shiftedIndex)) {
+				isAllowed = false;
+			}
+			if (item instanceof IItemPipe) {
+				isAllowed = false;
+			}
+		}
+		return isAllowed;
+	}
+
+	public static void addAllowedTile(Class<? extends TileEntity> tileclass) {
+		if (tileclass != null) {
+			if (!allowedBlockTileEntities.contains(tileclass)) {
+				allowedBlockTileEntities.add(tileclass);
+			}
+		}
+	}
 
 	public static boolean isTileEntityAllowed(TileEntity tileentity) {
-		if (allowedBlockTileEntities.contains(tileentity.getClass())) {
-			return true;
+		if (tileentity != null) {
+			if (allowedBlockTileEntities.contains(tileentity.getClass())) {
+				return true;
+			}
 		}
 		return false;
 	}

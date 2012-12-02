@@ -130,57 +130,61 @@ public class BlockLittleBlocks extends BlockContainer {
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int q, float a, float b, float c) {
 		if (entityplayer.getCurrentEquippedItem() != null) {
-			int itemID = entityplayer.getCurrentEquippedItem().itemID;
+			ItemStack itemstack = entityplayer.getCurrentEquippedItem();
+			Object itemHeld = itemstack.getItem(); 
+			Block block = null;
+			Item item = null;
+			if (itemHeld instanceof Block) {
+				block = (Block)itemHeld;
+			}
+			if (itemHeld instanceof Item) {
+				item = (Item)itemHeld;
+			}
 			Block[] blocks = Block.blocksList;
 			Item[] items = Item.itemsList;
 			boolean denyPlacement = false;
 			String placementMessage = "";
-			if (itemID < blocks.length) {
-				if (!LBCore.isBlockAllowed(blocks[itemID])) {
+			if (block != null) {
+				if (!LBCore.isBlockAllowed(block)) {
 					denyPlacement = true;
-					placementMessage = LBCore.denyBlockMessage;
+					placementMessage = LBCore.denyPlacementMessage;
 				}
-				if (LBCore.hasTile(itemID)) {
-					if (!LBCore.isTileEntityAllowed(blocks[itemID]
+				if (LBCore.hasTile(block.blockID)) {
+					if (!LBCore.isTileEntityAllowed(block
 							.createTileEntity(world, 0))) {
 						denyPlacement = true;
-						placementMessage = LBCore.denyBlockMessage;
+						placementMessage = LBCore.denyPlacementMessage;
 					}
 				}
-				if (blocks[itemID] != null) {
-					Block theBlock = blocks[itemID];
-					if (theBlock.getRenderType() == 1) {
-						denyPlacement = true;
-						placementMessage = LBCore.denyBlockMessage;
+				if (block.getRenderType() == 1) {
+					denyPlacement = true;
+					placementMessage = LBCore.denyPlacementMessage;
+				}
+				if (block.getBlockName() != null) {
+					if (block.getBlockName().equals("tile.pistonBase") || block
+							.getBlockName()
+								.equals("tile.pistonStickyBase")) {
+						// denyPlacement = true;
+						// placementMessage = LBCore.denyPlacementMessage;
 					}
-					if (theBlock.getBlockName() != null) {
-						if (theBlock.getBlockName().equals("tile.pistonBase") || theBlock
-								.getBlockName()
-									.equals("tile.pistonStickyBase")) {
-							// denyPlacement = true;
-							// placementMessage = LBCore.denyBlockMessage;
+				}
+			} else if (item != null) {
+				if (item instanceof ItemBlock) {
+					int itemBlockId = ((ItemBlock) item)
+							.getBlockID();
+					if (LBCore.hasTile(itemBlockId)) {
+						if (!LBCore
+								.isTileEntityAllowed(Block.blocksList[itemBlockId]
+										.createTileEntity(world, 0))) {
+							denyPlacement = true;
+							placementMessage = LBCore.denyPlacementMessage;
 						}
 					}
 				}
-			} else {
-				if (itemID < items.length) {
-					if (Item.itemsList[itemID] instanceof ItemBlock) {
-						int itemBlockId = ((ItemBlock) Item.itemsList[itemID])
-								.getBlockID();
-						if (LBCore.hasTile(itemBlockId)) {
-							if (!LBCore
-									.isTileEntityAllowed(Block.blocksList[itemBlockId]
-											.createTileEntity(world, 0))) {
-								denyPlacement = true;
-								placementMessage = LBCore.denyBlockMessage;
-							}
-						}
-					}
+				if (!LBCore.isItemAllowed(item)) {
+					denyPlacement = true;
+					placementMessage = LBCore.denyUseMessage;
 				}
-			}
-			if (itemID == Item.hoeDiamond.shiftedIndex || itemID == Item.hoeGold.shiftedIndex || itemID == Item.hoeSteel.shiftedIndex || itemID == Item.hoeStone.shiftedIndex || itemID == Item.hoeWood.shiftedIndex) {
-				denyPlacement = true;
-				placementMessage = LBCore.denyUseMessage;
 			}
 			if (denyPlacement) {
 				if (world.isRemote) {
