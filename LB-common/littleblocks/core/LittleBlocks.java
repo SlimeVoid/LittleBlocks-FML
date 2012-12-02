@@ -15,7 +15,11 @@ import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
 import eurysmods.api.ICommonProxy;
 
-@Mod(modid = "LittleBlocksMod", name = "Little Blocks", version = "2.0.0.4")
+@Mod(
+		modid = "LittleBlocksMod",
+		name = "Little Blocks",
+		version = "2.0.0.4",
+		dependencies = "after:EurysCore")
 @NetworkMod(
 		clientSideRequired = true,
 		serverSideRequired = false,
