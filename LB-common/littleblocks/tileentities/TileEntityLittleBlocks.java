@@ -563,15 +563,12 @@ public class TileEntityLittleBlocks extends TileEntity {
 
 		PacketPayload p = new PacketPayload(numberOfBlocks * 5 + 1, 0, 0, 0);
 		p.setIntPayload(0, numberOfBlocks);
-		int position2 = 0;
-		int index = 1;
-		for (int i = 1; i <= numberOfBlocks * 5; i += 5) {
-			p.setIntPayload(i, data[position2]);
-			p.setIntPayload(i + 1, data[position2 + 1]);
-			p.setIntPayload(i + 2, data[position2 + 2]);
-			p.setIntPayload(i + 3, data[position2 + 3]);
-			p.setIntPayload(i + 4, data[position2 + 4]);
-			position2 += 5;
+		for (int i = 0; i < (numberOfBlocks * 5); i += 5) {
+			p.setIntPayload(i + 1, data[i]);
+			p.setIntPayload(i + 2, data[i + 1]);
+			p.setIntPayload(i + 3, data[i + 2]);
+			p.setIntPayload(i + 4, data[i + 3]);
+			p.setIntPayload(i + 5, data[i + 4]);
 		}
 		this.upToDate = true;
 		return p;
