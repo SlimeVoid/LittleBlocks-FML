@@ -53,6 +53,8 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 
 		if (tessellator.isDrawing) {
 			tessellator.draw();
+		}
+		if (!tessellator.isDrawing) {
 			tessellator.startDrawingQuads();
 		}
 		
@@ -71,6 +73,8 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 							if (!littleBlock.isDefaultTexture) {
 								if (tessellator.isDrawing) {
 									tessellator.draw();
+								}
+								if (!tessellator.isDrawing) {
 									tessellator.startDrawingQuads();
 								}
 								bindTextureByName(littleBlock.getTextureFile());
@@ -90,7 +94,9 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 											coords[1],
 											coords[2]);
 								}
-								tessellator.draw();
+								if (tessellator.isDrawing) {
+									tessellator.draw();	
+								}
 								bindTextureByName("/terrain.png");
 							} else {
 								if (!tessellator.isDrawing) {
