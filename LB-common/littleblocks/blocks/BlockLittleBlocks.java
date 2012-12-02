@@ -34,7 +34,6 @@ import net.minecraft.src.World;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
-import cpw.mods.fml.relauncher.ReflectionHelper;
 
 public class BlockLittleBlocks extends BlockContainer {
 
@@ -131,14 +130,14 @@ public class BlockLittleBlocks extends BlockContainer {
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int q, float a, float b, float c) {
 		if (entityplayer.getCurrentEquippedItem() != null) {
 			ItemStack itemstack = entityplayer.getCurrentEquippedItem();
-			Object itemHeld = itemstack.getItem(); 
+			Object itemHeld = itemstack.getItem();
 			Block block = null;
 			Item item = null;
 			if (itemHeld instanceof Block) {
-				block = (Block)itemHeld;
+				block = (Block) itemHeld;
 			}
 			if (itemHeld instanceof Item) {
-				item = (Item)itemHeld;
+				item = (Item) itemHeld;
 			}
 			Block[] blocks = Block.blocksList;
 			Item[] items = Item.itemsList;
@@ -150,8 +149,9 @@ public class BlockLittleBlocks extends BlockContainer {
 					placementMessage = LBCore.denyPlacementMessage;
 				}
 				if (LBCore.hasTile(block.blockID)) {
-					if (!LBCore.isTileEntityAllowed(block
-							.createTileEntity(world, 0))) {
+					if (!LBCore.isTileEntityAllowed(block.createTileEntity(
+							world,
+							0))) {
 						denyPlacement = true;
 						placementMessage = LBCore.denyPlacementMessage;
 					}
@@ -170,8 +170,7 @@ public class BlockLittleBlocks extends BlockContainer {
 				}
 			} else if (item != null) {
 				if (item instanceof ItemBlock) {
-					int itemBlockId = ((ItemBlock) item)
-							.getBlockID();
+					int itemBlockId = ((ItemBlock) item).getBlockID();
 					if (LBCore.hasTile(itemBlockId)) {
 						if (!LBCore
 								.isTileEntityAllowed(Block.blocksList[itemBlockId]
@@ -213,7 +212,8 @@ public class BlockLittleBlocks extends BlockContainer {
 	}
 
 	public boolean onServerBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int q, float a, float b, float c) {
-		if (entityplayer.canCurrentToolHarvestBlock/*canPlayerEdit*/(x, y, z)) {
+		if (entityplayer
+				.canCurrentToolHarvestBlock/* canPlayerEdit */(x, y, z)) {
 			TileEntity tileentity = world.getBlockTileEntity(x, y, z);
 			if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
 				TileEntityLittleBlocks tile = (TileEntityLittleBlocks) tileentity;
@@ -508,10 +508,10 @@ public class BlockLittleBlocks extends BlockContainer {
 				setBlockBoundsBasedOnSelection(world, x, y, z);
 				return new MovingObjectPosition(
 						x,
-						y,
-						z,
-						(Byte) min[1],
-						((Vec3) min[0]).addVector(x, y, z));
+							y,
+							z,
+							(Byte) min[1],
+							((Vec3) min[0]).addVector(x, y, z));
 			}
 		}
 		xSelected = -10;

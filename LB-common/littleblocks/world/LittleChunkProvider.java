@@ -102,6 +102,6 @@ public class LittleChunkProvider implements IChunkProvider {
 	}
 
 	@Override
-	public void func_82695_e(int var1, int var2) {		
+	public void func_82695_e(int var1, int var2) {
 	}
 }

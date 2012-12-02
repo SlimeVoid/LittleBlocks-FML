@@ -7,7 +7,6 @@ import littleblocks.core.LBCore;
 import littleblocks.tileentities.TileEntityLittleBlocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.Block;
-import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.RenderHelper;
 import net.minecraft.src.Tessellator;
 import net.minecraft.src.TileEntity;
@@ -57,7 +56,7 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 		if (!tessellator.isDrawing) {
 			tessellator.startDrawingQuads();
 		}
-		
+
 		for (int x1 = 0; x1 < content.length; x1++) {
 			for (int y1 = 0; y1 < content[x1].length; y1++) {
 				for (int z1 = 0; z1 < content[x1][y1].length; z1++) {
@@ -78,14 +77,16 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 									tessellator.startDrawingQuads();
 								}
 								bindTextureByName(littleBlock.getTextureFile());
-								//if (LBCore.optifine) {
-									LBCore.getLittleRenderer(tile.getWorldObj()).renderBlockByRenderType(
-											littleBlock,
-											coords[0],
-											coords[1],
-											coords[2]);
-								//}
-								if(littleBlock.hasTileEntity(0)) {
+								// if (LBCore.optifine) {
+								LBCore
+										.getLittleRenderer(tile.getWorldObj())
+											.renderBlockByRenderType(
+													littleBlock,
+													coords[0],
+													coords[1],
+													coords[2]);
+								// }
+								if (littleBlock.hasTileEntity(0)) {
 									renderLittleTile(
 											tile,
 											littleBlock,
@@ -95,21 +96,23 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 											coords[2]);
 								}
 								if (tessellator.isDrawing) {
-									tessellator.draw();	
+									tessellator.draw();
 								}
 								bindTextureByName("/terrain.png");
 							} else {
 								if (!tessellator.isDrawing) {
 									tessellator.startDrawingQuads();
 								}
-								//if (LBCore.optifine) {
-									LBCore.getLittleRenderer(tile.getWorldObj()).renderBlockByRenderType(
-											littleBlock,
-											coords[0],
-											coords[1],
-											coords[2]);
-								//}
-								if(littleBlock.hasTileEntity(0)) {
+								// if (LBCore.optifine) {
+								LBCore
+										.getLittleRenderer(tile.getWorldObj())
+											.renderBlockByRenderType(
+													littleBlock,
+													coords[0],
+													coords[1],
+													coords[2]);
+								// }
+								if (littleBlock.hasTileEntity(0)) {
 									renderLittleTile(
 											tile,
 											littleBlock,

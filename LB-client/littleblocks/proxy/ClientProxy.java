@@ -4,7 +4,6 @@ import littleblocks.core.LBCore;
 import littleblocks.network.ClientPacketHandler;
 import littleblocks.network.LBPacketIds;
 import littleblocks.network.packets.PacketLittleBlocksSettings;
-import littleblocks.render.BlockLittleBlocksRenderer;
 import littleblocks.render.TileEntityLittleBlocksRenderer;
 import littleblocks.tickhandlers.ClientTickHandler;
 import littleblocks.world.LittleWorld;
@@ -20,11 +19,11 @@ import net.minecraft.src.World;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.DimensionManager;
 import cpw.mods.fml.client.registry.ClientRegistry;
-import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
 import cpw.mods.fml.common.registry.TickRegistry;
+
 @SideOnly(Side.CLIENT)
 public class ClientProxy extends CommonProxy {
 
@@ -35,12 +34,15 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void registerRenderInformation() {
-		//RenderingRegistry.registerBlockHandler(new BlockLittleBlocksRenderer());
+		// RenderingRegistry.registerBlockHandler(new
+		// BlockLittleBlocksRenderer());
 	}
 
 	@Override
 	public void registerTileEntitySpecialRenderer(Class<? extends TileEntity> clazz) {
-		ClientRegistry.bindTileEntitySpecialRenderer(clazz,	new TileEntityLittleBlocksRenderer());
+		ClientRegistry.bindTileEntitySpecialRenderer(
+				clazz,
+				new TileEntityLittleBlocksRenderer());
 	}
 
 	@Override
@@ -53,7 +55,9 @@ public class ClientProxy extends CommonProxy {
 	public void registerTickHandler() {
 		LBCore.littleDimensionClient = -1;
 		LBCore.littleProviderTypeClient = -1;
-		if (FMLCommonHandler.instance().getSide().isClient() && ModLoader.getMinecraftInstance().isSingleplayer()) {
+		if (FMLCommonHandler.instance().getSide().isClient() && ModLoader
+				.getMinecraftInstance()
+					.isSingleplayer()) {
 			LBCore.littleDimensionServer = -1;
 			LBCore.littleProviderTypeServer = -1;
 		}
@@ -77,15 +81,25 @@ public class ClientProxy extends CommonProxy {
 				if (LBCore.littleWorldClient == null || LBCore.littleWorldClient
 						.isOutdated(world) || needsRefresh) {
 					if (LBCore.littleDimensionClient < 0) {
-						this.setLittleDimension(world, LBCore.configuration, DimensionManager.getNextFreeDimId());
-						LBCore.littleProviderTypeClient = DimensionManager.getProviderType(world.provider.dimensionId);
+						this.setLittleDimension(
+								world,
+								LBCore.configuration,
+								DimensionManager.getNextFreeDimId());
+						LBCore.littleProviderTypeClient = DimensionManager
+								.getProviderType(world.provider.dimensionId);
 						if (LBCore.littleProviderClient == null) {
-							System.out.println("Registering Dimension: " + LBCore.littleDimensionClient);
-							DimensionManager.registerDimension(LBCore.littleDimensionClient, LBCore.littleProviderTypeClient);
-							LBCore.littleProviderClient = DimensionManager.createProviderFor(LBCore.littleDimensionClient);
+							System.out
+									.println("Registering Dimension: " + LBCore.littleDimensionClient);
+							DimensionManager.registerDimension(
+									LBCore.littleDimensionClient,
+									LBCore.littleProviderTypeClient);
+							LBCore.littleProviderClient = DimensionManager
+									.createProviderFor(LBCore.littleDimensionClient);
 						}
 					}
-					LBCore.littleWorldClient = new LittleWorld(world, LBCore.littleProviderClient);
+					LBCore.littleWorldClient = new LittleWorld(
+							world,
+								LBCore.littleProviderClient);
 				}
 				return LBCore.littleWorldClient;
 			} else {
@@ -116,9 +130,9 @@ public class ClientProxy extends CommonProxy {
 	public void setLittleDimension(World world, Configuration configuration, int nextFreeDimId) {
 		configuration.load();
 		LBCore.littleDimensionClient = Integer.parseInt(configuration.get(
-		Configuration.CATEGORY_GENERAL,
-		"littleDimensionClient",
-		nextFreeDimId).value);
+				Configuration.CATEGORY_GENERAL,
+				"littleDimensionClient",
+				nextFreeDimId).value);
 		configuration.save();
 		if (!world.isRemote) {
 			super.setLittleDimension(world, configuration, nextFreeDimId);

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import littleblocks.blocks.BlockLittleBlocksBlock;
 import littleblocks.core.LBCore;
 import littleblocks.network.CommonPacketHandler;
 import littleblocks.tileentities.TileEntityLittleBlocks;
@@ -22,8 +21,6 @@ import net.minecraft.src.WorldProvider;
 import net.minecraft.src.WorldSettings;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Side;
-import net.minecraft.src.BlockFluid;
-import net.minecraft.src.BlockFlowing;
 
 public class LittleWorldServer extends LittleWorld {
 
@@ -128,14 +125,14 @@ public class LittleWorldServer extends LittleWorld {
 							nextTick.zCoord);
 
 					if (blockId == nextTick.blockID && blockId > 0) {
-						Block littleBlock = Block.blocksList[blockId]; 
+						Block littleBlock = Block.blocksList[blockId];
 						if (LBCore.isBlockAllowedToTick(littleBlock)) {
 							littleBlock.updateTick(
-								this,
-								nextTick.xCoord,
-								nextTick.yCoord,
-								nextTick.zCoord,
-								this.rand);
+									this,
+									nextTick.xCoord,
+									nextTick.yCoord,
+									nextTick.zCoord,
+									this.rand);
 						}
 						TileEntity tileentity = this
 								.getRealWorld()
@@ -216,11 +213,11 @@ public class LittleWorldServer extends LittleWorld {
 		}
 		BlockEventData eventData = new BlockEventData(
 				x,
-				y,
-				z,
-				blockID,
-				eventID,
-				eventParam);
+					y,
+					z,
+					blockID,
+					eventID,
+					eventParam);
 		Iterator nextEvent = this.blockEventCache[this.blockEventCacheIndex]
 				.iterator();
 		BlockEventData newBlockEvent;
@@ -337,7 +334,17 @@ public class LittleWorldServer extends LittleWorld {
 
 	@Override
 	public void metadataModified(int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
-		CommonPacketHandler.metadataModified(this, x, y, z, side, littleX, littleY, littleZ, blockId, metadata);
+		CommonPacketHandler.metadataModified(
+				this,
+				x,
+				y,
+				z,
+				side,
+				littleX,
+				littleY,
+				littleZ,
+				blockId,
+				metadata);
 	}
 
 	@Override
@@ -358,14 +365,35 @@ public class LittleWorldServer extends LittleWorld {
 					(y << 3) + littleY,
 					(z << 3) + littleZ);
 		}
-		super.idModified(lastBlockId, x, y, z, side, littleX, littleY, littleZ, blockId, metadata);
+		super.idModified(
+				lastBlockId,
+				x,
+				y,
+				z,
+				side,
+				littleX,
+				littleY,
+				littleZ,
+				blockId,
+				metadata);
 		this.notifyBlockChange(
 				(x << 3) + littleX,
 				(y << 3) + littleY,
 				(z << 3) + littleZ,
 				blockId);
 		if (lastBlockId != 0) {
-			CommonPacketHandler.idModified(this, lastBlockId, x, y, z, side, littleX, littleY, littleZ, blockId, metadata);
+			CommonPacketHandler.idModified(
+					this,
+					lastBlockId,
+					x,
+					y,
+					z,
+					side,
+					littleX,
+					littleY,
+					littleZ,
+					blockId,
+					metadata);
 		}
 	}
 }

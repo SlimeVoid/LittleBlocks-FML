@@ -23,7 +23,7 @@ public class LBInit {
 		LBM.setModChannel("LITTLEBLOCKS");
 		LBCore.configFile = new File(
 				LBM.getProxy().getMinecraftDir(),
-				"config/LittleBlocks.cfg");
+					"config/LittleBlocks.cfg");
 		LBCore.configuration = new Configuration(LBCore.configFile);
 		load();
 	}

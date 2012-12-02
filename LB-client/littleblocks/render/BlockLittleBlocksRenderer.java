@@ -1,9 +1,5 @@
 package littleblocks.render;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-
 import littleblocks.core.LBCore;
 import littleblocks.tileentities.TileEntityLittleBlocks;
 import net.minecraft.src.Block;
@@ -11,7 +7,6 @@ import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.Tessellator;
-import net.minecraft.src.WorldClient;
 
 import org.lwjgl.opengl.GL11;
 
@@ -34,12 +29,12 @@ public class BlockLittleBlocksRenderer implements ISimpleBlockRenderingHandler {
 
 			int[][][] content = tile.getContent();
 
-			Tessellator tessellator = Tessellator.instance;		
-			
+			Tessellator tessellator = Tessellator.instance;
+
 			if (tessellator.isDrawing) {
 				tessellator.draw();
 			}
-			
+
 			GL11.glPushMatrix();
 			tessellator.startDrawingQuads();
 			double xS = -((x >> 4) << 4), yS = -((y >> 4) << 4), zS = -((z >> 4) << 4);
@@ -49,7 +44,7 @@ public class BlockLittleBlocksRenderer implements ISimpleBlockRenderingHandler {
 			float scale = 1 / (float) LBCore.littleBlocksSize;
 			GL11.glScalef(scale, scale, scale);
 			GL11.glTranslated(-xS, -yS, -zS);
-			
+
 			int defaultTexture = ModLoader.getMinecraftInstance().renderEngine
 					.getTexture("/terrain.png");
 			for (int x1 = 0; x1 < content.length; x1++) {
@@ -74,25 +69,31 @@ public class BlockLittleBlocksRenderer implements ISimpleBlockRenderingHandler {
 										.getTexture(littleBlock
 												.getTextureFile());
 								GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
-								LBCore.getLittleRenderer(tile.worldObj).renderBlockByRenderType(
-										littleBlock,
-										coords[0],
-										coords[1],
-										coords[2]);
+								LBCore
+										.getLittleRenderer(tile.worldObj)
+											.renderBlockByRenderType(
+													littleBlock,
+													coords[0],
+													coords[1],
+													coords[2]);
 								if (tessellator.isDrawing) {
 									tessellator.draw();
 								}
-								GL11.glBindTexture(GL11.GL_TEXTURE_2D, defaultTexture);
+								GL11.glBindTexture(
+										GL11.GL_TEXTURE_2D,
+										defaultTexture);
 							} else {
 								if (!tessellator.isDrawing) {
 									System.out.println("Not Drawing");
 									tessellator.startDrawingQuads();
 								}
-								LBCore.getLittleRenderer(tile.worldObj).renderBlockByRenderType(
-										littleBlock,
-										coords[0],
-										coords[1],
-										coords[2]);
+								LBCore
+										.getLittleRenderer(tile.worldObj)
+											.renderBlockByRenderType(
+													littleBlock,
+													coords[0],
+													coords[1],
+													coords[2]);
 							}
 						}
 					}

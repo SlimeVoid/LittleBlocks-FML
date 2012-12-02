@@ -1,22 +1,18 @@
 package littleblocks.world;
 
-import littleblocks.blocks.BlockLittleBlocksBlock;
 import littleblocks.core.LBCore;
 import littleblocks.tileentities.TileEntityLittleBlocks;
-import net.minecraft.src.BiomeGenBase;
 import net.minecraft.src.Block;
 import net.minecraft.src.Chunk;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EnumSkyBlock;
 import net.minecraft.src.IChunkProvider;
 import net.minecraft.src.MovingObjectPosition;
-import net.minecraft.src.Profiler;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.Vec3;
 import net.minecraft.src.World;
 import net.minecraft.src.WorldProvider;
 import net.minecraft.src.WorldSettings;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeDirection;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
@@ -32,33 +28,27 @@ public class LittleWorld extends World {
 	public LittleWorld(World world) {
 		super(
 				world.getSaveHandler(),
-				"LittleBlocksWorld",
-				LBCore.littleProviderClient,
-				new WorldSettings(world.getWorldInfo().getSeed(), world
-						.getWorldInfo()
-							.getGameType(), world
-						.getWorldInfo()
-							.isMapFeaturesEnabled(), world
-						.getWorldInfo()
-							.isHardcoreModeEnabled(), world
-						.getWorldInfo()
-							.getTerrainType()), null);
+					"LittleBlocksWorld",
+					LBCore.littleProviderClient,
+					new WorldSettings(world.getWorldInfo().getSeed(), world
+							.getWorldInfo()
+								.getGameType(), world
+							.getWorldInfo()
+								.isMapFeaturesEnabled(), world
+							.getWorldInfo()
+								.isHardcoreModeEnabled(), world
+							.getWorldInfo()
+								.getTerrainType()), null);
 		this.realWorld = world;
 	}
 
 	public LittleWorld(World world, WorldProvider worldprovider) {
-		super(
-				world.getSaveHandler(),
-				"LittleBlocksWorld",
-				new WorldSettings(world.getWorldInfo().getSeed(), world
-						.getWorldInfo()
-							.getGameType(), world
-						.getWorldInfo()
-							.isMapFeaturesEnabled(), world
-						.getWorldInfo()
-							.isHardcoreModeEnabled(), world
-						.getWorldInfo()
-							.getTerrainType()), worldprovider, null);
+		super(world.getSaveHandler(), "LittleBlocksWorld", new WorldSettings(
+				world.getWorldInfo().getSeed(),
+					world.getWorldInfo().getGameType(),
+					world.getWorldInfo().isMapFeaturesEnabled(),
+					world.getWorldInfo().isHardcoreModeEnabled(),
+					world.getWorldInfo().getTerrainType()), worldprovider, null);
 		this.realWorld = world;
 	}
 
@@ -153,7 +143,10 @@ public class LittleWorld extends World {
 
 	@Override
 	public boolean spawnEntityInWorld(Entity entity) {
-		entity.setPosition(entity.posX / LBCore.littleBlocksSize, entity.posY / LBCore.littleBlocksSize, entity.posZ / LBCore.littleBlocksSize);
+		entity.setPosition(
+				entity.posX / LBCore.littleBlocksSize,
+				entity.posY / LBCore.littleBlocksSize,
+				entity.posZ / LBCore.littleBlocksSize);
 		entity.motionX /= LBCore.littleBlocksSize;
 		entity.motionY /= LBCore.littleBlocksSize;
 		entity.motionZ /= LBCore.littleBlocksSize;
@@ -384,20 +377,20 @@ public class LittleWorld extends World {
 		}
 	}
 
-/*	public void idModified(BlockLittleBlocksBlock lbb, int lastId) {
-		realWorld.updateAllLightTypes(
-				lbb.getParentX(),
-				lbb.getParentY(),
-				lbb.getParentZ());
-	}*/
+	/*
+	 * public void idModified(BlockLittleBlocksBlock lbb, int lastId) {
+	 * realWorld.updateAllLightTypes( lbb.getParentX(), lbb.getParentY(),
+	 * lbb.getParentZ()); }
+	 */
 
 	public void idModified(int lastBlockId, int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
 		realWorld.updateAllLightTypes(x, y, z);
 	}
 
-/*	public void metadataModified(BlockLittleBlocksBlock lbb) {
-	}*/
-	
+	/*
+	 * public void metadataModified(BlockLittleBlocksBlock lbb) { }
+	 */
+
 	public void metadataModified(int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
 	}
 
@@ -493,7 +486,13 @@ public class LittleWorld extends World {
 
 	@Override
 	public void playSoundEffect(double x, double y, double z, String s, float f, float f1) {
-		this.realWorld.playSoundEffect(x / LBCore.littleBlocksSize, y / LBCore.littleBlocksSize, z / LBCore.littleBlocksSize, s, f, f1);
+		this.realWorld.playSoundEffect(
+				x / LBCore.littleBlocksSize,
+				y / LBCore.littleBlocksSize,
+				z / LBCore.littleBlocksSize,
+				s,
+				f,
+				f1);
 	}
 
 	@Override
@@ -503,12 +502,24 @@ public class LittleWorld extends World {
 
 	@Override
 	public void playAuxSFX(int x, int y, int z, int l, int i1) {
-		this.realWorld.playAuxSFX(x / LBCore.littleBlocksSize, y / LBCore.littleBlocksSize, z / LBCore.littleBlocksSize, l, i1);
+		this.realWorld.playAuxSFX(
+				x / LBCore.littleBlocksSize,
+				y / LBCore.littleBlocksSize,
+				z / LBCore.littleBlocksSize,
+				l,
+				i1);
 	}
 
 	@Override
 	public void spawnParticle(String s, double x, double y, double z, double d3, double d4, double d5) {
-		this.realWorld.spawnParticle(s, x / LBCore.littleBlocksSize, y / LBCore.littleBlocksSize, z / LBCore.littleBlocksSize, d3, d4, d5);
+		this.realWorld.spawnParticle(
+				s,
+				x / LBCore.littleBlocksSize,
+				y / LBCore.littleBlocksSize,
+				z / LBCore.littleBlocksSize,
+				d3,
+				d4,
+				d5);
 	}
 
 	@Override

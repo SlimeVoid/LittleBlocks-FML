@@ -110,18 +110,18 @@ public class ClientPacketHandler implements IPacketHandler {
 	public static void blockUpdate(World world, EntityPlayer entityplayer, int x, int y, int z, int q, float a, float b, float c, BlockLittleBlocks block, String command) {
 		PacketLittleBlocks packetLB = new PacketLittleBlocks(
 				command,
-				x,
-				y,
-				z,
-				q,
-				a,
-				b,
-				c,
-				block.xSelected,
-				block.ySelected,
-				block.zSelected,
-				block.blockID,
-				block.side);
+					x,
+					y,
+					z,
+					q,
+					a,
+					b,
+					c,
+					block.xSelected,
+					block.ySelected,
+					block.zSelected,
+					block.blockID,
+					block.side);
 		packetLB.setSender(LBPacketIds.CLIENT);
 		ModLoader.sendPacket(packetLB.getPacket());
 	}

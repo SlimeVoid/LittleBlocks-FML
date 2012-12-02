@@ -4,8 +4,6 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
-import buildcraft.core.IItemPipe;
-
 import littleblocks.api.ILBCommonProxy;
 import littleblocks.blocks.BlockLittleBlocks;
 import littleblocks.tileentities.TileEntityLittleBlocks;
@@ -14,7 +12,6 @@ import net.minecraft.src.Block;
 import net.minecraft.src.BlockFlowing;
 import net.minecraft.src.BlockFluid;
 import net.minecraft.src.BlockPistonBase;
-import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemHoe;
 import net.minecraft.src.ItemMonsterPlacer;
@@ -25,10 +22,9 @@ import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntityNote;
 import net.minecraft.src.World;
-import net.minecraft.src.WorldClient;
 import net.minecraft.src.WorldProvider;
 import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.DimensionManager;
+import buildcraft.core.IItemPipe;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
@@ -70,7 +66,7 @@ public class LBCore {
 	public static int littleProviderTypeClient;
 	@SideOnly(Side.CLIENT)
 	public static WorldProvider littleProviderClient;
-	
+
 	public static int littleDimensionServer;
 	public static int littleProviderTypeServer;
 	public static WorldProvider littleProviderServer;
@@ -83,10 +79,10 @@ public class LBCore {
 		littleBlocksID = configurationProperties();
 		littleBlocks = new BlockLittleBlocks(
 				littleBlocksID,
-				TileEntityLittleBlocks.class,
-				Material.wood,
-				2F,
-				true).setBlockName("littleBlocks");
+					TileEntityLittleBlocks.class,
+					Material.wood,
+					2F,
+					true).setBlockName("littleBlocks");
 		GameRegistry.registerBlock(littleBlocks);
 		addDisallowedBlockTick(BlockFluid.class);
 		addDisallowedBlockTick(BlockFlowing.class);
@@ -113,7 +109,7 @@ public class LBCore {
 		}
 		return true;
 	}
-	
+
 	private static void addDisallowedBlock(Class<? extends Block> blockClass) {
 		if (blockClass != null) {
 			if (!disallowedBlocks.contains(blockClass)) {
@@ -130,7 +126,7 @@ public class LBCore {
 		}
 		return true;
 	}
-	
+
 	public static void addDisallowedItemIDs(Integer itemID) {
 		if (itemID > Block.blocksList.length) {
 			if (!disallowedItemIDs.contains(itemID)) {
@@ -138,7 +134,7 @@ public class LBCore {
 			}
 		}
 	}
-	
+
 	public static void addDisallowedItem(Class<? extends Item> itemClass) {
 		if (itemClass != null) {
 			if (!disallowedItems.contains(itemClass)) {
@@ -223,7 +219,9 @@ public class LBCore {
 
 	@SideOnly(Side.CLIENT)
 	public static RenderBlocks getLittleRenderer(World world) {
-		if (littleRenderer != null && ((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(world, false).getRealWorld() == world) {
+		if (littleRenderer != null && ((ILBCommonProxy) LBInit.LBM.getProxy())
+				.getLittleWorld(world, false)
+					.getRealWorld() == world) {
 			return littleRenderer;
 		}
 		return setLittleRenderer(world);
@@ -235,6 +233,8 @@ public class LBCore {
 			return littleRenderer = null;
 		}
 		return littleRenderer = new RenderBlocks(
-				((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(world, false));
+				((ILBCommonProxy) LBInit.LBM.getProxy()).getLittleWorld(
+						world,
+						false));
 	}
 }

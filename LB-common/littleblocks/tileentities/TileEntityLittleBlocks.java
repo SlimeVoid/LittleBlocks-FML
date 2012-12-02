@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import littleblocks.api.ILBCommonProxy;
-import littleblocks.blocks.BlockLittleBlocksBlock;
 import littleblocks.core.LBCore;
 import littleblocks.core.LBInit;
 import littleblocks.network.packets.PacketTileEntityLB;
@@ -12,11 +11,11 @@ import littleblocks.world.LittleWorld;
 import net.minecraft.src.Block;
 import net.minecraft.src.BlockFlowing;
 import net.minecraft.src.BlockStationary;
+import net.minecraft.src.INetworkManager;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagInt;
 import net.minecraft.src.NBTTagList;
-import net.minecraft.src.INetworkManager;
 import net.minecraft.src.Packet;
 import net.minecraft.src.Packet132TileEntityData;
 import net.minecraft.src.TileEntity;
@@ -251,7 +250,17 @@ public class TileEntityLittleBlocks extends TileEntity {
 		if (lastId != id) {
 			((ILBCommonProxy) LBInit.LBM.getProxy()).getLittleWorld(
 					this.worldObj,
-					false).idModified(lastId, this.xCoord, this.yCoord, this.zCoord, 0, x, y, z, id, 0);
+					false).idModified(
+					lastId,
+					this.xCoord,
+					this.yCoord,
+					this.zCoord,
+					0,
+					x,
+					y,
+					z,
+					id,
+					0);
 		}
 	}
 
@@ -318,7 +327,16 @@ public class TileEntityLittleBlocks extends TileEntity {
 		if (lastData != metadata) {
 			((ILBCommonProxy) LBInit.LBM.getProxy()).getLittleWorld(
 					this.worldObj,
-					false).metadataModified(this.xCoord, this.yCoord, this.zCoord, 0, x, y, z, blockId, metadata);
+					false).metadataModified(
+					this.xCoord,
+					this.yCoord,
+					this.zCoord,
+					0,
+					x,
+					y,
+					z,
+					blockId,
+					metadata);
 		}
 	}
 
@@ -388,13 +406,32 @@ public class TileEntityLittleBlocks extends TileEntity {
 		if (lastData != metadata) {
 			((ILBCommonProxy) LBInit.LBM.getProxy()).getLittleWorld(
 					this.worldObj,
-					false).metadataModified(this.xCoord, this.yCoord, this.zCoord, 0, x, y, z, id, metadata);
+					false).metadataModified(
+					this.xCoord,
+					this.yCoord,
+					this.zCoord,
+					0,
+					x,
+					y,
+					z,
+					id,
+					metadata);
 		}
 		if (lastId != id) {
 			if (!(Block.blocksList[lastId] instanceof BlockFlowing || Block.blocksList[lastId] instanceof BlockStationary)) {
 				((ILBCommonProxy) LBInit.LBM.getProxy()).getLittleWorld(
 						this.worldObj,
-						false).idModified(lastId, this.xCoord, this.yCoord, this.zCoord, 0, x, y, z, id, metadata);
+						false).idModified(
+						lastId,
+						this.xCoord,
+						this.yCoord,
+						this.zCoord,
+						0,
+						x,
+						y,
+						z,
+						id,
+						metadata);
 			}
 		}
 	}
