@@ -357,9 +357,9 @@ public class BlockLittleBlocks extends BlockContainer {
 	}
 
 	@Override
-	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int i, int j, int k) {
+	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z) {
 		if (LBCore.littleBlocksClip) {
-			return super.getCollisionBoundingBoxFromPool(world, i, j, k);
+			return super.getCollisionBoundingBoxFromPool(world, x, y, z);
 		}
 		return null;
 	}
@@ -406,31 +406,31 @@ public class BlockLittleBlocks extends BlockContainer {
 	}
 
 	@Override
-	public void addCollidingBlockToList(World world, int i, int j, int k, AxisAlignedBB axisalignedbb, List list, Entity entity) {
-		TileEntity tileentity = world.getBlockTileEntity(i, j, k);
+	public void addCollidingBlockToList(World world, int x, int y, int z, AxisAlignedBB axisalignedbb, List list, Entity entity) {
+		TileEntity tileentity = world.getBlockTileEntity(x, y, z);
 		if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
 			TileEntityLittleBlocks tile = (TileEntityLittleBlocks) tileentity;
 
 			int[][][] content = tile.getContent();
 			float m = LBCore.littleBlocksSize;
 
-			for (int x = 0; x < content.length; x++) {
-				for (int y = 0; y < content[x].length; y++) {
-					for (int z = 0; z < content[x][y].length; z++) {
-						if (content[x][y][z] > 0) {
-							Block block = Block.blocksList[content[x][y][z]];
+			for (int xx = 0; xx < content.length; xx++) {
+				for (int yy = 0; yy < content[xx].length; yy++) {
+					for (int zz = 0; zz < content[xx][yy].length; zz++) {
+						if (content[xx][yy][zz] > 0) {
+							Block block = Block.blocksList[content[xx][yy][zz]];
 							setBlockBounds(
-									(float) (x + block.getBlockBoundsMinX()) / m,
-									(float) (y + block.getBlockBoundsMinY()) / m,
-									(float) (z + block.getBlockBoundsMinZ()) / m,
-									(float) (x + block.getBlockBoundsMaxX()) / m,
-									(float) (y + block.getBlockBoundsMaxY()) / m,
-									(float) (z + block.getBlockBoundsMaxZ()) / m);
+									(float) (xx + block.getBlockBoundsMinX()) / m,
+									(float) (yy + block.getBlockBoundsMinY()) / m,
+									(float) (zz + block.getBlockBoundsMinZ()) / m,
+									(float) (xx + block.getBlockBoundsMaxX()) / m,
+									(float) (yy + block.getBlockBoundsMaxY()) / m,
+									(float) (zz + block.getBlockBoundsMaxZ()) / m);
 							super.addCollidingBlockToList(
 									world,
-									i,
-									j,
-									k,
+									x,
+									y,
+									z,
 									axisalignedbb,
 									list,
 									entity);
@@ -438,17 +438,17 @@ public class BlockLittleBlocks extends BlockContainer {
 					}
 				}
 			}
-			setBlockBoundsBasedOnSelection(world, i, j, k);
+			setBlockBoundsBasedOnSelection(world, x, y, z);
 		}
 	}
 
 	@Override
-	public MovingObjectPosition collisionRayTrace(World world, int i, int j, int k, Vec3 player, Vec3 view) {
+	public MovingObjectPosition collisionRayTrace(World world, int x, int y, int z, Vec3 player, Vec3 view) {
 		TileEntityLittleBlocks tile = (TileEntityLittleBlocks) world
-				.getBlockTileEntity(i, j, k);
+				.getBlockTileEntity(x, y, z);
 
-		player = player.addVector(-i, -j, -k);
-		view = view.addVector(-i, -j, -k);
+		player = player.addVector(-x, -y, -z);
+		view = view.addVector(-x, -y, -z);
 		if (tile == null) {
 			return null;
 		}
@@ -461,9 +461,9 @@ public class BlockLittleBlocks extends BlockContainer {
 				this,
 				player,
 				view,
-				i,
-				j,
-				k,
+				x,
+				y,
+				z,
 				returns,
 				content,
 				tile);
@@ -473,9 +473,9 @@ public class BlockLittleBlocks extends BlockContainer {
 				world,
 				player,
 				view,
-				i,
-				j,
-				k,
+				x,
+				y,
+				z,
 				returns);
 
 		if (!returns.isEmpty()) {
@@ -499,26 +499,26 @@ public class BlockLittleBlocks extends BlockContainer {
 							ySelected,
 							zSelected)].collisionRayTrace(
 							tile.getLittleWorld(),
-							(i << 3) + xSelected,
-							(j << 3) + ySelected,
-							(k << 3) + zSelected,
+							(x << 3) + xSelected,
+							(y << 3) + ySelected,
+							(z << 3) + zSelected,
 							player,
 							view);
 				}
-				setBlockBoundsBasedOnSelection(world, i, j, k);
+				setBlockBoundsBasedOnSelection(world, x, y, z);
 				return new MovingObjectPosition(
-						i,
-						j,
-						k,
+						x,
+						y,
+						z,
 						(Byte) min[1],
-						((Vec3) min[0]).addVector(i, j, k));
+						((Vec3) min[0]).addVector(x, y, z));
 			}
 		}
 		xSelected = -10;
 		ySelected = -10;
 		zSelected = -10;
 		side = -1;
-		setBlockBoundsBasedOnSelection(world, i, j, k);
+		setBlockBoundsBasedOnSelection(world, x, y, z);
 
 		return null;
 	}
@@ -623,24 +623,24 @@ public class BlockLittleBlocks extends BlockContainer {
 	}
 
 	@Override
-	public boolean isPoweringTo(IBlockAccess iblockaccess, int i, int j, int k, int l) {
-		if (super.isPoweringTo(iblockaccess, i, j, k, l)) {
+	public boolean isPoweringTo(IBlockAccess iblockaccess, int x, int y, int z, int side) {
+		if (super.isPoweringTo(iblockaccess, x, y, z, side)) {
 			return true;
 		} else {
 			TileEntityLittleBlocks tile = (TileEntityLittleBlocks) iblockaccess
-					.getBlockTileEntity(i, j, k);
+					.getBlockTileEntity(x, y, z);
 
 			int[][][] content = tile.getContent();
-			int maX = 8, maY = 8, maZ = 8;
+			int maX = tile.size, maY = tile.size, maZ = tile.size;
 			int startX = 0, startY = 0, startZ = 0;
 
-			switch (l) {
+			switch (side) {
 			case 1:
 				maY = 1;
 				break;
 
 			case 0:
-				startY = 7;
+				startY = maY - 1;
 				break;
 
 			case 3:
@@ -648,7 +648,7 @@ public class BlockLittleBlocks extends BlockContainer {
 				break;
 
 			case 2:
-				startZ = 7;
+				startZ = maZ - 1;
 				break;
 
 			case 5:
@@ -656,21 +656,21 @@ public class BlockLittleBlocks extends BlockContainer {
 				break;
 
 			case 4:
-				startX = 7;
+				startX = maX - 1;
 				break;
 			}
 
-			for (int x = startX; x < maX; x++) {
-				for (int y = startY; y < maY; y++) {
-					for (int z = startZ; z < maZ; z++) {
-						if (content[x][y][z] > 0) {
-							if (Block.blocksList[content[x][y][z]]
+			for (int xx = startX; xx < maX; xx++) {
+				for (int yy = startY; yy < maY; yy++) {
+					for (int zz = startZ; zz < maZ; zz++) {
+						if (content[xx][yy][zz] > 0) {
+							if (Block.blocksList[content[xx][yy][zz]]
 									.isPoweringTo(
 											tile.getLittleWorld(),
-											(i << 3) + x,
-											(j << 3) + y,
-											(k << 3) + z,
-											l)) {
+											(x << 3) + xx,
+											(y << 3) + yy,
+											(z << 3) + zz,
+											side)) {
 								return true;
 							}
 						}
@@ -697,7 +697,7 @@ public class BlockLittleBlocks extends BlockContainer {
 					break;
 
 				case 1:
-					startY = 7;
+					startY = maY - 1;
 					break;
 
 				case 2:
@@ -705,7 +705,7 @@ public class BlockLittleBlocks extends BlockContainer {
 					break;
 
 				case 3:
-					startZ = 7;
+					startZ = maZ - 1;
 					break;
 
 				case 4:
@@ -713,7 +713,7 @@ public class BlockLittleBlocks extends BlockContainer {
 					break;
 
 				case 5:
-					startX = 7;
+					startX = maX - 1;
 					break;
 				}
 

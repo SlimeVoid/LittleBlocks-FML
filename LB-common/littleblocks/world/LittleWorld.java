@@ -83,37 +83,37 @@ public class LittleWorld extends World {
 	}
 
 	@Override
-	public int getSkyBlockTypeBrightness(EnumSkyBlock enumskyblock, int i, int j, int k) {
+	public int getSkyBlockTypeBrightness(EnumSkyBlock enumskyblock, int x, int y, int z) {
 		return super.getSkyBlockTypeBrightness(
 				enumskyblock,
-				i >> 3,
-				j >> 3,
-				k >> 3);
+				x >> 3,
+				y >> 3,
+				z >> 3);
 	}
 
 	@Override
-	public int getLightBrightnessForSkyBlocks(int i, int j, int k, int l) {
+	public int getLightBrightnessForSkyBlocks(int x, int y, int z, int l) {
 		return realWorld.getLightBrightnessForSkyBlocks(
-				i >> 3,
-				j >> 3,
-				k >> 3,
+				x >> 3,
+				y >> 3,
+				z >> 3,
 				l);
 	}
 
 	@SideOnly(Side.CLIENT)
 	@Override
-	public float getBrightness(int i, int j, int k, int l) {
+	public float getBrightness(int x, int y, int z, int l) {
 		if (realWorld != null) {
-			return realWorld.getBrightness(i >> 3, j >> 3, k >> 3, l);
+			return realWorld.getBrightness(x >> 3, y >> 3, z >> 3, l);
 		}
 		return 0;
 	}
 
 	@SideOnly(Side.CLIENT)
 	@Override
-	public int getBlockLightValue(int i, int j, int k) {
+	public int getBlockLightValue(int x, int y, int z) {
 		if (realWorld != null) {
-			return realWorld.getBlockLightValue(i >> 3, j >> 3, k >> 3);
+			return realWorld.getBlockLightValue(x >> 3, y >> 3, z >> 3);
 		}
 		return 0;
 	}
@@ -153,10 +153,10 @@ public class LittleWorld extends World {
 
 	@Override
 	public boolean spawnEntityInWorld(Entity entity) {
-		entity.setPosition(entity.posX / 8, entity.posY / 8, entity.posZ / 8);
-		entity.motionX /= 8;
-		entity.motionY /= 8;
-		entity.motionZ /= 8;
+		entity.setPosition(entity.posX / LBCore.littleBlocksSize, entity.posY / LBCore.littleBlocksSize, entity.posZ / LBCore.littleBlocksSize);
+		entity.motionX /= LBCore.littleBlocksSize;
+		entity.motionY /= LBCore.littleBlocksSize;
+		entity.motionZ /= LBCore.littleBlocksSize;
 		entity.worldObj = realWorld;
 		return realWorld.spawnEntityInWorld(entity);
 	}
@@ -493,7 +493,7 @@ public class LittleWorld extends World {
 
 	@Override
 	public void playSoundEffect(double x, double y, double z, String s, float f, float f1) {
-		this.realWorld.playSoundEffect(x / 8, y / 8, z / 8, s, f, f1);
+		this.realWorld.playSoundEffect(x / LBCore.littleBlocksSize, y / LBCore.littleBlocksSize, z / LBCore.littleBlocksSize, s, f, f1);
 	}
 
 	@Override
@@ -503,23 +503,23 @@ public class LittleWorld extends World {
 
 	@Override
 	public void playAuxSFX(int x, int y, int z, int l, int i1) {
-		this.realWorld.playAuxSFX(x / 8, y / 8, z / 8, l, i1);
+		this.realWorld.playAuxSFX(x / LBCore.littleBlocksSize, y / LBCore.littleBlocksSize, z / LBCore.littleBlocksSize, l, i1);
 	}
 
 	@Override
 	public void spawnParticle(String s, double x, double y, double z, double d3, double d4, double d5) {
-		this.realWorld.spawnParticle(s, x / 8, y / 8, z / 8, d3, d4, d5);
+		this.realWorld.spawnParticle(s, x / LBCore.littleBlocksSize, y / LBCore.littleBlocksSize, z / LBCore.littleBlocksSize, d3, d4, d5);
 	}
 
 	@Override
 	public MovingObjectPosition rayTraceBlocks_do_do(Vec3 Vec3, Vec3 Vec31, boolean flag, boolean flag1) {
-		Vec3.xCoord *= 8;
-		Vec3.yCoord *= 8;
-		Vec3.zCoord *= 8;
+		Vec3.xCoord *= LBCore.littleBlocksSize;
+		Vec3.yCoord *= LBCore.littleBlocksSize;
+		Vec3.zCoord *= LBCore.littleBlocksSize;
 
-		Vec31.xCoord *= 8;
-		Vec31.yCoord *= 8;
-		Vec31.zCoord *= 8;
+		Vec31.xCoord *= LBCore.littleBlocksSize;
+		Vec31.yCoord *= LBCore.littleBlocksSize;
+		Vec31.zCoord *= LBCore.littleBlocksSize;
 		return super.rayTraceBlocks_do_do(Vec3, Vec31, flag, flag1);
 	}
 
@@ -533,7 +533,7 @@ public class LittleWorld extends World {
 	}
 
 	@Override
-	public Entity getEntityByID(int var1) {
+	public Entity getEntityByID(int entityId) {
 		return null;
 	}
 }
