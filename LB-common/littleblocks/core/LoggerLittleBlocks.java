@@ -3,6 +3,8 @@ package littleblocks.core;
 import eurysmods.data.Logger;
 
 public class LoggerLittleBlocks extends Logger {
+	
+	private static Logger instance;
 
 	@Override
 	protected String getLoggerName() {
