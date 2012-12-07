@@ -30,6 +30,7 @@ import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
 import cpw.mods.fml.common.registry.GameRegistry;
 import eurysmods.api.ICommonProxy;
+import eurysmods.data.Logger;
 
 public class LBCore {
 	public static File configFile;
@@ -164,6 +165,14 @@ public class LBCore {
 		if (tileclass != null) {
 			if (!allowedBlockTileEntities.contains(tileclass)) {
 				allowedBlockTileEntities.add(tileclass);
+			} else {
+				LoggerLittleBlocks.getInstance(
+						LoggerLittleBlocks.filterClassName(LBCore.class.toString())
+				).write(
+						true,
+						"Tried to add a tileentity to the disallowed list that already exists",
+						Logger.LogLevel.DEBUG
+				);
 			}
 		}
 	}
