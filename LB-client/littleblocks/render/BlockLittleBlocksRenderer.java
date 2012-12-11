@@ -58,7 +58,6 @@ public class BlockLittleBlocksRenderer implements ISimpleBlockRenderingHandler {
 									(y << 3) + y1,
 									(z << 3) + z1 };
 							if (!littleBlock.isDefaultTexture) {
-								System.out.println("Not Default");
 								if (tessellator.isDrawing) {
 									tessellator.draw();
 								}
@@ -84,7 +83,6 @@ public class BlockLittleBlocksRenderer implements ISimpleBlockRenderingHandler {
 										defaultTexture);
 							} else {
 								if (!tessellator.isDrawing) {
-									System.out.println("Not Drawing");
 									tessellator.startDrawingQuads();
 								}
 								LBCore
