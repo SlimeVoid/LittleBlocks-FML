@@ -18,7 +18,7 @@ import eurysmods.api.ICommonProxy;
 @Mod(
 		modid = "LittleBlocksMod",
 		name = "Little Blocks",
-		version = "2.0.0.4",
+		version = "2.0.0.5",
 		dependencies = "after:EurysCore")
 @NetworkMod(
 		clientSideRequired = true,
