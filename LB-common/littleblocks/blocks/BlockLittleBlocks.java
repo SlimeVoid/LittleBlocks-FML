@@ -88,7 +88,7 @@ public class BlockLittleBlocks extends BlockContainer {
 							}
 							tile.setContent(x1, y1, z1, 0);
 							tile.onInventoryChanged();
-							world.markBlockNeedsUpdate(x, y, z);
+							world.markBlockForRenderUpdate(x, y, z);
 						}
 					}
 				}
@@ -235,7 +235,7 @@ public class BlockLittleBlocks extends BlockContainer {
 									entityplayer,
 									littleWorld,
 									entityplayer.getCurrentEquippedItem());
-							world.markBlockNeedsUpdate(x, y, z);
+							world.markBlockForRenderUpdate(x, y, z);
 							return true;
 						} else if (itemManager.activateBlockOrUseItem(
 								entityplayer,
@@ -248,7 +248,7 @@ public class BlockLittleBlocks extends BlockContainer {
 								a,
 								b,
 								c)) {
-							world.markBlockNeedsUpdate(x, y, z);
+							world.markBlockForRenderUpdate(x, y, z);
 							return true;
 						}
 					}
@@ -302,7 +302,7 @@ public class BlockLittleBlocks extends BlockContainer {
 			}
 			tile.setContent(this.xSelected, this.ySelected, this.zSelected, 0);
 		}
-		world.markBlockNeedsUpdate(x, y, z);
+		world.markBlockForRenderUpdate(x, y, z);
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -623,8 +623,8 @@ public class BlockLittleBlocks extends BlockContainer {
 	}
 
 	@Override
-	public boolean isPoweringTo(IBlockAccess iblockaccess, int x, int y, int z, int side) {
-		if (super.isPoweringTo(iblockaccess, x, y, z, side)) {
+	public boolean isProvidingStrongPower(IBlockAccess iblockaccess, int x, int y, int z, int side) {
+		if (super.isProvidingStrongPower(iblockaccess, x, y, z, side)) {
 			return true;
 		} else {
 			TileEntityLittleBlocks tile = (TileEntityLittleBlocks) iblockaccess
@@ -665,7 +665,7 @@ public class BlockLittleBlocks extends BlockContainer {
 					for (int zz = startZ; zz < maZ; zz++) {
 						if (content[xx][yy][zz] > 0) {
 							if (Block.blocksList[content[xx][yy][zz]]
-									.isPoweringTo(
+									.isProvidingStrongPower(
 											tile.getLittleWorld(),
 											(x << 3) + xx,
 											(y << 3) + yy,

@@ -75,7 +75,7 @@ public class ClientPacketHandler implements IPacketHandler {
 			}
 			index += 5;
 		}
-		world.markBlockNeedsUpdate(
+		world.markBlockForRenderUpdate(
 				packetLB.xPosition,
 				packetLB.yPosition,
 				packetLB.zPosition);
@@ -98,7 +98,7 @@ public class ClientPacketHandler implements IPacketHandler {
 		}
 		tileentitylb.setContent(content);
 		tileentitylb.setMetadata(metadata);
-		world.markBlockNeedsUpdate(
+		world.markBlockForRenderUpdate(
 				packetLB.xPosition,
 				packetLB.yPosition,
 				packetLB.zPosition);
@@ -179,7 +179,7 @@ public class ClientPacketHandler implements IPacketHandler {
 								packetLB.getSelectedZ(),
 								packetLB.getMetadata());
 					}
-					world.markBlockNeedsUpdate(
+					world.markBlockForRenderUpdate(
 							packetLB.xPosition,
 							packetLB.yPosition,
 							packetLB.zPosition);

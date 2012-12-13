@@ -372,7 +372,7 @@ public class LittleWorld extends World {
 			Block block = Block.blocksList[world.getBlockId(x, y, z)];
 			if (block != null) {
 				block.onNeighborBlockChange(world, x, y, z, side);
-				world.markBlockNeedsUpdate(x, y, z);
+				world.markBlockForRenderUpdate(x, y, z);
 			}
 		}
 	}
@@ -480,8 +480,8 @@ public class LittleWorld extends World {
 	}
 
 	@Override
-	public void markBlockNeedsUpdate(int x, int y, int z) {
-		this.realWorld.markBlockNeedsUpdate(x >> 3, y >> 3, z >> 3);
+	public void markBlockForRenderUpdate(int x, int y, int z) {
+		this.realWorld.markBlockForRenderUpdate(x >> 3, y >> 3, z >> 3);
 	}
 
 	@Override
