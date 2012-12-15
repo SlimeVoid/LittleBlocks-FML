@@ -374,7 +374,7 @@ public class LittleWorld extends World {
 						"getBlockMetadata(" + x + ", " + y + ", " + z + ").[" + littleBlockId + ", " + littleMetaData + "]",
 						LoggerLittleBlocks.LogLevel.DEBUG
 				);
-				return littleBlockId;
+				return littleMetaData;
 			} else {
 				LoggerLittleBlocks.getInstance(
 						LoggerLittleBlocks.filterClassName(
@@ -539,7 +539,7 @@ public class LittleWorld extends World {
 							metadata);
 					flag = true;
 				}
-				this.markBlockForUpdate(x >> 3, y >> 3, z >> 3);
+				this.markBlockForRenderUpdate(x >> 3, y >> 3, z >> 3);
 			}
 			return flag;
 		}
@@ -723,7 +723,7 @@ public class LittleWorld extends World {
 				)
 		).write(
 				this.isRemote,
-				"notifyBlocksOfNeighbourChange(" + x + ", " + y + ", " + z + ").[" + side + "]",
+				"notifyBlocksOfNeighborChange(" + x + ", " + y + ", " + z + ").[" + side + "]",
 				LoggerLittleBlocks.LogLevel.DEBUG
 		);
 		notifyBlockOfNeighborChange(x - 1, y, z, side);
@@ -732,6 +732,7 @@ public class LittleWorld extends World {
 		notifyBlockOfNeighborChange(x, y + 1, z, side);
 		notifyBlockOfNeighborChange(x, y, z - 1, side);
 		notifyBlockOfNeighborChange(x, y, z + 1, side);
+		this.markBlockForUpdate(x, y, z);
 	}
 
 	private void notifyBlockOfNeighborChange(int x, int y, int z, int side) {
@@ -763,7 +764,7 @@ public class LittleWorld extends World {
 			z >>= 3;
 			world = realWorld;
 		}
-		if (!world.editingBlocks && !world.isRemote) {
+		if (!realWorld.editingBlocks && !world.isRemote) {
 			Block block = Block.blocksList[world.getBlockId(x, y, z)];
 			if (block != null) {
 				LoggerLittleBlocks.getInstance(
@@ -776,9 +777,9 @@ public class LittleWorld extends World {
 						LoggerLittleBlocks.LogLevel.DEBUG
 				);
 				block.onNeighborBlockChange(world, x, y, z, side);
-				world.markBlockForUpdate(x, y, z);
 			}
 		}
+		world.markBlockForRenderUpdate(x, y, z);
 	}
 
 	/*
