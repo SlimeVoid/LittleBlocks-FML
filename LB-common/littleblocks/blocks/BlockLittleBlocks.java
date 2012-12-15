@@ -212,8 +212,7 @@ public class BlockLittleBlocks extends BlockContainer {
 	}
 
 	public boolean onServerBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int q, float a, float b, float c) {
-		if (entityplayer
-				.canCurrentToolHarvestBlock/* canPlayerEdit */(x, y, z)) {
+		if (entityplayer.canPlayerEdit(x, y, z, q, entityplayer.getHeldItem())) {
 			TileEntity tileentity = world.getBlockTileEntity(x, y, z);
 			if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
 				TileEntityLittleBlocks tile = (TileEntityLittleBlocks) tileentity;
@@ -235,7 +234,7 @@ public class BlockLittleBlocks extends BlockContainer {
 									entityplayer,
 									littleWorld,
 									entityplayer.getCurrentEquippedItem());
-							world.markBlockForRenderUpdate(x, y, z);
+							world.markBlockForUpdate(x, y, z);
 							return true;
 						} else if (itemManager.activateBlockOrUseItem(
 								entityplayer,
@@ -248,7 +247,7 @@ public class BlockLittleBlocks extends BlockContainer {
 								a,
 								b,
 								c)) {
-							world.markBlockForRenderUpdate(x, y, z);
+							world.markBlockForUpdate(x, y, z);
 							return true;
 						}
 					}
@@ -302,7 +301,7 @@ public class BlockLittleBlocks extends BlockContainer {
 			}
 			tile.setContent(this.xSelected, this.ySelected, this.zSelected, 0);
 		}
-		world.markBlockForRenderUpdate(x, y, z);
+		world.markBlockForUpdate(x, y, z);
 	}
 
 	@SideOnly(Side.CLIENT)
