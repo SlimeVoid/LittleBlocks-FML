@@ -130,6 +130,11 @@ public class LittleWorld extends World {
 	}
 
 	@Override
+	public long getTotalWorldTime() {
+		return this.realWorld.getWorldInfo().getWorldTotalTime();
+	}
+
+	@Override
 	public int getLightBrightnessForSkyBlocks(int x, int y, int z, int l) {
 		LoggerLittleBlocks.getInstance(
 				LoggerLittleBlocks.filterClassName(
