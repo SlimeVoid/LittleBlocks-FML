@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import littleblocks.core.LBCore;
+import littleblocks.core.LoggerLittleBlocks;
 import littleblocks.network.CommonPacketHandler;
 import littleblocks.tileentities.TileEntityLittleBlocks;
 import net.minecraft.src.Block;
@@ -50,7 +51,15 @@ public class LittleWorldServer extends LittleWorld {
 
 	public LittleWorldServer(World world, WorldProvider worldprovider) {
 		super(world, worldprovider);
-
+		LoggerLittleBlocks.getInstance(
+				LoggerLittleBlocks.filterClassName(
+						this.getClass().toString()
+				)
+		).write(
+				this.isRemote,
+				"LittleWorld loaded [" + world.toString() + "].provider(" + worldprovider.dimensionId + ")",
+				LoggerLittleBlocks.LogLevel.DEBUG
+		);
 		if (this.scheduledTickSet == null) {
 			this.scheduledTickSet = new HashSet();
 		}
@@ -127,6 +136,18 @@ public class LittleWorldServer extends LittleWorld {
 					if (blockId == nextTick.blockID && blockId > 0) {
 						Block littleBlock = Block.blocksList[blockId];
 						if (LBCore.isBlockAllowedToTick(littleBlock)) {
+							LoggerLittleBlocks.getInstance(
+									LoggerLittleBlocks.filterClassName(
+											this.getClass().toString()
+									)
+							).write(
+									this.isRemote,
+									"ScheduledTickUpdate for Block[" + littleBlock.blockID + "].("+ 
+											nextTick.xCoord + ", " +
+											nextTick.yCoord + ", " +
+											nextTick.zCoord + ")",
+									LoggerLittleBlocks.LogLevel.DEBUG
+							);
 							littleBlock.updateTick(
 									this,
 									nextTick.xCoord,

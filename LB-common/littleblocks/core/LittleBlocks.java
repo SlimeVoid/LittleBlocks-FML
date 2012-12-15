@@ -14,6 +14,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
 import eurysmods.api.ICommonProxy;
+import eurysmods.data.Logger.LogLevel;
 
 @Mod(
 		modid = "LittleBlocksMod",
@@ -36,19 +37,37 @@ public class LittleBlocks {
 			serverSide = "littleblocks.proxy.CommonProxy")
 	public static ICommonProxy proxy;
 
-	@Init
-	public void LittleBlocksInit(FMLInitializationEvent event) {
-		LBCore.initialize(proxy);
-	}
-
 	@PreInit
 	public void LittleBlocksPreInit(FMLPreInitializationEvent event) {
 		try {
 			this.getClass().getClassLoader().loadClass("TextureHDCompassFX");
 			LBCore.optifine = true;
+			LoggerLittleBlocks.getInstance(
+					LoggerLittleBlocks.filterClassName(
+							this.getClass().toString()
+					)
+			).write(
+					false,
+					"Optifine Loaded - RenderBlocks Configured",
+					LoggerLittleBlocks.LogLevel.DEBUG
+			);
 		} catch (ClassNotFoundException e) {
 			LBCore.optifine = false;
+			LoggerLittleBlocks.getInstance(
+					LoggerLittleBlocks.filterClassName(
+							this.getClass().toString()
+					)
+			).write(
+					false,
+					"Optifine not Loaded - RenderBlocks Configured",
+					LoggerLittleBlocks.LogLevel.DEBUG
+			);
 		}
+	}
+
+	@Init
+	public void LittleBlocksInit(FMLInitializationEvent event) {
+		LBCore.initialize(proxy);
 	}
 
 	@PostInit
