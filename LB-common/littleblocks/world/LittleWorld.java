@@ -7,6 +7,7 @@ import net.minecraft.src.Block;
 import net.minecraft.src.Chunk;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EnumSkyBlock;
+import net.minecraft.src.Explosion;
 import net.minecraft.src.IChunkProvider;
 import net.minecraft.src.MovingObjectPosition;
 import net.minecraft.src.TileEntity;
@@ -993,6 +994,17 @@ public class LittleWorld extends World {
 		Vec31.zCoord *= LBCore.littleBlocksSize;
 		return super.rayTraceBlocks_do_do(Vec3, Vec31, flag, flag1);
 	}
+
+	@Override
+    public Explosion newExplosion(Entity entity, double x, double y, double z, float strength, boolean isFlaming, boolean isSmoking)
+    {
+        Explosion explosion = new Explosion(this, entity, x, y, z, strength / 8);
+        explosion.isFlaming = isFlaming;
+        explosion.isSmoking = isSmoking;
+        explosion.doExplosionA();
+        explosion.doExplosionB(true);
+        return explosion;
+    }
 
 	@Override
 	protected IChunkProvider createChunkProvider() {
