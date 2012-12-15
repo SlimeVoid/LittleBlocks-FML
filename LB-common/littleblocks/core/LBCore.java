@@ -41,6 +41,7 @@ public class LBCore {
 	public static String blockActivateCommand = "BLOCKACTIVATE";
 	public static String littleNotifyCommand = "LITTLENOTIFY";
 	public static String updateClientCommand = "UPDATECLIENT";
+	public static String loggerLevel = "INFO";
 	public static Block littleBlocks;
 	@SideOnly(Side.CLIENT)
 	public static LittleWorld littleWorldClient;
@@ -222,7 +223,12 @@ public class LBCore {
 				"renderingMethod",
 				0).value);
 		renderType = RenderingRegistry.getNextAvailableRenderId();
+		loggerLevel = String.valueOf(configuration.get(
+				Configuration.CATEGORY_GENERAL,
+				"loggerLevel",
+				loggerLevel));
 		configuration.save();
+		LoggerLittleBlocks.getInstance("LittleBlocksConfig").setFilterLevel(loggerLevel);
 		return littleBlocksID;
 	}
 

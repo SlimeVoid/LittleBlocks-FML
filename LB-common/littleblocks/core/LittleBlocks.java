@@ -39,30 +39,6 @@ public class LittleBlocks {
 
 	@PreInit
 	public void LittleBlocksPreInit(FMLPreInitializationEvent event) {
-		try {
-			this.getClass().getClassLoader().loadClass("TextureHDCompassFX");
-			LBCore.optifine = true;
-			LoggerLittleBlocks.getInstance(
-					LoggerLittleBlocks.filterClassName(
-							this.getClass().toString()
-					)
-			).write(
-					false,
-					"Optifine Loaded - RenderBlocks Configured",
-					LoggerLittleBlocks.LogLevel.DEBUG
-			);
-		} catch (ClassNotFoundException e) {
-			LBCore.optifine = false;
-			LoggerLittleBlocks.getInstance(
-					LoggerLittleBlocks.filterClassName(
-							this.getClass().toString()
-					)
-			).write(
-					false,
-					"Optifine not Loaded - RenderBlocks Configured",
-					LoggerLittleBlocks.LogLevel.DEBUG
-			);
-		}
 	}
 
 	@Init

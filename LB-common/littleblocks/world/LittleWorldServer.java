@@ -57,7 +57,8 @@ public class LittleWorldServer extends LittleWorld {
 				)
 		).write(
 				this.isRemote,
-				"LittleWorld loaded [" + world.toString() + "].provider(" + worldprovider.dimensionId + ")",
+				"LittleWorld loaded (" + world.toString() + ")." + 
+				"provider[" + worldprovider + "]",
 				LoggerLittleBlocks.LogLevel.DEBUG
 		);
 		if (this.scheduledTickSet == null) {
@@ -155,7 +156,7 @@ public class LittleWorldServer extends LittleWorld {
 									nextTick.zCoord,
 									this.rand);
 						}
-						TileEntity tileentity = this
+						/*TileEntity tileentity = this
 								.getRealWorld()
 									.getBlockTileEntity(
 											nextTick.xCoord >> 3,
@@ -165,14 +166,14 @@ public class LittleWorldServer extends LittleWorld {
 							if (!littleBlockTiles.contains(tileentity)) {
 								littleBlockTiles.add(tileentity);
 							}
-						}
+						}*/
 					}
 				}
 			}
-			if (this.ticksInWorld >= MAX_TICKS_IN_WORLD) {
+			/*if (this.ticksInWorld >= MAX_TICKS_IN_WORLD) {
 				for (TileEntity tile : littleBlockTiles) {
 				}
-			}
+			}*/
 			return !this.pendingTickListEntries.isEmpty();
 		}
 	}
@@ -182,7 +183,7 @@ public class LittleWorldServer extends LittleWorld {
 	 * radius of the event.
 	 */
 	private void sendAndApplyBlockEvents() {
-		Set<TileEntityLittleBlocks> tileentities = new HashSet();
+		//Set<TileEntityLittleBlocks> tileentities = new HashSet();
 		while (!this.blockEventCache[this.blockEventCacheIndex].isEmpty()) {
 			int index = this.blockEventCacheIndex;
 			this.blockEventCacheIndex ^= 1;
@@ -191,6 +192,20 @@ public class LittleWorldServer extends LittleWorld {
 			while (blockEvent.hasNext()) {
 				BlockEventData eventData = (BlockEventData) blockEvent.next();
 				if (this.onBlockEventReceived(eventData)) {
+					LoggerLittleBlocks.getInstance(
+							LoggerLittleBlocks.filterClassName(
+									this.getClass().toString()
+							)
+					).write(
+							this.isRemote,
+							"onBlockEvenReceived(" + eventData.getBlockID() + ").[Event: " + 
+									eventData.getEventID() + "(" +
+									eventData.getX() + ", " +
+									eventData.getY() + ", " +
+									eventData.getZ() + "), " + 
+									eventData.getEventParameter(),
+							LoggerLittleBlocks.LogLevel.DEBUG
+					);
 				}
 			}
 
@@ -217,6 +232,20 @@ public class LittleWorldServer extends LittleWorld {
 					blockEventData.getEventParameter());
 			return true;
 		} else {
+			LoggerLittleBlocks.getInstance(
+					LoggerLittleBlocks.filterClassName(
+							this.getClass().toString()
+					)
+			).write(
+					this.isRemote,
+					"FAILED:onBlockEvenReceived(" + blockEventData.getBlockID() + ").[Event: " + 
+							blockEventData.getEventID() + "(" +
+							blockEventData.getX() + ", " +
+							blockEventData.getY() + ", " +
+							blockEventData.getZ() + "), " + 
+							blockEventData.getEventParameter(),
+					LoggerLittleBlocks.LogLevel.DEBUG
+			);
 			return false;
 		}
 	}
@@ -228,7 +257,7 @@ public class LittleWorldServer extends LittleWorld {
 	 * EventParameter
 	 */
 	public void addBlockEvent(int x, int y, int z, int blockID, int eventID, int eventParam) {
-		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+		if (FMLCommonHandler.instance().getSide() == Side.CLIENT && !this.isRemote) {
 			super.addBlockEvent(x, y, z, blockID, eventID, eventParam);
 			return;
 		}

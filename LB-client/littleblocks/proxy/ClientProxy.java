@@ -1,6 +1,7 @@
 package littleblocks.proxy;
 
 import littleblocks.core.LBCore;
+import littleblocks.core.LoggerLittleBlocks;
 import littleblocks.network.ClientPacketHandler;
 import littleblocks.network.LBPacketIds;
 import littleblocks.network.packets.PacketLittleBlocksSettings;
@@ -26,6 +27,34 @@ import cpw.mods.fml.common.registry.TickRegistry;
 
 @SideOnly(Side.CLIENT)
 public class ClientProxy extends CommonProxy {
+	
+	@Override
+	public void preInit() {
+		try {
+			this.getClass().getClassLoader().loadClass("TextureHDCompassFX");
+			LBCore.optifine = true;
+			LoggerLittleBlocks.getInstance(
+					LoggerLittleBlocks.filterClassName(
+							this.getClass().toString()
+					)
+			).write(
+					false,
+					"Optifine Loaded - RenderBlocks Configured",
+					LoggerLittleBlocks.LogLevel.DEBUG
+			);
+		} catch (ClassNotFoundException e) {
+			LBCore.optifine = false;
+			LoggerLittleBlocks.getInstance(
+					LoggerLittleBlocks.filterClassName(
+							this.getClass().toString()
+					)
+			).write(
+					false,
+					"Optifine not Loaded - RenderBlocks Configured",
+					LoggerLittleBlocks.LogLevel.DEBUG
+			);
+		}
+	}
 
 	@Override
 	public String getMinecraftDir() {

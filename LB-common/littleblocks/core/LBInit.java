@@ -29,6 +29,7 @@ public class LBInit {
 	}
 
 	public static void load() {
+		LBM.getProxy().preInit();
 		EurysCore.console(LBM.getModName(), "Registering items...");
 		LBCore.addItems();
 		GameRegistry.registerTileEntity(

@@ -2,6 +2,7 @@ package littleblocks.proxy;
 
 import littleblocks.api.ILBCommonProxy;
 import littleblocks.core.LBCore;
+import littleblocks.core.LoggerLittleBlocks;
 import littleblocks.tickhandlers.CommonTickHandler;
 import littleblocks.world.LittleWorld;
 import littleblocks.world.LittleWorldServer;
@@ -20,6 +21,9 @@ import cpw.mods.fml.common.registry.TickRegistry;
 import eurysmods.api.IPacketHandling;
 
 public class CommonProxy implements ILBCommonProxy {
+
+	@Override
+	public void preInit() {}
 
 	@Override
 	public void registerRenderInformation() {
