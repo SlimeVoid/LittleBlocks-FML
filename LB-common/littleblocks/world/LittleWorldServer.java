@@ -141,24 +141,25 @@ public class LittleWorldServer extends LittleWorld {
 					if (blockId == nextTick.blockID && blockId > 0) {
 						Block littleBlock = Block.blocksList[blockId];
 						if (LBCore.isBlockAllowedToTick(littleBlock)) {
-							LoggerLittleBlocks.getInstance(
-									LoggerLittleBlocks.filterClassName(
-											this.getClass().toString()
-									)
-							).write(
-									this.isRemote,
-									"ScheduledTickUpdate for Block[" + littleBlock.blockID + "].("+ 
-											nextTick.xCoord + ", " +
-											nextTick.yCoord + ", " +
-											nextTick.zCoord + ")",
-									LoggerLittleBlocks.LogLevel.DEBUG
-							);
 							littleBlock.updateTick(
 									this,
 									nextTick.xCoord,
 									nextTick.yCoord,
 									nextTick.zCoord,
 									this.rand);
+						} else {
+							LoggerLittleBlocks.getInstance(
+									LoggerLittleBlocks.filterClassName(
+											this.getClass().toString()
+									)
+							).write(
+									this.isRemote,
+									"BlockUpdateTick Prohibited[" + Block.blocksList[littleBlock.blockID].getBlockName() + "].("+ 
+											nextTick.xCoord + ", " +
+											nextTick.yCoord + ", " +
+											nextTick.zCoord + ")",
+									LoggerLittleBlocks.LogLevel.DEBUG
+							);
 						}
 						/*TileEntity tileentity = this
 								.getRealWorld()

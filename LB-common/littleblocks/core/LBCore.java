@@ -223,10 +223,12 @@ public class LBCore {
 				"renderingMethod",
 				0).value);
 		renderType = RenderingRegistry.getNextAvailableRenderId();
+		System.out.println(loggerLevel);
 		loggerLevel = String.valueOf(configuration.get(
 				Configuration.CATEGORY_GENERAL,
 				"loggerLevel",
-				loggerLevel));
+				"INFO").value);
+		System.out.println(loggerLevel);
 		configuration.save();
 		LoggerLittleBlocks.getInstance("LittleBlocksConfig").setFilterLevel(loggerLevel);
 		return littleBlocksID;

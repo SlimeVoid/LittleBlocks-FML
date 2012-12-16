@@ -18,6 +18,7 @@ import net.minecraft.src.WorldSettings;
 import net.minecraftforge.common.ForgeDirection;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
+import eurysmods.data.Logger.LogLevel;
 
 public class LittleWorld extends World {
 
@@ -100,15 +101,6 @@ public class LittleWorld extends World {
 	 */
 	@Override
 	public boolean tickUpdates(boolean tick) {
-		LoggerLittleBlocks.getInstance(
-				LoggerLittleBlocks.filterClassName(
-						this.getClass().toString()
-				)
-		).write(
-				this.isRemote,
-				"tickUpdates(tick:" + tick + ")",
-				LoggerLittleBlocks.LogLevel.DEBUG
-		);
 		return false;
 	}
 
@@ -143,36 +135,28 @@ public class LittleWorld extends World {
 
 	@Override
 	public int getLightBrightnessForSkyBlocks(int x, int y, int z, int l) {
+		if (this.realWorld != null) {return realWorld.getLightBrightnessForSkyBlocks(
+				x >> 3,
+				y >> 3,
+				z >> 3,
+				l);	
+		}
 		LoggerLittleBlocks.getInstance(
 				LoggerLittleBlocks.filterClassName(
 						this.getClass().toString()
 				)
 		).write(
 				this.isRemote,
-				"getLightBrightnessForSkyBlocks(" + x + ", " + y + ", " + z + "[" + l + ")",
+				"getLightBrightnessForSkyBlocks(" + x + ", " + y + ", " + z + ").[" + l + "]:Null",
 				LoggerLittleBlocks.LogLevel.DEBUG
 		);
-		return realWorld.getLightBrightnessForSkyBlocks(
-				x >> 3,
-				y >> 3,
-				z >> 3,
-				l);
+		return 0;
 	}
 
 	@SideOnly(Side.CLIENT)
 	@Override
 	public float getBrightness(int x, int y, int z, int l) {
 		if (realWorld != null) {
-			LoggerLittleBlocks.getInstance(
-					LoggerLittleBlocks.filterClassName(
-							this.getClass().toString()
-					)
-			).write(
-					this.isRemote,
-					"getBrightness" + x + ", " + y + ", " + z + "[" + l + "]).[" +
-					realWorld.getBrightness(x >> 3, y >> 3, z >> 3, l) + "]",
-					LoggerLittleBlocks.LogLevel.DEBUG
-			);
 			return realWorld.getBrightness(x >> 3, y >> 3, z >> 3, l);
 		}
 		LoggerLittleBlocks.getInstance(
@@ -191,18 +175,17 @@ public class LittleWorld extends World {
 	@Override
 	public int getBlockLightValue(int x, int y, int z) {
 		if (realWorld != null) {
-			LoggerLittleBlocks.getInstance(
-					LoggerLittleBlocks.filterClassName(
-							this.getClass().toString()
-					)
-			).write(
-					this.isRemote,
-					"getBlockLightValue(" + x + ", " + y + ", " + z + ").[" +
-					realWorld.getBlockLightValue(x >> 3, y >> 3, z >> 3) + "]",
-					LoggerLittleBlocks.LogLevel.DEBUG
-			);
 			return realWorld.getBlockLightValue(x >> 3, y >> 3, z >> 3);
 		}
+		LoggerLittleBlocks.getInstance(
+				LoggerLittleBlocks.filterClassName(
+						this.getClass().toString()
+				)
+		).write(
+				this.isRemote,
+				"getBlockLightValue(" + x + ", " + y + ", " + z + ").[null]",
+				LoggerLittleBlocks.LogLevel.DEBUG
+		);
 		return 0;
 	}
 
@@ -275,15 +258,6 @@ public class LittleWorld extends World {
 				TileEntityLittleBlocks tile = (TileEntityLittleBlocks) realWorld
 						.getBlockTileEntity(x >> 3, y >> 3, z >> 3);
 				int littleBlockId = tile.getContent(x & 7, y & 7, z & 7);
-				LoggerLittleBlocks.getInstance(
-						LoggerLittleBlocks.filterClassName(
-								this.getClass().toString()
-						)
-				).write(
-						this.isRemote,
-						"getBlockId(" + x + ", " + y + ", " + z + ").[" + littleBlockId + "]",
-						LoggerLittleBlocks.LogLevel.DEBUG
-				);
 				return littleBlockId;
 			} else {
 				LoggerLittleBlocks.getInstance(
@@ -376,16 +350,7 @@ public class LittleWorld extends World {
 				TileEntityLittleBlocks tile = (TileEntityLittleBlocks) realWorld
 						.getBlockTileEntity(x >> 3, y >> 3, z >> 3);
 				int littleBlockId = tile.getContent(x & 7, y & 7, z & 7);
-				int littleMetaData = tile.getMetadata(x & 7, y & 7, z & 7); 
-				LoggerLittleBlocks.getInstance(
-						LoggerLittleBlocks.filterClassName(
-								this.getClass().toString()
-						)
-				).write(
-						this.isRemote,
-						"getBlockMetadata(" + x + ", " + y + ", " + z + ").[" + littleBlockId + ", " + littleMetaData + "]",
-						LoggerLittleBlocks.LogLevel.DEBUG
-				);
+				int littleMetaData = tile.getMetadata(x & 7, y & 7, z & 7);
 				return littleMetaData;
 			} else {
 				LoggerLittleBlocks.getInstance(
@@ -448,9 +413,9 @@ public class LittleWorld extends World {
 			Chunk chunk = realWorld.getChunkFromChunkCoords(x >> 7, z >> 7);
 			if (chunk.getBlockID((x & 0x7f) >> 3, y >> 3, (z & 0x7f) >> 3) != LBCore.littleBlocksID) {
 				realWorld.setBlockWithNotify(
-						(x) >> 3,
+						x >> 3,
 						y >> 3,
-						(z) >> 3,
+						z >> 3,
 						LBCore.littleBlocksID);
 			}
 			TileEntityLittleBlocks tile = (TileEntityLittleBlocks) realWorld
@@ -458,17 +423,18 @@ public class LittleWorld extends World {
 			int currentId = tile.getContent(x & 7, y & 7, z & 7);
 			int currentData = tile.getMetadata(x & 7, y & 7, z & 7);
 			if (currentId != id || currentData != metadata) {
+				tile.setContent(x & 7, y & 7, z & 7, id, metadata);
+				flag = true;
+			} else {
 				LoggerLittleBlocks.getInstance(
 						LoggerLittleBlocks.filterClassName(
 								this.getClass().toString()
 						)
 				).write(
 						this.isRemote,
-						"setBlockAndMetadata(" + x + ", " + y + ", " + z + ").[" + id + ", " + metadata + "]",
-						LoggerLittleBlocks.LogLevel.DEBUG
+						"setBlockAndMetadata(" + x + ", " + y + ", " + z + ").[" + id + ", "+ metadata + "]:No Change",
+						LoggerLittleBlocks.LogLevel.ERROR
 				);
-				tile.setContent(x & 7, y & 7, z & 7, id, metadata);
-				flag = true;
 			}
 			realWorld.updateAllLightTypes(x >> 3, y >> 3, z >> 3);
 			return flag;
@@ -534,15 +500,6 @@ public class LittleWorld extends World {
 				int currentId = tileentitylb.getContent(x & 7, y & 7, z & 7);
 				int currentData = tileentitylb.getMetadata(x & 7, y & 7, z & 7);
 				if (currentId != blockId || currentData != metadata) {
-					LoggerLittleBlocks.getInstance(
-							LoggerLittleBlocks.filterClassName(
-									this.getClass().toString()
-							)
-					).write(
-							this.isRemote,
-							"setBlockAndMetadataWithUpdate(" + x + ", " + y + ", " + z + ").[" + blockId + ", " + metadata + "]",
-							LoggerLittleBlocks.LogLevel.DEBUG
-					);
 					tileentitylb.setContent(
 							x & 7,
 							y & 7,
@@ -550,6 +507,16 @@ public class LittleWorld extends World {
 							blockId,
 							metadata);
 					flag = true;
+				} else {
+					LoggerLittleBlocks.getInstance(
+							LoggerLittleBlocks.filterClassName(
+									this.getClass().toString()
+							)
+					).write(
+							this.isRemote,
+							"setBlockAndMetadataWithUpdate(" + x + ", " + y + ", " + z + ").[" + blockId + ", " + metadata + "]:No Change",
+							LoggerLittleBlocks.LogLevel.DEBUG
+					);
 				}
 				this.markBlockForRenderUpdate(x >> 3, y >> 3, z >> 3);
 			}
@@ -608,17 +575,18 @@ public class LittleWorld extends World {
 					.getBlockTileEntity(x >> 3, y >> 3, z >> 3);
 			int currentId = tile.getContent(x & 7, y & 7, z & 7);
 			if (currentId != id) {
+				tile.setContent(x & 7, y & 7, z & 7, id);
+				flag = true;
+			} else {
 				LoggerLittleBlocks.getInstance(
 						LoggerLittleBlocks.filterClassName(
 								this.getClass().toString()
 						)
 				).write(
 						this.isRemote,
-						"setBlock(" + x + ", " + y + ", " + z + ").[" + id + "]",
+						"setBlock(" + x + ", " + y + ", " + z + ").[" + id + "]:No Change",
 						LoggerLittleBlocks.LogLevel.DEBUG
 				);
-				tile.setContent(x & 7, y & 7, z & 7, id);
-				flag = true;
 			}
 			realWorld.updateAllLightTypes(x >> 3, y >> 3, z >> 3);
 			return flag;
@@ -667,19 +635,20 @@ public class LittleWorld extends World {
 			if (chunk.getBlockID((x & 0x7f) >> 3, y >> 3, (z & 0x7f) >> 3) == LBCore.littleBlocksID) {
 				TileEntityLittleBlocks tile = (TileEntityLittleBlocks) realWorld
 						.getBlockTileEntity(x >> 3, y >> 3, z >> 3);
+				int id = tile.getContent(x & 7, y & 7, z & 7);
 				int currentData = tile.getMetadata(x & 7, y & 7, z & 7);
 				if (currentData != metadata) {
-					int id = tile.getContent(x & 7, y & 7, z & 7);
+					tile.setMetadata(x & 7, y & 7, z & 7, metadata);
+				} else {
 					LoggerLittleBlocks.getInstance(
 							LoggerLittleBlocks.filterClassName(
 									this.getClass().toString()
 							)
 					).write(
 							this.isRemote,
-							"setBlockMetadata(" + x + ", " + y + ", " + z + ").[" + id + ", " + metadata + "]",
+							"setBlockMetadata(" + x + ", " + y + ", " + z + ").[" + id + ", " + metadata + "]:No Change",
 							LoggerLittleBlocks.LogLevel.DEBUG
 					);
-					tile.setMetadata(x & 7, y & 7, z & 7, metadata);
 				}
 			} else {
 				LoggerLittleBlocks.getInstance(
@@ -714,15 +683,6 @@ public class LittleWorld extends World {
 				(xMid >> 3) + xDiff,
 				(yMid >> 3) + yDiff,
 				(zMid >> 3) + zDiff);
-		LoggerLittleBlocks.getInstance(
-				LoggerLittleBlocks.filterClassName(
-						this.getClass().toString()
-				)
-		).write(
-				this.isRemote,
-				"checkChunkExist(" + minX + ", " + minY + ", " + minZ + ", " + maxX + ", " + maxY + ", " + maxZ + ").[" + flag + "]",
-				LoggerLittleBlocks.LogLevel.DEBUG
-		);
 
 		return flag;
 	}
@@ -781,16 +741,17 @@ public class LittleWorld extends World {
 		if (!realWorld.editingBlocks && !world.isRemote) {
 			Block block = Block.blocksList[world.getBlockId(x, y, z)];
 			if (block != null) {
+				block.onNeighborBlockChange(world, x, y, z, side);
+			} else {
 				LoggerLittleBlocks.getInstance(
 						LoggerLittleBlocks.filterClassName(
 								this.getClass().toString()
 						)
 				).write(
 						this.isRemote,
-						"notifyBlocksOfNeighbourChange(" + x + ", " + y + ", " + z + ").[" + side + "]",
+						"notifyBlocksOfNeighbourChange(" + x + ", " + y + ", " + z + ").[" + side + "]:Null",
 						LoggerLittleBlocks.LogLevel.DEBUG
 				);
-				block.onNeighborBlockChange(world, x, y, z, side);
 			}
 		}
 		//world.markBlockForUpdate(x, y, z);
@@ -804,15 +765,6 @@ public class LittleWorld extends World {
 
 	public void idModified(int lastBlockId, int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
 		realWorld.updateAllLightTypes(x, y, z);
-		LoggerLittleBlocks.getInstance(
-				LoggerLittleBlocks.filterClassName(
-						this.getClass().toString()
-				)
-		).write(
-				this.isRemote,
-				"idModified(" + x + ", " + y + ", " + z + ").[" + side + "].(" + littleX + ", " + littleY + ", " + littleZ + ", " + blockId + ", " + metadata + ")",
-				LoggerLittleBlocks.LogLevel.DEBUG
-		);
 	}
 
 	/*
@@ -820,15 +772,6 @@ public class LittleWorld extends World {
 	 */
 
 	public void metadataModified(int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
-		LoggerLittleBlocks.getInstance(
-				LoggerLittleBlocks.filterClassName(
-						this.getClass().toString()
-				)
-		).write(
-				this.isRemote,
-				"metadataModified(" + x + ", " + y + ", " + z + ").[" + side + "].(" + littleX + ", " + littleY + ", " + littleZ + ", " + blockId + ", " + metadata + ")",
-				LoggerLittleBlocks.LogLevel.DEBUG
-		);
 	}
 
 	@Override
@@ -1031,30 +974,76 @@ public class LittleWorld extends World {
 	@Override
 	public boolean isBlockProvidingPowerTo(int x, int y, int z, int direction) {
 		int blockId = this.realWorld.getBlockId(x >> 3, y >> 3, z >> 3);
+		boolean flag;
 		if (blockId == LBCore.littleBlocksID) {
 			int littleBlockId = this.getBlockId(x, y, z);
-			return littleBlockId == 0 ? false : Block.blocksList[littleBlockId].isProvidingStrongPower(this, x, y, z, direction);
+			flag = littleBlockId == 0 ? false : Block.blocksList[littleBlockId].isProvidingStrongPower(this, x, y, z, direction);
+		} else {
+			x >>= 3;
+			y >>= 3;
+			z >>= 3;
+			flag = blockId == 0 ? false : Block.blocksList[blockId].isProvidingStrongPower(this.realWorld, x, y, z, direction);
 		}
-		return blockId == 0 ? false : Block.blocksList[blockId].isProvidingStrongPower(this.realWorld, x >> 3, y >> 3, z >> 3, direction);
+		LoggerLittleBlocks.getInstance(
+				LoggerLittleBlocks.filterClassName(
+						this.getClass().toString()
+				)
+		).write(
+				this.isRemote,
+				"isBlockProvidingPowerTo(" + x + ", " + y + ", " + z + ", " + direction + "):" + flag,
+				LoggerLittleBlocks.LogLevel.DEBUG
+		);
+		return flag;
 	}
 
 	@Override
 	public boolean isBlockGettingPowered(int x, int y, int z) {
-		return this.isBlockProvidingPowerTo(x, y - 1, z, 0) ? true : (this.isBlockProvidingPowerTo(x, y + 1, z, 1) ? true : (this.isBlockProvidingPowerTo(x, y, z - 1, 2) ? true : (this.isBlockProvidingPowerTo(x, y, z + 1, 3) ? true : (this.isBlockProvidingPowerTo(x - 1, y, z, 4) ? true : this.isBlockProvidingPowerTo(x + 1, y, z, 5)))));
+		boolean flag = this.isBlockProvidingPowerTo(x, y - 1, z, 0) ? true : (this.isBlockProvidingPowerTo(x, y + 1, z, 1) ? true : (this.isBlockProvidingPowerTo(x, y, z - 1, 2) ? true : (this.isBlockProvidingPowerTo(x, y, z + 1, 3) ? true : (this.isBlockProvidingPowerTo(x - 1, y, z, 4) ? true : this.isBlockProvidingPowerTo(x + 1, y, z, 5)))));
+		LoggerLittleBlocks.getInstance(
+				LoggerLittleBlocks.filterClassName(
+						this.getClass().toString()
+				)
+		).write(
+				this.isRemote,
+				"isBlockGettingPowered(" + x + ", " + y + ", " + z + ", " + "):" + flag,
+				LoggerLittleBlocks.LogLevel.DEBUG
+		);
+		return flag;
 	}
 
 	@Override
 	public boolean isBlockIndirectlyProvidingPowerTo(int x, int y, int z, int direction) {
+		boolean flag;
 		if (this.isBlockNormalCube(x, y, z)) {
-			return this.isBlockGettingPowered(x, y, z);
+			flag = this.isBlockGettingPowered(x, y, z);
 		} else {
-			int var5 = this.getBlockId(x, y, z);
-			return var5 == 0 ? false : Block.blocksList[var5].isProvidingWeakPower(this, x, y, z, direction);
+			int blockId = this.getBlockId(x, y, z);
+			flag = blockId == 0 ? false : Block.blocksList[blockId].isProvidingWeakPower(this, x, y, z, direction);
 		}
+		LoggerLittleBlocks.getInstance(
+				LoggerLittleBlocks.filterClassName(
+						this.getClass().toString()
+				)
+		).write(
+				this.isRemote,
+				"isBlockIndirectlyProvidingPowerTo(" + x + ", " + y + ", " + z + ", " + direction + "):" + flag,
+				LoggerLittleBlocks.LogLevel.DEBUG
+		);
+		return flag;
     }
     
 	@Override
 	public boolean isBlockIndirectlyGettingPowered(int x, int y, int z) {
-		return this.isBlockIndirectlyProvidingPowerTo(x, y - 1, z, 0) ? true : (this.isBlockIndirectlyProvidingPowerTo(x, y + 1, z, 1) ? true : (this.isBlockIndirectlyProvidingPowerTo(x, y, z - 1, 2) ? true : (this.isBlockIndirectlyProvidingPowerTo(x, y, z + 1, 3) ? true : (this.isBlockIndirectlyProvidingPowerTo(x - 1, y, z, 4) ? true : this.isBlockIndirectlyProvidingPowerTo(x + 1, y, z, 5)))));
+		boolean flag = this.isBlockIndirectlyProvidingPowerTo(x, y - 1, z, 0) ? true : (this.isBlockIndirectlyProvidingPowerTo(x, y + 1, z, 1) ? true : (this.isBlockIndirectlyProvidingPowerTo(x, y, z - 1, 2) ? true : (this.isBlockIndirectlyProvidingPowerTo(x, y, z + 1, 3) ? true : (this.isBlockIndirectlyProvidingPowerTo(x - 1, y, z, 4) ? true : this.isBlockIndirectlyProvidingPowerTo(x + 1, y, z, 5)))));
+		LoggerLittleBlocks.getInstance(
+				LoggerLittleBlocks.filterClassName(
+						this.getClass().toString()
+				)
+		).write(
+				this.isRemote,
+				"isBlockIndirectlyGettingPowered(" + x + ", " + y + ", " + z + "):" + flag,
+				LoggerLittleBlocks.LogLevel.DEBUG
+		);
+		return flag;
 	}
 }
