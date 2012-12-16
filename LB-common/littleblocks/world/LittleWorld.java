@@ -744,7 +744,9 @@ public class LittleWorld extends World {
 		notifyBlockOfNeighborChange(x, y + 1, z, side);
 		notifyBlockOfNeighborChange(x, y, z - 1, side);
 		notifyBlockOfNeighborChange(x, y, z + 1, side);
-		//this.markBlockForUpdate(x, y, z);
+		if (this.isRemote) {
+			this.markBlockForUpdate(x, y, z);
+		}
 	}
 
 	private void notifyBlockOfNeighborChange(int x, int y, int z, int side) {
@@ -1024,5 +1026,35 @@ public class LittleWorld extends World {
 	@Override
 	public Entity getEntityByID(int entityId) {
 		return null;
+	}
+
+	@Override
+	public boolean isBlockProvidingPowerTo(int x, int y, int z, int direction) {
+		int blockId = this.realWorld.getBlockId(x >> 3, y >> 3, z >> 3);
+		if (blockId == LBCore.littleBlocksID) {
+			int littleBlockId = this.getBlockId(x, y, z);
+			return littleBlockId == 0 ? false : Block.blocksList[littleBlockId].isProvidingStrongPower(this, x, y, z, direction);
+		}
+		return blockId == 0 ? false : Block.blocksList[blockId].isProvidingStrongPower(this.realWorld, x >> 3, y >> 3, z >> 3, direction);
+	}
+
+	@Override
+	public boolean isBlockGettingPowered(int x, int y, int z) {
+		return this.isBlockProvidingPowerTo(x, y - 1, z, 0) ? true : (this.isBlockProvidingPowerTo(x, y + 1, z, 1) ? true : (this.isBlockProvidingPowerTo(x, y, z - 1, 2) ? true : (this.isBlockProvidingPowerTo(x, y, z + 1, 3) ? true : (this.isBlockProvidingPowerTo(x - 1, y, z, 4) ? true : this.isBlockProvidingPowerTo(x + 1, y, z, 5)))));
+	}
+
+	@Override
+	public boolean isBlockIndirectlyProvidingPowerTo(int x, int y, int z, int direction) {
+		if (this.isBlockNormalCube(x, y, z)) {
+			return this.isBlockGettingPowered(x, y, z);
+		} else {
+			int var5 = this.getBlockId(x, y, z);
+			return var5 == 0 ? false : Block.blocksList[var5].isProvidingWeakPower(this, x, y, z, direction);
+		}
+    }
+    
+	@Override
+	public boolean isBlockIndirectlyGettingPowered(int x, int y, int z) {
+		return this.isBlockIndirectlyProvidingPowerTo(x, y - 1, z, 0) ? true : (this.isBlockIndirectlyProvidingPowerTo(x, y + 1, z, 1) ? true : (this.isBlockIndirectlyProvidingPowerTo(x, y, z - 1, 2) ? true : (this.isBlockIndirectlyProvidingPowerTo(x, y, z + 1, 3) ? true : (this.isBlockIndirectlyProvidingPowerTo(x - 1, y, z, 4) ? true : this.isBlockIndirectlyProvidingPowerTo(x + 1, y, z, 5)))));
 	}
 }

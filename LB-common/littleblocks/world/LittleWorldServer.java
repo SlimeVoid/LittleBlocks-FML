@@ -15,8 +15,14 @@ import net.minecraft.src.Block;
 import net.minecraft.src.BlockEventData;
 import net.minecraft.src.Chunk;
 import net.minecraft.src.ChunkCoordIntPair;
+import net.minecraft.src.Entity;
+import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.EntityPlayerMP;
+import net.minecraft.src.Explosion;
 import net.minecraft.src.NextTickListEntry;
+import net.minecraft.src.Packet60Explosion;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.Vec3;
 import net.minecraft.src.World;
 import net.minecraft.src.WorldProvider;
 import net.minecraft.src.WorldSettings;
@@ -175,6 +181,41 @@ public class LittleWorldServer extends LittleWorld {
 			return !this.pendingTickListEntries.isEmpty();
 		}
 	}
+
+    /**
+     * returns a new explosion. Does initiation (at time of writing Explosion is not finished)
+     */
+    public Explosion newExplosion(Entity entity, double x, double y, double z, float strength, boolean isFlaming, boolean isSmoking)
+    {
+        Explosion explosion = new Explosion(this, entity, x, y, z, strength / 8);
+        explosion.isFlaming = isFlaming;
+        explosion.isSmoking = isSmoking;
+        explosion.doExplosionA();
+        explosion.doExplosionB(false);
+
+        if (!isSmoking)
+        {
+            explosion.affectedBlockPositions.clear();
+        }
+        
+        double xCoord = (double)((int)x >> 3);
+        double yCoord = (double)((int)y >> 3);
+        double zCoord = (double)((int)z >> 3);
+
+        Iterator players = this.realWorld.playerEntities.iterator();
+
+        while (players.hasNext())
+        {
+            EntityPlayer player = (EntityPlayer)players.next();
+
+            if (player.getDistanceSq(xCoord, yCoord, zCoord) < 4096.0D)
+            {
+                ((EntityPlayerMP)player).playerNetServerHandler.sendPacketToPlayer(new Packet60Explosion(xCoord, yCoord, zCoord, strength / 8, explosion.affectedBlockPositions, (Vec3)explosion.func_77277_b().get(player)));
+            }
+        }
+
+        return explosion;
+    }
 
 	/**
 	 * Send and apply locally all pending BlockEvents to each player with 64m
@@ -405,6 +446,18 @@ public class LittleWorldServer extends LittleWorld {
 					(z << 3) + littleZ,
 					0,
 					0);
+			CommonPacketHandler.idModified(
+					this,
+					lastBlockId,
+					x,
+					y,
+					z,
+					side,
+					littleX,
+					littleY,
+					littleZ,
+					blockId,
+					metadata);
 		}
 		if (blockId != 0) {
 			Block.blocksList[blockId].onBlockAdded(
@@ -412,6 +465,18 @@ public class LittleWorldServer extends LittleWorld {
 					(x << 3) + littleX,
 					(y << 3) + littleY,
 					(z << 3) + littleZ);
+			CommonPacketHandler.idModified(
+					this,
+					blockId,
+					x,
+					y,
+					z,
+					side,
+					littleX,
+					littleY,
+					littleZ,
+					blockId,
+					metadata);
 		}
 		super.idModified(
 				lastBlockId,
@@ -429,19 +494,5 @@ public class LittleWorldServer extends LittleWorld {
 				(y << 3) + littleY,
 				(z << 3) + littleZ,
 				blockId);
-		if (lastBlockId != 0) {
-			CommonPacketHandler.idModified(
-					this,
-					lastBlockId,
-					x,
-					y,
-					z,
-					side,
-					littleX,
-					littleY,
-					littleZ,
-					blockId,
-					metadata);
-		}
 	}
 }
