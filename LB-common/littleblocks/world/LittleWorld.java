@@ -87,6 +87,7 @@ public class LittleWorld extends World {
 		super.tick();
 		this.ticksInWorld++;
 		if (this.isRemote) {
+	        this.func_82738_a(this.getTotalWorldTime() + 1L);
 			this.setWorldTime(this.getWorldTime() + 1L);
 		}
 		if (this.ticksInWorld >= MAX_TICKS_IN_WORLD) {
@@ -129,6 +130,11 @@ public class LittleWorld extends World {
 				y >> 3,
 				z >> 3);
 	}
+
+	@Override
+    public long getWorldTime() {
+        return this.realWorld.provider.getWorldTime();
+    }
 
 	@Override
 	public long getTotalWorldTime() {
@@ -738,7 +744,7 @@ public class LittleWorld extends World {
 		notifyBlockOfNeighborChange(x, y + 1, z, side);
 		notifyBlockOfNeighborChange(x, y, z - 1, side);
 		notifyBlockOfNeighborChange(x, y, z + 1, side);
-		this.markBlockForUpdate(x, y, z);
+		//this.markBlockForUpdate(x, y, z);
 	}
 
 	private void notifyBlockOfNeighborChange(int x, int y, int z, int side) {
@@ -785,7 +791,7 @@ public class LittleWorld extends World {
 				block.onNeighborBlockChange(world, x, y, z, side);
 			}
 		}
-		world.markBlockForRenderUpdate(x, y, z);
+		//world.markBlockForUpdate(x, y, z);
 	}
 
 	/*

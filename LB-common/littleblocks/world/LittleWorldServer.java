@@ -83,17 +83,15 @@ public class LittleWorldServer extends LittleWorld {
 
 	@Override
 	public void tick() {
-		if (this.worldInfo.getWorldTime() != this.realWorld
-				.getWorldInfo()
-					.getWorldTime()) {
-			this.worldInfo.setWorldTime(this.realWorld
-					.getWorldInfo()
-						.getWorldTime());
+		if (this.worldInfo.getWorldTime() != this.getWorldTime()) {
+			this.worldInfo.setWorldTime(this.getWorldTime());
+			this.worldInfo.incrementTotalWorldTime(this.getTotalWorldTime());
 			this.scheduledTickSet.clear();
 			this.pendingTickListEntries.clear();
 		}
 		this.sendAndApplyBlockEvents();
-		this.worldInfo.setWorldTime(this.worldInfo.getWorldTime() + 1L);
+        this.worldInfo.incrementTotalWorldTime(this.getTotalWorldTime() + 1L);
+        this.worldInfo.setWorldTime(this.getWorldTime() + 1L);
 		this.tickUpdates(false);
 		this.sendAndApplyBlockEvents();
 	}
