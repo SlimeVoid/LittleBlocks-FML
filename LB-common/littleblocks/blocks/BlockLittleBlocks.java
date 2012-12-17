@@ -234,7 +234,7 @@ public class BlockLittleBlocks extends BlockContainer {
 									entityplayer,
 									littleWorld,
 									entityplayer.getCurrentEquippedItem());
-							world.markBlockForUpdate(x, y, z);
+							//world.markBlockForUpdate(x, y, z);
 							return true;
 						} else if (itemManager.activateBlockOrUseItem(
 								entityplayer,
@@ -247,7 +247,7 @@ public class BlockLittleBlocks extends BlockContainer {
 								a,
 								b,
 								c)) {
-							world.markBlockForUpdate(x, y, z);
+							//world.markBlockForUpdate(x, y, z);
 							return true;
 						}
 					}

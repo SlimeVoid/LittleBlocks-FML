@@ -44,28 +44,13 @@ public class CommonPacketHandler implements IPacketHandler {
 		}
 	}
 
-	/*
-	 * public static void metadataModified(LittleWorld littleWorld,
-	 * BlockLittleBlocksBlock lbb) { PacketLittleBlocks packetLB = new
-	 * PacketLittleBlocks( LBCore.metaDataModifiedCommand, lbb);
-	 * packetLB.setSender(LBPacketIds.SERVER); sendToAllPlayers(
-	 * littleWorld.getRealWorld(), null, packetLB.getPacket(), lbb.getParentX(),
-	 * lbb.getParentY(), lbb.getParentZ(), true); }
-	 */
-
 	public static void metadataModified(LittleWorld littleWorld, int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
 		PacketLittleBlocks packetLB = new PacketLittleBlocks(
-				LBCore.idModifiedCommand,
-					x,
-					y,
-					z,
+				LBCore.metaDataModifiedCommand,
+					(x << 3) + littleX,
+					(y << 3) + littleY,
+					(z << 3) + littleZ,
 					side,
-					0,
-					0,
-					0,
-					littleX,
-					littleY,
-					littleZ,
 					blockId,
 					metadata);
 		packetLB.setSender(LBPacketIds.SERVER);
@@ -79,34 +64,13 @@ public class CommonPacketHandler implements IPacketHandler {
 				true);
 	}
 
-	public static void idModified(LittleWorld littleWorld, BlockLittleBlocksBlock lbb) {
-		PacketLittleBlocks packetLB = new PacketLittleBlocks(
-				LBCore.idModifiedCommand,
-					lbb);
-		packetLB.setSender(LBPacketIds.SERVER);
-		sendToAllPlayers(
-				littleWorld.getRealWorld(),
-				null,
-				packetLB.getPacket(),
-				lbb.getParentX(),
-				lbb.getParentY(),
-				lbb.getParentZ(),
-				true);
-	}
-
 	public static void idModified(LittleWorld littleWorld, int lastBlockId, int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
 		PacketLittleBlocks packetLB = new PacketLittleBlocks(
 				LBCore.idModifiedCommand,
-					x,
-					y,
-					z,
+				(x << 3) + littleX,
+				(y << 3) + littleY,
+				(z << 3) + littleZ,
 					side,
-					0,
-					0,
-					0,
-					littleX,
-					littleY,
-					littleZ,
 					blockId,
 					metadata);
 		packetLB.setSender(LBPacketIds.SERVER);

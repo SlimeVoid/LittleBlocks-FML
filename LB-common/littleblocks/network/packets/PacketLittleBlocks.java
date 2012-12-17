@@ -15,17 +15,23 @@ import eurysmods.network.packets.core.PacketUpdate;
 public class PacketLittleBlocks extends PacketUpdate {
 
 	private int sender;
+	private int blockId;
+	private int metaData;
 
 	@Override
 	public void writeData(DataOutputStream data) throws IOException {
 		super.writeData(data);
 		data.writeInt(sender);
+		data.writeInt(blockId);
+		data.writeInt(metaData);
 	}
 
 	@Override
 	public void readData(DataInputStream data) throws IOException {
 		super.readData(data);
 		sender = data.readInt();
+		blockId = data.readInt();
+		metaData = data.readInt();
 	}
 
 	public PacketLittleBlocks() {
@@ -36,7 +42,7 @@ public class PacketLittleBlocks extends PacketUpdate {
 	public PacketLittleBlocks(String command, int x, int y, int z, int side, float vecX, float vecY, float vecZ, int selectedX, int selectedY, int selectedZ, int blockId, int metadata) {
 		this();
 		this.setPosition(x, y, z, side);
-		this.setVecs(vecX, vecY, vecZ);
+		//this.setVecs(vecX, vecY, vecZ);
 		this.payload = new PacketPayload(5, 0, 1, 0);
 		this.setCommand(command);
 		this.setBlockId(blockId);
@@ -44,22 +50,15 @@ public class PacketLittleBlocks extends PacketUpdate {
 		this.setSelectedXYZ(selectedX, selectedY, selectedZ);
 	}
 
-	public PacketLittleBlocks(String command, BlockLittleBlocksBlock lbb) {
+	public PacketLittleBlocks(String command, int x, int y, int z, int side, int blockId, int metadata) {
 		this();
-		this.setPosition(
-				lbb.getParentX(),
-				lbb.getParentY(),
-				lbb.getParentZ(),
-				0);
-		this.setVecs(0, 0, 0);
-		this.payload = new PacketPayload(5, 0, 1, 0);
+		this.setPosition(x, y, z, side);
+		//this.setVecs(vecX, vecY, vecZ);
+		this.payload = new PacketPayload(0, 0, 1, 0);
 		this.setCommand(command);
-		this.setBlockId(lbb.getBlockId());
-		this.setMetadata(lbb.getMetaData());
-		this.setSelectedXYZ(
-				lbb.getLittleX(),
-				lbb.getLittleY(),
-				lbb.getLittleZ());
+		this.setBlockId(blockId);
+		this.setMetadata(metadata);
+		//this.setSelectedXYZ(selectedX, selectedY, selectedZ);
 	}
 
 	private void setCommand(String command) {
@@ -92,19 +91,23 @@ public class PacketLittleBlocks extends PacketUpdate {
 	}
 
 	public void setBlockId(int blockId) {
-		this.payload.setIntPayload(0, blockId);
+		//this.payload.setIntPayload(0, blockId);
+		this.blockId = blockId;
 	}
 
 	public void setMetadata(int metadata) {
-		this.payload.setIntPayload(1, metadata);
+		//this.payload.setIntPayload(1, metadata);
+		this.metaData = metadata;
 	}
 
 	public int getBlockID() {
-		return this.payload.getIntPayload(0);
+		//return this.payload.getIntPayload(0);
+		return blockId;
 	}
 
 	public int getMetadata() {
-		return this.payload.getIntPayload(1);
+		//return this.payload.getIntPayload(1);
+		return metaData;
 	}
 
 	public int getSelectedX() {

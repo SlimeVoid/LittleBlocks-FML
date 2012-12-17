@@ -3,12 +3,15 @@ package littleblocks.network;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 
+import littleblocks.api.ILBCommonProxy;
 import littleblocks.blocks.BlockLittleBlocks;
 import littleblocks.core.LBCore;
+import littleblocks.core.LBInit;
 import littleblocks.network.packets.PacketLittleBlocks;
 import littleblocks.network.packets.PacketLittleBlocksSettings;
 import littleblocks.network.packets.PacketTileEntityLB;
 import littleblocks.tileentities.TileEntityLittleBlocks;
+import littleblocks.world.LittleWorld;
 import net.minecraft.src.Block;
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.EntityPlayer;
@@ -133,57 +136,50 @@ public class ClientPacketHandler implements IPacketHandler {
 				CommonPacketHandler.handlePacket(packet, entityplayer, world);
 			}
 			if (packetLB.getCommand().equals(LBCore.littleNotifyCommand)) {
-			} else if (packetLB.targetExists(world)) {
-				TileEntity tileentity = packetLB.getTileEntity(world);
-				int xx = (packetLB.xPosition << 3) + packetLB.getSelectedX(), yy = (packetLB.yPosition << 3) + packetLB
-						.getSelectedY(), zz = (packetLB.zPosition << 3) + packetLB
-						.getSelectedZ();
-				if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
-					TileEntityLittleBlocks tileentitylb = (TileEntityLittleBlocks) tileentity;
-					if (packetLB.getCommand().equals(LBCore.idModifiedCommand)) {
-						tileentitylb.setContent(
-								packetLB.getSelectedX(),
-								packetLB.getSelectedY(),
-								packetLB.getSelectedZ(),
-								packetLB.getBlockID());
-						tileentitylb.setMetadata(
-								packetLB.getSelectedX(),
-								packetLB.getSelectedY(),
-								packetLB.getSelectedZ(),
-								packetLB.getMetadata());
-					}
-					if (packetLB.getCommand().equals(
-							LBCore.metaDataModifiedCommand)) {
-						tileentitylb.setContent(
-								packetLB.getSelectedX(),
-								packetLB.getSelectedY(),
-								packetLB.getSelectedZ(),
-								packetLB.getBlockID());
-						tileentitylb.setMetadata(
-								packetLB.getSelectedX(),
-								packetLB.getSelectedY(),
-								packetLB.getSelectedZ(),
-								packetLB.getMetadata());
-					}
-					if (packetLB
-							.getCommand()
-								.equals(LBCore.updateClientCommand)) {
-						tileentitylb.setContent(
-								packetLB.getSelectedX(),
-								packetLB.getSelectedY(),
-								packetLB.getSelectedZ(),
-								packetLB.getBlockID());
-						tileentitylb.setMetadata(
-								packetLB.getSelectedX(),
-								packetLB.getSelectedY(),
-								packetLB.getSelectedZ(),
-								packetLB.getMetadata());
-					}
-					world.markBlockForRenderUpdate(
+			} else {
+				if (packetLB.getCommand().equals(LBCore.idModifiedCommand)) {
+					LittleWorld lw = ((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(world, false);
+					lw.setBlockAndMetadata(
 							packetLB.xPosition,
 							packetLB.yPosition,
-							packetLB.zPosition);
+							packetLB.zPosition,
+							packetLB.getBlockID(),
+							packetLB.getMetadata());
+					/*tileentitylb.setContent(
+							packetLB.getSelectedX(),
+							packetLB.getSelectedY(),
+							packetLB.getSelectedZ(),
+							packetLB.getBlockID());
+					tileentitylb.setMetadata(
+							packetLB.getSelectedX(),
+							packetLB.getSelectedY(),
+							packetLB.getSelectedZ(),
+							packetLB.getMetadata());*/
 				}
+				if (packetLB.getCommand().equals(
+						LBCore.metaDataModifiedCommand)) {
+					LittleWorld lw = ((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(world, false);
+					lw.setBlockAndMetadata(
+							packetLB.xPosition,
+							packetLB.yPosition,
+							packetLB.zPosition,
+							packetLB.getBlockID(),
+							packetLB.getMetadata());
+					/*tileentitylb.setContent(
+							packetLB.getSelectedX(),
+							packetLB.getSelectedY(),
+							packetLB.getSelectedZ(),
+							packetLB.getBlockID());
+					tileentitylb.setMetadata(
+							packetLB.getSelectedX(),
+							packetLB.getSelectedY(),
+							packetLB.getSelectedZ(),
+							packetLB.getMetadata());*/
+				}
+				world.markBlockForRenderUpdate(
+						packetLB.xPosition,
+						packetLB.yPosition,
+						packetLB.zPosition);
 			}
 		}
 	}
