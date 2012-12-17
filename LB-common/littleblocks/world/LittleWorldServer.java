@@ -358,48 +358,57 @@ public class LittleWorldServer extends LittleWorld {
 	 */
 	@Override
 	public void scheduleBlockUpdate(int x, int y, int z, int blockId, int tickRate) {
-		NextTickListEntry nextTick = new NextTickListEntry(x, y, z, blockId);
+		this.func_82740_a(x, y, z, blockId, tickRate, 0);
+	}
+	
+	@Override
+    public void func_82740_a(int x, int y, int z, int blockId, int tickRate, int someValue) {
+		NextTickListEntry nextTickEntry = new NextTickListEntry(x, y, z, blockId);
 		byte max = 8;
 
-		if (this.scheduledUpdatesAreImmediate) {
-			if (this.checkChunksExist(
-					nextTick.xCoord - max,
-					nextTick.yCoord - max,
-					nextTick.zCoord - max,
-					nextTick.xCoord + max,
-					nextTick.yCoord + max,
-					nextTick.zCoord + max)) {
-				int var8 = this.getBlockId(
-						nextTick.xCoord,
-						nextTick.yCoord,
-						nextTick.zCoord);
-
-				if (var8 == nextTick.blockID && var8 > 0) {
-					Block.blocksList[var8].updateTick(
-							this,
-							nextTick.xCoord,
-							nextTick.yCoord,
-							nextTick.zCoord,
-							this.rand);
+		if (this.scheduledUpdatesAreImmediate && blockId > 0) {
+			if (Block.blocksList[blockId].func_82506_l()) {
+				if (this.checkChunksExist(
+						nextTickEntry.xCoord - max,
+						nextTickEntry.yCoord - max,
+						nextTickEntry.zCoord - max,
+						nextTickEntry.xCoord + max,
+						nextTickEntry.yCoord + max,
+						nextTickEntry.zCoord + max)) {
+					int nextTickId = this.getBlockId(
+							nextTickEntry.xCoord,
+							nextTickEntry.yCoord,
+							nextTickEntry.zCoord);
+	
+					if (nextTickId == nextTickEntry.blockID && nextTickId > 0) {
+						Block.blocksList[nextTickId].updateTick(
+								this,
+								nextTickEntry.xCoord,
+								nextTickEntry.yCoord,
+								nextTickEntry.zCoord,
+								this.rand);
+					}
 				}
+            	return;
 			}
-		} else {
-			if (this.checkChunksExist(
-					x - max,
-					y - max,
-					z - max,
-					x + max,
-					y + max,
-					z + max)) {
-				if (blockId > 0) {
-					nextTick.setScheduledTime(tickRate + this.worldInfo
-							.getWorldTime());
-				}
+			tickRate = 1;
+		}
+		if (this.checkChunksExist(
+				x - max,
+				y - max,
+				z - max,
+				x + max,
+				y + max,
+				z + max)) {
+			if (blockId > 0) {
+				nextTickEntry.setScheduledTime((long)tickRate + this.worldInfo
+						.getWorldTime());
+				//nextTickEntry.func_82753_a(someValue);
+			}
 
-				if (!this.scheduledTickSet.contains(nextTick)) {
-					this.scheduledTickSet.add(nextTick);
-					this.pendingTickListEntries.add(nextTick);
-				}
+			if (!this.scheduledTickSet.contains(nextTickEntry)) {
+				this.scheduledTickSet.add(nextTickEntry);
+				this.pendingTickListEntries.add(nextTickEntry);
 			}
 		}
 	}
