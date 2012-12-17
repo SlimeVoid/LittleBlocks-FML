@@ -87,10 +87,8 @@ public class LittleWorld extends World {
 	public void tick() {
 		super.tick();
 		this.ticksInWorld++;
-		if (this.isRemote) {
-	        this.func_82738_a(this.getTotalWorldTime() + 1L);
-			this.setWorldTime(this.getWorldTime() + 1L);
-		}
+        this.func_82738_a(this.getTotalWorldTime() + 1L);
+		this.setWorldTime(this.getWorldTime() + 1L);
 		if (this.ticksInWorld >= MAX_TICKS_IN_WORLD) {
 			this.ticksInWorld = 0;
 		}

@@ -15,17 +15,21 @@ import net.minecraft.src.Block;
 import net.minecraft.src.BlockEventData;
 import net.minecraft.src.Chunk;
 import net.minecraft.src.ChunkCoordIntPair;
+import net.minecraft.src.CrashReport;
+import net.minecraft.src.CrashReportCategory;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.Explosion;
 import net.minecraft.src.NextTickListEntry;
 import net.minecraft.src.Packet60Explosion;
+import net.minecraft.src.ReportedException;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.Vec3;
 import net.minecraft.src.World;
 import net.minecraft.src.WorldProvider;
 import net.minecraft.src.WorldSettings;
+import net.minecraftforge.common.DimensionManager;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Side;
 
@@ -89,15 +93,15 @@ public class LittleWorldServer extends LittleWorld {
 
 	@Override
 	public void tick() {
-		if (this.worldInfo.getWorldTime() != this.getWorldTime()) {
+		/*if (this.worldInfo.getWorldTime() != this.getWorldTime()) {
 			this.worldInfo.setWorldTime(this.getWorldTime());
 			this.worldInfo.incrementTotalWorldTime(this.getTotalWorldTime());
 			this.scheduledTickSet.clear();
 			this.pendingTickListEntries.clear();
-		}
+		}*/
 		this.sendAndApplyBlockEvents();
-        this.worldInfo.incrementTotalWorldTime(this.getTotalWorldTime() + 1L);
-        this.worldInfo.setWorldTime(this.getWorldTime() + 1L);
+        this.worldInfo.incrementTotalWorldTime(this.realWorld.getWorldInfo().getWorldTotalTime() + 1L);
+        this.worldInfo.setWorldTime(this.realWorld.getWorldInfo().getWorldTime() + 1L);
 		this.tickUpdates(false);
 		this.sendAndApplyBlockEvents();
 	}
@@ -118,8 +122,8 @@ public class LittleWorldServer extends LittleWorld {
 				NextTickListEntry nextTick = (NextTickListEntry) this.pendingTickListEntries
 						.first();
 
-				if (!tick && nextTick.scheduledTime > this.worldInfo
-						.getWorldTime()) {
+				if (!tick && nextTick.scheduledTime > this.realWorld.getWorldInfo()
+						.getWorldTotalTime()) {
 					break;
 				}
 
@@ -139,27 +143,54 @@ public class LittleWorldServer extends LittleWorld {
 							nextTick.zCoord);
 
 					if (blockId == nextTick.blockID && blockId > 0) {
-						Block littleBlock = Block.blocksList[blockId];
-						if (LBCore.isBlockAllowedToTick(littleBlock)) {
-							littleBlock.updateTick(
-									this,
-									nextTick.xCoord,
-									nextTick.yCoord,
-									nextTick.zCoord,
-									this.rand);
-						} else {
+						try {
+							Block littleBlock = Block.blocksList[blockId];
+							if (LBCore.isBlockAllowedToTick(littleBlock)) {
+								littleBlock.updateTick(
+										this,
+										nextTick.xCoord,
+										nextTick.yCoord,
+										nextTick.zCoord,
+										this.rand);
+							} else {
+								LoggerLittleBlocks.getInstance(
+										LoggerLittleBlocks.filterClassName(
+												this.getClass().toString()
+										)
+								).write(
+										this.isRemote,
+										"BlockUpdateTick Prohibited[" + Block.blocksList[littleBlock.blockID].getBlockName() + "].("+ 
+												nextTick.xCoord + ", " +
+												nextTick.yCoord + ", " +
+												nextTick.zCoord + ")",
+										LoggerLittleBlocks.LogLevel.DEBUG
+								);
+							}
+						} catch(Throwable thrown) {
 							LoggerLittleBlocks.getInstance(
 									LoggerLittleBlocks.filterClassName(
 											this.getClass().toString()
 									)
 							).write(
 									this.isRemote,
-									"BlockUpdateTick Prohibited[" + Block.blocksList[littleBlock.blockID].getBlockName() + "].("+ 
+									"BlockUpdateTick FAILED[" + Block.blocksList[blockId].getBlockName() + "].("+ 
 											nextTick.xCoord + ", " +
 											nextTick.yCoord + ", " +
 											nextTick.zCoord + ")",
 									LoggerLittleBlocks.LogLevel.DEBUG
 							);
+							CrashReport var8 = CrashReport.func_85055_a(thrown, "Exception while ticking a block");
+							CrashReportCategory var9 = var8.func_85058_a("Block being ticked");
+							int metadata;
+							
+							try {
+								metadata = this.getBlockMetadata(nextTick.xCoord, nextTick.yCoord, nextTick.zCoord);
+							} catch (Throwable thrown2) {
+								metadata = -1;
+							}
+							
+							CrashReportCategory.func_85068_a(var9, nextTick.xCoord, nextTick.yCoord, nextTick.zCoord, blockId, metadata);
+							throw new ReportedException(var8);
 						}
 						/*TileEntity tileentity = this
 								.getRealWorld()
@@ -297,17 +328,13 @@ public class LittleWorldServer extends LittleWorld {
 	 * EventParameter
 	 */
 	public void addBlockEvent(int x, int y, int z, int blockID, int eventID, int eventParam) {
-		if (FMLCommonHandler.instance().getSide() == Side.CLIENT && !this.isRemote) {
-			super.addBlockEvent(x, y, z, blockID, eventID, eventParam);
-			return;
-		}
 		BlockEventData eventData = new BlockEventData(
 				x,
-					y,
-					z,
-					blockID,
-					eventID,
-					eventParam);
+				y,
+				z,
+				blockID,
+				eventID,
+				eventParam);
 		Iterator nextEvent = this.blockEventCache[this.blockEventCacheIndex]
 				.iterator();
 		BlockEventData newBlockEvent;
@@ -401,9 +428,9 @@ public class LittleWorldServer extends LittleWorld {
 				y + max,
 				z + max)) {
 			if (blockId > 0) {
-				nextTickEntry.setScheduledTime((long)tickRate + this.worldInfo
-						.getWorldTime());
-				//nextTickEntry.func_82753_a(someValue);
+				nextTickEntry.setScheduledTime((long)tickRate + this.realWorld.getWorldInfo()
+						.getWorldTotalTime());
+				nextTickEntry.func_82753_a(someValue);
 			}
 
 			if (!this.scheduledTickSet.contains(nextTickEntry)) {
@@ -422,7 +449,7 @@ public class LittleWorldServer extends LittleWorld {
 		NextTickListEntry nextTick = new NextTickListEntry(x, y, z, blockId);
 
 		if (blockId > 0) {
-			nextTick.setScheduledTime(tickRate + this.worldInfo.getWorldTime());
+			nextTick.setScheduledTime((long)tickRate + this.realWorld.getWorldInfo().getWorldTotalTime());
 		}
 
 		if (!this.scheduledTickSet.contains(nextTick)) {
