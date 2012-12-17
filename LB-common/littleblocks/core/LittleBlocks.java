@@ -19,7 +19,7 @@ import eurysmods.data.Logger.LogLevel;
 @Mod(
 		modid = "LittleBlocksMod",
 		name = "Little Blocks",
-		version = "2.0.0.6",
+		version = "2.0.0.7",
 		dependencies = "after:EurysCore")
 @NetworkMod(
 		clientSideRequired = true,
