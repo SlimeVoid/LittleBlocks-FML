@@ -381,25 +381,27 @@ public class BlockLittleBlocks extends BlockContainer {
 						(zSelected + 1) / m);
 			} else {
 				Block block = Block.blocksList[content];
-				block.setBlockBoundsBasedOnState(
-						tile.getLittleWorld(),
-						(x << 3) + xSelected,
-						(y << 3) + ySelected,
-						(z << 3) + zSelected);
-				AxisAlignedBB bound = AxisAlignedBB.getBoundingBox(
-						(xSelected + block.getBlockBoundsMinX()) / m,
-						(ySelected + block.getBlockBoundsMinY()) / m,
-						(zSelected + block.getBlockBoundsMinZ()) / m,
-						(xSelected + block.getBlockBoundsMaxX()) / m,
-						(ySelected + block.getBlockBoundsMaxY()) / m,
-						(zSelected + block.getBlockBoundsMaxZ()) / m);
-				setBlockBounds(
-						(float) bound.minX,
-						(float) bound.minY,
-						(float) bound.minZ,
-						(float) bound.maxX,
-						(float) bound.maxY,
-						(float) bound.maxZ);
+				if (block != null) {
+					block.setBlockBoundsBasedOnState(
+							tile.getLittleWorld(),
+							(x << 3) + xSelected,
+							(y << 3) + ySelected,
+							(z << 3) + zSelected);
+					AxisAlignedBB bound = AxisAlignedBB.getBoundingBox(
+							(xSelected + block.getBlockBoundsMinX()) / m,
+							(ySelected + block.getBlockBoundsMinY()) / m,
+							(zSelected + block.getBlockBoundsMinZ()) / m,
+							(xSelected + block.getBlockBoundsMaxX()) / m,
+							(ySelected + block.getBlockBoundsMaxY()) / m,
+							(zSelected + block.getBlockBoundsMaxZ()) / m);
+					setBlockBounds(
+							(float) bound.minX,
+							(float) bound.minY,
+							(float) bound.minZ,
+							(float) bound.maxX,
+							(float) bound.maxY,
+							(float) bound.maxZ);
+				}
 			}
 		}
 	}
@@ -418,21 +420,23 @@ public class BlockLittleBlocks extends BlockContainer {
 					for (int zz = 0; zz < content[xx][yy].length; zz++) {
 						if (content[xx][yy][zz] > 0) {
 							Block block = Block.blocksList[content[xx][yy][zz]];
-							setBlockBounds(
-									(float) (xx + block.getBlockBoundsMinX()) / m,
-									(float) (yy + block.getBlockBoundsMinY()) / m,
-									(float) (zz + block.getBlockBoundsMinZ()) / m,
-									(float) (xx + block.getBlockBoundsMaxX()) / m,
-									(float) (yy + block.getBlockBoundsMaxY()) / m,
-									(float) (zz + block.getBlockBoundsMaxZ()) / m);
-							super.addCollidingBlockToList(
-									world,
-									x,
-									y,
-									z,
-									axisalignedbb,
-									list,
-									entity);
+							if (block != null) {
+								setBlockBounds(
+										(float) (xx + block.getBlockBoundsMinX()) / m,
+										(float) (yy + block.getBlockBoundsMinY()) / m,
+										(float) (zz + block.getBlockBoundsMinZ()) / m,
+										(float) (xx + block.getBlockBoundsMaxX()) / m,
+										(float) (yy + block.getBlockBoundsMaxY()) / m,
+										(float) (zz + block.getBlockBoundsMaxZ()) / m);
+								super.addCollidingBlockToList(
+										world,
+										x,
+										y,
+										z,
+										axisalignedbb,
+										list,
+										entity);
+							}
 						}
 					}
 				}
@@ -493,16 +497,19 @@ public class BlockLittleBlocks extends BlockContainer {
 				ySelected = (Integer) min[4];
 				zSelected = (Integer) min[5];
 				if (tile.getContent(xSelected, ySelected, zSelected) > 0) {
-					Block.blocksList[tile.getContent(
+					Block littleBlock = Block.blocksList[tile.getContent(
 							xSelected,
 							ySelected,
-							zSelected)].collisionRayTrace(
-							tile.getLittleWorld(),
-							(x << 3) + xSelected,
-							(y << 3) + ySelected,
-							(z << 3) + zSelected,
-							player,
-							view);
+							zSelected)];
+					if (littleBlock != null) {
+						littleBlock.collisionRayTrace(
+								tile.getLittleWorld(),
+								(x << 3) + xSelected,
+								(y << 3) + ySelected,
+								(z << 3) + zSelected,
+								player,
+								view);
+					}
 				}
 				setBlockBoundsBasedOnSelection(world, x, y, z);
 				return new MovingObjectPosition(
@@ -663,7 +670,8 @@ public class BlockLittleBlocks extends BlockContainer {
 				for (int yy = startY; yy < maY; yy++) {
 					for (int zz = startZ; zz < maZ; zz++) {
 						if (content[xx][yy][zz] > 0) {
-							if (Block.blocksList[content[xx][yy][zz]]
+							Block littleBlock = Block.blocksList[content[xx][yy][zz]];
+							if (littleBlock != null && littleBlock
 									.isProvidingWeakPower(
 											tile.getLittleWorld(),
 											(x << 3) + xx,
@@ -720,13 +728,15 @@ public class BlockLittleBlocks extends BlockContainer {
 					for (int yy = startY; yy < maY; yy++) {
 						for (int zz = startZ; zz < maZ; zz++) {
 							if (content[xx][yy][zz] > 0) {
-								Block.blocksList[content[xx][yy][zz]]
-										.onNeighborBlockChange(
+								Block littleBlock = Block.blocksList[content[xx][yy][zz]];
+								if (littleBlock != null) {
+										littleBlock.onNeighborBlockChange(
 												tile.getLittleWorld(),
 												(x << 3) + xx,
 												(y << 3) + yy,
 												(z << 3) + zz,
 												blockId);
+								}
 							}
 						}
 					}
