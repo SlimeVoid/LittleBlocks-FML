@@ -64,62 +64,64 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 						int blockId = content[x1][y1][z1];
 						if (blockId > 0) {
 							Block littleBlock = Block.blocksList[blockId];
-							int[] coords = {
-									(tile.xCoord << 3) + x1,
-									(tile.yCoord << 3) + y1,
-									(tile.zCoord << 3) + z1 };
-							bindTextureByName("/terrain.png");
-							if (!littleBlock.isDefaultTexture) {
-								if (tessellator.isDrawing) {
-									tessellator.draw();
-								}
-								if (!tessellator.isDrawing) {
-									tessellator.startDrawingQuads();
-								}
-								bindTextureByName(littleBlock.getTextureFile());
-								// if (LBCore.optifine) {
-								LBCore
-										.getLittleRenderer(tile.getWorldObj())
-											.renderBlockByRenderType(
-													littleBlock,
-													coords[0],
-													coords[1],
-													coords[2]);
-								// }
-								if (littleBlock.hasTileEntity(0)) {
-									renderLittleTile(
-											tile,
-											littleBlock,
-											f,
-											coords[0],
-											coords[1],
-											coords[2]);
-								}
-								if (tessellator.isDrawing) {
-									tessellator.draw();
-								}
+							if (littleBlock != null) {
+								int[] coords = {
+										(tile.xCoord << 3) + x1,
+										(tile.yCoord << 3) + y1,
+										(tile.zCoord << 3) + z1 };
 								bindTextureByName("/terrain.png");
-							} else {
-								if (!tessellator.isDrawing) {
-									tessellator.startDrawingQuads();
-								}
-								// if (LBCore.optifine) {
-								LBCore
-										.getLittleRenderer(tile.getWorldObj())
-											.renderBlockByRenderType(
-													littleBlock,
-													coords[0],
-													coords[1],
-													coords[2]);
-								// }
-								if (littleBlock.hasTileEntity(0)) {
-									renderLittleTile(
-											tile,
-											littleBlock,
-											f,
-											coords[0],
-											coords[1],
-											coords[2]);
+								if (!littleBlock.isDefaultTexture) {
+									if (tessellator.isDrawing) {
+										tessellator.draw();
+									}
+									if (!tessellator.isDrawing) {
+										tessellator.startDrawingQuads();
+									}
+									bindTextureByName(littleBlock.getTextureFile());
+									// if (LBCore.optifine) {
+									LBCore
+											.getLittleRenderer(tile.getWorldObj())
+												.renderBlockByRenderType(
+														littleBlock,
+														coords[0],
+														coords[1],
+														coords[2]);
+									// }
+									if (littleBlock.hasTileEntity(0)) {
+										renderLittleTile(
+												tile,
+												littleBlock,
+												f,
+												coords[0],
+												coords[1],
+												coords[2]);
+									}
+									if (tessellator.isDrawing) {
+										tessellator.draw();
+									}
+									bindTextureByName("/terrain.png");
+								} else {
+									if (!tessellator.isDrawing) {
+										tessellator.startDrawingQuads();
+									}
+									// if (LBCore.optifine) {
+									LBCore
+											.getLittleRenderer(tile.getWorldObj())
+												.renderBlockByRenderType(
+														littleBlock,
+														coords[0],
+														coords[1],
+														coords[2]);
+									// }
+									if (littleBlock.hasTileEntity(0)) {
+										renderLittleTile(
+												tile,
+												littleBlock,
+												f,
+												coords[0],
+												coords[1],
+												coords[2]);
+									}
 								}
 							}
 						}
