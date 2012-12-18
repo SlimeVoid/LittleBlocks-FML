@@ -41,6 +41,7 @@ public class LBCore {
 	public static String blockActivateCommand = "BLOCKACTIVATE";
 	public static String littleNotifyCommand = "LITTLENOTIFY";
 	public static String updateClientCommand = "UPDATECLIENT";
+	public static boolean littleBlocksForceUpdate;
 	public static String loggerLevel = "INFO";
 	public static Block littleBlocks;
 	@SideOnly(Side.CLIENT)
@@ -218,6 +219,10 @@ public class LBCore {
 				Configuration.CATEGORY_GENERAL,
 				"littleBlocksClip",
 				true).value);
+		littleBlocksForceUpdate = Boolean.parseBoolean(configuration.get(
+				Configuration.CATEGORY_GENERAL,
+				"littleBlocksForceUpdate",
+				false).value);
 		renderingMethod = Integer.parseInt(configuration.get(
 				Configuration.CATEGORY_GENERAL,
 				"renderingMethod",

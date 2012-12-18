@@ -484,6 +484,17 @@ public class TileEntityLittleBlocks extends TileEntity {
 			}
 			tiles.get(i).updateEntity();
 		}
+		if (LBCore.littleBlocksForceUpdate) {
+			for (int x = 0; x < content.length; x++) {
+				for (int y = 0; y < content[x].length; y++) {
+					for (int z = 0; z < content[x][y].length; z++) {
+						if (content[x][y][z] != 0 && Block.blocksList[content[x][y][z]] == null) {
+							this.setContent(x, y, z, 0);
+						}
+					}
+				}
+			}
+		}
 	}
 
 	@Override
