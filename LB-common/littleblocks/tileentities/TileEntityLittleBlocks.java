@@ -604,6 +604,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 						data[position + 4] = z;
 						position += 5;
 						numberOfBlocks += 1;
+						
 					}
 				}
 			}
