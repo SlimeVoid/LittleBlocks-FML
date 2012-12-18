@@ -33,34 +33,36 @@ public class CollisionRayTrace {
 				for (int z = 0; z < content[x][y].length; z++) {
 					if (content[x][y][z] > 0) {
 						Block block = Block.blocksList[content[x][y][z]];
-						block.collisionRayTrace(
-								tile.getLittleWorld(),
-								(i << 3) + x,
-								(j << 3) + y,
-								(k << 3) + z,
-								player,
-								view);
-						Object[] ret = littleBlocks.rayTraceBound(
-								AxisAlignedBB.getBoundingBox(
-										(x + block.getBlockBoundsMinX()) / m,
-										(y + block.getBlockBoundsMinY()) / m,
-										(z + block.getBlockBoundsMinZ()) / m,
-										(x + block.getBlockBoundsMaxX()) / m,
-										(y + block.getBlockBoundsMaxY()) / m,
-										(z + block.getBlockBoundsMaxZ()) / m),
-								i,
-								j,
-								k,
-								player,
-								view);
-						if (ret != null) {
-							returns.add(new Object[] {
-									ret[0],
-									ret[1],
-									ret[2],
-									x,
-									y,
-									z });
+						if (block != null) {
+							block.collisionRayTrace(
+									tile.getLittleWorld(),
+									(i << 3) + x,
+									(j << 3) + y,
+									(k << 3) + z,
+									player,
+									view);
+							Object[] ret = littleBlocks.rayTraceBound(
+									AxisAlignedBB.getBoundingBox(
+											(x + block.getBlockBoundsMinX()) / m,
+											(y + block.getBlockBoundsMinY()) / m,
+											(z + block.getBlockBoundsMinZ()) / m,
+											(x + block.getBlockBoundsMaxX()) / m,
+											(y + block.getBlockBoundsMaxY()) / m,
+											(z + block.getBlockBoundsMaxZ()) / m),
+									i,
+									j,
+									k,
+									player,
+									view);
+							if (ret != null) {
+								returns.add(new Object[] {
+										ret[0],
+										ret[1],
+										ret[2],
+										x,
+										y,
+										z });
+							}
 						}
 					}
 				}
