@@ -94,13 +94,20 @@ public class LBCore {
 					2F,
 					true).setBlockName("littleBlocks");
 		GameRegistry.registerBlock(littleBlocks, "littleBlocks");
-		EntityRegistry.registerModEntity(EntityItemLittleBlocksCollection.class, "LittleBlocksCollection", 250, LittleBlocks.instance, 8, 250, false);
+		EntityRegistry.registerModEntity(
+				EntityItemLittleBlocksCollection.class,
+				"LittleBlocksCollection",
+				littleBlocksCollectionID,
+				LittleBlocks.instance,
+				256,
+				1,
+				false);
 		addDisallowedBlockTick(BlockFluid.class);
 		addDisallowedBlockTick(BlockFlowing.class);
 		addDisallowedBlock(BlockPistonBase.class);
 		addAllowedTile(TileEntityNote.class);
-		addAllowedTile(TileEntityChest.class);
-		addAllowedTile(TileEntityDispenser.class);
+		// addAllowedTile(TileEntityChest.class);
+		// addAllowedTile(TileEntityDispenser.class);
 		addDisallowedItem(ItemHoe.class);
 		addDisallowedItem(ItemMonsterPlacer.class);
 		MinecraftForge.EVENT_BUS.register(new LittleBlocksCollectionPickup());
@@ -228,9 +235,9 @@ public class LBCore {
 				"littleBlocksID",
 				150).value);
 		littleBlocksCollectionID = Integer.parseInt(configuration.get(
-				Configuration.CATEGORY_ITEM,
+				Configuration.CATEGORY_GENERAL,
 				"littleBlocksCollectionID",
-				29999).value);
+				EntityRegistry.findGlobalUniqueEntityId()).value);
 		littleBlocksClip = Boolean.parseBoolean(configuration.get(
 				Configuration.CATEGORY_GENERAL,
 				"littleBlocksClip",
