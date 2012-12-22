@@ -2,10 +2,12 @@ package littleblocks.proxy;
 
 import littleblocks.core.LBCore;
 import littleblocks.core.LoggerLittleBlocks;
+import littleblocks.items.EntityItemLittleBlocksCollection;
 import littleblocks.network.ClientPacketHandler;
 import littleblocks.network.LBPacketIds;
 import littleblocks.network.packets.PacketLittleBlocksSettings;
 import littleblocks.render.BlockLittleBlocksRenderer;
+import littleblocks.render.EntityItemLittleBlocksCollectionRenderer;
 import littleblocks.render.TileEntityLittleBlocksRenderer;
 import littleblocks.tickhandlers.ClientTickHandler;
 import littleblocks.tickhandlers.PlayerTickHandler;
@@ -68,6 +70,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void registerRenderInformation() {
 		RenderingRegistry.registerBlockHandler(new BlockLittleBlocksRenderer());
+		RenderingRegistry.registerEntityRenderingHandler(EntityItemLittleBlocksCollection.class, new EntityItemLittleBlocksCollectionRenderer());
 	}
 
 	@Override
