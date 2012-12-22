@@ -1,7 +1,7 @@
 package littleblocks.api;
 
 import littleblocks.world.LittleWorld;
-import net.minecraft.src.World;
+import net.minecraft.world.World;
 import net.minecraftforge.common.Configuration;
 import eurysmods.api.ICommonProxy;
 

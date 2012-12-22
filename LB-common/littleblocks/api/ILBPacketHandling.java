@@ -2,8 +2,8 @@ package littleblocks.api;
 
 import littleblocks.blocks.BlockLittleBlocks;
 import littleblocks.world.LittleWorld;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.World;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
 import eurysmods.api.IPacketHandling;
 
 public interface ILBPacketHandling extends IPacketHandling {

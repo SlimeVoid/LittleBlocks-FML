@@ -15,7 +15,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import littleblocks.world.LittleWorld;
-import net.minecraft.src.Block;
+import net.minecraft.block.Block;
+
 
 public class BlockLittleBlocksLittleRenderer {
 	private static BlockLittleBlocksLittleRenderer instance;

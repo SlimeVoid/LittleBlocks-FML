@@ -2,12 +2,12 @@ package littleblocks.world;
 
 import java.util.List;
 
-import net.minecraft.src.Chunk;
-import net.minecraft.src.ChunkPosition;
-import net.minecraft.src.EnumCreatureType;
-import net.minecraft.src.IChunkProvider;
-import net.minecraft.src.IProgressUpdate;
-import net.minecraft.src.World;
+import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.util.IProgressUpdate;
+import net.minecraft.world.ChunkPosition;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.IChunkProvider;
 
 public class LittleChunkProvider implements IChunkProvider {
 	private World realWorld;

@@ -4,10 +4,9 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import littleblocks.blocks.BlockLittleBlocksBlock;
 import littleblocks.core.LBInit;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import eurysmods.network.packets.core.PacketIds;
 import eurysmods.network.packets.core.PacketPayload;
 import eurysmods.network.packets.core.PacketUpdate;

@@ -2,22 +2,22 @@ package littleblocks.proxy;
 
 import littleblocks.api.ILBCommonProxy;
 import littleblocks.core.LBCore;
-import littleblocks.core.LoggerLittleBlocks;
 import littleblocks.tickhandlers.CommonTickHandler;
+import littleblocks.tickhandlers.PlayerTickHandler;
 import littleblocks.world.LittleWorld;
 import littleblocks.world.LittleWorldServer;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.INetworkManager;
-import net.minecraft.src.NetHandler;
-import net.minecraft.src.Packet1Login;
-import net.minecraft.src.Packet250CustomPayload;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.network.INetworkManager;
+import net.minecraft.network.packet.NetHandler;
+import net.minecraft.network.packet.Packet1Login;
+import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.DimensionManager;
-import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.common.registry.TickRegistry;
+import cpw.mods.fml.relauncher.Side;
 import eurysmods.api.IPacketHandling;
 
 public class CommonProxy implements ILBCommonProxy {
@@ -71,6 +71,7 @@ public class CommonProxy implements ILBCommonProxy {
 		LBCore.littleDimensionServer = -1;
 		LBCore.littleProviderTypeServer = -1;
 		TickRegistry.registerTickHandler(new CommonTickHandler(), Side.SERVER);
+		TickRegistry.registerTickHandler(new PlayerTickHandler(), Side.SERVER);
 	}
 
 	@Override

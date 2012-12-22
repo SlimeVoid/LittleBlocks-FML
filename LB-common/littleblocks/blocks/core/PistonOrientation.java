@@ -1,7 +1,7 @@
 package littleblocks.blocks.core;
 
-import net.minecraft.src.World;
-import net.minecraftforge.event.ForgeSubscribe;
+
+import net.minecraft.world.World;
 
 // import net.minecraftforge.event.entity.block.BlockOrientationEvent;
 

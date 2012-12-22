@@ -1,7 +1,7 @@
 package littleblocks.network.packets;
 
 import littleblocks.core.LBInit;
-import net.minecraft.src.World;
+import net.minecraft.world.World;
 import eurysmods.network.packets.core.PacketIds;
 import eurysmods.network.packets.core.PacketPayload;
 import eurysmods.network.packets.core.PacketUpdate;

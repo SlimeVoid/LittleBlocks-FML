@@ -10,28 +10,25 @@ import java.util.TreeSet;
 import littleblocks.core.LBCore;
 import littleblocks.core.LoggerLittleBlocks;
 import littleblocks.network.CommonPacketHandler;
-import littleblocks.tileentities.TileEntityLittleBlocks;
-import net.minecraft.src.Block;
-import net.minecraft.src.BlockEventData;
-import net.minecraft.src.Chunk;
-import net.minecraft.src.ChunkCoordIntPair;
-import net.minecraft.src.CrashReport;
-import net.minecraft.src.CrashReportCategory;
-import net.minecraft.src.Entity;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.EntityPlayerMP;
-import net.minecraft.src.Explosion;
-import net.minecraft.src.NextTickListEntry;
-import net.minecraft.src.Packet60Explosion;
-import net.minecraft.src.ReportedException;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.Vec3;
-import net.minecraft.src.World;
-import net.minecraft.src.WorldProvider;
-import net.minecraft.src.WorldSettings;
-import net.minecraftforge.common.DimensionManager;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Side;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockEventData;
+import net.minecraft.crash.CrashReport;
+import net.minecraft.crash.CrashReportCategory;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.packet.Packet60Explosion;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ReportedException;
+import net.minecraft.util.Vec3;
+import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.world.Explosion;
+import net.minecraft.world.NextTickListEntry;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldProvider;
+import net.minecraft.world.WorldSettings;
+import net.minecraft.world.chunk.Chunk;
+import eurysmods.data.Logger;
 
 public class LittleWorldServer extends LittleWorld {
 
@@ -62,7 +59,7 @@ public class LittleWorldServer extends LittleWorld {
 	public LittleWorldServer(World world, WorldProvider worldprovider) {
 		super(world, worldprovider);
 		LoggerLittleBlocks.getInstance(
-				LoggerLittleBlocks.filterClassName(
+				Logger.filterClassName(
 						this.getClass().toString()
 				)
 		).write(
@@ -154,7 +151,7 @@ public class LittleWorldServer extends LittleWorld {
 										this.rand);
 							} else {
 								LoggerLittleBlocks.getInstance(
-										LoggerLittleBlocks.filterClassName(
+										Logger.filterClassName(
 												this.getClass().toString()
 										)
 								).write(
@@ -168,7 +165,7 @@ public class LittleWorldServer extends LittleWorld {
 							}
 						} catch(Throwable thrown) {
 							LoggerLittleBlocks.getInstance(
-									LoggerLittleBlocks.filterClassName(
+									Logger.filterClassName(
 											this.getClass().toString()
 									)
 							).write(
@@ -179,8 +176,8 @@ public class LittleWorldServer extends LittleWorld {
 											nextTick.zCoord + ")",
 									LoggerLittleBlocks.LogLevel.DEBUG
 							);
-							CrashReport var8 = CrashReport.func_85055_a(thrown, "Exception while ticking a block");
-							CrashReportCategory var9 = var8.func_85058_a("Block being ticked");
+							CrashReport crashReport = CrashReport.makeCrashReport(thrown, "Exception while ticking a block");
+							CrashReportCategory var9 = crashReport.makeCategory("Block being ticked");
 							int metadata;
 							
 							try {
@@ -190,7 +187,7 @@ public class LittleWorldServer extends LittleWorld {
 							}
 							
 							CrashReportCategory.func_85068_a(var9, nextTick.xCoord, nextTick.yCoord, nextTick.zCoord, blockId, metadata);
-							throw new ReportedException(var8);
+							throw new ReportedException(crashReport);
 						}
 						/*TileEntity tileentity = this
 								.getRealWorld()
@@ -230,9 +227,9 @@ public class LittleWorldServer extends LittleWorld {
             explosion.affectedBlockPositions.clear();
         }
         
-        double xCoord = (double)((int)x >> 3);
-        double yCoord = (double)((int)y >> 3);
-        double zCoord = (double)((int)z >> 3);
+        double xCoord = (int)x >> 3;
+        double yCoord = (int)y >> 3;
+        double zCoord = (int)z >> 3;
 
         Iterator players = this.realWorld.playerEntities.iterator();
 
@@ -264,7 +261,7 @@ public class LittleWorldServer extends LittleWorld {
 				BlockEventData eventData = (BlockEventData) blockEvent.next();
 				if (this.onBlockEventReceived(eventData)) {
 					LoggerLittleBlocks.getInstance(
-							LoggerLittleBlocks.filterClassName(
+							Logger.filterClassName(
 									this.getClass().toString()
 							)
 					).write(
@@ -304,7 +301,7 @@ public class LittleWorldServer extends LittleWorld {
 			return true;
 		} else {
 			LoggerLittleBlocks.getInstance(
-					LoggerLittleBlocks.filterClassName(
+					Logger.filterClassName(
 							this.getClass().toString()
 					)
 			).write(
@@ -387,7 +384,10 @@ public class LittleWorldServer extends LittleWorld {
 	public void scheduleBlockUpdate(int x, int y, int z, int blockId, int tickRate) {
 		this.func_82740_a(x, y, z, blockId, tickRate, 0);
 	}
-	
+
+	/**
+	 * Schedules a tick to a block with a delay (Most commonly the tick rate) with some Value
+	 */
 	@Override
     public void func_82740_a(int x, int y, int z, int blockId, int tickRate, int someValue) {
 		NextTickListEntry nextTickEntry = new NextTickListEntry(x, y, z, blockId);
@@ -428,7 +428,7 @@ public class LittleWorldServer extends LittleWorld {
 				y + max,
 				z + max)) {
 			if (blockId > 0) {
-				nextTickEntry.setScheduledTime((long)tickRate + this.realWorld.getWorldInfo()
+				nextTickEntry.setScheduledTime(tickRate + this.realWorld.getWorldInfo()
 						.getWorldTotalTime());
 				nextTickEntry.func_82753_a(someValue);
 			}
@@ -449,7 +449,7 @@ public class LittleWorldServer extends LittleWorld {
 		NextTickListEntry nextTick = new NextTickListEntry(x, y, z, blockId);
 
 		if (blockId > 0) {
-			nextTick.setScheduledTime((long)tickRate + this.realWorld.getWorldInfo().getWorldTotalTime());
+			nextTick.setScheduledTime(tickRate + this.realWorld.getWorldInfo().getWorldTotalTime());
 		}
 
 		if (!this.scheduledTickSet.contains(nextTick)) {
@@ -471,6 +471,21 @@ public class LittleWorldServer extends LittleWorld {
 				littleZ,
 				blockId,
 				metadata);
+		super.metadataModified(
+				x,
+				y,
+				z,
+				side,
+				littleX,
+				littleY,
+				littleZ,
+				blockId, 
+				metadata);
+		this.notifyBlockChange(
+				(x << 3) + littleX,
+				(y << 3) + littleY,
+				(z << 3) + littleZ,
+				blockId);
 	}
 
 	@Override
@@ -502,18 +517,22 @@ public class LittleWorldServer extends LittleWorld {
 					(x << 3) + littleX,
 					(y << 3) + littleY,
 					(z << 3) + littleZ);
-			CommonPacketHandler.idModified(
-					this,
-					blockId,
-					x,
-					y,
-					z,
-					side,
-					littleX,
-					littleY,
-					littleZ,
-					blockId,
-					metadata);
+			if (blockId == Block.chest.blockID) {
+				this.realWorld.markBlockForUpdate(x, y, z);
+			} else {
+				CommonPacketHandler.idModified(
+						this,
+						blockId,
+						x,
+						y,
+						z,
+						side,
+						littleX,
+						littleY,
+						littleZ,
+						blockId,
+						metadata);
+			}
 		}
 		super.idModified(
 				lastBlockId,

@@ -5,12 +5,12 @@ import java.util.List;
 
 import littleblocks.core.LBCore;
 import littleblocks.tileentities.TileEntityLittleBlocks;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.Block;
-import net.minecraft.src.RenderHelper;
-import net.minecraft.src.Tessellator;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.TileEntitySpecialRenderer;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.tileentity.TileEntity;
 
 import org.lwjgl.opengl.GL11;
 
@@ -78,15 +78,15 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 										tessellator.startDrawingQuads();
 									}
 									bindTextureByName(littleBlock.getTextureFile());
-									// if (LBCore.optifine) {
-									LBCore
+									if (LBCore.optifine) {
+										LBCore
 											.getLittleRenderer(tile.getWorldObj())
 												.renderBlockByRenderType(
 														littleBlock,
 														coords[0],
 														coords[1],
 														coords[2]);
-									// }
+									}
 									if (littleBlock.hasTileEntity(0)) {
 										renderLittleTile(
 												tile,
@@ -104,15 +104,15 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 									if (!tessellator.isDrawing) {
 										tessellator.startDrawingQuads();
 									}
-									// if (LBCore.optifine) {
-									LBCore
+									if (LBCore.optifine) {
+										LBCore
 											.getLittleRenderer(tile.getWorldObj())
 												.renderBlockByRenderType(
 														littleBlock,
 														coords[0],
 														coords[1],
 														coords[2]);
-									// }
+									}
 									if (littleBlock.hasTileEntity(0)) {
 										renderLittleTile(
 												tile,

@@ -5,25 +5,29 @@ import littleblocks.core.LoggerLittleBlocks;
 import littleblocks.network.ClientPacketHandler;
 import littleblocks.network.LBPacketIds;
 import littleblocks.network.packets.PacketLittleBlocksSettings;
+import littleblocks.render.BlockLittleBlocksRenderer;
 import littleblocks.render.TileEntityLittleBlocksRenderer;
 import littleblocks.tickhandlers.ClientTickHandler;
+import littleblocks.tickhandlers.PlayerTickHandler;
 import littleblocks.world.LittleWorld;
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.INetworkManager;
+import net.minecraft.client.multiplayer.NetClientHandler;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.network.INetworkManager;
+import net.minecraft.network.packet.NetHandler;
+import net.minecraft.network.packet.Packet1Login;
 import net.minecraft.src.ModLoader;
-import net.minecraft.src.NetClientHandler;
-import net.minecraft.src.NetHandler;
-import net.minecraft.src.Packet1Login;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.DimensionManager;
 import cpw.mods.fml.client.registry.ClientRegistry;
+import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Side;
-import cpw.mods.fml.common.asm.SideOnly;
 import cpw.mods.fml.common.registry.TickRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import eurysmods.data.Logger;
 
 @SideOnly(Side.CLIENT)
 public class ClientProxy extends CommonProxy {
@@ -34,7 +38,7 @@ public class ClientProxy extends CommonProxy {
 			this.getClass().getClassLoader().loadClass("TextureHDCompassFX");
 			LBCore.optifine = true;
 			LoggerLittleBlocks.getInstance(
-					LoggerLittleBlocks.filterClassName(
+					Logger.filterClassName(
 							this.getClass().toString()
 					)
 			).write(
@@ -45,7 +49,7 @@ public class ClientProxy extends CommonProxy {
 		} catch (ClassNotFoundException e) {
 			LBCore.optifine = false;
 			LoggerLittleBlocks.getInstance(
-					LoggerLittleBlocks.filterClassName(
+					Logger.filterClassName(
 							this.getClass().toString()
 					)
 			).write(
@@ -63,8 +67,7 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void registerRenderInformation() {
-		// RenderingRegistry.registerBlockHandler(new
-		// BlockLittleBlocksRenderer());
+		RenderingRegistry.registerBlockHandler(new BlockLittleBlocksRenderer());
 	}
 
 	@Override
@@ -91,6 +94,7 @@ public class ClientProxy extends CommonProxy {
 			LBCore.littleProviderTypeServer = -1;
 		}
 		TickRegistry.registerTickHandler(new ClientTickHandler(), Side.CLIENT);
+		TickRegistry.registerTickHandler(new PlayerTickHandler(), Side.CLIENT);
 	}
 
 	@Override

@@ -5,26 +5,12 @@ import java.util.List;
 import littleblocks.blocks.BlockLittleBlocks;
 import littleblocks.core.LBCore;
 import littleblocks.tileentities.TileEntityLittleBlocks;
-import net.minecraft.src.AxisAlignedBB;
-import net.minecraft.src.Block;
-import net.minecraft.src.Vec3;
-import net.minecraft.src.World;
+import net.minecraft.block.Block;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.Vec3;
+import net.minecraft.world.World;
 
 public class CollisionRayTrace {
-
-	public static List<Object[]> rayTraceLB(BlockLittleBlocks littleBlocks, Vec3 player, Vec3 view, int i, int j, int k, List<Object[]> returns, int[][][] content, TileEntityLittleBlocks tile) {
-		/*
-		 * List<Object> newReturn = null; do { if(tMaxX < tMaxY) { if(tMaxX <
-		 * tMaxZ) { X= X + stepX; if(X == justOutX) return(NIL); outside grid
-		 * tMaxX= tMaxX + tDeltaX; } else { Z= Z + stepZ; if(Z == justOutZ)
-		 * return(NIL); tMaxZ= tMaxZ + tDeltaZ; } } else { if(tMaxY < tMaxZ) {
-		 * Y= Y + stepY; if(Y == justOutY) return(NIL); tMaxY= tMaxY + tDeltaY;
-		 * } else { Z= Z + stepZ; if(Z == justOutZ) return(NIL); tMaxZ= tMaxZ +
-		 * tDeltaZ; } } list= ObjectList[X][Y][Z]; } while(list == NIL);
-		 * return(list);
-		 */
-		return returns;
-	}
 
 	public static List<Object[]> rayTraceLittleBlocks(BlockLittleBlocks littleBlocks, Vec3 player, Vec3 view, int i, int j, int k, List<Object[]> returns, int[][][] content, TileEntityLittleBlocks tile) {
 		float m = LBCore.littleBlocksSize;

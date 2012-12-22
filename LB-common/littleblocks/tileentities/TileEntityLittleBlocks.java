@@ -8,18 +8,16 @@ import littleblocks.core.LBCore;
 import littleblocks.core.LBInit;
 import littleblocks.network.packets.PacketTileEntityLB;
 import littleblocks.world.LittleWorld;
-import net.minecraft.src.Block;
-import net.minecraft.src.BlockFlowing;
-import net.minecraft.src.BlockStationary;
-import net.minecraft.src.INetworkManager;
+import net.minecraft.block.Block;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagInt;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.INetworkManager;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.src.ModLoader;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.NBTTagInt;
-import net.minecraft.src.NBTTagList;
-import net.minecraft.src.Packet;
-import net.minecraft.src.Packet132TileEntityData;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import cpw.mods.fml.common.FMLCommonHandler;
 import eurysmods.network.packets.core.PacketPayload;
 import eurysmods.network.packets.core.PacketUpdate;
@@ -418,21 +416,19 @@ public class TileEntityLittleBlocks extends TileEntity {
 					metadata);
 		}
 		if (lastId != id) {
-			if (!(Block.blocksList[lastId] instanceof BlockFlowing || Block.blocksList[lastId] instanceof BlockStationary)) {
-				((ILBCommonProxy) LBInit.LBM.getProxy()).getLittleWorld(
-						this.worldObj,
-						false).idModified(
-						lastId,
-						this.xCoord,
-						this.yCoord,
-						this.zCoord,
-						0,
-						x,
-						y,
-						z,
-						id,
-						metadata);
-			}
+			((ILBCommonProxy) LBInit.LBM.getProxy()).getLittleWorld(
+					this.worldObj,
+					false).idModified(
+					lastId,
+					this.xCoord,
+					this.yCoord,
+					this.zCoord,
+					0,
+					x,
+					y,
+					z,
+					id,
+					metadata);
 		}
 	}
 
@@ -562,6 +558,11 @@ public class TileEntityLittleBlocks extends TileEntity {
 			tilesTag.appendTag(tileTag);
 		}
 		nbttagcompound.setTag("Tiles", tilesTag);
+	}
+
+	public void clearContents() {
+		this.content = new int[LBCore.littleBlocksSize][LBCore.littleBlocksSize][LBCore.littleBlocksSize];
+		this.metadatas = new int[LBCore.littleBlocksSize][LBCore.littleBlocksSize][LBCore.littleBlocksSize];
 	}
 
 	@Override
