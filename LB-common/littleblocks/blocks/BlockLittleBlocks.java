@@ -10,6 +10,8 @@ import littleblocks.core.LBCore;
 import littleblocks.core.LBInit;
 import littleblocks.items.EntityItemLittleBlocksCollection;
 import littleblocks.network.ClientPacketHandler;
+import littleblocks.network.CommonPacketHandler;
+import littleblocks.network.packets.PacketLittleBlocksCollection;
 import littleblocks.tileentities.TileEntityLittleBlocks;
 import littleblocks.world.LittleWorld;
 import net.minecraft.block.Block;
@@ -107,6 +109,8 @@ public class BlockLittleBlocks extends BlockContainer {
 			}
 			if (!world.isRemote) {
 				world.spawnEntityInWorld(collection);
+				PacketLittleBlocksCollection packet = new PacketLittleBlocksCollection(collection);
+				CommonPacketHandler.sendToAll(packet);
 			}
 		}
 		return super.removeBlockByPlayer(world, entityplayer, x, y, z);

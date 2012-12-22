@@ -7,13 +7,16 @@ import littleblocks.api.ILBCommonProxy;
 import littleblocks.blocks.BlockLittleBlocks;
 import littleblocks.core.LBCore;
 import littleblocks.core.LBInit;
+import littleblocks.items.EntityItemLittleBlocksCollection;
 import littleblocks.network.packets.PacketLittleBlocks;
+import littleblocks.network.packets.PacketLittleBlocksCollection;
 import littleblocks.network.packets.PacketLittleBlocksSettings;
 import littleblocks.network.packets.PacketTileEntityLB;
 import littleblocks.tileentities.TileEntityLittleBlocks;
 import littleblocks.world.LittleWorld;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
@@ -192,6 +195,7 @@ public class ClientPacketHandler implements IPacketHandler {
 				packet.data));
 		try {
 			int packetID = data.read();
+			System.out.println("PacketID: " + packetID);
 			switch (packetID) {
 			case PacketIds.LOGIN:
 				PacketLittleBlocksSettings settings = new PacketLittleBlocksSettings();
@@ -211,9 +215,22 @@ public class ClientPacketHandler implements IPacketHandler {
 				packetLB.readData(data);
 				ClientPacketHandler.handlePacket(packetLB, entityplayer, world);
 				break;
+			case PacketIds.ENTITY:
+				PacketLittleBlocksCollection collection = new PacketLittleBlocksCollection();
+				collection.readData(data);
+				ClientPacketHandler.handleEntity(collection, entityplayer, world);
+				break;
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
+		}
+	}
+
+	private static void handleEntity(PacketLittleBlocksCollection collection, EntityPlayer entityplayer, World world) {
+		System.out.println("Handling Entity Packet");
+		Entity entity = collection.getEntity(world);
+		if (entity instanceof EntityItemLittleBlocksCollection) {
+			((EntityItemLittleBlocksCollection)entity).itemstackCollection = collection.itemstackCollection;
 		}
 	}
 }
