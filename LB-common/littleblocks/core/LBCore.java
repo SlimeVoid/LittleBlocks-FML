@@ -22,8 +22,6 @@ import net.minecraft.item.ItemMonsterPlacer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.tileentity.TileEntityNote;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
