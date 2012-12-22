@@ -6,29 +6,35 @@ import java.util.Set;
 
 import littleblocks.api.ILBCommonProxy;
 import littleblocks.blocks.BlockLittleBlocks;
+import littleblocks.items.EntityItemLittleBlocksCollection;
+import littleblocks.items.LittleBlocksCollectionPickup;
 import littleblocks.tileentities.TileEntityLittleBlocks;
 import littleblocks.world.LittleWorld;
-import net.minecraft.src.Block;
-import net.minecraft.src.BlockFlowing;
-import net.minecraft.src.BlockFluid;
-import net.minecraft.src.BlockPistonBase;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemHoe;
-import net.minecraft.src.ItemMonsterPlacer;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.Material;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockFlowing;
+import net.minecraft.block.BlockFluid;
+import net.minecraft.block.BlockPistonBase;
+import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemHoe;
+import net.minecraft.item.ItemMonsterPlacer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.src.ModLoader;
-import net.minecraft.src.RenderBlocks;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.TileEntityNote;
-import net.minecraft.src.World;
-import net.minecraft.src.WorldProvider;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.tileentity.TileEntityDispenser;
+import net.minecraft.tileentity.TileEntityNote;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldProvider;
 import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.MinecraftForge;
 import buildcraft.core.IItemPipe;
 import cpw.mods.fml.client.registry.RenderingRegistry;
-import cpw.mods.fml.common.Side;
-import cpw.mods.fml.common.asm.SideOnly;
+import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import eurysmods.api.ICommonProxy;
 import eurysmods.data.Logger;
 
@@ -48,6 +54,7 @@ public class LBCore {
 	public static LittleWorld littleWorldClient;
 	public static LittleWorld littleWorldServer;
 	public static int littleBlocksID;
+	public static int littleBlocksCollectionID;
 	public static boolean littleBlocksClip;
 	public static int renderingMethod;
 	public static int renderType;
@@ -86,13 +93,18 @@ public class LBCore {
 					Material.wood,
 					2F,
 					true).setBlockName("littleBlocks");
-		GameRegistry.registerBlock(littleBlocks);
+		GameRegistry.registerBlock(littleBlocks, "littleBlocks");
+		EntityRegistry.registerModEntity(EntityItemLittleBlocksCollection.class, "LittleBlocksCollection", 250, LittleBlocks.instance, 8, 250, false);
 		addDisallowedBlockTick(BlockFluid.class);
 		addDisallowedBlockTick(BlockFlowing.class);
 		addDisallowedBlock(BlockPistonBase.class);
 		addAllowedTile(TileEntityNote.class);
+		addAllowedTile(TileEntityChest.class);
+		addAllowedTile(TileEntityDispenser.class);
 		addDisallowedItem(ItemHoe.class);
 		addDisallowedItem(ItemMonsterPlacer.class);
+		MinecraftForge.EVENT_BUS.register(new LittleBlocksCollectionPickup());
+		// MinecraftForge.EVENT_BUS.register(new LittleContainerInteract());
 		// MinecraftForge.EVENT_BUS.register(new PistonOrientation());
 	}
 
@@ -169,7 +181,7 @@ public class LBCore {
 				allowedBlockTileEntities.add(tileclass);
 			} else {
 				LoggerLittleBlocks.getInstance(
-						LoggerLittleBlocks.filterClassName(LBCore.class.toString())
+						Logger.filterClassName(LBCore.class.toString())
 				).write(
 						true,
 						"Tried to add a tileentity to the disallowed list that already exists",
@@ -215,6 +227,10 @@ public class LBCore {
 				Configuration.CATEGORY_BLOCK,
 				"littleBlocksID",
 				150).value);
+		littleBlocksCollectionID = Integer.parseInt(configuration.get(
+				Configuration.CATEGORY_ITEM,
+				"littleBlocksCollectionID",
+				29999).value);
 		littleBlocksClip = Boolean.parseBoolean(configuration.get(
 				Configuration.CATEGORY_GENERAL,
 				"littleBlocksClip",

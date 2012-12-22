@@ -2,38 +2,40 @@ package littleblocks.blocks;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import littleblocks.api.ILBCommonProxy;
 import littleblocks.blocks.core.CollisionRayTrace;
 import littleblocks.core.LBCore;
 import littleblocks.core.LBInit;
+import littleblocks.items.EntityItemLittleBlocksCollection;
 import littleblocks.network.ClientPacketHandler;
 import littleblocks.tileentities.TileEntityLittleBlocks;
 import littleblocks.world.LittleWorld;
-import net.minecraft.src.AxisAlignedBB;
-import net.minecraft.src.Block;
-import net.minecraft.src.BlockContainer;
-import net.minecraft.src.CreativeTabs;
-import net.minecraft.src.Entity;
-import net.minecraft.src.EntityClientPlayerMP;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.EntityPlayerMP;
-import net.minecraft.src.EnumGameType;
-import net.minecraft.src.IBlockAccess;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemBlock;
-import net.minecraft.src.ItemBucket;
-import net.minecraft.src.ItemInWorldManager;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.Material;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockContainer;
+import net.minecraft.block.material.Material;
+import net.minecraft.client.entity.EntityClientPlayerMP;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemBucket;
+import net.minecraft.item.ItemInWorldManager;
+import net.minecraft.item.ItemStack;
 import net.minecraft.src.ModLoader;
-import net.minecraft.src.MovingObjectPosition;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.Vec3;
-import net.minecraft.src.World;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
+import net.minecraft.world.EnumGameType;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Side;
-import cpw.mods.fml.common.asm.SideOnly;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockLittleBlocks extends BlockContainer {
 
@@ -52,6 +54,11 @@ public class BlockLittleBlocks extends BlockContainer {
 		}
 		this.setCreativeTab(CreativeTabs.tabDecorations);
 	}
+	
+	@Override
+	public int quantityDropped(Random random) {
+		return 0;
+	}
 
 	@Override
 	public boolean removeBlockByPlayer(World world, EntityPlayer entityplayer, int x, int y, int z) {
@@ -59,9 +66,8 @@ public class BlockLittleBlocks extends BlockContainer {
 		if (id == LBCore.littleBlocksID) {
 			TileEntityLittleBlocks tile = (TileEntityLittleBlocks) world
 					.getBlockTileEntity(x, y, z);
-			if (tile.isEmpty()) {
-				return super.removeBlockByPlayer(world, entityplayer, x, y, z);
-			} else {
+			EntityItemLittleBlocksCollection collection = new EntityItemLittleBlocksCollection(world, x, y, z);
+			if (!tile.isEmpty()) {
 				if (FMLCommonHandler.instance().getSide() == Side.CLIENT && ModLoader
 						.getMinecraftInstance().playerController
 						.isInCreativeMode()) {
@@ -70,60 +76,66 @@ public class BlockLittleBlocks extends BlockContainer {
 				} else if (isCreative(entityplayer)) {
 					this.onBlockClicked(world, x, y, z, entityplayer);
 					return false;
-				}
-				int[][][] content = tile.getContent();
-				for (int x1 = 0; x1 < content.length; x1++) {
-					for (int y1 = 0; y1 < content[x1].length; y1++) {
-						for (int z1 = 0; z1 < content[x1][y1].length; z1++) {
-							int blockId = content[x1][y1][z1];
-							int contentMeta = tile.getMetadata(x1, y1, z1);
-							if (blockId > 0 && Block.blocksList[blockId] != null) {
-								dropLittleBlockAsNormalBlock(
-										world,
-										x,
-										y,
-										z,
-										blockId,
-										contentMeta);
+				} else {
+					int[][][] content = tile.getContent();
+					if (collection != null) {
+						for (int x1 = 0; x1 < content.length; x1++) {
+							for (int y1 = 0; y1 < content[x1].length; y1++) {
+								for (int z1 = 0; z1 < content[x1][y1].length; z1++) {
+									int blockId = content[x1][y1][z1];
+									int contentMeta = tile.getMetadata(x1, y1, z1);
+									if (blockId > 0 && Block.blocksList[blockId] != null) {
+										ItemStack itemToDrop = dropLittleBlockAsNormalBlock(
+												world,
+												x,
+												y,
+												z,
+												blockId,
+												contentMeta);
+										if (itemToDrop != null) {
+											collection.addItemToDrop(itemToDrop);
+										}
+									}
+								}
 							}
-							tile.setContent(x1, y1, z1, 0);
-							tile.onInventoryChanged();
-							world.markBlockForRenderUpdate(x, y, z);
 						}
+						tile.clearContents();
+						tile.onInventoryChanged();
+						world.markBlockForRenderUpdate(x, y, z);
 					}
 				}
+			}
+			if (!world.isRemote) {
+				world.spawnEntityInWorld(collection);
 			}
 		}
 		return super.removeBlockByPlayer(world, entityplayer, x, y, z);
 	}
 
-	private void dropLittleBlockAsNormalBlock(World world, int x, int y, int z, int blockId, int metaData) {
-		int idDropped = Block.blocksList[blockId].idDropped(
-				metaData,
-				world.rand,
-				0);
-		int quantityDropped = Block.blocksList[blockId]
-				.quantityDropped(world.rand);
-		List<ItemStack> items = Block.blocksList[blockId].getBlockDropped(
+	private ItemStack dropLittleBlockAsNormalBlock(World world, int x, int y, int z, int blockId, int metaData) {
+		boolean dropsBlocks = Block.blocksList[blockId].getBlockDropped(
 				world,
 				x,
 				y,
 				z,
 				metaData,
-				0);
-		ItemStack itemstack = null;
-		if (items != null && items.size() > 0) {
-			if (items.get(0) != null) {
-				itemstack = items.get(0);
+				0).size() > 0 ? true : false;
+		if (dropsBlocks) {
+			int idDropped = Block.blocksList[blockId].idDropped(
+					metaData,
+					world.rand,
+					0);
+			int quantityDropped = Block.blocksList[blockId]
+					.quantityDropped(world.rand); 
+			int damageDropped = Block.blocksList[blockId]
+					.damageDropped(metaData);
+			ItemStack itemstack = new ItemStack(idDropped, quantityDropped, damageDropped);
+	
+			if (idDropped > 0 && quantityDropped > 0) {
+				return itemstack;
 			}
 		}
-		if (itemstack == null) {
-			itemstack = new ItemStack(idDropped, quantityDropped, metaData);
-		}
-
-		if (idDropped > 0 && quantityDropped > 0) {
-			this.dropLittleBlockAsItem_do(world, x, y, z, itemstack);
-		}
+		return null;
 	}
 
 	@Override
@@ -291,17 +303,17 @@ public class BlockLittleBlocks extends BlockContainer {
 		int xx = (x << 3) + this.xSelected, yy = (y << 3) + this.ySelected, zz = (z << 3) + this.zSelected;
 		if (content > 0 && Block.blocksList[content] != null) {
 			if (!isCreative(entityplayer)) {
-				dropLittleBlockAsNormalBlock(
+				ItemStack itemToDrop = dropLittleBlockAsNormalBlock(
 						world,
 						x,
 						y,
 						z,
 						content,
 						contentMeta);
+				this.dropLittleBlockAsItem_do(world, x, y, z, itemToDrop);
 			}
 			tile.setContent(this.xSelected, this.ySelected, this.zSelected, 0);
 		}
-		world.markBlockForUpdate(x, y, z);
 	}
 
 	@SideOnly(Side.CLIENT)
