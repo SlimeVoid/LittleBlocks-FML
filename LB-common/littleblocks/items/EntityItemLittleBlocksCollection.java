@@ -38,7 +38,6 @@ public class EntityItemLittleBlocksCollection extends EntityItem {
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		int stacks = 0;
 		nbttagcompound.setInteger("LittleBlocks", itemstackCollection.size());
-		System.out.println(itemstackCollection.size());
 		for (ItemStack itemstack : itemstackCollection.values()) {
 			writeItemStackToNBT(nbttagcompound, itemstack, stacks);
 			stacks++;
