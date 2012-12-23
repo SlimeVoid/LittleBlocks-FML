@@ -627,4 +627,8 @@ public class TileEntityLittleBlocks extends TileEntity {
 	public void setMetadata(int[][][] metadata) {
 		this.metadatas = metadata;
 	}
+
+	public int[][][] getMetadata() {
+		return this.metadatas;
+	}
 }

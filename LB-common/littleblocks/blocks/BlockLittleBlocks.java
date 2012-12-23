@@ -710,53 +710,57 @@ public class BlockLittleBlocks extends BlockContainer {
 		if (updateEveryone) {
 			TileEntityLittleBlocks tile = (TileEntityLittleBlocks) world
 					.getBlockTileEntity(x, y, z);
-			int[][][] content = tile.getContent();
-			int maX = tile.size, maY = tile.size, maZ = tile.size;
-			int startX = 0, startY = 0, startZ = 0;
-			for (int side = 0; side < 6; side++) {
-				switch (side) {
-				case 0:
-					maY = 1;
-					break;
-
-				case 1:
-					startY = maY - 1;
-					break;
-
-				case 2:
-					maZ = 1;
-					break;
-
-				case 3:
-					startZ = maZ - 1;
-					break;
-
-				case 4:
-					maX = 1;
-					break;
-
-				case 5:
-					startX = maX - 1;
-					break;
-				}
-
-				for (int xx = startX; xx < maX; xx++) {
-					for (int yy = startY; yy < maY; yy++) {
-						for (int zz = startZ; zz < maZ; zz++) {
-							if (content[xx][yy][zz] > 0) {
-								Block littleBlock = Block.blocksList[content[xx][yy][zz]];
-								if (littleBlock != null) {
-										littleBlock.onNeighborBlockChange(
-												tile.getLittleWorld(),
-												(x << 3) + xx,
-												(y << 3) + yy,
-												(z << 3) + zz,
-												blockId);
+			if (tile != null) {
+				int[][][] content = tile.getContent();
+				int maX = tile.size, maY = tile.size, maZ = tile.size;
+				int startX = 0, startY = 0, startZ = 0;
+				for (int side = 0; side < 6; side++) {
+					switch (side) {
+					case 0:
+						maY = 1;
+						break;
+	
+					case 1:
+						startY = maY - 1;
+						break;
+	
+					case 2:
+						maZ = 1;
+						break;
+	
+					case 3:
+						startZ = maZ - 1;
+						break;
+	
+					case 4:
+						maX = 1;
+						break;
+	
+					case 5:
+						startX = maX - 1;
+						break;
+					}
+	
+					for (int xx = startX; xx < maX; xx++) {
+						for (int yy = startY; yy < maY; yy++) {
+							for (int zz = startZ; zz < maZ; zz++) {
+								if (content[xx][yy][zz] > 0) {
+									Block littleBlock = Block.blocksList[content[xx][yy][zz]];
+									if (littleBlock != null) {
+											littleBlock.onNeighborBlockChange(
+													tile.getLittleWorld(),
+													(x << 3) + xx,
+													(y << 3) + yy,
+													(z << 3) + zz,
+													blockId);
+									}
 								}
 							}
 						}
 					}
 				}
+			} else {
+				super.onNeighborBlockChange(world, x, y, z, blockId);
 			}
 		}
 	}

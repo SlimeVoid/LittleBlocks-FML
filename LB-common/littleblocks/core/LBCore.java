@@ -7,6 +7,7 @@ import java.util.Set;
 import littleblocks.api.ILBCommonProxy;
 import littleblocks.blocks.BlockLittleBlocks;
 import littleblocks.items.EntityItemLittleBlocksCollection;
+import littleblocks.items.ItemLittleBlocksCopier;
 import littleblocks.items.LittleBlocksCollectionPickup;
 import littleblocks.tileentities.TileEntityLittleBlocks;
 import littleblocks.world.LittleWorld;
@@ -48,10 +49,12 @@ public class LBCore {
 	public static boolean littleBlocksForceUpdate;
 	public static String loggerLevel = "INFO";
 	public static Block littleBlocks;
+	public static Item littleBlocksCopier;
 	@SideOnly(Side.CLIENT)
 	public static LittleWorld littleWorldClient;
 	public static LittleWorld littleWorldServer;
 	public static int littleBlocksID;
+	public static int littleBlocksCopierID;
 	public static int littleBlocksCollectionID;
 	public static boolean littleBlocksClip;
 	public static int renderingMethod;
@@ -91,6 +94,7 @@ public class LBCore {
 					Material.wood,
 					2F,
 					true).setBlockName("littleBlocks");
+		littleBlocksCopier = new ItemLittleBlocksCopier(littleBlocksCopierID).setItemName("LittleBlocksCopier");
 		GameRegistry.registerBlock(littleBlocks, "littleBlocks");
 		EntityRegistry.registerModEntity(
 				EntityItemLittleBlocksCollection.class,
@@ -232,6 +236,10 @@ public class LBCore {
 				Configuration.CATEGORY_BLOCK,
 				"littleBlocksID",
 				150).value);
+		littleBlocksCopierID = Integer.parseInt(configuration.get(
+				Configuration.CATEGORY_ITEM,
+				"littleBlocksCopierID",
+				29999).value);
 		littleBlocksCollectionID = Integer.parseInt(configuration.get(
 				Configuration.CATEGORY_GENERAL,
 				"littleBlocksCollectionID",
