@@ -16,15 +16,14 @@ import littleblocks.tileentities.TileEntityLittleBlocks;
 import littleblocks.world.LittleWorld;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.BlockPistonBase;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemInWorldManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.src.ModLoader;
@@ -32,12 +31,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
-import net.minecraft.world.EnumGameType;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockLittleBlocks extends BlockContainer {
 
@@ -254,7 +251,7 @@ public class BlockLittleBlocks extends BlockContainer {
 									a,
 									b,
 									c)) {
-								System.out.println("activatedOrPlaced");
+								checkPlacement(littleWorld, entityplayer, x, y, z, q, xx, yy, zz, side);
 								return true;
 							}
 							if (entityplayer.getCurrentEquippedItem() != null) {
@@ -262,7 +259,6 @@ public class BlockLittleBlocks extends BlockContainer {
 										entityplayer,
 										littleWorld,
 										entityplayer.getCurrentEquippedItem())) {
-									System.out.println("Used");
 									return true;
 								}
 							}
@@ -271,8 +267,44 @@ public class BlockLittleBlocks extends BlockContainer {
 				}
 			}
 		}
-		System.out.println("Neither");
 		return false;
+	}
+
+	private void checkPlacement(LittleWorld littleWorld, EntityPlayer entityplayer, int x, int y, int z, int l, int xx, int yy, int zz, int side) {
+        if (side == 0)
+        {
+            --yy;
+        }
+
+        if (side == 1)
+        {
+            ++yy;
+        }
+
+        if (side == 2)
+        {
+            --zz;
+        }
+
+        if (side == 3)
+        {
+            ++zz;
+        }
+
+        if (side == 4)
+        {
+            --xx;
+        }
+
+        if (side == 5)
+        {
+            ++xx;
+        }
+		Block block = Block.blocksList[littleWorld.getBlockId(xx, yy, zz)];
+		if (block != null && block instanceof BlockPistonBase) {
+			int newData = BlockPistonBase.determineOrientation(littleWorld.getRealWorld(), x, y, z, entityplayer);
+			littleWorld.setBlockAndMetadataWithNotify(xx, yy, zz, block.blockID, newData);
+		}
 	}
 
 	@Override
