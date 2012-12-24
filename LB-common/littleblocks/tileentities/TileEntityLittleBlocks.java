@@ -437,13 +437,15 @@ public class TileEntityLittleBlocks extends TileEntity {
 	}
 
 	public void setTileEntity(int x, int y, int z, TileEntity tile) {
-		tile.setWorldObj(getLittleWorld());
-		tile.xCoord = (xCoord << 3) + x;
-		tile.yCoord = (yCoord << 3) + y;
-		tile.zCoord = (zCoord << 3) + z;
-		removeTileEntity(x, y, z);
-		tile.validate();
-		addTileEntity(tile);
+		if (tile != null) {
+			tile.setWorldObj(getLittleWorld());
+			tile.xCoord = (xCoord << 3) + x;
+			tile.yCoord = (yCoord << 3) + y;
+			tile.zCoord = (zCoord << 3) + z;
+			removeTileEntity(x, y, z);
+			tile.validate();
+			addTileEntity(tile);
+		}
 	}
 
 	public TileEntity getTileEntity(int x, int y, int z) {
