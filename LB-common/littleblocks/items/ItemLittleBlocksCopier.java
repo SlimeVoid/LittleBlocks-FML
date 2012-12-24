@@ -19,8 +19,8 @@ import net.minecraftforge.common.ForgeDirection;
 
 public class ItemLittleBlocksCopier extends Item {
 	
-	private HashMap<EntityPlayer, TileEntityLittleBlocks> selectedLittleTiles = new HashMap();
-	private ReadWriteLock tileLock = new ReadWriteLock();
+	private static HashMap<EntityPlayer, TileEntityLittleBlocks> selectedLittleTiles = new HashMap();
+	private static ReadWriteLock tileLock = new ReadWriteLock();
 
 	public ItemLittleBlocksCopier(int id) {
 		super(id);
@@ -30,69 +30,84 @@ public class ItemLittleBlocksCopier extends Item {
 	
 	public boolean onItemUseFirst(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int l, float a, float b, float c) {
 		if (!world.isRemote) {
-			TileEntity tileentity = world.getBlockTileEntity(x, y, z);
-			if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
-				try {
-					tileLock.writeLock(world);
-					selectedLittleTiles.put(entityplayer, (TileEntityLittleBlocks)tileentity);
-					tileLock.writeUnlock();
-				} catch (InterruptedException e) {
-					LoggerLittleBlocks.getInstance("ItemLittleBlocksCopier").writeStackTrace(e);
-				}
-				return true;
-			} else if (tileentity == null) {
-				try {
-					tileLock.readLock(world);
-					if (!selectedLittleTiles.containsKey(entityplayer)) {
-						tileLock.readUnlock();
-						return false;
-					}
-					TileEntityLittleBlocks selectedLittleTile = selectedLittleTiles.get(entityplayer);
-					tileLock.readUnlock();
-					if (selectedLittleTile != null) {
-			            if (l == 0)
-			            {
-			                --y;
-			            }
-	
-			            if (l == 1)
-			            {
-			                ++y;
-			            }
-	
-			            if (l == 2)
-			            {
-			                --z;
-			            }
-	
-			            if (l == 3)
-			            {
-			                ++z;
-			            }
-	
-			            if (l == 4)
-			            {
-			                --x;
-			            }
-	
-			            if (l == 5)
-			            {
-			                ++x;
-			            }
-			            world.setBlock(x, y, z, LBCore.littleBlocksID);
-			            TileEntity newtile = world.getBlockTileEntity(x, y, z);
-			            if (newtile != null && newtile instanceof TileEntityLittleBlocks) {
-			            	TileEntityLittleBlocks newtilelb = (TileEntityLittleBlocks)newtile;
-			            	newtilelb.setContent(selectedLittleTiles.get(entityplayer).getContent());
-			            	newtilelb.setMetadata(selectedLittleTiles.get(entityplayer).getMetadata());
-			            	newtilelb.onInventoryChanged();
-			            }
-			            world.markBlockForUpdate(x, y, z);
+			if (entityplayer.capabilities.isCreativeMode) {
+				TileEntity tileentity = world.getBlockTileEntity(x, y, z);
+				if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
+					try {
+						tileLock.writeLock(world);
+						selectedLittleTiles.put(entityplayer, (TileEntityLittleBlocks)tileentity);
+						tileLock.writeUnlock();
+					} catch (InterruptedException e) {
+						LoggerLittleBlocks.getInstance("ItemLittleBlocksCopier").writeStackTrace(e);
 					}
 					return true;
-				} catch (InterruptedException e) {
-					LoggerLittleBlocks.getInstance("ItemLittleBlocksCopier").writeStackTrace(e);
+				} else if (tileentity == null) {
+					try {
+						tileLock.readLock(world);
+						if (!selectedLittleTiles.containsKey(entityplayer)) {
+							tileLock.readUnlock();
+							return false;
+						}
+						TileEntityLittleBlocks selectedLittleTile = selectedLittleTiles.get(entityplayer);
+						tileLock.readUnlock();
+						int xx = x, yy = y, zz = z;
+						if (selectedLittleTile != null) {
+				            if (l == 0)
+				            {
+				                --yy;
+				            }
+		
+				            if (l == 1)
+				            {
+				                ++yy;
+				            }
+		
+				            if (l == 2)
+				            {
+				                --zz;
+				            }
+		
+				            if (l == 3)
+				            {
+				                ++zz;
+				            }
+		
+				            if (l == 4)
+				            {
+				                --xx;
+				            }
+		
+				            if (l == 5)
+				            {
+				                ++xx;
+				            }
+				            world.setBlock(xx, yy, zz, LBCore.littleBlocksID);
+				            TileEntity newtile = world.getBlockTileEntity(xx, yy, zz);
+				            if (newtile != null && newtile instanceof TileEntityLittleBlocks) {
+				            	TileEntityLittleBlocks newtilelb = (TileEntityLittleBlocks)newtile;
+				            	tileLock.readLock(world);
+				            	TileEntityLittleBlocks oldtile = selectedLittleTiles.get(entityplayer);
+				            	tileLock.readUnlock();
+				            	for (int x1 = 0; x1 < LBCore.littleBlocksSize; x1++) {
+					            	for (int y1 = 0; y1 < LBCore.littleBlocksSize; y1++) {
+						            	for (int z1 = 0; z1 < LBCore.littleBlocksSize; z1++) {
+						            		if (oldtile.getContent(x1, y1, z1) > 0) {
+						            			newtilelb.setContent(x1, y1, z1, oldtile.getContent(x1, y1, z1), oldtile.getMetadata(x1, y1, z1));
+						            		}
+						            	}
+					            	}
+				            	}
+				            	newtilelb.onInventoryChanged();
+					            world.markBlockForUpdate(xx, yy, zz);
+				            }
+						}
+						return true;
+					} catch (InterruptedException e) {
+						LoggerLittleBlocks.getInstance("ItemLittleBlocksCopier").writeStackTrace(e);
+					}
 				}
+			} else {
+				entityplayer.addChatMessage(LBCore.littleBlockCopierMessage);
 			}
 		}
 		return false;
