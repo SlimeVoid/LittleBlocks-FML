@@ -1,6 +1,5 @@
 package littleblocks.handlers;
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import littleblocks.core.LBCore;
