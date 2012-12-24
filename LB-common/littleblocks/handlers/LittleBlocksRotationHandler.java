@@ -1,15 +1,30 @@
 package littleblocks.handlers;
 
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
 import littleblocks.core.LBCore;
 import littleblocks.tileentities.TileEntityLittleBlocks;
+import littleblocks.world.LittleWorld;
 
 public class LittleBlocksRotationHandler {
+	World world;
+	LittleWorld littleWorld;
+	EntityPlayer entityplayer;
 	TileEntityLittleBlocks tile;
+	int x, y, z, side;
 	int[][][] newContent = new int[LBCore.littleBlocksSize][LBCore.littleBlocksSize][LBCore.littleBlocksSize];
 	int[][][] newMetadata = new int[LBCore.littleBlocksSize][LBCore.littleBlocksSize][LBCore.littleBlocksSize];
 	
-	public LittleBlocksRotationHandler(TileEntityLittleBlocks tile) {
+	public LittleBlocksRotationHandler(World world, EntityPlayer entityplayer, TileEntityLittleBlocks tile, int x, int y, int z, int side) {
+		this.world = world;
+		this.littleWorld = tile.getLittleWorld();
+		this.entityplayer = entityplayer;
 		this.tile = tile;
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.side = side;
 	}
 	
 	public void rotateTile() {
@@ -33,8 +48,6 @@ public class LittleBlocksRotationHandler {
 				}
 			}
 		}
-		this.tile.onInventoryChanged();
-		tile.worldObj.markBlockForUpdate(tile.xCoord, tile.yCoord, tile.zCoord);
 	}
 
 }

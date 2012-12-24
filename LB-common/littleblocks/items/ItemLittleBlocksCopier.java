@@ -33,7 +33,7 @@ public class ItemLittleBlocksCopier extends Item {
 					TileEntity tileentity = world.getBlockTileEntity(x, y, z);
 					if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
 						TileEntityLittleBlocks tilelb = (TileEntityLittleBlocks)tileentity;
-						LittleBlocksRotationHandler tileToRotate = new LittleBlocksRotationHandler(tilelb);
+						LittleBlocksRotationHandler tileToRotate = new LittleBlocksRotationHandler(world, entityplayer, tilelb, x, y, z, l);
 						tileToRotate.rotateTile();
 					}
 					return true;
