@@ -12,72 +12,77 @@
 package littleblocks.render;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
+import org.lwjgl.opengl.GL11;
+
+import littleblocks.core.LBCore;
 import littleblocks.world.LittleWorld;
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.src.ModLoader;
+import net.minecraft.world.World;
 
 
 public class BlockLittleBlocksLittleRenderer {
-	private static BlockLittleBlocksLittleRenderer instance;
-	private Map<Integer, BlockToRender> blocksToRender;
-	private LittleWorld littleWorld;
-
-	private BlockLittleBlocksLittleRenderer(LittleWorld littleWorld) {
-		this.blocksToRender = new HashMap<Integer, BlockToRender>();
-		this.littleWorld = littleWorld;
+	private World world;
+	private Set<String> textures = new HashSet();
+	public HashMap<String, HashMap<Integer, LittleBlockToRender>> texturedBlocksToRender = new HashMap();
+	
+	public BlockLittleBlocksLittleRenderer(World worldObj) {
+		this.world = worldObj;
 	}
 
-	public static BlockLittleBlocksLittleRenderer getInstance(LittleWorld littleWorld) {
-		if (instance == null || instance.littleWorld.hashCode() != littleWorld
-				.hashCode())
-			instance = new BlockLittleBlocksLittleRenderer(littleWorld);
-
-		return instance;
-	}
-
-	public void addMem(int index, int[] newcoords, Block littleBlock) {
-		BlockToRender blockToRender = new BlockToRender(littleBlock, newcoords);
-		this.blocksToRender.put(index, blockToRender);
-	}
-
-	public void remMem(int index) {
-		this.blocksToRender.remove(index);
-	}
-
-	public int[] getCoords(int index) {
-		BlockToRender node = this.blocksToRender.get(index);
-		if (node == null) {
-			return null;
+	public void addLittleBlockToRender(Block block, int x, int y, int z) {
+		LittleBlockToRender render = new LittleBlockToRender(block, x, y, z);
+		if (texturedBlocksToRender.containsKey(block.getTextureFile())) {
+			HashMap<Integer, LittleBlockToRender> littleBlocksToRender = texturedBlocksToRender.get(block.getTextureFile());
+			int nextInt = littleBlocksToRender.size();
+			littleBlocksToRender.put(nextInt, render);
 		} else {
-			return node.coords;
+			this.textures.add(block.getTextureFile());
+			HashMap<Integer, LittleBlockToRender> littleBlocksToRender = new HashMap();
+			littleBlocksToRender.put(0, render);
+			texturedBlocksToRender.put(block.getTextureFile(), littleBlocksToRender);
 		}
 	}
-
-	public Block getBlock(int index) {
-		BlockToRender node = this.blocksToRender.get(index);
-		if (node == null) {
-			return null;
-		} else {
-			return node.block;
-		}
-	}
-
-	public class BlockToRender {
-		Block block;
-		int[] coords;
-
-		public BlockToRender(Block block, int[] coords) {
+	
+	private class LittleBlockToRender {
+		public Block block;
+		public int x, y, z;
+		
+		public LittleBlockToRender(Block block, int x, int y, int z) {
 			this.block = block;
-			this.coords = coords;
+			this.x = x;
+			this.y = y;
+			this.z = z;
 		}
 	}
 
-	public int getSize() {
-		return blocksToRender.size();
-	}
-
-	public void clear() {
-		this.blocksToRender.clear();
+	public void renderBlocks() {
+		for (String textureFile : this.textures) {
+			if (this.texturedBlocksToRender.containsKey(textureFile)) {
+				Tessellator tessellator = Tessellator.instance;
+				tessellator.draw();
+				tessellator.startDrawingQuads();
+				HashMap<Integer, LittleBlockToRender> littleBlocksToRender = this.texturedBlocksToRender.get(textureFile);
+				int texture = ModLoader.getMinecraftInstance().renderEngine
+						.getTexture(textureFile);
+				GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
+				for (LittleBlockToRender block: littleBlocksToRender.values()) {
+					LBCore.getLittleRenderer(world).
+							renderBlockByRenderType(
+										block.block,
+										block.x,
+										block.y,
+										block.z);
+				}
+				tessellator.draw();
+				tessellator.startDrawingQuads();
+			}
+		}
 	}
 }

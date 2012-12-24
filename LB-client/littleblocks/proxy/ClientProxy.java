@@ -8,6 +8,7 @@ import littleblocks.network.LBPacketIds;
 import littleblocks.network.packets.PacketLittleBlocksSettings;
 import littleblocks.render.BlockLittleBlocksRenderer;
 import littleblocks.render.EntityItemLittleBlocksCollectionRenderer;
+import littleblocks.render.LittleBlocksRenderer;
 import littleblocks.render.TileEntityLittleBlocksRenderer;
 import littleblocks.tickhandlers.ClientTickHandler;
 import littleblocks.tickhandlers.PlayerTickHandler;
@@ -40,22 +41,18 @@ public class ClientProxy extends CommonProxy {
 			this.getClass().getClassLoader().loadClass("TextureHDCompassFX");
 			LBCore.optifine = true;
 			LoggerLittleBlocks.getInstance(
-					Logger.filterClassName(
-							this.getClass().toString()
-					)
+					"ClientProxy"
 			).write(
-					false,
+					true,
 					"Optifine Loaded - RenderBlocks Configured",
 					LoggerLittleBlocks.LogLevel.DEBUG
 			);
 		} catch (ClassNotFoundException e) {
 			LBCore.optifine = false;
 			LoggerLittleBlocks.getInstance(
-					Logger.filterClassName(
-							this.getClass().toString()
-					)
+					"ClientProxy"
 			).write(
-					false,
+					true,
 					"Optifine not Loaded - RenderBlocks Configured",
 					LoggerLittleBlocks.LogLevel.DEBUG
 			);
@@ -69,8 +66,8 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void registerRenderInformation() {
-		RenderingRegistry.registerBlockHandler(new BlockLittleBlocksRenderer());
-		//RenderingRegistry.registerEntityRenderingHandler(EntityItemLittleBlocksCollection.class, new EntityItemLittleBlocksCollectionRenderer());
+		RenderingRegistry.registerBlockHandler(new LittleBlocksRenderer());
+		RenderingRegistry.registerEntityRenderingHandler(EntityItemLittleBlocksCollection.class, new EntityItemLittleBlocksCollectionRenderer());
 	}
 
 	@Override
