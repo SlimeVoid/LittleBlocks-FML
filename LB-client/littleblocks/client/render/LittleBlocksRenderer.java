@@ -1,4 +1,4 @@
-package littleblocks.render;
+package littleblocks.client.render;
 
 import littleblocks.core.LBCore;
 import littleblocks.tileentities.TileEntityLittleBlocks;

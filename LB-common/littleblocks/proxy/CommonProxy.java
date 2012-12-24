@@ -2,8 +2,7 @@ package littleblocks.proxy;
 
 import littleblocks.api.ILBCommonProxy;
 import littleblocks.core.LBCore;
-import littleblocks.tickhandlers.CommonTickHandler;
-import littleblocks.tickhandlers.PlayerTickHandler;
+import littleblocks.handlers.CommonTickHandler;
 import littleblocks.world.LittleWorld;
 import littleblocks.world.LittleWorldServer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -71,7 +70,6 @@ public class CommonProxy implements ILBCommonProxy {
 		LBCore.littleDimensionServer = -1;
 		LBCore.littleProviderTypeServer = -1;
 		TickRegistry.registerTickHandler(new CommonTickHandler(), Side.SERVER);
-		TickRegistry.registerTickHandler(new PlayerTickHandler(), Side.SERVER);
 	}
 
 	@Override

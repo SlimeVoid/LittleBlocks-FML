@@ -19,8 +19,8 @@ import net.minecraftforge.common.ForgeDirection;
 
 public class ItemLittleBlocksCopier extends Item {
 	
-	private static HashMap<EntityPlayer, TileEntityLittleBlocks> selectedLittleTiles = new HashMap();
-	private static ReadWriteLock tileLock = new ReadWriteLock();
+	public static HashMap<EntityPlayer, TileEntityLittleBlocks> selectedLittleTiles = new HashMap();
+	public static ReadWriteLock tileLock = new ReadWriteLock();
 
 	public ItemLittleBlocksCopier(int id) {
 		super(id);

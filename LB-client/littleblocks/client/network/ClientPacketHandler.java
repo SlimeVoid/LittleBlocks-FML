@@ -1,4 +1,4 @@
-package littleblocks.network;
+package littleblocks.client.network;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -8,6 +8,8 @@ import littleblocks.blocks.BlockLittleBlocks;
 import littleblocks.core.LBCore;
 import littleblocks.core.LBInit;
 import littleblocks.items.EntityItemLittleBlocksCollection;
+import littleblocks.network.CommonPacketHandler;
+import littleblocks.network.LBPacketIds;
 import littleblocks.network.packets.PacketLittleBlocks;
 import littleblocks.network.packets.PacketLittleBlocksCollection;
 import littleblocks.network.packets.PacketLittleBlocksSettings;

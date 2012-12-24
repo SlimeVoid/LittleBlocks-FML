@@ -1,4 +1,4 @@
-package littleblocks.render;
+package littleblocks.client.render;
 
 import java.util.ArrayList;
 import java.util.List;

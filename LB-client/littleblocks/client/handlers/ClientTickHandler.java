@@ -1,4 +1,4 @@
-package littleblocks.tickhandlers;
+package littleblocks.client.handlers;
 
 import java.util.EnumSet;
 
@@ -9,7 +9,7 @@ import net.minecraftforge.common.DimensionManager;
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
 
-public class CommonTickHandler implements ITickHandler {
+public class ClientTickHandler implements ITickHandler {
 
 	@Override
 	public void tickStart(EnumSet<TickType> type, Object... tickData) {
@@ -29,12 +29,11 @@ public class CommonTickHandler implements ITickHandler {
 
 	@Override
 	public EnumSet<TickType> ticks() {
-		return EnumSet.of(TickType.SERVER);
+		return EnumSet.of(TickType.CLIENT);
 	}
 
 	@Override
 	public String getLabel() {
-		return "LittleBlocks Tick Handler";
+		return "LittleBlocks Client Tick Handler";
 	}
-
 }

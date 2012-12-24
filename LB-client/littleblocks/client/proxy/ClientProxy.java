@@ -1,17 +1,18 @@
-package littleblocks.proxy;
+package littleblocks.client.proxy;
 
+import littleblocks.client.handlers.ClientTickHandler;
+import littleblocks.client.network.ClientPacketHandler;
+import littleblocks.client.render.BlockLittleBlocksRenderer;
+import littleblocks.client.render.EntityItemLittleBlocksCollectionRenderer;
+import littleblocks.client.render.LittleBlocksRenderer;
+import littleblocks.client.render.TileEntityLittleBlocksRenderer;
 import littleblocks.core.LBCore;
 import littleblocks.core.LoggerLittleBlocks;
+import littleblocks.handlers.DrawCopierHighlight;
 import littleblocks.items.EntityItemLittleBlocksCollection;
-import littleblocks.network.ClientPacketHandler;
 import littleblocks.network.LBPacketIds;
 import littleblocks.network.packets.PacketLittleBlocksSettings;
-import littleblocks.render.BlockLittleBlocksRenderer;
-import littleblocks.render.EntityItemLittleBlocksCollectionRenderer;
-import littleblocks.render.LittleBlocksRenderer;
-import littleblocks.render.TileEntityLittleBlocksRenderer;
-import littleblocks.tickhandlers.ClientTickHandler;
-import littleblocks.tickhandlers.PlayerTickHandler;
+import littleblocks.proxy.CommonProxy;
 import littleblocks.world.LittleWorld;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.NetClientHandler;
@@ -24,6 +25,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -66,6 +68,7 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void registerRenderInformation() {
+		MinecraftForge.EVENT_BUS.register(new DrawCopierHighlight());
 		RenderingRegistry.registerBlockHandler(new LittleBlocksRenderer());
 		RenderingRegistry.registerEntityRenderingHandler(EntityItemLittleBlocksCollection.class, new EntityItemLittleBlocksCollectionRenderer());
 	}
@@ -94,7 +97,6 @@ public class ClientProxy extends CommonProxy {
 			LBCore.littleProviderTypeServer = -1;
 		}
 		TickRegistry.registerTickHandler(new ClientTickHandler(), Side.CLIENT);
-		TickRegistry.registerTickHandler(new PlayerTickHandler(), Side.CLIENT);
 	}
 
 	@Override

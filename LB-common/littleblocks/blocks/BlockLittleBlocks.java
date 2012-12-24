@@ -6,10 +6,10 @@ import java.util.Random;
 
 import littleblocks.api.ILBCommonProxy;
 import littleblocks.blocks.core.CollisionRayTrace;
+import littleblocks.client.network.ClientPacketHandler;
 import littleblocks.core.LBCore;
 import littleblocks.core.LBInit;
 import littleblocks.items.EntityItemLittleBlocksCollection;
-import littleblocks.network.ClientPacketHandler;
 import littleblocks.network.CommonPacketHandler;
 import littleblocks.network.packets.PacketLittleBlocksCollection;
 import littleblocks.tileentities.TileEntityLittleBlocks;

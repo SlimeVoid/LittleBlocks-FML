@@ -1,6 +1,6 @@
 package littleblocks.core;
 
-import littleblocks.network.ClientPacketHandler;
+import littleblocks.client.network.ClientPacketHandler;
 import littleblocks.network.CommonPacketHandler;
 import littleblocks.network.LBConnectionHandler;
 import cpw.mods.fml.common.Mod;
@@ -33,7 +33,7 @@ import eurysmods.api.ICommonProxy;
 		connectionHandler = LBConnectionHandler.class)
 public class LittleBlocks {
 	@SidedProxy(
-			clientSide = "littleblocks.proxy.ClientProxy",
+			clientSide = "littleblocks.client.proxy.ClientProxy",
 			serverSide = "littleblocks.proxy.CommonProxy")
 	public static ICommonProxy proxy;
 	
