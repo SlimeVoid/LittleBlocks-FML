@@ -17,7 +17,6 @@ import littleblocks.network.packets.PacketTileEntityLB;
 import littleblocks.tileentities.TileEntityLittleBlocks;
 import littleblocks.world.LittleWorld;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetworkManager;
@@ -71,7 +70,7 @@ public class ClientPacketHandler implements IPacketHandler {
 			tileentitylb.setContent(x, y, z, id, meta);
 			if (id != 0) {
 				Block littleBlock = Block.blocksList[id];
-				if (littleBlock instanceof BlockContainer) {
+				littleBlock.hasTileEntity(meta);
 					tileentitylb.setTileEntity(
 							x,
 							y,
@@ -79,7 +78,6 @@ public class ClientPacketHandler implements IPacketHandler {
 							Block.blocksList[id].createTileEntity(
 									tileentitylb.getLittleWorld(),
 									meta));
-				}
 			}
 			index += 5;
 		}
@@ -177,7 +175,6 @@ public class ClientPacketHandler implements IPacketHandler {
 				packet.data));
 		try {
 			int packetID = data.read();
-			System.out.println("PacketID: " + packetID);
 			switch (packetID) {
 			case PacketIds.LOGIN:
 				PacketLittleBlocksSettings settings = new PacketLittleBlocksSettings();
