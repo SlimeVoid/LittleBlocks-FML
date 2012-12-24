@@ -1,8 +1,5 @@
 package littleblocks.handlers;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
-
 import littleblocks.core.LBCore;
 import littleblocks.items.ItemLittleBlocksCopier;
 import net.minecraft.client.renderer.Tessellator;
@@ -11,6 +8,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.event.ForgeSubscribe;
+
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 
 public class DrawCopierHighlight {
 

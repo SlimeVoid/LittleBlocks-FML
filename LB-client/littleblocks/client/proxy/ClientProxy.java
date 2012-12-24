@@ -2,7 +2,6 @@ package littleblocks.client.proxy;
 
 import littleblocks.client.handlers.ClientTickHandler;
 import littleblocks.client.network.ClientPacketHandler;
-import littleblocks.client.render.BlockLittleBlocksRenderer;
 import littleblocks.client.render.EntityItemLittleBlocksCollectionRenderer;
 import littleblocks.client.render.LittleBlocksRenderer;
 import littleblocks.client.render.TileEntityLittleBlocksRenderer;
@@ -32,7 +31,6 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import eurysmods.data.Logger;
 
 @SideOnly(Side.CLIENT)
 public class ClientProxy extends CommonProxy {

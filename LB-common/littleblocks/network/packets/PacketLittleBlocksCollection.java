@@ -7,7 +7,6 @@ import java.util.HashMap;
 
 import littleblocks.core.LBInit;
 import littleblocks.items.EntityItemLittleBlocksCollection;
-
 import net.minecraft.item.ItemStack;
 import eurysmods.network.packets.core.PacketEntity;
 

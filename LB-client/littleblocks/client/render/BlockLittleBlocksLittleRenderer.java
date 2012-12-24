@@ -13,18 +13,15 @@ package littleblocks.client.render;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
-import org.lwjgl.opengl.GL11;
-
 import littleblocks.core.LBCore;
-import littleblocks.world.LittleWorld;
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.src.ModLoader;
 import net.minecraft.world.World;
+
+import org.lwjgl.opengl.GL11;
 
 
 public class BlockLittleBlocksLittleRenderer {

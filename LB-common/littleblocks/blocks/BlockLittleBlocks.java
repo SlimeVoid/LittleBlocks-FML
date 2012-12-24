@@ -271,39 +271,43 @@ public class BlockLittleBlocks extends BlockContainer {
 	}
 
 	private void checkPlacement(LittleWorld littleWorld, EntityPlayer entityplayer, int x, int y, int z, int l, int xx, int yy, int zz, int side) {
-        if (side == 0)
-        {
-            --yy;
-        }
+		if (side == 0) {
+			--yy;
+		}
 
-        if (side == 1)
-        {
-            ++yy;
-        }
+		if (side == 1) {
+			++yy;
+		}
 
-        if (side == 2)
-        {
-            --zz;
-        }
+		if (side == 2) {
+			--zz;
+		}
 
-        if (side == 3)
-        {
-            ++zz;
-        }
+		if (side == 3) {
+			++zz;
+		}
 
-        if (side == 4)
-        {
-            --xx;
-        }
+		if (side == 4) {
+			--xx;
+		}
 
-        if (side == 5)
-        {
-            ++xx;
-        }
+		if (side == 5) {
+			++xx;
+		}
 		Block block = Block.blocksList[littleWorld.getBlockId(xx, yy, zz)];
 		if (block != null && block instanceof BlockPistonBase) {
-			int newData = BlockPistonBase.determineOrientation(littleWorld.getRealWorld(), x, y, z, entityplayer);
-			littleWorld.setBlockAndMetadataWithNotify(xx, yy, zz, block.blockID, newData);
+			int newData = BlockPistonBase.determineOrientation(
+					littleWorld.getRealWorld(),
+					x,
+					y,
+					z,
+					entityplayer);
+			littleWorld.setBlockAndMetadataWithNotify(
+					xx,
+					yy,
+					zz,
+					block.blockID,
+					newData);
 		}
 	}
 

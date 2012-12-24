@@ -4,10 +4,6 @@ import java.util.HashMap;
 import java.util.Random;
 
 import littleblocks.items.EntityItemLittleBlocksCollection;
-
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemRenderer;
@@ -21,6 +17,9 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.client.ForgeHooksClient;
+
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 
 public class EntityItemLittleBlocksCollectionRenderer extends RenderItem {
 	private HashMap<ItemStack, Random> random = new HashMap();
