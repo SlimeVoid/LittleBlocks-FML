@@ -10,6 +10,8 @@ import java.util.TreeSet;
 import littleblocks.core.LBCore;
 import littleblocks.core.LoggerLittleBlocks;
 import littleblocks.network.CommonPacketHandler;
+import littleblocks.world.events.LittleBlockEvent;
+import littleblocks.world.events.LittleBlockEventList;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEventData;
 import net.minecraft.crash.CrashReport;
