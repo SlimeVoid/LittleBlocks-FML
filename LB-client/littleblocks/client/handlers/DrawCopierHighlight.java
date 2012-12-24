@@ -1,4 +1,4 @@
-package littleblocks.handlers;
+package littleblocks.client.handlers;
 
 import littleblocks.core.LBCore;
 import littleblocks.items.ItemLittleBlocksCopier;

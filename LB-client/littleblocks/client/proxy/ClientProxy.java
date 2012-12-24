@@ -1,13 +1,13 @@
 package littleblocks.client.proxy;
 
 import littleblocks.client.handlers.ClientTickHandler;
+import littleblocks.client.handlers.DrawCopierHighlight;
 import littleblocks.client.network.ClientPacketHandler;
 import littleblocks.client.render.EntityItemLittleBlocksCollectionRenderer;
 import littleblocks.client.render.LittleBlocksRenderer;
 import littleblocks.client.render.TileEntityLittleBlocksRenderer;
 import littleblocks.core.LBCore;
 import littleblocks.core.LoggerLittleBlocks;
-import littleblocks.handlers.DrawCopierHighlight;
 import littleblocks.items.EntityItemLittleBlocksCollection;
 import littleblocks.network.LBPacketIds;
 import littleblocks.network.packets.PacketLittleBlocksSettings;
