@@ -62,6 +62,7 @@ public class LBCore {
 	public static boolean optifine;
 	public static String denyPlacementMessage = "Sorry, you cannot place that here!";
 	public static String denyUseMessage = "Sorry, you cannot use that here!";
+	public static String littleBlockCopierMessage = "Sorry, that feature is only available in Creative Mode!";
 	public static int littleBlocksSize = 8;
 	private static Set<Integer> disallowedItemIDs = new HashSet();
 	private static Set<Class<? extends Item>> disallowedItems = new HashSet();

@@ -75,7 +75,7 @@ public class BlockLittleBlocks extends BlockContainer {
 						.isInCreativeMode()) {
 					this.onBlockClicked(world, x, y, z, entityplayer);
 					return false;
-				} else if (isCreative(entityplayer)) {
+				} else if (entityplayer.capabilities.isCreativeMode) {
 					this.onBlockClicked(world, x, y, z, entityplayer);
 					return false;
 				} else {
@@ -144,8 +144,28 @@ public class BlockLittleBlocks extends BlockContainer {
 
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int q, float a, float b, float c) {
-		if (entityplayer.getCurrentEquippedItem() != null) {
-			ItemStack itemstack = entityplayer.getCurrentEquippedItem();
+		if (world.isRemote) {
+			ClientPacketHandler.blockUpdate(
+					world,
+					entityplayer,
+					x,
+					y,
+					z,
+					q,
+					a,
+					b,
+					c,
+					this,
+					LBCore.blockActivateCommand);
+		}
+		return true;
+	}
+	
+	private boolean canPlayerPlaceBlock(World world, EntityPlayer entityplayer) {
+		boolean denyPlacement = false;
+		String placementMessage = "";
+		ItemStack itemstack = entityplayer.getCurrentEquippedItem();
+		if (itemstack != null) {
 			Object itemHeld = itemstack.getItem();
 			Block block = null;
 			Item item = null;
@@ -155,10 +175,6 @@ public class BlockLittleBlocks extends BlockContainer {
 			if (itemHeld instanceof Item) {
 				item = (Item) itemHeld;
 			}
-			Block[] blocks = Block.blocksList;
-			Item[] items = Item.itemsList;
-			boolean denyPlacement = false;
-			String placementMessage = "";
 			if (block != null) {
 				if (!LBCore.isBlockAllowed(block)) {
 					denyPlacement = true;
@@ -176,15 +192,8 @@ public class BlockLittleBlocks extends BlockContainer {
 					denyPlacement = true;
 					placementMessage = LBCore.denyPlacementMessage;
 				}
-				if (block.getBlockName() != null) {
-					if (block.getBlockName().equals("tile.pistonBase") || block
-							.getBlockName()
-								.equals("tile.pistonStickyBase")) {
-						// denyPlacement = true;
-						// placementMessage = LBCore.denyPlacementMessage;
-					}
-				}
-			} else if (item != null) {
+			}
+			if (item != null) {
 				if (item instanceof ItemBlock) {
 					int itemBlockId = ((ItemBlock) item).getBlockID();
 					if (LBCore.hasTile(itemBlockId)) {
@@ -201,112 +210,107 @@ public class BlockLittleBlocks extends BlockContainer {
 					placementMessage = LBCore.denyUseMessage;
 				}
 			}
-			if (denyPlacement) {
-				if (world.isRemote) {
-					entityplayer.addChatMessage(placementMessage);
-				}
-				return true;
-			}
 		}
-		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
-			if (world.isRemote) {
-				ClientPacketHandler.blockUpdate(
-						world,
-						entityplayer,
-						x,
-						y,
-						z,
-						q,
-						a,
-						b,
-						c,
-						this,
-						LBCore.blockActivateCommand);
-			}
+		if (denyPlacement) {
+			entityplayer.addChatMessage(placementMessage);
+			return false;
 		}
 		return true;
 	}
 
-	public boolean onServerBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int q, float a, float b, float c) {
+	public boolean onServerBlockActivated(
+			World world,
+			int x, int y, int z,
+			EntityPlayer entityplayer,
+			int q, float a, float b, float c,
+			int xSelected, int ySelected, int zSelected, int side) {
 		if (entityplayer.canPlayerEdit(x, y, z, q, entityplayer.getHeldItem())) {
-			TileEntity tileentity = world.getBlockTileEntity(x, y, z);
-			if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
-				TileEntityLittleBlocks tile = (TileEntityLittleBlocks) tileentity;
-				int xx = (x << 3) + this.xSelected, yy = (y << 3) + this.ySelected, zz = (z << 3) + this.zSelected;
-				LittleWorld littleWorld = ((ILBCommonProxy) LBInit.LBM
-						.getProxy()).getLittleWorld(world, false);
-				int blockId = tile.getContent(
-						this.xSelected,
-						this.ySelected,
-						this.zSelected);
-				if (littleWorld != null) {
-					if (entityplayer instanceof EntityPlayerMP) {
-						EntityPlayerMP player = (EntityPlayerMP) entityplayer;
-						ItemInWorldManager itemManager = player.theItemInWorldManager;
-						if (entityplayer.getCurrentEquippedItem() != null && entityplayer
-								.getCurrentEquippedItem()
-									.getItem() instanceof ItemBucket) {
-							itemManager.tryUseItem(
+			if (entityplayer.getHeldItem() != null && entityplayer.getHeldItem().getItem() == LBCore.littleBlocksCopier) {
+				return true;
+			}
+			if (canPlayerPlaceBlock(world, entityplayer)) {
+				TileEntity tileentity = world.getBlockTileEntity(x, y, z);
+				if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
+					TileEntityLittleBlocks tile = (TileEntityLittleBlocks) tileentity;
+					int xx = (x << 3) + xSelected, yy = (y << 3) + ySelected, zz = (z << 3) + zSelected;
+					LittleWorld littleWorld = ((ILBCommonProxy) LBInit.LBM
+							.getProxy()).getLittleWorld(world, false);
+					int blockId = tile.getContent(
+							xSelected,
+							ySelected,
+							zSelected);
+					if (littleWorld != null) {
+						if (entityplayer instanceof EntityPlayerMP) {
+							EntityPlayerMP player = (EntityPlayerMP) entityplayer;
+							ItemInWorldManager itemManager = player.theItemInWorldManager;
+							if (itemManager.activateBlockOrUseItem(
 									entityplayer,
 									littleWorld,
-									entityplayer.getCurrentEquippedItem());
-							//world.markBlockForUpdate(x, y, z);
-							return true;
-						} else if (itemManager.activateBlockOrUseItem(
-								entityplayer,
-								littleWorld,
-								entityplayer.getCurrentEquippedItem(),
-								xx,
-								yy,
-								zz,
-								this.side,
-								a,
-								b,
-								c)) {
-							//world.markBlockForUpdate(x, y, z);
-							return true;
+									entityplayer.getCurrentEquippedItem(),
+									xx,
+									yy,
+									zz,
+									side,
+									a,
+									b,
+									c)) {
+								System.out.println("activatedOrPlaced");
+								return true;
+							}
+							if (entityplayer.getCurrentEquippedItem() != null) {
+								if (itemManager.tryUseItem(
+										entityplayer,
+										littleWorld,
+										entityplayer.getCurrentEquippedItem())) {
+									System.out.println("Used");
+									return true;
+								}
+							}
 						}
 					}
 				}
 			}
 		}
+		System.out.println("Neither");
 		return false;
 	}
 
 	@Override
 	public void onBlockClicked(World world, int x, int y, int z, EntityPlayer entityplayer) {
-		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
-			if (world.isRemote) {
-				ClientPacketHandler.blockUpdate(
-						world,
-						entityplayer,
-						x,
-						y,
-						z,
-						0,
-						0,
-						0,
-						0,
-						this,
-						LBCore.blockClickCommand);
-			}
+		if (world.isRemote) {
+			ClientPacketHandler.blockUpdate(
+					world,
+					entityplayer,
+					x,
+					y,
+					z,
+					0,
+					0,
+					0,
+					0,
+					this,
+					LBCore.blockClickCommand);
 		}
 	}
 
-	public void onServerBlockClicked(World world, int x, int y, int z, EntityPlayer entityplayer) {
+	public void onServerBlockClicked(
+			World world,
+			int x, int y, int z,
+			EntityPlayer entityplayer,
+			int xSelected, int ySelected, int zSelected) {
 		TileEntityLittleBlocks tile = (TileEntityLittleBlocks) world
 				.getBlockTileEntity(x, y, z);
 		int content = tile.getContent(
-				this.xSelected,
-				this.ySelected,
-				this.zSelected);
+				xSelected,
+				ySelected,
+				zSelected);
 		int contentMeta = tile.getMetadata(
-				this.xSelected,
-				this.ySelected,
-				this.zSelected);
-		int xx = (x << 3) + this.xSelected, yy = (y << 3) + this.ySelected, zz = (z << 3) + this.zSelected;
+				xSelected,
+				ySelected,
+				zSelected);
+		int xx = (x << 3) + xSelected, yy = (y << 3) + ySelected, zz = (z << 3) + zSelected;
 		if (content > 0 && Block.blocksList[content] != null) {
-			if (!isCreative(entityplayer)) {
+			if (!entityplayer.capabilities.isCreativeMode) {
 				ItemStack itemToDrop = dropLittleBlockAsNormalBlock(
 						world,
 						x,
@@ -316,32 +320,8 @@ public class BlockLittleBlocks extends BlockContainer {
 						contentMeta);
 				this.dropLittleBlockAsItem_do(world, x, y, z, itemToDrop);
 			}
-			tile.setContent(this.xSelected, this.ySelected, this.zSelected, 0);
+			tile.setContent(xSelected, ySelected, zSelected, 0);
 		}
-	}
-
-	@SideOnly(Side.CLIENT)
-	private boolean isCreative(EntityPlayer entityplayer, World world) {
-		if (entityplayer instanceof EntityClientPlayerMP) {
-			if (ModLoader.getMinecraftInstance().playerController
-					.isInCreativeMode() || world.getWorldInfo().getGameType() == EnumGameType.CREATIVE) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private boolean isCreative(EntityPlayer entityplayer) {
-		if (entityplayer.worldObj.isRemote) {
-			return isCreative(entityplayer, entityplayer.worldObj);
-		}
-		if (entityplayer != null && entityplayer instanceof EntityPlayerMP) {
-			if (((EntityPlayerMP) entityplayer).theItemInWorldManager
-					.getGameType() == EnumGameType.CREATIVE) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	public void dropLittleBlockAsItem_do(World world, int x, int y, int z, ItemStack itemStack) {
@@ -381,35 +361,35 @@ public class BlockLittleBlocks extends BlockContainer {
 
 	public void setBlockBoundsBasedOnSelection(World world, int x, int y, int z) {
 		float m = LBCore.littleBlocksSize;
-		if (xSelected == -10) {
+		if (this.xSelected == -10) {
 			setBlockBounds(0f, 0f, 0f, 0f, 0f, 0f);
 		} else {
 			TileEntityLittleBlocks tile = (TileEntityLittleBlocks) world
 					.getBlockTileEntity(x, y, z);
-			int content = tile.getContent(xSelected, ySelected, zSelected);
+			int content = tile.getContent(this.xSelected, this.ySelected, this.zSelected);
 			if (content <= 0) {
 				setBlockBounds(
-						xSelected / m,
-						ySelected / m,
-						zSelected / m,
-						(xSelected + 1) / m,
-						(ySelected + 1) / m,
-						(zSelected + 1) / m);
+						this.xSelected / m,
+						this.ySelected / m,
+						this.zSelected / m,
+						(this.xSelected + 1) / m,
+						(this.ySelected + 1) / m,
+						(this.zSelected + 1) / m);
 			} else {
 				Block block = Block.blocksList[content];
 				if (block != null) {
 					block.setBlockBoundsBasedOnState(
 							tile.getLittleWorld(),
-							(x << 3) + xSelected,
-							(y << 3) + ySelected,
-							(z << 3) + zSelected);
+							(x << 3) + this.xSelected,
+							(y << 3) + this.ySelected,
+							(z << 3) + this.zSelected);
 					AxisAlignedBB bound = AxisAlignedBB.getBoundingBox(
-							(xSelected + block.getBlockBoundsMinX()) / m,
-							(ySelected + block.getBlockBoundsMinY()) / m,
-							(zSelected + block.getBlockBoundsMinZ()) / m,
-							(xSelected + block.getBlockBoundsMaxX()) / m,
-							(ySelected + block.getBlockBoundsMaxY()) / m,
-							(zSelected + block.getBlockBoundsMaxZ()) / m);
+							(this.xSelected + block.getBlockBoundsMinX()) / m,
+							(this.ySelected + block.getBlockBoundsMinY()) / m,
+							(this.zSelected + block.getBlockBoundsMinZ()) / m,
+							(this.xSelected + block.getBlockBoundsMaxX()) / m,
+							(this.ySelected + block.getBlockBoundsMaxY()) / m,
+							(this.zSelected + block.getBlockBoundsMaxZ()) / m);
 					setBlockBounds(
 							(float) bound.minX,
 							(float) bound.minY,
@@ -508,21 +488,21 @@ public class BlockLittleBlocks extends BlockContainer {
 				}
 			}
 			if (min != null) {
-				side = (Byte) min[1];
-				xSelected = (Integer) min[3];
-				ySelected = (Integer) min[4];
-				zSelected = (Integer) min[5];
-				if (tile.getContent(xSelected, ySelected, zSelected) > 0) {
+				this.side = (Byte) min[1];
+				this.xSelected = (Integer) min[3];
+				this.ySelected = (Integer) min[4];
+				this.zSelected = (Integer) min[5];
+				if (tile.getContent(this.xSelected, this.ySelected, this.zSelected) > 0) {
 					Block littleBlock = Block.blocksList[tile.getContent(
-							xSelected,
-							ySelected,
-							zSelected)];
+							this.xSelected,
+							this.ySelected,
+							this.zSelected)];
 					if (littleBlock != null) {
 						littleBlock.collisionRayTrace(
 								tile.getLittleWorld(),
-								(x << 3) + xSelected,
-								(y << 3) + ySelected,
-								(z << 3) + zSelected,
+								(x << 3) + this.xSelected,
+								(y << 3) + this.ySelected,
+								(z << 3) + this.zSelected,
 								player,
 								view);
 					}
@@ -536,10 +516,10 @@ public class BlockLittleBlocks extends BlockContainer {
 							((Vec3) min[0]).addVector(x, y, z));
 			}
 		}
-		xSelected = -10;
-		ySelected = -10;
-		zSelected = -10;
-		side = -1;
+		this.xSelected = -10;
+		this.ySelected = -10;
+		this.zSelected = -10;
+		this.side = -1;
 		setBlockBoundsBasedOnSelection(world, x, y, z);
 
 		return null;
@@ -651,50 +631,51 @@ public class BlockLittleBlocks extends BlockContainer {
 		} else {
 			TileEntityLittleBlocks tile = (TileEntityLittleBlocks) iblockaccess
 					.getBlockTileEntity(x, y, z);
-
-			int[][][] content = tile.getContent();
-			int maX = tile.size, maY = tile.size, maZ = tile.size;
-			int startX = 0, startY = 0, startZ = 0;
-
-			switch (side) {
-			case 1:
-				maY = 1;
-				break;
-
-			case 0:
-				startY = maY - 1;
-				break;
-
-			case 3:
-				maZ = 1;
-				break;
-
-			case 2:
-				startZ = maZ - 1;
-				break;
-
-			case 5:
-				maX = 1;
-				break;
-
-			case 4:
-				startX = maX - 1;
-				break;
-			}
-
-			for (int xx = startX; xx < maX; xx++) {
-				for (int yy = startY; yy < maY; yy++) {
-					for (int zz = startZ; zz < maZ; zz++) {
-						if (content[xx][yy][zz] > 0) {
-							Block littleBlock = Block.blocksList[content[xx][yy][zz]];
-							if (littleBlock != null && littleBlock
-									.isProvidingWeakPower(
-											tile.getLittleWorld(),
-											(x << 3) + xx,
-											(y << 3) + yy,
-											(z << 3) + zz,
-											side)) {
-								return true;
+			if (tile != null) {
+				int[][][] content = tile.getContent();
+				int maX = tile.size, maY = tile.size, maZ = tile.size;
+				int startX = 0, startY = 0, startZ = 0;
+	
+				switch (side) {
+				case 1:
+					maY = 1;
+					break;
+	
+				case 0:
+					startY = maY - 1;
+					break;
+	
+				case 3:
+					maZ = 1;
+					break;
+	
+				case 2:
+					startZ = maZ - 1;
+					break;
+	
+				case 5:
+					maX = 1;
+					break;
+	
+				case 4:
+					startX = maX - 1;
+					break;
+				}
+	
+				for (int xx = startX; xx < maX; xx++) {
+					for (int yy = startY; yy < maY; yy++) {
+						for (int zz = startZ; zz < maZ; zz++) {
+							if (content[xx][yy][zz] > 0) {
+								Block littleBlock = Block.blocksList[content[xx][yy][zz]];
+								if (littleBlock != null && littleBlock
+										.isProvidingWeakPower(
+												tile.getLittleWorld(),
+												(x << 3) + xx,
+												(y << 3) + yy,
+												(z << 3) + zz,
+												side)) {
+									return true;
+								}
 							}
 						}
 					}

@@ -35,9 +35,7 @@ public class CommonPacketHandler implements IPacketHandler {
 			List<TileEntity> tileEntities = world.loadedTileEntityList;
 			for (TileEntity tileentity : tileEntities) {
 				if (tileentity instanceof TileEntityLittleBlocks) {
-					tileentity.onInventoryChanged();
-					// world.markBlockNeedsUpdate(tileentity.xCoord,
-					// tileentity.yCoord+1, tileentity.zCoord);
+					world.markBlockForUpdate(tileentity.xCoord, tileentity.yCoord+1, tileentity.zCoord);
 				}
 			}
 		}
@@ -91,29 +89,16 @@ public class CommonPacketHandler implements IPacketHandler {
 						packetLB.xPosition,
 						packetLB.yPosition,
 						packetLB.zPosition) == LBCore.littleBlocksID) {
-					((BlockLittleBlocks) LBCore.littleBlocks).xSelected = packetLB
-							.getSelectedX();
-					((BlockLittleBlocks) LBCore.littleBlocks).ySelected = packetLB
-							.getSelectedY();
-					((BlockLittleBlocks) LBCore.littleBlocks).zSelected = packetLB
-							.getSelectedZ();
-					((BlockLittleBlocks) LBCore.littleBlocks).side = packetLB
-							.getMetadata();
 					((BlockLittleBlocks) LBCore.littleBlocks)
 							.onServerBlockActivated(
 									world,
-									packet.xPosition,
-									packet.yPosition,
-									packet.zPosition,
+									packet.xPosition, packet.yPosition, packet.zPosition,
 									entityplayer,
-									packet.side,
-									packet.vecX,
-									packet.vecY,
-									packet.vecZ);
-					((BlockLittleBlocks) LBCore.littleBlocks).xSelected = -10;
-					((BlockLittleBlocks) LBCore.littleBlocks).ySelected = -10;
-					((BlockLittleBlocks) LBCore.littleBlocks).zSelected = -10;
-					((BlockLittleBlocks) LBCore.littleBlocks).side = -1;
+									packet.side, packet.vecX, packet.vecY, packet.vecZ,
+									((PacketLittleBlocks) packet).getSelectedX(),
+									((PacketLittleBlocks) packet).getSelectedY(),
+									((PacketLittleBlocks) packet).getSelectedZ(),
+									((PacketLittleBlocks) packet).getMetadata());
 				}
 			}
 			if (packetLB.getCommand().equals(LBCore.blockClickCommand)) {
@@ -121,25 +106,16 @@ public class CommonPacketHandler implements IPacketHandler {
 						packetLB.xPosition,
 						packetLB.yPosition,
 						packetLB.zPosition) == LBCore.littleBlocksID) {
-					((BlockLittleBlocks) LBCore.littleBlocks).xSelected = packetLB
-							.getSelectedX();
-					((BlockLittleBlocks) LBCore.littleBlocks).ySelected = packetLB
-							.getSelectedY();
-					((BlockLittleBlocks) LBCore.littleBlocks).zSelected = packetLB
-							.getSelectedZ();
-					((BlockLittleBlocks) LBCore.littleBlocks).side = packetLB
-							.getMetadata();
 					((BlockLittleBlocks) LBCore.littleBlocks)
 							.onServerBlockClicked(
 									world,
 									packet.xPosition,
 									packet.yPosition,
 									packet.zPosition,
-									entityplayer);
-					((BlockLittleBlocks) LBCore.littleBlocks).xSelected = -10;
-					((BlockLittleBlocks) LBCore.littleBlocks).ySelected = -10;
-					((BlockLittleBlocks) LBCore.littleBlocks).zSelected = -10;
-					((BlockLittleBlocks) LBCore.littleBlocks).side = -1;
+									entityplayer,
+									((PacketLittleBlocks) packet).getSelectedX(),
+									((PacketLittleBlocks) packet).getSelectedY(),
+									((PacketLittleBlocks) packet).getSelectedZ());
 				}
 			}
 		}

@@ -148,16 +148,6 @@ public class ClientPacketHandler implements IPacketHandler {
 							packetLB.zPosition,
 							packetLB.getBlockID(),
 							packetLB.getMetadata());
-					/*tileentitylb.setContent(
-							packetLB.getSelectedX(),
-							packetLB.getSelectedY(),
-							packetLB.getSelectedZ(),
-							packetLB.getBlockID());
-					tileentitylb.setMetadata(
-							packetLB.getSelectedX(),
-							packetLB.getSelectedY(),
-							packetLB.getSelectedZ(),
-							packetLB.getMetadata());*/
 				}
 				if (packetLB.getCommand().equals(
 						LBCore.metaDataModifiedCommand)) {
@@ -168,16 +158,6 @@ public class ClientPacketHandler implements IPacketHandler {
 							packetLB.zPosition,
 							packetLB.getBlockID(),
 							packetLB.getMetadata());
-					/*tileentitylb.setContent(
-							packetLB.getSelectedX(),
-							packetLB.getSelectedY(),
-							packetLB.getSelectedZ(),
-							packetLB.getBlockID());
-					tileentitylb.setMetadata(
-							packetLB.getSelectedX(),
-							packetLB.getSelectedY(),
-							packetLB.getSelectedZ(),
-							packetLB.getMetadata());*/
 				}
 				world.markBlockForRenderUpdate(
 						packetLB.xPosition,
@@ -205,10 +185,7 @@ public class ClientPacketHandler implements IPacketHandler {
 			case PacketIds.TILE:
 				PacketTileEntityLB packetTileLB = new PacketTileEntityLB();
 				packetTileLB.readData(data);
-				ClientPacketHandler.handleTileEntityPacket(
-						packetTileLB,
-						entityplayer,
-						world);
+				ClientPacketHandler.handleTileEntityPacket(packetTileLB, entityplayer, world);
 				break;
 			case PacketIds.UPDATE:
 				PacketLittleBlocks packetLB = new PacketLittleBlocks();
@@ -227,7 +204,6 @@ public class ClientPacketHandler implements IPacketHandler {
 	}
 
 	private static void handleEntity(PacketLittleBlocksCollection collection, EntityPlayer entityplayer, World world) {
-		System.out.println("Handling Entity Packet");
 		Entity entity = collection.getEntity(world);
 		if (entity instanceof EntityItemLittleBlocksCollection) {
 			((EntityItemLittleBlocksCollection)entity).itemstackCollection = collection.itemstackCollection;
