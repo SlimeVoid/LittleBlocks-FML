@@ -222,6 +222,7 @@ public class LBCore {
 
 	public static void addNames() {
 		ModLoader.addName(littleBlocks, "Little Blocks Block");
+		ModLoader.addName(littleBlocksCopier, "Little Blocks Tool");
 	}
 
 	public static void addRecipes() {
