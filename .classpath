@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="LB-common"/>
+	<classpathentry kind="src" path="LB-client"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Forge"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/EurysCore-FML"/>
+	<classpathentry kind="lib" path="/Forge/jars/bin/lwjgl_util.jar"/>
+	<classpathentry kind="lib" path="/Forge/jars/bin/lwjgl.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

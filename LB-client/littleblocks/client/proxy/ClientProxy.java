@@ -7,6 +7,7 @@ import littleblocks.client.render.EntityItemLittleBlocksCollectionRenderer;
 import littleblocks.client.render.LittleBlocksRenderer;
 import littleblocks.client.render.TileEntityLittleBlocksRenderer;
 import littleblocks.core.LBCore;
+import littleblocks.core.LBInit;
 import littleblocks.core.LoggerLittleBlocks;
 import littleblocks.items.EntityItemLittleBlocksCollection;
 import littleblocks.network.LBPacketIds;
@@ -22,6 +23,7 @@ import net.minecraft.network.packet.Packet1Login;
 import net.minecraft.src.ModLoader;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
@@ -66,6 +68,7 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void registerRenderInformation() {
+		MinecraftForgeClient.preloadTexture("/littleblocks/gui/items.png");
 		MinecraftForge.EVENT_BUS.register(new DrawCopierHighlight());
 		RenderingRegistry.registerBlockHandler(new LittleBlocksRenderer());
 		RenderingRegistry.registerEntityRenderingHandler(EntityItemLittleBlocksCollection.class, new EntityItemLittleBlocksCollectionRenderer());

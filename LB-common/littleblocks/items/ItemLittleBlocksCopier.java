@@ -128,6 +128,6 @@ public class ItemLittleBlocksCopier extends Item {
 
 	@Override
 	public String getTextureFile() {
-		return LBInit.LBM.getItemSheet();
+		return "/littleblocks/gui/items.png";
 	}
 }
