@@ -1,8 +1,5 @@
 package littleblocks.client.render;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import littleblocks.core.LBCore;
 import littleblocks.tileentities.TileEntityLittleBlocks;
 import net.minecraft.block.Block;
@@ -15,9 +12,7 @@ import net.minecraft.tileentity.TileEntity;
 import org.lwjgl.opengl.GL11;
 
 public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
-	private Tessellator tessellator = Tessellator.instance;
-	private List<TileEntity> entitiesToDraw = new ArrayList<TileEntity>();
-
+	
 	@Override
 	public void renderTileEntityAt(TileEntity tileentity, double d, double d1, double d2, float f) {
 		renderTileEntityLittleBlocks(
@@ -29,7 +24,22 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 	}
 
 	private void renderTileEntityLittleBlocks(TileEntityLittleBlocks tile, double x, double y, double z, float f) {
+
+		if (tile == null || tile.isEmpty()) {
+			return;
+		}
+		
+		int[][][] content = tile.getContent();
+		
+		Tessellator tessellator = Tessellator.instance;
+		
+		if (tessellator.isDrawing) {
+			tessellator.draw();
+		}
+		
 		GL11.glPushMatrix();
+		tessellator.startDrawingQuads();
+		
 		GL11.glTranslated(x, y, z);
 		GL11.glTranslated(-tile.xCoord, -tile.yCoord, -tile.zCoord);
 
@@ -37,8 +47,6 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 
 		float scale = 1F / LBCore.littleBlocksSize;
 		GL11.glScaled(scale, scale, scale);
-
-		int[][][] content = tile.getContent();
 
 		RenderHelper.disableStandardItemLighting();
 		GL11.glBlendFunc(770, 771);
@@ -49,14 +57,9 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 		} else {
 			GL11.glShadeModel(7424 /* GL_FLAT */);
 		}
-
-		if (tessellator.isDrawing) {
-			tessellator.draw();
-		}
-		if (!tessellator.isDrawing) {
-			tessellator.startDrawingQuads();
-		}
-
+		
+		BlockLittleBlocksLittleRenderer littleBlocks = new BlockLittleBlocksLittleRenderer(tile.worldObj);
+/*
 		for (int x1 = 0; x1 < content.length; x1++) {
 			for (int y1 = 0; y1 < content[x1].length; y1++) {
 				for (int z1 = 0; z1 < content[x1][y1].length; z1++) {
@@ -128,32 +131,29 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 					}
 				}
 			}
-		}
-
-		if (tessellator.isDrawing) {
-			tessellator.draw();
-		}
-
-		GL11.glDisable(32826 /* GL_RESCALE_NORMAL_EXT */);
-		GL11.glPopMatrix();
-	}
-
-	public void renderLittleTile(TileEntityLittleBlocks tile, Block littleBlock, float f, int x, int y, int z) {
-		if (littleBlock.hasTileEntity(0)) {
-			TileEntity littleTile = tile.getLittleWorld().getBlockTileEntity(
-					x,
-					y,
-					z);
-			if (littleTile != null) {
-				if (!(littleTile instanceof TileEntityLittleBlocks)) {
-					tileEntityRenderer.renderTileEntityAt(
-							littleTile,
-							littleTile.xCoord,
-							littleTile.yCoord,
-							littleTile.zCoord,
-							f);
+		}*/
+		
+		for (int x1 = 0; x1 < content.length; x1++) {
+			for (int y1 = 0; y1 < content[x1].length; y1++) {
+				for (int z1 = 0; z1 < content[x1][y1].length; z1++) {
+					int blockId = content[x1][y1][z1];
+					if (blockId > 0) {
+						Block littleBlock = Block.blocksList[blockId];
+						if (littleBlock.hasTileEntity(tile.getMetadata(x1, y1, z1))) {
+							int[] coords = {
+									(tile.xCoord << 3) + x1,
+									(tile.yCoord << 3) + y1,
+									(tile.zCoord << 3) + z1 };
+							littleBlocks.addLittleBlockToRender(littleBlock, coords[0], coords[1], coords[2]);
+						}
+					}
 				}
 			}
 		}
+		
+		littleBlocks.renderTiles(tile, tileEntityRenderer, f);
+
+		GL11.glDisable(32826 /* GL_RESCALE_NORMAL_EXT */);
+		GL11.glPopMatrix();
 	}
 }
