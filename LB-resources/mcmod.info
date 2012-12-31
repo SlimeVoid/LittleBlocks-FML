@@ -7,9 +7,9 @@
   "mcversion": "1.4.7",
   "url": "https://github.com/SlimeVoid/LittleBlocks-FML",
   "updateUrl": "",
-  "credits": "",
-  "authors": ["Eurymachus","Slime Void Crew"],
-  "logoFile": "littleblocks/logo.png",
+  "credits": "Eurymachus, Vengeurk, ali4z",
+  "authors": ["Slime Void Crew"],
+  "logoFile": "/littleblocks/logo.png",
   "screenshots": [""],
   "parent":"",
   "dependencies": ["EurysCore"]
