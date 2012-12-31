@@ -364,6 +364,7 @@ public class BlockLittleBlocks extends BlockContainer {
 		this.dropBlockAsItem_do(world, x, y, z, itemStack);
 	}
 
+	@Override
 	public TileEntity createNewTileEntity(World par1World) {
 		try {
 			return (TileEntity) this.clazz.newInstance();

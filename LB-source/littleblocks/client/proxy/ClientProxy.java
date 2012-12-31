@@ -156,6 +156,7 @@ public class ClientProxy extends CommonProxy {
 		return ModLoader.getMinecraftInstance().thePlayer;
 	}
 
+	@Override
 	public World getWorld(NetHandler handler) {
 		if (handler instanceof NetClientHandler) {
 			return ((NetClientHandler) handler).getPlayer().worldObj;

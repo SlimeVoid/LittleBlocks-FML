@@ -26,6 +26,7 @@ public class ItemLittleBlocksCopier extends Item {
 		this.setCreativeTab(CreativeTabs.tabTools);
 	}
 
+	@Override
 	public boolean onItemUseFirst(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int l, float a, float b, float c) {
 		if (!world.isRemote) {
 			if (entityplayer.capabilities.isCreativeMode) {

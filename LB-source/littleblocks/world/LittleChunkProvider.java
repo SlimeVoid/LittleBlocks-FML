@@ -21,6 +21,7 @@ public class LittleChunkProvider implements IChunkProvider {
 	/**
 	 * loads or generates the chunk at the chunk location specified
 	 */
+	@Override
 	public Chunk loadChunk(int x, int y) {
 		return this.provideChunk(x, y);
 	}
@@ -30,6 +31,7 @@ public class LittleChunkProvider implements IChunkProvider {
 	 * will generates all the blocks for the specified chunk from the map seed
 	 * and chunk seed
 	 */
+	@Override
 	public Chunk provideChunk(int x, int y) {
 		byte[] bytes = new byte[32768];
 		Chunk chunk = new Chunk(this.littleWorld, bytes, x, y);
@@ -39,6 +41,7 @@ public class LittleChunkProvider implements IChunkProvider {
 	/**
 	 * Checks to see if a chunk exists at x, y
 	 */
+	@Override
 	public boolean chunkExists(int par1, int par2) {
 		return true;
 	}
@@ -46,6 +49,7 @@ public class LittleChunkProvider implements IChunkProvider {
 	/**
 	 * Populates chunk with ores etc etc
 	 */
+	@Override
 	public void populate(IChunkProvider par1IChunkProvider, int par2, int par3) {
 	}
 
@@ -54,6 +58,7 @@ public class LittleChunkProvider implements IChunkProvider {
 	 * passed false, save up to two chunks. Return true if all chunks have been
 	 * saved.
 	 */
+	@Override
 	public boolean saveChunks(boolean par1, IProgressUpdate par2IProgressUpdate) {
 		return false;
 	}
@@ -63,6 +68,7 @@ public class LittleChunkProvider implements IChunkProvider {
 	 * chunkSet.add() never being called it thinks the list is always empty and
 	 * will not remove any chunks.
 	 */
+	@Override
 	public boolean unload100OldestChunks() {
 		return false;
 	}
@@ -70,6 +76,7 @@ public class LittleChunkProvider implements IChunkProvider {
 	/**
 	 * Returns if the IChunkProvider supports saving.
 	 */
+	@Override
 	public boolean canSave() {
 		return false;
 	}
@@ -77,6 +84,7 @@ public class LittleChunkProvider implements IChunkProvider {
 	/**
 	 * Converts the instance data to a readable string.
 	 */
+	@Override
 	public String makeString() {
 		return "[LB]" + realWorld.getProviderName();
 	}
@@ -85,6 +93,7 @@ public class LittleChunkProvider implements IChunkProvider {
 	 * Returns a list of creatures of the specified type that can spawn at the
 	 * given location.
 	 */
+	@Override
 	public List getPossibleCreatures(EnumCreatureType par1EnumCreatureType, int par2, int par3, int par4) {
 		return null;
 	}
@@ -93,10 +102,12 @@ public class LittleChunkProvider implements IChunkProvider {
 	 * Returns the location of the closest structure of the specified type. If
 	 * not found returns null.
 	 */
+	@Override
 	public ChunkPosition findClosestStructure(World par1World, String par2Str, int par3, int par4, int par5) {
 		return null;
 	}
 
+	@Override
 	public int getLoadedChunkCount() {
 		return 1;
 	}

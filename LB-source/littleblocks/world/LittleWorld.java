@@ -454,6 +454,7 @@ public class LittleWorld extends World {
 	 * Sets the block ID and metadata of a block, optionally marking it as
 	 * needing update. Args: X,Y,Z, blockID, metadata, needsUpdate
 	 */
+	@Override
 	public boolean setBlockAndMetadataWithUpdate(int x, int y, int z, int blockId, int metadata, boolean needsUpdate) {
 		if (x < 0xfe363c80 || z < 0xfe363c80 || x >= 0x1c9c380 || z >= 0x1c9c380) {
 			LoggerLittleBlocks.getInstance(

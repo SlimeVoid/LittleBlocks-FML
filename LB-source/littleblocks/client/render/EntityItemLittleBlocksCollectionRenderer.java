@@ -25,6 +25,7 @@ public class EntityItemLittleBlocksCollectionRenderer extends RenderItem {
 	private HashMap<ItemStack, Random> random = new HashMap();
 	private RenderBlocks renderBlocks = new RenderBlocks();
 
+	@Override
 	public void doRender(Entity entity, double x, double y, double z, float f1, float f2) {
 		this.doRenderItem(
 				(EntityItemLittleBlocksCollection) entity,

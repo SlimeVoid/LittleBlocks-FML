@@ -216,7 +216,8 @@ public class LittleWorldServer extends LittleWorld {
     /**
      * returns a new explosion. Does initiation (at time of writing Explosion is not finished)
      */
-    public Explosion newExplosion(Entity entity, double x, double y, double z, float strength, boolean isFlaming, boolean isSmoking)
+    @Override
+	public Explosion newExplosion(Entity entity, double x, double y, double z, float strength, boolean isFlaming, boolean isSmoking)
     {
         Explosion explosion = new Explosion(this, entity, x, y, z, strength / 8);
         explosion.isFlaming = isFlaming;
@@ -326,6 +327,7 @@ public class LittleWorldServer extends LittleWorld {
 	 * called with the given parameters. Args: X,Y,Z, BlockID, EventID,
 	 * EventParameter
 	 */
+	@Override
 	public void addBlockEvent(int x, int y, int z, int blockID, int eventID, int eventParam) {
 		BlockEventData eventData = new BlockEventData(
 				x,

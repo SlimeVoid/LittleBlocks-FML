@@ -16,7 +16,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import littleblocks.core.LBCore;
-import littleblocks.core.LBInit;
 import littleblocks.tileentities.TileEntityLittleBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.Tessellator;
