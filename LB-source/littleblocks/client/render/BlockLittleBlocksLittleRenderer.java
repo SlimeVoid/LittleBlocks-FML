@@ -16,9 +16,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import littleblocks.core.LBCore;
+import littleblocks.core.LBInit;
+import littleblocks.tileentities.TileEntityLittleBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.src.ModLoader;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 import org.lwjgl.opengl.GL11;
@@ -79,6 +83,41 @@ public class BlockLittleBlocksLittleRenderer {
 				}
 				tessellator.draw();
 				tessellator.startDrawingQuads();
+			}
+		}
+	}
+
+	public void renderTiles(TileEntityLittleBlocks tile, TileEntityRenderer tileEntityRenderer, float f) {
+		for (String textureFile : this.textures) {
+			if (this.texturedBlocksToRender.containsKey(textureFile)) {
+				Tessellator tessellator = Tessellator.instance;
+				if (tessellator.isDrawing) {
+					tessellator.draw();
+				}
+				HashMap<Integer, LittleBlockToRender> littleBlocksToRender = this.texturedBlocksToRender.get(textureFile);
+				int texture = ModLoader.getMinecraftInstance().renderEngine
+						.getTexture(textureFile);
+				GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
+				for (LittleBlockToRender block: littleBlocksToRender.values()) {
+					TileEntity littleTile = tile.getLittleWorld().getBlockTileEntity(
+							block.x,
+							block.y,
+							block.z);
+					if (littleTile != null) {
+						tileEntityRenderer.renderTileEntityAt(
+								littleTile,
+								littleTile.xCoord,
+								littleTile.yCoord,
+								littleTile.zCoord,
+								f);
+						LBCore.getLittleRenderer(world).
+								renderBlockByRenderType(
+											block.block,
+											block.x,
+											block.y,
+											block.z);	
+					}
+				}
 			}
 		}
 	}

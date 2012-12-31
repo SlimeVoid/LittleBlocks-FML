@@ -202,12 +202,13 @@ public class LBCore {
 	}
 
 	public static boolean isTileEntityAllowed(TileEntity tileentity) {
-		if (tileentity != null) {
+		/*if (tileentity != null) {
 			if (allowedBlockTileEntities.contains(tileentity.getClass())) {
 				return true;
 			}
 		}
-		return false;
+		return false;*/
+		return true;
 	}
 
 	public static boolean hasTile(int itemBlockId) {
