@@ -68,7 +68,8 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void registerRenderInformation() {
-		MinecraftForgeClient.preloadTexture("/littleblocks/gui/items.png");
+		MinecraftForgeClient.preloadTexture(LBInit.LBM.getBlockSheet());
+		MinecraftForgeClient.preloadTexture(LBInit.LBM.getItemSheet());
 		MinecraftForge.EVENT_BUS.register(new DrawCopierHighlight());
 		RenderingRegistry.registerBlockHandler(new LittleBlocksRenderer());
 		RenderingRegistry.registerEntityRenderingHandler(EntityItemLittleBlocksCollection.class, new EntityItemLittleBlocksCollectionRenderer());
