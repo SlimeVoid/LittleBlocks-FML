@@ -16,8 +16,10 @@ import net.minecraft.tileentity.TileEntity;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+
 public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
-	
+		
 	@Override
 	public void renderTileEntityAt(TileEntity tileentity, double d, double d1, double d2, float f) {
 		renderTileEntityLittleBlocks(
@@ -56,15 +58,15 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 			}
 		}
 
-		Tessellator tessellator = Tessellator.instance;
-        int mode = tessellator.drawMode;
+		//Tessellator tessellator = Tessellator.instance;
+        //int mode = tessellator.drawMode;
 
-		if (tessellator.isDrawing) {
-			tessellator.draw();
-		}
+		//if (tessellator.isDrawing) {
+		//	tessellator.draw();
+		//}
 		
 		GL11.glPushMatrix();
-		tessellator.startDrawing(mode);
+		//tessellator.startDrawing(mode);
 		
 		GL11.glTranslated(x, y, z);
 		GL11.glTranslated(-tile.xCoord, -tile.yCoord, -tile.zCoord);
@@ -86,35 +88,40 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 		
 		renderTiles(littleBlocks, tile, f);
 
-        this.bindTextureByName("/terrain.png");
+        //this.bindTextureByName("/terrain.png");
 		
-        if (tessellator.isDrawing) {
-        	tessellator.draw();
-        }
+        //if (tessellator.isDrawing) {
+        //	tessellator.draw();
+        //}
 		
 		GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 		GL11.glPopMatrix();
-		tessellator.startDrawing(mode);
-    	tessellator.draw();
+		//tessellator.startDrawing(mode);
+    	//tessellator.draw();
 	}
 
 	public void renderTiles(BlockLittleBlocksLittleRenderer littleBlocks, TileEntityLittleBlocks tile, float f) {
 		for (String textureFile : littleBlocks.textures) {
 			if (littleBlocks.texturedBlocksToRender.containsKey(textureFile)) {
-				Tessellator tessellator = Tessellator.instance;
-				int mode = tessellator.drawMode;
-				if (tessellator.isDrawing) {
-					tessellator.draw();
-				}
-				tessellator.startDrawing(mode);
+				//Tessellator tessellator = Tessellator.instance;
+				//int mode = tessellator.drawMode;
+				//if (tessellator.isDrawing) {
+				//	tessellator.draw();
+				//	tessellator.startDrawing(mode);
+				//}
+					ModLoader.getLogger().fine("[LittleBlocks]-TileRender-Texture["+textureFile+"]");
+				//this.bindTextureByName(textureFile);
+				//if (tessellator.isDrawing) {
+				//	tessellator.draw();
+				//}
 				HashMap<Integer, BlockLittleBlocksLittleRenderer.LittleBlockToRender> littleBlocksToRender = littleBlocks.texturedBlocksToRender.get(textureFile);
-				this.bindTextureByName(textureFile);
 				for (LittleBlockToRender block: littleBlocksToRender.values()) {
 					TileEntity littleTile = tile.getLittleWorld().getBlockTileEntity(
 							block.x,
 							block.y,
 							block.z);
 					if (littleTile != null) {
+							ModLoader.getLogger().fine("[LittleBlocks]-TileRender-Tile["+littleTile.toString()+"]");
 						tileEntityRenderer.renderTileEntityAt(
 								littleTile,
 								littleTile.xCoord,
@@ -123,9 +130,9 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 								f);
 					}
 				}
-				if (tessellator.isDrawing) {
-					tessellator.draw();
-				}
+				//if (tessellator.isDrawing) {
+				//	tessellator.draw();
+				//}
 			}
 		}
 	}

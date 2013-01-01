@@ -57,7 +57,8 @@ public class LittleBlocksRenderer implements ISimpleBlockRenderingHandler {
 			}
 			
 			GL11.glPushMatrix();
-			tessellator.startDrawingQuads();
+            int mode = tessellator.drawMode;
+			tessellator.startDrawing(mode);
 			
 			double xS = -((x >> 4) << 4), yS = -((y >> 4) << 4), zS = -((z >> 4) << 4);
 
@@ -72,7 +73,7 @@ public class LittleBlocksRenderer implements ISimpleBlockRenderingHandler {
             GL11.glBindTexture(GL11.GL_TEXTURE_2D, ModLoader.getMinecraftInstance().renderEngine
             		.getTexture("/terrain.png"));
 			
-            int mode = tessellator.drawMode;
+            mode = tessellator.drawMode;
             if (tessellator.isDrawing) {
             	tessellator.draw();
             }

@@ -23,6 +23,7 @@ import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.src.ModLoader;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.client.MinecraftForgeClient;
 
 import org.lwjgl.opengl.GL11;
 
@@ -66,16 +67,16 @@ public class BlockLittleBlocksLittleRenderer {
 		for (String textureFile : this.textures) {
 			if (this.texturedBlocksToRender.containsKey(textureFile)) {
 				Tessellator tessellator = Tessellator.instance;
-				//if (tessellator.isDrawing) {
-					int mode = tessellator.drawMode;
-					tessellator.draw();
-					tessellator.startDrawing(mode);
-				//}
+				int mode = tessellator.drawMode;
+				tessellator.draw();
+				tessellator.startDrawing(mode);
+				
 				HashMap<Integer, LittleBlockToRender> littleBlocksToRender = this.texturedBlocksToRender.get(textureFile);
 				int texture = ModLoader.getMinecraftInstance().renderEngine
 						.getTexture(textureFile);
 				GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
 				for (LittleBlockToRender block: littleBlocksToRender.values()) {
+					//MinecraftForgeClient.renderBlock(LBCore.getLittleRenderer(world), block.block, block.x, block.y, block.z);
 					LBCore.getLittleRenderer(world).
 							renderBlockByRenderType(
 										block.block,
@@ -83,10 +84,9 @@ public class BlockLittleBlocksLittleRenderer {
 										block.y,
 										block.z);
 				}
-				//if (tessellator.isDrawing) {
-					tessellator.draw();
-					tessellator.startDrawing(mode);
-				//}
+				
+				tessellator.draw();
+				tessellator.startDrawing(mode);
 			}
 		}
 	}
