@@ -7,8 +7,10 @@ import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.src.ModLoader;
 import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.client.MinecraftForgeClient;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
@@ -28,23 +30,6 @@ public class LittleBlocksRenderer implements ISimpleBlockRenderingHandler {
 			}
 
 			int[][][] content = tile.getContent();
-
-			Tessellator tessellator = Tessellator.instance;
-
-			if (tessellator.isDrawing) {
-				tessellator.draw();
-			}
-
-			GL11.glPushMatrix();
-			tessellator.startDrawingQuads();
-			
-			double xS = -((x >> 4) << 4), yS = -((y >> 4) << 4), zS = -((z >> 4) << 4);
-
-			GL11.glTranslated(xS, yS, zS);
-			GL11.glEnable(32826 /* GL_RESCALE_NORMAL_EXT */);
-			float scale = 1 / (float) LBCore.littleBlocksSize;
-			GL11.glScalef(scale, scale, scale);
-			GL11.glTranslated(-xS, -yS, -zS);
 			
 			BlockLittleBlocksLittleRenderer littleBlocks = new BlockLittleBlocksLittleRenderer(tile.worldObj);
 			
@@ -63,18 +48,39 @@ public class LittleBlocksRenderer implements ISimpleBlockRenderingHandler {
 					}
 				}
 			}
+
+
+			Tessellator tessellator = Tessellator.instance;
+
+			if (tessellator.isDrawing) {
+				tessellator.draw();
+			}
+			
+			GL11.glPushMatrix();
+			tessellator.startDrawingQuads();
+			
+			double xS = -((x >> 4) << 4), yS = -((y >> 4) << 4), zS = -((z >> 4) << 4);
+
+			GL11.glTranslated(xS, yS, zS);
+			GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+			float scale = 1 / (float) LBCore.littleBlocksSize;
+			GL11.glScalef(scale, scale, scale);
+			GL11.glTranslated(-xS, -yS, -zS);
 			
 			littleBlocks.renderBlocks();
 
-			tessellator.draw();
-			tessellator.startDrawingQuads();
-			int defaultTexture = ModLoader.getMinecraftInstance().renderEngine
-					.getTexture("/terrain.png");
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, defaultTexture);
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, ModLoader.getMinecraftInstance().renderEngine
+            		.getTexture("/terrain.png"));
 			
-			GL11.glDisable(32826 /* GL_RESCALE_NORMAL_EXT */);
+            int mode = tessellator.drawMode;
+            if (tessellator.isDrawing) {
+            	tessellator.draw();
+            }
+			
+			GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 			GL11.glPopMatrix();
-
+			
+			tessellator.startDrawing(mode);
 			return true;
 		}
 		return false;

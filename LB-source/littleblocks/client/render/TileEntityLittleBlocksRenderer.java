@@ -1,5 +1,8 @@
 package littleblocks.client.render;
 
+import java.util.HashMap;
+
+import littleblocks.client.render.BlockLittleBlocksLittleRenderer.LittleBlockToRender;
 import littleblocks.core.LBCore;
 import littleblocks.tileentities.TileEntityLittleBlocks;
 import net.minecraft.block.Block;
@@ -7,9 +10,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.src.ModLoader;
 import net.minecraft.tileentity.TileEntity;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 
 public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 	
@@ -29,109 +34,9 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 			return;
 		}
 		
-		int[][][] content = tile.getContent();
-		
-		Tessellator tessellator = Tessellator.instance;
-		
-		if (tessellator.isDrawing) {
-			tessellator.draw();
-		}
-		
-		GL11.glPushMatrix();
-		tessellator.startDrawingQuads();
-		
-		GL11.glTranslated(x, y, z);
-		GL11.glTranslated(-tile.xCoord, -tile.yCoord, -tile.zCoord);
-
-		GL11.glEnable(32826 /* GL_RESCALE_NORMAL_EXT */);
-
-		float scale = 1F / LBCore.littleBlocksSize;
-		GL11.glScaled(scale, scale, scale);
-
-		RenderHelper.disableStandardItemLighting();
-		GL11.glBlendFunc(770, 771);
-		GL11.glEnable(3042 /* GL_BLEND */);
-		GL11.glDisable(2884 /* GL_CULL_FACE */);
-		if (Minecraft.isAmbientOcclusionEnabled()) {
-			GL11.glShadeModel(7425 /* GL_SMOOTH */);
-		} else {
-			GL11.glShadeModel(7424 /* GL_FLAT */);
-		}
-		
 		BlockLittleBlocksLittleRenderer littleBlocks = new BlockLittleBlocksLittleRenderer(tile.worldObj);
-/*
-		for (int x1 = 0; x1 < content.length; x1++) {
-			for (int y1 = 0; y1 < content[x1].length; y1++) {
-				for (int z1 = 0; z1 < content[x1][y1].length; z1++) {
-					if (content[x1][y1][z1] > 0) {
-						int blockId = content[x1][y1][z1];
-						if (blockId > 0) {
-							Block littleBlock = Block.blocksList[blockId];
-							if (littleBlock != null) {
-								int[] coords = {
-										(tile.xCoord << 3) + x1,
-										(tile.yCoord << 3) + y1,
-										(tile.zCoord << 3) + z1 };
-								bindTextureByName("/terrain.png");
-								if (!littleBlock.isDefaultTexture) {
-									if (tessellator.isDrawing) {
-										tessellator.draw();
-									}
-									if (!tessellator.isDrawing) {
-										tessellator.startDrawingQuads();
-									}
-									bindTextureByName(littleBlock.getTextureFile());
-									if (LBCore.optifine) {
-										LBCore
-											.getLittleRenderer(tile.getWorldObj())
-												.renderBlockByRenderType(
-														littleBlock,
-														coords[0],
-														coords[1],
-														coords[2]);
-									}
-									if (littleBlock.hasTileEntity(0)) {
-										renderLittleTile(
-												tile,
-												littleBlock,
-												f,
-												coords[0],
-												coords[1],
-												coords[2]);
-									}
-									if (tessellator.isDrawing) {
-										tessellator.draw();
-									}
-									bindTextureByName("/terrain.png");
-								} else {
-									if (!tessellator.isDrawing) {
-										tessellator.startDrawingQuads();
-									}
-									if (LBCore.optifine) {
-										LBCore
-											.getLittleRenderer(tile.getWorldObj())
-												.renderBlockByRenderType(
-														littleBlock,
-														coords[0],
-														coords[1],
-														coords[2]);
-									}
-									if (littleBlock.hasTileEntity(0)) {
-										renderLittleTile(
-												tile,
-												littleBlock,
-												f,
-												coords[0],
-												coords[1],
-												coords[2]);
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}*/
+		
+		int[][][] content = tile.getContent();
 		
 		for (int x1 = 0; x1 < content.length; x1++) {
 			for (int y1 = 0; y1 < content[x1].length; y1++) {
@@ -150,10 +55,78 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 				}
 			}
 		}
-		
-		littleBlocks.renderTiles(tile, tileEntityRenderer, f);
 
-		GL11.glDisable(32826 /* GL_RESCALE_NORMAL_EXT */);
+		Tessellator tessellator = Tessellator.instance;
+        int mode = tessellator.drawMode;
+
+		if (tessellator.isDrawing) {
+			tessellator.draw();
+		}
+		
+		GL11.glPushMatrix();
+		tessellator.startDrawing(mode);
+		
+		GL11.glTranslated(x, y, z);
+		GL11.glTranslated(-tile.xCoord, -tile.yCoord, -tile.zCoord);
+
+		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+
+		float scale = 1F / LBCore.littleBlocksSize;
+		GL11.glScaled(scale, scale, scale);
+
+		RenderHelper.disableStandardItemLighting();
+		GL11.glBlendFunc(770, 771);
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glDisable(GL11.GL_CULL_FACE);
+		if (Minecraft.isAmbientOcclusionEnabled()) {
+			GL11.glShadeModel(GL11.GL_SMOOTH);
+		} else {
+			GL11.glShadeModel(GL11.GL_FLAT);
+		}
+		
+		renderTiles(littleBlocks, tile, f);
+
+        this.bindTextureByName("/terrain.png");
+		
+        if (tessellator.isDrawing) {
+        	tessellator.draw();
+        }
+		
+		GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 		GL11.glPopMatrix();
+		tessellator.startDrawing(mode);
+    	tessellator.draw();
+	}
+
+	public void renderTiles(BlockLittleBlocksLittleRenderer littleBlocks, TileEntityLittleBlocks tile, float f) {
+		for (String textureFile : littleBlocks.textures) {
+			if (littleBlocks.texturedBlocksToRender.containsKey(textureFile)) {
+				Tessellator tessellator = Tessellator.instance;
+				int mode = tessellator.drawMode;
+				if (tessellator.isDrawing) {
+					tessellator.draw();
+				}
+				tessellator.startDrawing(mode);
+				HashMap<Integer, BlockLittleBlocksLittleRenderer.LittleBlockToRender> littleBlocksToRender = littleBlocks.texturedBlocksToRender.get(textureFile);
+				this.bindTextureByName(textureFile);
+				for (LittleBlockToRender block: littleBlocksToRender.values()) {
+					TileEntity littleTile = tile.getLittleWorld().getBlockTileEntity(
+							block.x,
+							block.y,
+							block.z);
+					if (littleTile != null) {
+						tileEntityRenderer.renderTileEntityAt(
+								littleTile,
+								littleTile.xCoord,
+								littleTile.yCoord,
+								littleTile.zCoord,
+								f);
+					}
+				}
+				if (tessellator.isDrawing) {
+					tessellator.draw();
+				}
+			}
+		}
 	}
 }

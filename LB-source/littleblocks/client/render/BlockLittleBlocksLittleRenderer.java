@@ -29,7 +29,7 @@ import org.lwjgl.opengl.GL11;
 
 public class BlockLittleBlocksLittleRenderer {
 	private World world;
-	private Set<String> textures = new HashSet();
+	public Set<String> textures = new HashSet();
 	public HashMap<String, HashMap<Integer, LittleBlockToRender>> texturedBlocksToRender = new HashMap();
 	
 	public BlockLittleBlocksLittleRenderer(World worldObj) {
@@ -50,7 +50,7 @@ public class BlockLittleBlocksLittleRenderer {
 		}
 	}
 	
-	private class LittleBlockToRender {
+	public class LittleBlockToRender {
 		public Block block;
 		public int x, y, z;
 		
@@ -66,8 +66,11 @@ public class BlockLittleBlocksLittleRenderer {
 		for (String textureFile : this.textures) {
 			if (this.texturedBlocksToRender.containsKey(textureFile)) {
 				Tessellator tessellator = Tessellator.instance;
-				tessellator.draw();
-				tessellator.startDrawingQuads();
+				//if (tessellator.isDrawing) {
+					int mode = tessellator.drawMode;
+					tessellator.draw();
+					tessellator.startDrawing(mode);
+				//}
 				HashMap<Integer, LittleBlockToRender> littleBlocksToRender = this.texturedBlocksToRender.get(textureFile);
 				int texture = ModLoader.getMinecraftInstance().renderEngine
 						.getTexture(textureFile);
@@ -80,43 +83,10 @@ public class BlockLittleBlocksLittleRenderer {
 										block.y,
 										block.z);
 				}
-				tessellator.draw();
-				tessellator.startDrawingQuads();
-			}
-		}
-	}
-
-	public void renderTiles(TileEntityLittleBlocks tile, TileEntityRenderer tileEntityRenderer, float f) {
-		for (String textureFile : this.textures) {
-			if (this.texturedBlocksToRender.containsKey(textureFile)) {
-				Tessellator tessellator = Tessellator.instance;
-				if (tessellator.isDrawing) {
+				//if (tessellator.isDrawing) {
 					tessellator.draw();
-				}
-				HashMap<Integer, LittleBlockToRender> littleBlocksToRender = this.texturedBlocksToRender.get(textureFile);
-				int texture = ModLoader.getMinecraftInstance().renderEngine
-						.getTexture(textureFile);
-				GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
-				for (LittleBlockToRender block: littleBlocksToRender.values()) {
-					TileEntity littleTile = tile.getLittleWorld().getBlockTileEntity(
-							block.x,
-							block.y,
-							block.z);
-					if (littleTile != null) {
-						tileEntityRenderer.renderTileEntityAt(
-								littleTile,
-								littleTile.xCoord,
-								littleTile.yCoord,
-								littleTile.zCoord,
-								f);
-						LBCore.getLittleRenderer(world).
-								renderBlockByRenderType(
-											block.block,
-											block.x,
-											block.y,
-											block.z);	
-					}
-				}
+					tessellator.startDrawing(mode);
+				//}
 			}
 		}
 	}
