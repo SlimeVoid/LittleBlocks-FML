@@ -11,6 +11,7 @@ import eurysmods.network.packets.core.PacketTileEntity;
 public class PacketTileEntityLB extends PacketTileEntity {
 
 	private int sender;
+	private byte[] tileEntities;
 
 	public PacketTileEntityLB() {
 		super();
@@ -21,12 +22,32 @@ public class PacketTileEntityLB extends PacketTileEntity {
 	public void writeData(DataOutputStream data) throws IOException {
 		super.writeData(data);
 		data.writeInt(this.sender);
+		this.writeTileEntityBytes(data);
+	}
+
+	private void writeTileEntityBytes(DataOutputStream data) {
+		try {
+			data.write(tileEntities);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void readData(DataInputStream data) throws IOException {
 		super.readData(data);
 		this.sender = data.readInt();
+		this.readTileEntityBytes(data);
+	}
+
+	private void readTileEntityBytes(DataInputStream data) {
+		try {
+			data.read(tileEntities);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public PacketTileEntityLB(TileEntityLittleBlocks tileentity) {
@@ -37,6 +58,7 @@ public class PacketTileEntityLB extends PacketTileEntity {
 				tileentity.zCoord,
 				0);
 		this.payload = tileentity.getTileEntityPayload();
+		this.setTileEntities(tileentity.getTiles());
 	}
 
 	public int getSender() {
@@ -45,5 +67,13 @@ public class PacketTileEntityLB extends PacketTileEntity {
 
 	public void setSender(int sender) {
 		this.sender = sender;
+	}
+	
+	public byte[] getTileEntities() {
+		return this.tileEntities;
+	}
+	
+	public void setTileEntities(byte[] tileentities) {
+		this.tileEntities = tileentities;
 	}
 }

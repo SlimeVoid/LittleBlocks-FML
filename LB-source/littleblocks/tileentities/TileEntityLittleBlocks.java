@@ -633,4 +633,32 @@ public class TileEntityLittleBlocks extends TileEntity {
 	public int[][][] getMetadata() {
 		return this.metadatas;
 	}
+
+	public byte[] getTiles() {
+		NBTTagCompound nbttagcompound = new NBTTagCompound();
+		NBTTagList tilesTag = new NBTTagList();
+		for (TileEntity tile : tiles) {
+			NBTTagCompound tileTag = new NBTTagCompound();
+			tile.writeToNBT(tileTag);
+			tilesTag.appendTag(tileTag);
+		}
+		nbttagcompound.setTag("Tiles", tilesTag);
+		return nbttagcompound.getByteArray("Tiles");
+	}
+	
+	public void setTiles(byte[] tileentities) {
+		tiles.clear();
+		NBTTagCompound nbttagcompound = new NBTTagCompound();
+		nbttagcompound.setByteArray("Tiles", tileentities);
+		NBTTagList tilesTag = nbttagcompound.getTagList("Tiles");
+		for (int i = 0; i < tilesTag.tagCount(); i++) {
+			TileEntity tile = TileEntity
+					.createAndLoadEntity((NBTTagCompound) tilesTag.tagAt(i));
+			setTileEntity(
+					tile.xCoord & 7,
+					tile.yCoord & 7,
+					tile.zCoord & 7,
+					tile);
+		}
+	}
 }

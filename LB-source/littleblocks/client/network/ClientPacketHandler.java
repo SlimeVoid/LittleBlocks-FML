@@ -68,17 +68,7 @@ public class ClientPacketHandler implements IPacketHandler {
 					.getIntPayload(index + 3), z = packetLB.payload
 					.getIntPayload(index + 4);
 			tileentitylb.setContent(x, y, z, id, meta);
-			if (id != 0) {
-				Block littleBlock = Block.blocksList[id];
-				littleBlock.hasTileEntity(meta);
-					tileentitylb.setTileEntity(
-							x,
-							y,
-							z,
-							Block.blocksList[id].createTileEntity(
-									tileentitylb.getLittleWorld(),
-									meta));
-			}
+			tileentitylb.setTiles(packetLB.getTileEntities());
 			index += 5;
 		}
 		world.markBlockForRenderUpdate(
