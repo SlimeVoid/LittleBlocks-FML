@@ -514,6 +514,9 @@ public class LittleWorldServer extends LittleWorld {
 					littleZ,
 					blockId,
 					metadata);
+			if (Block.blocksList[lastBlockId].hasTileEntity(metadata)) {
+				this.realWorld.markBlockForUpdate(x, y, z);
+			}
 		}
 		if (blockId != 0) {
 			Block.blocksList[blockId].onBlockAdded(
@@ -521,7 +524,10 @@ public class LittleWorldServer extends LittleWorld {
 					(x << 3) + littleX,
 					(y << 3) + littleY,
 					(z << 3) + littleZ);
-			if (blockId == Block.chest.blockID) {
+			if (this.blockHasTileEntity(
+					(x << 3) + littleX,
+					(y << 3) + littleY,
+					(z << 3) + littleZ)) {
 				this.realWorld.markBlockForUpdate(x, y, z);
 			} else {
 				CommonPacketHandler.idModified(

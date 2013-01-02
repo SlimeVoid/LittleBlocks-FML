@@ -3,6 +3,10 @@ package littleblocks.network.packets;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import net.minecraft.nbt.NBTTagCompound;
 
 import littleblocks.core.LBInit;
 import littleblocks.tileentities.TileEntityLittleBlocks;
@@ -11,7 +15,7 @@ import eurysmods.network.packets.core.PacketTileEntity;
 public class PacketTileEntityLB extends PacketTileEntity {
 
 	private int sender;
-	private byte[] tileEntities;
+	private List<NBTTagCompound> tileEntities = new ArrayList<NBTTagCompound>();
 
 	public PacketTileEntityLB() {
 		super();
@@ -22,15 +26,13 @@ public class PacketTileEntityLB extends PacketTileEntity {
 	public void writeData(DataOutputStream data) throws IOException {
 		super.writeData(data);
 		data.writeInt(this.sender);
-		this.writeTileEntityBytes(data);
+		this.writeTileEntities(data);
 	}
 
-	private void writeTileEntityBytes(DataOutputStream data) {
-		try {
-			data.write(tileEntities);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	private void writeTileEntities(DataOutputStream data) throws IOException {
+		data.writeInt(tileEntities.size());
+		for (int i = 0; i < tileEntities.size(); i++) {
+			writeNBTTagCompound(tileEntities.get(i), data);
 		}
 	}
 
@@ -38,15 +40,14 @@ public class PacketTileEntityLB extends PacketTileEntity {
 	public void readData(DataInputStream data) throws IOException {
 		super.readData(data);
 		this.sender = data.readInt();
-		this.readTileEntityBytes(data);
+		this.readTileEntities(data);
 	}
 
-	private void readTileEntityBytes(DataInputStream data) {
-		try {
-			data.read(tileEntities);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	private void readTileEntities(DataInputStream data) throws IOException {
+		this.tileEntities.clear();
+		int numberOfTiles = data.readInt();
+		for (int i = 0; i < numberOfTiles; i++) {
+			this.tileEntities.add(readNBTTagCompound(data));
 		}
 	}
 
@@ -69,11 +70,11 @@ public class PacketTileEntityLB extends PacketTileEntity {
 		this.sender = sender;
 	}
 	
-	public byte[] getTileEntities() {
+	public List<NBTTagCompound> getTileEntities() {
 		return this.tileEntities;
 	}
 	
-	public void setTileEntities(byte[] tileentities) {
+	public void setTileEntities(List<NBTTagCompound> tileentities) {
 		this.tileEntities = tileentities;
 	}
 }

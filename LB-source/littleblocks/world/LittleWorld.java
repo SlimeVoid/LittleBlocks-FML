@@ -5,6 +5,7 @@ import littleblocks.core.LoggerLittleBlocks;
 import littleblocks.tileentities.TileEntityLittleBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
@@ -237,6 +238,58 @@ public class LittleWorld extends World {
 			);
 		}
 		return outdated;
+	}
+	
+	@Override
+	public boolean blockExists(int x, int y, int z) {
+		if (x < 0xfe363c80 || z < 0xfe363c80 || x >= 0x1c9c380 || z >= 0x1c9c380) {
+			LoggerLittleBlocks.getInstance(
+					Logger.filterClassName(
+							this.getClass().toString()
+					)
+			).write(
+					this.isRemote,
+					"getBlockId(" + x + ", " + y + ", " + z + ").[Out of bounds]",
+					LoggerLittleBlocks.LogLevel.DEBUG
+			);
+			return false;
+		}
+		if (y < 0) {
+			LoggerLittleBlocks.getInstance(
+					Logger.filterClassName(
+							this.getClass().toString()
+					)
+			).write(
+					this.isRemote,
+					"getBlockId(" + x + ", " + y + ", " + z + ").[y < 0]",
+					LoggerLittleBlocks.LogLevel.DEBUG
+			);
+			return false;
+		}
+		if (y >= this.getHeight()) {
+			LoggerLittleBlocks.getInstance(
+					Logger.filterClassName(
+							this.getClass().toString()
+					)
+			).write(
+					this.isRemote,
+					"getBlockId(" + x + ", " + y + ", " + z + ").[y >= "+ this.getHeight() + "]",
+					LoggerLittleBlocks.LogLevel.DEBUG
+			);
+			return false;
+		} else {
+			int id = realWorld
+					.getChunkFromChunkCoords(x >> 7, z >> 7)
+						.getBlockID((x & 0x7f) >> 3, y >> 3, (z & 0x7f) >> 3);
+			if (id == LBCore.littleBlocksID) {
+				TileEntityLittleBlocks tile = (TileEntityLittleBlocks) realWorld
+						.getBlockTileEntity(x >> 3, y >> 3, z >> 3);
+				int littleBlockId = tile.getContent(x & 7, y & 7, z & 7);
+				return littleBlockId > 0 ? true : false;
+			} else {
+				return false;
+			}
+		}
 	}
 
 	@Override
@@ -884,6 +937,11 @@ public class LittleWorld extends World {
 	public void markBlockForRenderUpdate(int x, int y, int z) {
 		this.realWorld.markBlockForRenderUpdate(x >> 3, y >> 3, z >> 3);
 	}
+	
+	@Override
+    public void markBlockRangeForRenderUpdate(int x, int y, int z, int x2, int y2, int z2) {
+		this.realWorld.markBlockRangeForRenderUpdate(x >> 3, y >> 3, z >> 3, x2 >> 3, y2 >> 3, z2 >> 3);
+	}
 
 	@Override
 	public void playSoundEffect(double x, double y, double z, String s, float f, float f1) {
@@ -1048,5 +1106,15 @@ public class LittleWorld extends World {
 			);
 		}
 		return flag;
+	}
+	
+	@Override
+    public EntityPlayer getClosestPlayer(double par1, double par3, double par5, double par7) {
+		return this.realWorld.getClosestPlayer(par1, par3, par5, par7);
+	}
+	
+	@Override
+    public EntityPlayer getClosestVulnerablePlayer(double par1, double par3, double par5, double par7) {
+		return this.realWorld.getClosestPlayer(par1, par3, par5, par7);
 	}
 }

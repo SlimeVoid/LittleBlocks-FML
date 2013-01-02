@@ -19,6 +19,8 @@ import net.minecraft.src.ModLoader;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import eurysmods.network.packets.core.PacketPayload;
 import eurysmods.network.packets.core.PacketUpdate;
 
@@ -633,28 +635,22 @@ public class TileEntityLittleBlocks extends TileEntity {
 	public int[][][] getMetadata() {
 		return this.metadatas;
 	}
-
-	public byte[] getTiles() {
-		NBTTagCompound nbttagcompound = new NBTTagCompound();
-		NBTTagList tilesTag = new NBTTagList();
+	public List<NBTTagCompound> getTiles() {
+		List<NBTTagCompound> tileList = new ArrayList<NBTTagCompound>();
 		for (TileEntity tile : tiles) {
 			NBTTagCompound tileTag = new NBTTagCompound();
 			tile.writeToNBT(tileTag);
-			tilesTag.appendTag(tileTag);
+			tileList.add(tileTag);
 		}
-		nbttagcompound.setTag("Tiles", tilesTag);
-		return nbttagcompound.getByteArray("Tiles");
+		return tileList;
 	}
-	
-	public void setTiles(byte[] tileentities) {
-		tiles.clear();
-		NBTTagCompound nbttagcompound = new NBTTagCompound();
-		nbttagcompound.setByteArray("Tiles", tileentities);
-		NBTTagList tilesTag = nbttagcompound.getTagList("Tiles");
-		for (int i = 0; i < tilesTag.tagCount(); i++) {
+
+	@SideOnly(Side.CLIENT)
+	public void setTiles(List<NBTTagCompound> tileentities) {
+		for (int i = 0; i < tileentities.size(); i++) {
 			TileEntity tile = TileEntity
-					.createAndLoadEntity((NBTTagCompound) tilesTag.tagAt(i));
-			setTileEntity(
+					.createAndLoadEntity((NBTTagCompound) tileentities.get(i));
+			this.setTileEntity(
 					tile.xCoord & 7,
 					tile.yCoord & 7,
 					tile.zCoord & 7,
