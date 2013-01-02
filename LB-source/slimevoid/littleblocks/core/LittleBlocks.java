@@ -33,8 +33,8 @@ import eurysmods.api.ICommonProxy;
 		connectionHandler = LBConnectionHandler.class)
 public class LittleBlocks {
 	@SidedProxy(
-			clientSide = "littleblocks.client.proxy.ClientProxy",
-			serverSide = "littleblocks.proxy.CommonProxy")
+			clientSide = "slimevoid.littleblocks.client.proxy.ClientProxy",
+			serverSide = "slimevoid.littleblocks.proxy.CommonProxy")
 	public static ICommonProxy proxy;
 	
 	@Instance("LittleBlocksMod")
