@@ -1,0 +1,19 @@
+Major Update
+ - Update to 1.4.6
+ - LittleBlocks T?ile contents now spawns a LittleChest full of the content when destroyed in smp
+ - Fixed rendering issues causing Tessellator crashes - Made non-optifine rendering much more efficient
+ - (Finally) Fixed the Piston Orientation issue. Pistons are now fully operational and orient themselves correctly when placed as a LittleBlock
+
+Content Addition - Major Addition (Major future implementations planned)
+ - Special LittleBlock Tool addition
+  - This tool will have more features to come
+  - Currently only supported in Creative mode (and thus no recipe exists)
+ - Added Special Tool ability to Copy existing LittleBlock Tiles (Awesome right!!)
+  - Placement position is highlighted with a funky pulsing quad, no real texture as of yet, but looks fun!
+
+Smaller fixes
+ - Packet code cleanup
+ - All LittleBlock placement checks now happen server side to prevent conflicts
+ - Redstone fully tested and operational
+ - Fixed some notify on neighbor change issues
+ - Cleaned up Render code

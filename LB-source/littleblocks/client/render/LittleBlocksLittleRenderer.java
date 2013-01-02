@@ -16,25 +16,23 @@ import java.util.HashSet;
 import java.util.Set;
 
 import littleblocks.core.LBCore;
-import littleblocks.tileentities.TileEntityLittleBlocks;
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.src.ModLoader;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraft.world.IBlockAccess;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 
 
-public class BlockLittleBlocksLittleRenderer {
-	private World world;
-	public Set<String> textures = new HashSet();
-	public HashMap<String, HashMap<Integer, LittleBlockToRender>> texturedBlocksToRender = new HashMap();
+public class LittleBlocksLittleRenderer {
+	private RenderBlocks renderBlocks;
+	public Set<String> textures = new HashSet<String>();
+	public HashMap<String, HashMap<Integer, LittleBlockToRender>> texturedBlocksToRender = new HashMap<String, HashMap<Integer, LittleBlockToRender>>();
 	
-	public BlockLittleBlocksLittleRenderer(World worldObj) {
-		this.world = worldObj;
+	public LittleBlocksLittleRenderer(RenderBlocks renderBlocks) {
+		this.renderBlocks = renderBlocks;
 	}
 
 	public void addLittleBlockToRender(Block block, int x, int y, int z) {
@@ -63,31 +61,67 @@ public class BlockLittleBlocksLittleRenderer {
 		}
 	}
 
-	public void renderBlocks() {
+	public void renderLittleBlocks(IBlockAccess iblockaccess, int x, int y, int z) {
+		Tessellator tessellator = Tessellator.instance;
+        int mode = tessellator.drawMode;
+		tessellator.draw();
+		GL11.glPushMatrix();
+		tessellator.startDrawing(mode);
+		
+		double xS = -((x >> 4) << 4), yS = -((y >> 4) << 4), zS = -((z >> 4) << 4);
+
+		GL11.glTranslated(xS, yS, zS);
+		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+		float scale = 1 / (float) LBCore.littleBlocksSize;
+		GL11.glScalef(scale, scale, scale);
+		GL11.glTranslated(-xS, -yS, -zS);
+		
 		for (String textureFile : this.textures) {
 			if (this.texturedBlocksToRender.containsKey(textureFile)) {
-				Tessellator tessellator = Tessellator.instance;
-				int mode = tessellator.drawMode;
+				HashMap<Integer, LittleBlockToRender> littleBlocksToRender = this.texturedBlocksToRender.get(textureFile);
+				
 				tessellator.draw();
 				tessellator.startDrawing(mode);
 				
-				HashMap<Integer, LittleBlockToRender> littleBlocksToRender = this.texturedBlocksToRender.get(textureFile);
-				int texture = ModLoader.getMinecraftInstance().renderEngine
-						.getTexture(textureFile);
-				GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
+				boolean customTexture = !textureFile.equals("/terrain.png");
+				if (customTexture) {
+					bindTexture(textureFile);
+				}
+				
 				for (LittleBlockToRender block: littleBlocksToRender.values()) {
-					//MinecraftForgeClient.renderBlock(LBCore.getLittleRenderer(world), block.block, block.x, block.y, block.z);
-					LBCore.getLittleRenderer(world).
+					this.renderBlocks.
 							renderBlockByRenderType(
 										block.block,
 										block.x,
 										block.y,
 										block.z);
 				}
-				
 				tessellator.draw();
 				tessellator.startDrawing(mode);
+
+				if (customTexture) {
+					unbindTexture();
+				}
 			}
 		}
+		
+		GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+		GL11.glPopMatrix();
+	}
+	
+	private void bindTexture(String textureFile) {
+		int texture = ModLoader.getMinecraftInstance(
+				).renderEngine.getTexture(
+						textureFile
+		);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
+	}
+	
+	private void unbindTexture() {
+		int texture = ModLoader.getMinecraftInstance(
+				).renderEngine.getTexture(
+						"/terrain.png"
+		);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
 	}
 }

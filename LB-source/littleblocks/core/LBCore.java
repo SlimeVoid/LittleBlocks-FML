@@ -105,20 +105,20 @@ public class LBCore {
 				256,
 				1,
 				false);
-		addDisallowedBlockTick(BlockFluid.class);
-		addDisallowedBlockTick(BlockFlowing.class);
+		registerDisallowedBlockTick(BlockFluid.class);
+		registerDisallowedBlockTick(BlockFlowing.class);
 		addDisallowedBlock(BlockPistonBase.class);
-		addAllowedTile(TileEntityNote.class);
+		registerAllowedTile(TileEntityNote.class);
 		// addAllowedTile(TileEntityChest.class);
 		// addAllowedTile(TileEntityDispenser.class);
-		addDisallowedItem(ItemHoe.class);
-		addDisallowedItem(ItemMonsterPlacer.class);
+		registerDisallowedItem(ItemHoe.class);
+		registerDisallowedItem(ItemMonsterPlacer.class);
 		MinecraftForge.EVENT_BUS.register(new LittleBlocksCollectionPickup());
 		// MinecraftForge.EVENT_BUS.register(new LittleContainerInteract());
 		// MinecraftForge.EVENT_BUS.register(new PistonOrientation());
 	}
 
-	public static void addDisallowedBlockTick(Class<? extends Block> blockClass) {
+	public static void registerDisallowedBlockTick(Class<? extends Block> blockClass) {
 		if (blockClass != null) {
 			if (!disallowedBlocksToTick.contains(blockClass)) {
 				disallowedBlocksToTick.add(blockClass);
@@ -160,7 +160,7 @@ public class LBCore {
 		}
 	}
 
-	public static void addDisallowedItem(Class<? extends Item> itemClass) {
+	public static void registerDisallowedItem(Class<? extends Item> itemClass) {
 		if (itemClass != null) {
 			if (!disallowedItems.contains(itemClass)) {
 				disallowedItems.add(itemClass);
@@ -175,7 +175,7 @@ public class LBCore {
 			if (disallowedItems.contains(item.getClass())) {
 				isAllowed = false;
 			}
-			if (disallowedItemIDs.contains(item.itemID)) {
+			if (disallowedItemIDs.contains(item.shiftedIndex)) {
 				isAllowed = false;
 			}
 			if (item instanceof IItemPipe) {
@@ -185,7 +185,7 @@ public class LBCore {
 		return isAllowed;
 	}
 
-	public static void addAllowedTile(Class<? extends TileEntity> tileclass) {
+	public static void registerAllowedTile(Class<? extends TileEntity> tileclass) {
 		if (tileclass != null) {
 			if (!allowedBlockTileEntities.contains(tileclass)) {
 				allowedBlockTileEntities.add(tileclass);
