@@ -41,7 +41,7 @@ public class CommonPacketHandler implements IPacketHandler {
 			}
 		}
 	}
-
+/*
 	public static void metadataModified(LittleWorld littleWorld, int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
 		PacketLittleBlocks packetLB = new PacketLittleBlocks(
 				LBCore.metaDataModifiedCommand,
@@ -62,7 +62,7 @@ public class CommonPacketHandler implements IPacketHandler {
 				true);
 	}
 
-	public static void idModified(LittleWorld littleWorld, int lastBlockId, int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
+	public static void idModified(LittleWorld littleWorld, int lastBlockId, int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata, TileEntity tileentity) {
 		PacketLittleBlocks packetLB = new PacketLittleBlocks(
 				LBCore.idModifiedCommand,
 				(x << 3) + littleX,
@@ -72,6 +72,9 @@ public class CommonPacketHandler implements IPacketHandler {
 					blockId,
 					metadata);
 		packetLB.setSender(LBPacketIds.SERVER);
+		if (tileentity != null) {
+			packetLB.setTileEntityData(tileentity);
+		}
 		sendToAllPlayers(
 				littleWorld.getRealWorld(),
 				null,
@@ -80,7 +83,7 @@ public class CommonPacketHandler implements IPacketHandler {
 				y,
 				z,
 				true);
-	}
+	}*/
 
 	public static void handlePacket(PacketUpdate packet, EntityPlayer entityplayer, World world) {
 		if (packet instanceof PacketLittleBlocks) {
@@ -215,5 +218,83 @@ public class CommonPacketHandler implements IPacketHandler {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+
+	public static void sendBreakBlock(
+			LittleWorld littleWorld,
+			int blockX, int blockY, int blockZ, int side,
+			int lastBlockId, int metadata, TileEntity tileData) {
+		
+		PacketLittleBlocks packetLB = new PacketLittleBlocks(
+				LBCore.breakBlock,
+				blockX, blockY, blockZ,
+				side,
+				lastBlockId,
+				metadata);
+		if (tileData != null) {
+			packetLB.setTileEntityData(tileData);
+		}
+		packetLB.setSender(LBPacketIds.SERVER);
+		sendToAllPlayers(
+				littleWorld.getRealWorld(),
+				null,
+				packetLB.getPacket(),
+				blockX >> 3,
+				blockY >> 3,
+				blockZ >> 3,
+				true);
+	}
+
+	public static void sendBlockAdded(
+			LittleWorld littleWorld,
+			int blockX, int blockY, int blockZ, int side,
+			int blockId, int metadata, TileEntity tileentity) {
+		
+		PacketLittleBlocks packetLB = new PacketLittleBlocks(
+				LBCore.blockAdded,
+				blockX,
+				blockY,
+				blockZ,
+				side,
+				blockId,
+				metadata);
+		packetLB.setSender(LBPacketIds.SERVER);
+		if (tileentity != null) {
+			packetLB.setTileEntityData(tileentity);
+		}
+		sendToAllPlayers(
+				littleWorld.getRealWorld(),
+				null,
+				packetLB.getPacket(),
+				blockX >> 3,
+				blockY >> 3,
+				blockZ >> 3,
+				true);
+	}
+
+	public static void sendMetadata(
+			LittleWorld littleWorld,
+			int blockX, int blockY, int blockZ,
+			int blockId, int side, int metadata, TileEntity tileData) {
+		PacketLittleBlocks packetLB = new PacketLittleBlocks(
+				LBCore.metaDataModifiedCommand,
+					blockX,
+					blockY,
+					blockZ,
+					side,
+					blockId,
+					metadata);
+		if (tileData != null) {
+			packetLB.setTileEntityData(tileData);
+		}
+		packetLB.setSender(LBPacketIds.SERVER);
+		sendToAllPlayers(
+				littleWorld.getRealWorld(),
+				null,
+				packetLB.getPacket(),
+				blockX >> 3,
+				blockY >> 3,
+				blockZ >> 3,
+				true);
 	}
 }

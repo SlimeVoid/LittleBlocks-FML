@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import slimevoid.littleblocks.core.LBInit;
 
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import eurysmods.network.packets.core.PacketIds;
@@ -17,21 +18,32 @@ public class PacketLittleBlocks extends PacketUpdate {
 	private int sender;
 	private int blockId;
 	private int metaData;
+	private NBTTagCompound tileEntityData;
 
 	@Override
 	public void writeData(DataOutputStream data) throws IOException {
 		super.writeData(data);
 		data.writeInt(sender);
-		data.writeInt(blockId);
-		data.writeInt(metaData);
+		//data.writeInt(blockId);
+		//data.writeInt(metaData);
+		writeTileEntityData(data);
+	}
+
+	private void writeTileEntityData(DataOutputStream data) throws IOException {
+		writeNBTTagCompound(this.tileEntityData, data);
 	}
 
 	@Override
 	public void readData(DataInputStream data) throws IOException {
 		super.readData(data);
 		sender = data.readInt();
-		blockId = data.readInt();
-		metaData = data.readInt();
+		//blockId = data.readInt();
+		//metaData = data.readInt();
+		readTileEntityData(data);
+	}
+
+	private void readTileEntityData(DataInputStream data) throws IOException {
+		this.tileEntityData = readNBTTagCompound(data);
 	}
 
 	public PacketLittleBlocks() {
@@ -42,23 +54,22 @@ public class PacketLittleBlocks extends PacketUpdate {
 	public PacketLittleBlocks(String command, int x, int y, int z, int side, float vecX, float vecY, float vecZ, int selectedX, int selectedY, int selectedZ, int blockId, int metadata) {
 		this();
 		this.setPosition(x, y, z, side);
-		//this.setVecs(vecX, vecY, vecZ);
+		this.setVecs(vecX, vecY, vecZ);
 		this.payload = new PacketPayload(5, 0, 1, 0);
 		this.setCommand(command);
 		this.setBlockId(blockId);
 		this.setMetadata(metadata);
 		this.setSelectedXYZ(selectedX, selectedY, selectedZ);
+		this.payload.setBoolPayload(0, false);
 	}
 
 	public PacketLittleBlocks(String command, int x, int y, int z, int side, int blockId, int metadata) {
 		this();
 		this.setPosition(x, y, z, side);
-		//this.setVecs(vecX, vecY, vecZ);
-		this.payload = new PacketPayload(0, 0, 1, 0);
+		this.payload = new PacketPayload(2, 0, 1, 1);
 		this.setCommand(command);
 		this.setBlockId(blockId);
 		this.setMetadata(metadata);
-		//this.setSelectedXYZ(selectedX, selectedY, selectedZ);
 	}
 
 	private void setCommand(String command) {
@@ -75,13 +86,6 @@ public class PacketLittleBlocks extends PacketUpdate {
 		this.payload.setIntPayload(4, selectedZ);
 	}
 
-	public TileEntity getTileEntity(World world) {
-		return world.getBlockTileEntity(
-				this.xPosition,
-				this.yPosition,
-				this.zPosition);
-	}
-
 	@Override
 	public boolean targetExists(World world) {
 		if (world.blockExists(this.xPosition, this.yPosition, this.zPosition)) {
@@ -91,23 +95,23 @@ public class PacketLittleBlocks extends PacketUpdate {
 	}
 
 	public void setBlockId(int blockId) {
-		//this.payload.setIntPayload(0, blockId);
-		this.blockId = blockId;
+		this.payload.setIntPayload(0, blockId);
+		//this.blockId = blockId;
 	}
 
 	public void setMetadata(int metadata) {
-		//this.payload.setIntPayload(1, metadata);
-		this.metaData = metadata;
+		this.payload.setIntPayload(1, metadata);
+		//this.metaData = metadata;
 	}
 
 	public int getBlockID() {
-		//return this.payload.getIntPayload(0);
-		return blockId;
+		return this.payload.getIntPayload(0);
+		//return blockId;
 	}
 
 	public int getMetadata() {
-		//return this.payload.getIntPayload(1);
-		return metaData;
+		return this.payload.getIntPayload(1);
+		//return metaData;
 	}
 
 	public int getSelectedX() {
@@ -128,5 +132,20 @@ public class PacketLittleBlocks extends PacketUpdate {
 
 	public void setSender(int sender) {
 		this.sender = sender;
+	}
+	
+	public void setTileEntityData(TileEntity tileData) {
+		NBTTagCompound tileTag = new NBTTagCompound();
+		tileData.writeToNBT(tileTag);
+		this.tileEntityData = tileTag;
+		this.payload.setBoolPayload(0, true);
+	}
+	
+	public NBTTagCompound getTileEntityData() {
+		return this.tileEntityData;
+	}
+	
+	public boolean hasTileEntity() {
+		return this.payload.getBoolPayload(0);
 	}
 }

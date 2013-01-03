@@ -6,10 +6,12 @@ import java.util.List;
 import slimevoid.littleblocks.api.ILBCommonProxy;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.LBInit;
+import slimevoid.littleblocks.network.packets.PacketLittleBlocks;
 import slimevoid.littleblocks.network.packets.PacketTileEntityLB;
 import slimevoid.littleblocks.world.LittleWorld;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.nbt.NBTTagList;
@@ -43,9 +45,9 @@ public class TileEntityLittleBlocks extends TileEntity {
 	@Override
 	public void setWorldObj(World par1World) {
 		this.worldObj = par1World;
-		((ILBCommonProxy) LBInit.LBM.getProxy()).getLittleWorld(
-				this.worldObj,
-				false);
+		//((ILBCommonProxy) LBInit.LBM.getProxy()).getLittleWorld(
+		//		this.worldObj,
+		//		false);
 	}
 
 	public TileEntityLittleBlocks() {
@@ -657,5 +659,60 @@ public class TileEntityLittleBlocks extends TileEntity {
 					tile.zCoord & 7,
 					tile);
 		}
+	}
+
+	public void handleBlockAdded(World world, EntityPlayer entityplayer,
+			PacketLittleBlocks packetLB) {
+		this.setContent(
+				packetLB.xPosition & 7,
+				packetLB.yPosition & 7,
+				packetLB.zPosition & 7,
+				packetLB.getBlockID(),
+				packetLB.getMetadata());
+		if (packetLB.hasTileEntity()) {
+			TileEntity tile = TileEntity
+					.createAndLoadEntity(packetLB.getTileEntityData());
+			this.setTileEntity(
+				packetLB.xPosition & 7,
+				packetLB.yPosition & 7,
+				packetLB.zPosition & 7,
+				tile);
+		}
+		this.onInventoryChanged();
+	}
+
+	public void handleBreakBlock(World world, EntityPlayer entityplayer,
+			PacketLittleBlocks packetLB) {
+		this.setContent(
+				packetLB.xPosition & 7,
+				packetLB.yPosition & 7,
+				packetLB.zPosition & 7,
+				0);
+		if (packetLB.hasTileEntity()) {
+			this.removeTileEntity(
+				packetLB.xPosition & 7,
+				packetLB.yPosition & 7,
+				packetLB.zPosition & 7);
+		}
+		this.onInventoryChanged();
+	}
+
+	public void handleUpdateMetadata(World world, EntityPlayer entityplayer,
+			PacketLittleBlocks packetLB) {
+		this.setMetadata(
+				packetLB.xPosition & 7,
+				packetLB.yPosition & 7,
+				packetLB.zPosition & 7,
+				packetLB.getMetadata());
+		if (packetLB.hasTileEntity()) {
+			TileEntity tile = TileEntity
+					.createAndLoadEntity(packetLB.getTileEntityData());
+			this.setTileEntity(
+				packetLB.xPosition & 7,
+				packetLB.yPosition & 7,
+				packetLB.zPosition & 7,
+				tile);
+		}
+		this.onInventoryChanged();
 	}
 }

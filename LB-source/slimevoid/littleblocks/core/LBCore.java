@@ -83,6 +83,8 @@ public class LBCore {
 	public static int littleDimensionServer;
 	public static int littleProviderTypeServer;
 	public static WorldProvider littleProviderServer;
+	public static String breakBlock = "breakBlock";
+	public static String blockAdded = "blockAdded";
 
 	public static void initialize(ICommonProxy proxy) {
 		LBInit.initialize(proxy);

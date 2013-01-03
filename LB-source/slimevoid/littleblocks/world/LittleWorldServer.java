@@ -465,17 +465,27 @@ public class LittleWorldServer extends LittleWorld {
 
 	@Override
 	public void metadataModified(int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
-		CommonPacketHandler.metadataModified(
-				this,
-				x,
-				y,
-				z,
-				side,
-				littleX,
-				littleY,
-				littleZ,
-				blockId,
-				metadata);
+		Block block = Block.blocksList[blockId];
+		int blockX = (x << 3) + littleX,
+			blockY = (y << 3) + littleY,
+			blockZ = (z << 3) + littleZ;
+		if (block != null) {
+			TileEntity tileentity = 
+					block.hasTileEntity(metadata) 
+					? this.getBlockTileEntity(
+							blockX,
+							blockY,
+							blockZ) : null;
+			CommonPacketHandler.sendMetadata(
+					this,
+					blockX,
+					blockY,
+					blockZ,
+					blockId,
+					side,
+					metadata,
+					tileentity);
+		}
 		super.metadataModified(
 				x,
 				y,
@@ -487,62 +497,67 @@ public class LittleWorldServer extends LittleWorld {
 				blockId, 
 				metadata);
 		this.notifyBlockChange(
-				(x << 3) + littleX,
-				(y << 3) + littleY,
-				(z << 3) + littleZ,
+				blockX,
+				blockY,
+				blockZ,
 				blockId);
 	}
 
 	@Override
 	public void idModified(int lastBlockId, int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
+		int blockX = (x << 3) + littleX,
+			blockY = (y << 3) + littleY,
+			blockZ = (z << 3) + littleZ;
 		if (lastBlockId != 0) {
-			Block.blocksList[lastBlockId].breakBlock(
-					this,
-					(x << 3) + littleX,
-					(y << 3) + littleY,
-					(z << 3) + littleZ,
-					0,
-					0);
-			CommonPacketHandler.idModified(
-					this,
-					lastBlockId,
-					x,
-					y,
-					z,
-					side,
-					littleX,
-					littleY,
-					littleZ,
-					blockId,
-					metadata);
-			if (Block.blocksList[lastBlockId].hasTileEntity(metadata)) {
-				this.realWorld.markBlockForUpdate(x, y, z);
+			Block block = Block.blocksList[blockId];
+			if (block != null) {
+				TileEntity tileentity = 
+						block.hasTileEntity(metadata) 
+						? this.getBlockTileEntity(
+								blockX,
+								blockY,
+								blockZ) : null;
+				block.breakBlock(
+						this,
+						blockX,
+						blockY,
+						blockZ,
+						side,
+						metadata);
+				CommonPacketHandler.sendBreakBlock(
+						this,
+						blockX,
+						blockY,
+						blockZ,
+						side,
+						lastBlockId,
+						metadata,
+						tileentity);
 			}
 		}
 		if (blockId != 0) {
-			Block.blocksList[blockId].onBlockAdded(
-					this,
-					(x << 3) + littleX,
-					(y << 3) + littleY,
-					(z << 3) + littleZ);
-			if (this.blockHasTileEntity(
-					(x << 3) + littleX,
-					(y << 3) + littleY,
-					(z << 3) + littleZ)) {
-				this.realWorld.markBlockForUpdate(x, y, z);
-			} else {
-				CommonPacketHandler.idModified(
+			Block block = Block.blocksList[blockId];
+			if (block != null) {
+				block.onBlockAdded(
 						this,
-						blockId,
-						x,
-						y,
-						z,
+						blockX,
+						blockY,
+						blockZ);
+				TileEntity tileentity = 
+						Block.blocksList[blockId].hasTileEntity(metadata) 
+						? this.getBlockTileEntity(
+								blockX,
+								blockY,
+								blockZ) : null;
+				CommonPacketHandler.sendBlockAdded(
+						this,
+						blockX,
+						blockY,
+						blockZ,
 						side,
-						littleX,
-						littleY,
-						littleZ,
 						blockId,
-						metadata);
+						metadata,
+						tileentity);
 			}
 		}
 		super.idModified(
@@ -557,9 +572,9 @@ public class LittleWorldServer extends LittleWorld {
 				blockId,
 				metadata);
 		this.notifyBlockChange(
-				(x << 3) + littleX,
-				(y << 3) + littleY,
-				(z << 3) + littleZ,
+				blockX,
+				blockY,
+				blockZ,
 				blockId);
 	}
 }

@@ -129,26 +129,20 @@ public class ClientPacketHandler implements IPacketHandler {
 			if (packetLB.getSender() == LBPacketIds.CLIENT) {
 				CommonPacketHandler.handlePacket(packet, entityplayer, world);
 			}
-			if (packetLB.getCommand().equals(LBCore.littleNotifyCommand)) {
-			} else {
-				if (packetLB.getCommand().equals(LBCore.idModifiedCommand)) {
-					LittleWorld lw = ((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(world, false);
-					lw.setBlockAndMetadata(
-							packetLB.xPosition,
-							packetLB.yPosition,
-							packetLB.zPosition,
-							packetLB.getBlockID(),
-							packetLB.getMetadata());
+			TileEntityLittleBlocks tileentitylittleblocks = (TileEntityLittleBlocks) world.getBlockTileEntity(
+					packetLB.xPosition >> 3,
+					packetLB.yPosition >> 3,
+					packetLB.zPosition >> 3);
+			if (tileentitylittleblocks != null) {
+				if (packetLB.getCommand().equals(LBCore.blockAdded)) {
+					tileentitylittleblocks.handleBlockAdded(world, entityplayer, packetLB);
+				}
+				if (packetLB.getCommand().equals(LBCore.breakBlock)) {
+					tileentitylittleblocks.handleBreakBlock(world, entityplayer, packetLB);
 				}
 				if (packetLB.getCommand().equals(
 						LBCore.metaDataModifiedCommand)) {
-					LittleWorld lw = ((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(world, false);
-					lw.setBlockAndMetadata(
-							packetLB.xPosition,
-							packetLB.yPosition,
-							packetLB.zPosition,
-							packetLB.getBlockID(),
-							packetLB.getMetadata());
+					tileentitylittleblocks.handleUpdateMetadata(world, entityplayer, packetLB);
 				}
 				world.markBlockForRenderUpdate(
 						packetLB.xPosition,
