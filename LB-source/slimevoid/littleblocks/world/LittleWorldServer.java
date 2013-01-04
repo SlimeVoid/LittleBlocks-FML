@@ -465,10 +465,15 @@ public class LittleWorldServer extends LittleWorld {
 
 	@Override
 	public void metadataModified(int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
-		Block block = Block.blocksList[blockId];
 		int blockX = (x << 3) + littleX,
-			blockY = (y << 3) + littleY,
-			blockZ = (z << 3) + littleZ;
+				blockY = (y << 3) + littleY,
+				blockZ = (z << 3) + littleZ;
+		this.notifyBlockChange(
+				blockX,
+				blockY,
+				blockZ,
+				blockId);
+		Block block = Block.blocksList[blockId];
 		if (block != null) {
 			TileEntity tileentity = 
 					block.hasTileEntity(metadata) 
@@ -486,21 +491,6 @@ public class LittleWorldServer extends LittleWorld {
 					metadata,
 					tileentity);
 		}
-		super.metadataModified(
-				x,
-				y,
-				z,
-				side,
-				littleX,
-				littleY,
-				littleZ,
-				blockId, 
-				metadata);
-		this.notifyBlockChange(
-				blockX,
-				blockY,
-				blockZ,
-				blockId);
 	}
 
 	@Override
@@ -508,8 +498,13 @@ public class LittleWorldServer extends LittleWorld {
 		int blockX = (x << 3) + littleX,
 			blockY = (y << 3) + littleY,
 			blockZ = (z << 3) + littleZ;
+		this.notifyBlockChange(
+				blockX,
+				blockY,
+				blockZ,
+				blockId);
 		if (lastBlockId != 0) {
-			Block block = Block.blocksList[blockId];
+			Block block = Block.blocksList[lastBlockId];
 			if (block != null) {
 				TileEntity tileentity = 
 						block.hasTileEntity(metadata) 
@@ -560,21 +555,5 @@ public class LittleWorldServer extends LittleWorld {
 						tileentity);
 			}
 		}
-		super.idModified(
-				lastBlockId,
-				x,
-				y,
-				z,
-				side,
-				littleX,
-				littleY,
-				littleZ,
-				blockId,
-				metadata);
-		this.notifyBlockChange(
-				blockX,
-				blockY,
-				blockZ,
-				blockId);
 	}
 }

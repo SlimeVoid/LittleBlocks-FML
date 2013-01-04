@@ -812,6 +812,14 @@ public class LittleWorld extends World {
 	}
 
 	public void idModified(int lastBlockId, int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
+		int blockX = (x << 3) + littleX,
+			blockY = (y << 3) + littleY,
+			blockZ = (z << 3) + littleZ;
+		this.notifyBlockChange(
+				blockX,
+				blockY,
+				blockZ,
+				blockId);
 		if (this.realWorld != null) {
 			this.realWorld.updateAllLightTypes(x, y, z);
 			this.realWorld.markBlockForRenderUpdate(x, y, z);
@@ -819,6 +827,14 @@ public class LittleWorld extends World {
 	}
 
 	public void metadataModified(int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
+		int blockX = (x << 3) + littleX,
+			blockY = (y << 3) + littleY,
+			blockZ = (z << 3) + littleZ;
+		this.notifyBlockChange(
+				blockX,
+				blockY,
+				blockZ,
+				blockId);
 		if (this.realWorld != null) {
 			this.realWorld.updateAllLightTypes(x, y, z);
 			this.realWorld.markBlockForRenderUpdate(x, y, z);

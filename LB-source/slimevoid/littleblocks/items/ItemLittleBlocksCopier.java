@@ -2,6 +2,9 @@ package slimevoid.littleblocks.items;
 
 import java.util.HashMap;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.LBInit;
 import slimevoid.littleblocks.core.LoggerLittleBlocks;
@@ -139,6 +142,7 @@ public class ItemLittleBlocksCopier extends Item {
 		return false;
 	}
 
+	@SideOnly(Side.CLIENT)
 	@Override
 	public String getTextureFile() {
 		return LBInit.LBM.getItemSheet();

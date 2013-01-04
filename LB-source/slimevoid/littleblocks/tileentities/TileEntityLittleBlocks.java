@@ -638,6 +638,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 	public int[][][] getMetadata() {
 		return this.metadatas;
 	}
+	
 	public List<NBTTagCompound> getTiles() {
 		List<NBTTagCompound> tileList = new ArrayList<NBTTagCompound>();
 		for (TileEntity tile : tiles) {
@@ -661,6 +662,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 		}
 	}
 
+	@SideOnly(Side.CLIENT)
 	public void handleBlockAdded(World world, EntityPlayer entityplayer,
 			PacketLittleBlocks packetLB) {
 		this.setContent(
@@ -673,14 +675,20 @@ public class TileEntityLittleBlocks extends TileEntity {
 			TileEntity tile = TileEntity
 					.createAndLoadEntity(packetLB.getTileEntityData());
 			this.setTileEntity(
-				packetLB.xPosition & 7,
-				packetLB.yPosition & 7,
-				packetLB.zPosition & 7,
-				tile);
+					tile.xCoord & 7,
+					tile.yCoord & 7,
+					tile.zCoord & 7,
+					tile);
 		}
+		Block.blocksList[packetLB.getBlockID()].onBlockAdded(
+				this.getLittleWorld(),
+				packetLB.xPosition,
+				packetLB.yPosition,
+				packetLB.zPosition);
 		this.onInventoryChanged();
 	}
 
+	@SideOnly(Side.CLIENT)
 	public void handleBreakBlock(World world, EntityPlayer entityplayer,
 			PacketLittleBlocks packetLB) {
 		this.setContent(
@@ -689,14 +697,21 @@ public class TileEntityLittleBlocks extends TileEntity {
 				packetLB.zPosition & 7,
 				0);
 		if (packetLB.hasTileEntity()) {
-			this.removeTileEntity(
-				packetLB.xPosition & 7,
-				packetLB.yPosition & 7,
-				packetLB.zPosition & 7);
+			TileEntity tile = TileEntity
+					.createAndLoadEntity(packetLB.getTileEntityData());
+			this.removeTileEntity(tile);
 		}
+		Block.blocksList[packetLB.getBlockID()].breakBlock(
+				this.getLittleWorld(),
+				packetLB.xPosition,
+				packetLB.yPosition,
+				packetLB.zPosition,
+				packetLB.side,
+				packetLB.getMetadata());
 		this.onInventoryChanged();
 	}
 
+	@SideOnly(Side.CLIENT)
 	public void handleUpdateMetadata(World world, EntityPlayer entityplayer,
 			PacketLittleBlocks packetLB) {
 		this.setMetadata(
@@ -708,9 +723,9 @@ public class TileEntityLittleBlocks extends TileEntity {
 			TileEntity tile = TileEntity
 					.createAndLoadEntity(packetLB.getTileEntityData());
 			this.setTileEntity(
-				packetLB.xPosition & 7,
-				packetLB.yPosition & 7,
-				packetLB.zPosition & 7,
+				tile.xCoord & 7,
+				tile.yCoord & 7,
+				tile.zCoord & 7,
 				tile);
 		}
 		this.onInventoryChanged();

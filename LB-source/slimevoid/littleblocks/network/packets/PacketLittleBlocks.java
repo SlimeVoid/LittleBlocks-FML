@@ -16,16 +16,12 @@ import eurysmods.network.packets.core.PacketUpdate;
 public class PacketLittleBlocks extends PacketUpdate {
 
 	private int sender;
-	private int blockId;
-	private int metaData;
 	private NBTTagCompound tileEntityData;
 
 	@Override
 	public void writeData(DataOutputStream data) throws IOException {
 		super.writeData(data);
 		data.writeInt(sender);
-		//data.writeInt(blockId);
-		//data.writeInt(metaData);
 		writeTileEntityData(data);
 	}
 
@@ -37,8 +33,6 @@ public class PacketLittleBlocks extends PacketUpdate {
 	public void readData(DataInputStream data) throws IOException {
 		super.readData(data);
 		sender = data.readInt();
-		//blockId = data.readInt();
-		//metaData = data.readInt();
 		readTileEntityData(data);
 	}
 
@@ -60,7 +54,6 @@ public class PacketLittleBlocks extends PacketUpdate {
 		this.setBlockId(blockId);
 		this.setMetadata(metadata);
 		this.setSelectedXYZ(selectedX, selectedY, selectedZ);
-		this.payload.setBoolPayload(0, false);
 	}
 
 	public PacketLittleBlocks(String command, int x, int y, int z, int side, int blockId, int metadata) {
@@ -70,6 +63,7 @@ public class PacketLittleBlocks extends PacketUpdate {
 		this.setCommand(command);
 		this.setBlockId(blockId);
 		this.setMetadata(metadata);
+		this.payload.setBoolPayload(0, false);
 	}
 
 	private void setCommand(String command) {
@@ -96,22 +90,18 @@ public class PacketLittleBlocks extends PacketUpdate {
 
 	public void setBlockId(int blockId) {
 		this.payload.setIntPayload(0, blockId);
-		//this.blockId = blockId;
 	}
 
 	public void setMetadata(int metadata) {
 		this.payload.setIntPayload(1, metadata);
-		//this.metaData = metadata;
 	}
 
 	public int getBlockID() {
 		return this.payload.getIntPayload(0);
-		//return blockId;
 	}
 
 	public int getMetadata() {
 		return this.payload.getIntPayload(1);
-		//return metaData;
 	}
 
 	public int getSelectedX() {

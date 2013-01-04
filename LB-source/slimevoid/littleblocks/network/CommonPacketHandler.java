@@ -278,12 +278,12 @@ public class CommonPacketHandler implements IPacketHandler {
 			int blockId, int side, int metadata, TileEntity tileData) {
 		PacketLittleBlocks packetLB = new PacketLittleBlocks(
 				LBCore.metaDataModifiedCommand,
-					blockX,
-					blockY,
-					blockZ,
-					side,
-					blockId,
-					metadata);
+				blockX,
+				blockY,
+				blockZ,
+				side,
+				blockId,
+				metadata);
 		if (tileData != null) {
 			packetLB.setTileEntityData(tileData);
 		}

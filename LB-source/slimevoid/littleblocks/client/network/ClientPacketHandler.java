@@ -69,39 +69,13 @@ public class ClientPacketHandler implements IPacketHandler {
 					.getIntPayload(index + 3), z = packetLB.payload
 					.getIntPayload(index + 4);
 			tileentitylb.setContent(x, y, z, id, meta);
-			tileentitylb.setTiles(packetLB.getTileEntities());
 			index += 5;
 		}
+		tileentitylb.setTiles(packetLB.getTileEntities());
 		world.markBlockForRenderUpdate(
 				packetLB.xPosition,
 				packetLB.yPosition,
 				packetLB.zPosition);
-	}
-
-	private static void handleBigTilePacket(World world, PacketTileEntityLB packetLB, TileEntityLittleBlocks tileentitylb) {
-		int[][][] content = new int[tileentitylb.size][tileentitylb.size][tileentitylb.size];
-		int[][][] metadata = new int[tileentitylb.size][tileentitylb.size][tileentitylb.size];
-		for (int xx = 0; xx < content.length; xx++) {
-			for (int yy = 0; yy < content[xx].length; yy++) {
-				for (int zz = 0; zz < content[xx][yy].length; zz++) {
-					int blockId = packetLB.payload
-							.getIntPayload(xx + (yy * tileentitylb.size) + (zz * tileentitylb.size * tileentitylb.size));
-					int blockMeta = packetLB.payload
-							.getIntPayload((tileentitylb.size * tileentitylb.size * tileentitylb.size) + xx + (yy * tileentitylb.size) + (zz * tileentitylb.size * tileentitylb.size));
-					content[xx][yy][zz] = blockId;
-					metadata[xx][yy][zz] = blockMeta;
-				}
-			}
-		}
-		tileentitylb.setContent(content);
-		tileentitylb.setMetadata(metadata);
-		world.markBlockForRenderUpdate(
-				packetLB.xPosition,
-				packetLB.yPosition,
-				packetLB.zPosition);
-	}
-
-	public void handleLittleData(PacketUpdate packetLB, TileEntity tileentitylittleblocks) {
 	}
 
 	public static void blockUpdate(World world, EntityPlayer entityplayer, int x, int y, int z, int q, float a, float b, float c, BlockLittleBlocks block, String command) {
@@ -144,10 +118,10 @@ public class ClientPacketHandler implements IPacketHandler {
 						LBCore.metaDataModifiedCommand)) {
 					tileentitylittleblocks.handleUpdateMetadata(world, entityplayer, packetLB);
 				}
-				world.markBlockForRenderUpdate(
-						packetLB.xPosition,
-						packetLB.yPosition,
-						packetLB.zPosition);
+				world.markBlockForUpdate(
+						packetLB.xPosition >> 3,
+						packetLB.yPosition >> 3,
+						packetLB.zPosition >> 3);
 			}
 		}
 	}
