@@ -2,11 +2,10 @@ package slimevoid.littleblocks.client.handlers;
 
 import java.util.EnumSet;
 
-import slimevoid.littleblocks.api.ILBCommonProxy;
-import slimevoid.littleblocks.core.LBInit;
-
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
+import slimevoid.littleblocks.api.ILBCommonProxy;
+import slimevoid.littleblocks.core.LBInit;
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
 

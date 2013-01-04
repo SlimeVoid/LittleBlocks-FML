@@ -1,11 +1,11 @@
 package slimevoid.littleblocks.network;
 
-import slimevoid.littleblocks.core.LBInit;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.NetLoginHandler;
 import net.minecraft.network.packet.NetHandler;
 import net.minecraft.network.packet.Packet1Login;
 import net.minecraft.server.MinecraftServer;
+import slimevoid.littleblocks.core.LBInit;
 import cpw.mods.fml.common.network.IConnectionHandler;
 import cpw.mods.fml.common.network.Player;
 

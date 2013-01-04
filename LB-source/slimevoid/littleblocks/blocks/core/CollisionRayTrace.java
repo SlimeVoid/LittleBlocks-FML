@@ -2,14 +2,13 @@ package slimevoid.littleblocks.blocks.core;
 
 import java.util.List;
 
-import slimevoid.littleblocks.blocks.BlockLittleBlocks;
-import slimevoid.littleblocks.core.LBCore;
-import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
-
 import net.minecraft.block.Block;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import slimevoid.littleblocks.blocks.BlockLittleBlocks;
+import slimevoid.littleblocks.core.LBCore;
+import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
 
 public class CollisionRayTrace {
 

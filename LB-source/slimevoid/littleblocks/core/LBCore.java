@@ -4,14 +4,6 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
-import slimevoid.littleblocks.api.ILBCommonProxy;
-import slimevoid.littleblocks.blocks.BlockLittleBlocks;
-import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
-import slimevoid.littleblocks.items.ItemLittleBlocksCopier;
-import slimevoid.littleblocks.items.LittleBlocksCollectionPickup;
-import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
-import slimevoid.littleblocks.world.LittleWorld;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFlowing;
 import net.minecraft.block.BlockFluid;
@@ -29,6 +21,13 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
+import slimevoid.littleblocks.api.ILBCommonProxy;
+import slimevoid.littleblocks.blocks.BlockLittleBlocks;
+import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
+import slimevoid.littleblocks.items.ItemLittleBlocksCopier;
+import slimevoid.littleblocks.items.LittleBlocksCollectionPickup;
+import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
+import slimevoid.littleblocks.world.LittleWorld;
 import buildcraft.core.IItemPipe;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;

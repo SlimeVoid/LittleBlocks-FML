@@ -6,11 +6,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.nbt.NBTTagCompound;
 import slimevoid.littleblocks.core.LBInit;
 import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
-
-import net.minecraft.nbt.NBTTagCompound;
-
 import eurysmods.network.packets.core.PacketTileEntity;
 
 public class PacketTileEntityLB extends PacketTileEntity {

@@ -1,10 +1,10 @@
 package slimevoid.littleblocks.handlers;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
 import slimevoid.littleblocks.world.LittleWorld;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.world.World;
 
 public class LittleBlocksRotationHandler {
 	World world;

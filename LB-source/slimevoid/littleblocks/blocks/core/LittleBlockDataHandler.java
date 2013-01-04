@@ -1,9 +1,9 @@
 package slimevoid.littleblocks.blocks.core;
 
-import slimevoid.littleblocks.world.LittleWorld;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import slimevoid.littleblocks.world.LittleWorld;
 
 public class LittleBlockDataHandler {
 

@@ -1,9 +1,9 @@
 package slimevoid.littleblocks.api;
 
-import slimevoid.littleblocks.blocks.BlockLittleBlocks;
-import slimevoid.littleblocks.world.LittleWorld;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
+import slimevoid.littleblocks.blocks.BlockLittleBlocks;
+import slimevoid.littleblocks.world.LittleWorld;
 import eurysmods.api.IPacketHandling;
 
 public interface ILBPacketHandling extends IPacketHandling {

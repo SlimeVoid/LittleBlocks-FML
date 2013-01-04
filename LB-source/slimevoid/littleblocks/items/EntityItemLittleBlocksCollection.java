@@ -2,13 +2,12 @@ package slimevoid.littleblocks.items;
 
 import java.util.HashMap;
 
-import slimevoid.littleblocks.core.LBCore;
-
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import slimevoid.littleblocks.core.LBCore;
 
 public class EntityItemLittleBlocksCollection extends EntityItem {
 	public HashMap<String, ItemStack> itemstackCollection = new HashMap();

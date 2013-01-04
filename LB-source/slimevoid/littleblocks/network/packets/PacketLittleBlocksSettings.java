@@ -1,7 +1,7 @@
 package slimevoid.littleblocks.network.packets;
 
-import slimevoid.littleblocks.core.LBInit;
 import net.minecraft.world.World;
+import slimevoid.littleblocks.core.LBInit;
 import eurysmods.network.packets.core.PacketIds;
 import eurysmods.network.packets.core.PacketPayload;
 import eurysmods.network.packets.core.PacketUpdate;

@@ -5,10 +5,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 
+import net.minecraft.item.ItemStack;
 import slimevoid.littleblocks.core.LBInit;
 import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
-
-import net.minecraft.item.ItemStack;
 import eurysmods.network.packets.core.PacketEntity;
 
 public class PacketLittleBlocksCollection extends PacketEntity {

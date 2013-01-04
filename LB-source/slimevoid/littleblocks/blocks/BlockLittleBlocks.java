@@ -4,17 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import slimevoid.littleblocks.api.ILBCommonProxy;
-import slimevoid.littleblocks.blocks.core.CollisionRayTrace;
-import slimevoid.littleblocks.client.network.ClientPacketHandler;
-import slimevoid.littleblocks.core.LBCore;
-import slimevoid.littleblocks.core.LBInit;
-import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
-import slimevoid.littleblocks.network.CommonPacketHandler;
-import slimevoid.littleblocks.network.packets.PacketLittleBlocksCollection;
-import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
-import slimevoid.littleblocks.world.LittleWorld;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockPistonBase;
@@ -34,6 +23,16 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import slimevoid.littleblocks.api.ILBCommonProxy;
+import slimevoid.littleblocks.blocks.core.CollisionRayTrace;
+import slimevoid.littleblocks.client.network.ClientPacketHandler;
+import slimevoid.littleblocks.core.LBCore;
+import slimevoid.littleblocks.core.LBInit;
+import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
+import slimevoid.littleblocks.network.CommonPacketHandler;
+import slimevoid.littleblocks.network.packets.PacketLittleBlocksCollection;
+import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
+import slimevoid.littleblocks.world.LittleWorld;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 

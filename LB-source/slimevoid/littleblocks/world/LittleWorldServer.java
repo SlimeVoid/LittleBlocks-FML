@@ -7,12 +7,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import slimevoid.littleblocks.core.LBCore;
-import slimevoid.littleblocks.core.LoggerLittleBlocks;
-import slimevoid.littleblocks.network.CommonPacketHandler;
-import slimevoid.littleblocks.world.events.LittleBlockEvent;
-import slimevoid.littleblocks.world.events.LittleBlockEventList;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEventData;
 import net.minecraft.crash.CrashReport;
@@ -31,6 +25,11 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.chunk.Chunk;
+import slimevoid.littleblocks.core.LBCore;
+import slimevoid.littleblocks.core.LoggerLittleBlocks;
+import slimevoid.littleblocks.network.CommonPacketHandler;
+import slimevoid.littleblocks.world.events.LittleBlockEvent;
+import slimevoid.littleblocks.world.events.LittleBlockEventList;
 import eurysmods.data.Logger;
 
 public class LittleWorldServer extends LittleWorld {

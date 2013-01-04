@@ -1,10 +1,10 @@
 package slimevoid.littleblocks.client.render;
 
-import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.src.ModLoader;
 import net.minecraft.tileentity.TileEntity;
+import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
 
 public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 		

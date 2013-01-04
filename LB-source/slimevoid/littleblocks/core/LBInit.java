@@ -2,9 +2,8 @@ package slimevoid.littleblocks.core;
 
 import java.io.File;
 
-import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
-
 import net.minecraftforge.common.Configuration;
+import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
 import cpw.mods.fml.common.registry.GameRegistry;
 import eurysmods.api.ICommonProxy;
 import eurysmods.api.ICore;

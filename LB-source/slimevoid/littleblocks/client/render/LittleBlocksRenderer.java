@@ -1,10 +1,10 @@
 package slimevoid.littleblocks.client.render;
 
-import slimevoid.littleblocks.core.LBCore;
-import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.world.IBlockAccess;
+import slimevoid.littleblocks.core.LBCore;
+import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
 public class LittleBlocksRenderer implements ISimpleBlockRenderingHandler {

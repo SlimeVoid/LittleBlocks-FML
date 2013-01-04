@@ -2,10 +2,8 @@ package slimevoid.littleblocks.core;
 
 import java.util.HashMap;
 
-import slimevoid.littleblocks.api.IChiselable;
-
-
 import net.minecraft.block.Block;
+import slimevoid.littleblocks.api.IChiselable;
 
 public class LBChiselCore {
 	HashMap<Class<? extends Block>, Integer> chiselableBlocks = new HashMap<Class<? extends Block>, Integer>();

@@ -3,13 +3,6 @@ package slimevoid.littleblocks.tileentities;
 import java.util.ArrayList;
 import java.util.List;
 
-import slimevoid.littleblocks.api.ILBCommonProxy;
-import slimevoid.littleblocks.core.LBCore;
-import slimevoid.littleblocks.core.LBInit;
-import slimevoid.littleblocks.network.packets.PacketLittleBlocks;
-import slimevoid.littleblocks.network.packets.PacketTileEntityLB;
-import slimevoid.littleblocks.world.LittleWorld;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -21,6 +14,12 @@ import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.src.ModLoader;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import slimevoid.littleblocks.api.ILBCommonProxy;
+import slimevoid.littleblocks.core.LBCore;
+import slimevoid.littleblocks.core.LBInit;
+import slimevoid.littleblocks.network.packets.PacketLittleBlocks;
+import slimevoid.littleblocks.network.packets.PacketTileEntityLB;
+import slimevoid.littleblocks.world.LittleWorld;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -653,7 +652,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 	public void setTiles(List<NBTTagCompound> tileentities) {
 		for (int i = 0; i < tileentities.size(); i++) {
 			TileEntity tile = TileEntity
-					.createAndLoadEntity((NBTTagCompound) tileentities.get(i));
+					.createAndLoadEntity(tileentities.get(i));
 			this.setTileEntity(
 					tile.xCoord & 7,
 					tile.yCoord & 7,

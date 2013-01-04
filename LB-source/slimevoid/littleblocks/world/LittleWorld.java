@@ -1,8 +1,5 @@
 package slimevoid.littleblocks.world;
 
-import slimevoid.littleblocks.core.LBCore;
-import slimevoid.littleblocks.core.LoggerLittleBlocks;
-import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,6 +14,9 @@ import net.minecraft.world.WorldSettings;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.common.ForgeDirection;
+import slimevoid.littleblocks.core.LBCore;
+import slimevoid.littleblocks.core.LoggerLittleBlocks;
+import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import eurysmods.data.Logger;

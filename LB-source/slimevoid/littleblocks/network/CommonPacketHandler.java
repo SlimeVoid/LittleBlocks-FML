@@ -4,13 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.util.List;
 
-import slimevoid.littleblocks.blocks.BlockLittleBlocks;
-import slimevoid.littleblocks.core.LBCore;
-import slimevoid.littleblocks.network.packets.PacketLittleBlocks;
-import slimevoid.littleblocks.network.packets.PacketLittleBlocksSettings;
-import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
-import slimevoid.littleblocks.world.LittleWorld;
-
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -20,6 +13,12 @@ import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
+import slimevoid.littleblocks.blocks.BlockLittleBlocks;
+import slimevoid.littleblocks.core.LBCore;
+import slimevoid.littleblocks.network.packets.PacketLittleBlocks;
+import slimevoid.littleblocks.network.packets.PacketLittleBlocksSettings;
+import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
+import slimevoid.littleblocks.world.LittleWorld;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
 import eurysmods.network.packets.core.PacketIds;
