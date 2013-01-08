@@ -21,6 +21,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
+import slimevoid.lib.ICommonProxy;
+import slimevoid.lib.data.Logger;
 import slimevoid.littleblocks.api.ILBCommonProxy;
 import slimevoid.littleblocks.blocks.BlockLittleBlocks;
 import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
@@ -34,8 +36,6 @@ import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import eurysmods.api.ICommonProxy;
-import eurysmods.data.Logger;
 
 public class LBCore {
 	public static File configFile;

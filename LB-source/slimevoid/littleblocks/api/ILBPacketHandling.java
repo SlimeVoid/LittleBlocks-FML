@@ -2,9 +2,9 @@ package slimevoid.littleblocks.api;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
+import slimevoid.lib.IPacketHandling;
 import slimevoid.littleblocks.blocks.BlockLittleBlocks;
 import slimevoid.littleblocks.world.LittleWorld;
-import eurysmods.api.IPacketHandling;
 
 public interface ILBPacketHandling extends IPacketHandling {
 	public void metadataModified(LittleWorld littleWorld, int x, int y, int z, int side, float vecX, float vecY, float vecZ, int lastMetadata, int newMetadata);

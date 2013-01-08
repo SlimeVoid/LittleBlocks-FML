@@ -14,6 +14,8 @@ import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.src.ModLoader;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import slimevoid.lib.network.PacketPayload;
+import slimevoid.lib.network.PacketUpdate;
 import slimevoid.littleblocks.api.ILBCommonProxy;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.LBInit;
@@ -23,8 +25,6 @@ import slimevoid.littleblocks.world.LittleWorld;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import eurysmods.network.packets.core.PacketPayload;
-import eurysmods.network.packets.core.PacketUpdate;
 
 public class TileEntityLittleBlocks extends TileEntity {
 	public int size = LBCore.littleBlocksSize;

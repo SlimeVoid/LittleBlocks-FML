@@ -9,6 +9,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.DimensionManager;
+import slimevoid.lib.IPacketHandling;
 import slimevoid.littleblocks.api.ILBCommonProxy;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.handlers.CommonTickHandler;
@@ -17,7 +18,6 @@ import slimevoid.littleblocks.world.LittleWorldServer;
 import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
-import eurysmods.api.IPacketHandling;
 
 public class CommonProxy implements ILBCommonProxy {
 

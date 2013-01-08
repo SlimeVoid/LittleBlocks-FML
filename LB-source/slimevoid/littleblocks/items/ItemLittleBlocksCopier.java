@@ -8,6 +8,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import slimevoid.lib.data.ReadWriteLock;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.LBInit;
 import slimevoid.littleblocks.core.LoggerLittleBlocks;
@@ -15,7 +16,6 @@ import slimevoid.littleblocks.handlers.LittleBlocksRotationHandler;
 import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import eurysmods.data.ReadWriteLock;
 
 public class ItemLittleBlocksCopier extends Item {
 

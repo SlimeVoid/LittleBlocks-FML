@@ -13,6 +13,8 @@ import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
+import slimevoid.lib.network.PacketIds;
+import slimevoid.lib.network.PacketUpdate;
 import slimevoid.littleblocks.blocks.BlockLittleBlocks;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocks;
@@ -21,8 +23,6 @@ import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
 import slimevoid.littleblocks.world.LittleWorld;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
-import eurysmods.network.packets.core.PacketIds;
-import eurysmods.network.packets.core.PacketUpdate;
 
 public class CommonPacketHandler implements IPacketHandler {
 

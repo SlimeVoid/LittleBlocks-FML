@@ -1,6 +1,6 @@
 package slimevoid.littleblocks.core;
 
-import eurysmods.data.Logger;
+import slimevoid.lib.data.Logger;
 
 public class LoggerLittleBlocks extends Logger {
 	

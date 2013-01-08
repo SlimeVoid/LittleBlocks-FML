@@ -3,12 +3,12 @@ package slimevoid.littleblocks.core;
 import java.io.File;
 
 import net.minecraftforge.common.Configuration;
+import slimevoid.lib.ICommonProxy;
+import slimevoid.lib.ICore;
+import slimevoid.lib.core.Core;
+import slimevoid.lib.core.SlimevoidCore;
 import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
 import cpw.mods.fml.common.registry.GameRegistry;
-import eurysmods.api.ICommonProxy;
-import eurysmods.api.ICore;
-import eurysmods.core.Core;
-import eurysmods.core.EurysCore;
 
 public class LBInit {
 	public static ICore LBM;
@@ -30,7 +30,7 @@ public class LBInit {
 
 	public static void load() {
 		LBM.getProxy().preInit();
-		EurysCore.console(LBM.getModName(), "Registering items...");
+		SlimevoidCore.console(LBM.getModName(), "Registering items...");
 		LBCore.addItems();
 		GameRegistry.registerTileEntity(
 				TileEntityLittleBlocks.class,
@@ -39,9 +39,9 @@ public class LBInit {
 		LBM.getProxy().registerTileEntitySpecialRenderer(
 				TileEntityLittleBlocks.class);
 		LBM.getProxy().registerTickHandler();
-		EurysCore.console(LBM.getModName(), "Naming items...");
+		SlimevoidCore.console(LBM.getModName(), "Naming items...");
 		LBCore.addNames();
-		EurysCore.console(LBM.getModName(), "Registering recipes...");
+		SlimevoidCore.console(LBM.getModName(), "Registering recipes...");
 		LBCore.addRecipes();
 	}
 }

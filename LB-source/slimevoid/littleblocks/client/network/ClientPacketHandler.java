@@ -11,6 +11,9 @@ import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.src.ModLoader;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import slimevoid.lib.network.PacketIds;
+import slimevoid.lib.network.PacketTileEntity;
+import slimevoid.lib.network.PacketUpdate;
 import slimevoid.littleblocks.blocks.BlockLittleBlocks;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
@@ -23,9 +26,6 @@ import slimevoid.littleblocks.network.packets.PacketTileEntityLB;
 import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
-import eurysmods.network.packets.core.PacketIds;
-import eurysmods.network.packets.core.PacketTileEntity;
-import eurysmods.network.packets.core.PacketUpdate;
 
 public class ClientPacketHandler implements IPacketHandler {
 

@@ -7,10 +7,10 @@ import java.io.IOException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import slimevoid.lib.network.PacketIds;
+import slimevoid.lib.network.PacketPayload;
+import slimevoid.lib.network.PacketUpdate;
 import slimevoid.littleblocks.core.LBInit;
-import eurysmods.network.packets.core.PacketIds;
-import eurysmods.network.packets.core.PacketPayload;
-import eurysmods.network.packets.core.PacketUpdate;
 
 public class PacketLittleBlocks extends PacketUpdate {
 

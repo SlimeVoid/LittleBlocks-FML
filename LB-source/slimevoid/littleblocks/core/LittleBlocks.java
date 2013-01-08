@@ -1,5 +1,6 @@
 package slimevoid.littleblocks.core;
 
+import slimevoid.lib.ICommonProxy;
 import slimevoid.littleblocks.client.network.ClientPacketHandler;
 import slimevoid.littleblocks.network.CommonPacketHandler;
 import slimevoid.littleblocks.network.LBConnectionHandler;
@@ -14,7 +15,6 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
-import eurysmods.api.ICommonProxy;
 
 @Mod(
 		modid = "LittleBlocksMod",

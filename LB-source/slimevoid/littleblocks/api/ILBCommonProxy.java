@@ -2,8 +2,8 @@ package slimevoid.littleblocks.api;
 
 import net.minecraft.world.World;
 import net.minecraftforge.common.Configuration;
+import slimevoid.lib.ICommonProxy;
 import slimevoid.littleblocks.world.LittleWorld;
-import eurysmods.api.ICommonProxy;
 
 public interface ILBCommonProxy extends ICommonProxy {
 
