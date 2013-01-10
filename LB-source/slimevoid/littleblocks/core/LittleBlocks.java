@@ -20,7 +20,7 @@ import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
 		modid = "LittleBlocksMod",
 		name = "Little Blocks",
 		version = "2.0.2.1",
-		dependencies = "after:EurysCore")
+		dependencies = "after:SlimevoidLib")
 @NetworkMod(
 		clientSideRequired = true,
 		serverSideRequired = false,

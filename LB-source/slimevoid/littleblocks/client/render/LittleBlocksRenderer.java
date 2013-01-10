@@ -32,11 +32,13 @@ public class LittleBlocksRenderer implements ISimpleBlockRenderingHandler {
 						int blockId = content[x1][y1][z1];
 						if (blockId > 0) {
 							Block littleBlock = Block.blocksList[blockId];
-							int[] coords = {
-									(x << 3) + x1,
-									(y << 3) + y1,
-									(z << 3) + z1 };
-							littleBlocks.addLittleBlockToRender(littleBlock, coords[0], coords[1], coords[2]);
+							if (littleBlock !=  null) {
+								int[] coords = {
+										(x << 3) + x1,
+										(y << 3) + y1,
+										(z << 3) + z1 };
+								littleBlocks.addLittleBlockToRender(littleBlock, coords[0], coords[1], coords[2]);
+							}
 						}
 					}
 				}

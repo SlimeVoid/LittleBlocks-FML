@@ -177,7 +177,7 @@ public class LBCore {
 			if (disallowedItems.contains(item.getClass())) {
 				isAllowed = false;
 			}
-			if (disallowedItemIDs.contains(item.shiftedIndex)) {
+			if (disallowedItemIDs.contains(item.itemID)) {
 				isAllowed = false;
 			}
 			if (item instanceof IItemPipe) {

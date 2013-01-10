@@ -1086,7 +1086,7 @@ public class LittleWorld extends World {
 			flag = this.isBlockGettingPowered(x, y, z);
 		} else {
 			int blockId = this.getBlockId(x, y, z);
-			if (blockId > 0) {
+			if (blockId > 0 && Block.blocksList[blockId] != null) {
 				Block block = Block.blocksList[blockId];
 				flag = block.isProvidingWeakPower(this, x, y, z, direction);
 			} else {
