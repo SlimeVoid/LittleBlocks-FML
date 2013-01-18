@@ -11,6 +11,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import slimevoid.littleblocks.core.LBCore;
+import slimevoid.littleblocks.core.lib.TextureLib;
 import slimevoid.littleblocks.items.ItemLittleBlocksCopier;
 
 public class DrawCopierHighlight {
@@ -35,7 +36,7 @@ public class DrawCopierHighlight {
         double iPX = event.player.prevPosX + (event.player.posX - event.player.prevPosX) * event.partialTicks;
         double iPY = event.player.prevPosY + (event.player.posY - event.player.prevPosY) * event.partialTicks;
         double iPZ = event.player.prevPosZ + (event.player.posZ - event.player.prevPosZ) * event.partialTicks;
-        int texture = event.context.renderEngine.getTexture("/terrain.png");
+        int texture = event.context.renderEngine.getTexture(TextureLib.COPIEROVERLAY);
 
         float xScale = 1;
         float yScale = 1;

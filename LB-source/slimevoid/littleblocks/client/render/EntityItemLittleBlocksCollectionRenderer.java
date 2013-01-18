@@ -23,7 +23,7 @@ import org.lwjgl.opengl.GL12;
 import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
 
 public class EntityItemLittleBlocksCollectionRenderer extends RenderItem {
-	private HashMap<ItemStack, Random> random = new HashMap();
+	private HashMap<ItemStack, Random> random = new HashMap<ItemStack, Random>();
 	private RenderBlocks renderBlocks = new RenderBlocks();
 
 	@Override
@@ -235,7 +235,7 @@ public class EntityItemLittleBlocksCollectionRenderer extends RenderItem {
 
 			float var16 = 0.0625F;
 			var17 = 0.021875F;
-			int stacksize = itemstack.stackSize;
+			//int stacksize = itemstack.stackSize;
 			byte miniCount = getMiniItemCountForItemStack(itemstack);
 
 			GL11.glTranslatef(
@@ -249,7 +249,7 @@ public class EntityItemLittleBlocksCollectionRenderer extends RenderItem {
 				if (var20 > 0 && shouldSpreadItems()) {
 					float x = (this.random.get(itemstack).nextFloat() * 2.0F - 1.0F) * 0.3F / 0.5F;
 					float y = (this.random.get(itemstack).nextFloat() * 2.0F - 1.0F) * 0.3F / 0.5F;
-					float z = (this.random.get(itemstack).nextFloat() * 2.0F - 1.0F) * 0.3F / 0.5F;
+					//float z = (this.random.get(itemstack).nextFloat() * 2.0F - 1.0F) * 0.3F / 0.5F;
 					GL11.glTranslatef(x, y, var16 + var17);
 				} else {
 					GL11.glTranslatef(0f, 0f, var16 + var17);

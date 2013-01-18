@@ -1,9 +1,11 @@
-package slimevoid.littleblocks.client.render;
+package slimevoid.littleblocks.client.render.tileentities;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.src.ModLoader;
 import net.minecraft.tileentity.TileEntity;
+import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
 
 public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
@@ -24,9 +26,11 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 			return;
 		}
 		
-		LittleTilesLittleRenderer littleTiles = new LittleTilesLittleRenderer(tileEntityRenderer);
+		LittleTilesLittleRenderer littleTiles = new LittleTilesLittleRenderer(this.tileEntityRenderer);
+		
 		
 		int[][][] content = tileentitylittleblocks.getContent();
+		//boolean optifineEnabled = LBCore.optifine;
 		
 		for (int x1 = 0; x1 < content.length; x1++) {
 			for (int y1 = 0; y1 < content[x1].length; y1++) {
@@ -40,7 +44,7 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 								if (tileentity != null) {
 									littleTiles.addLittleTileToRender(tileentity, littleBlock.getTextureFile());
 								} else {
-									ModLoader.getLogger().warning("Attempted to render a tile for [" + littleBlock.getBlockName() + "] that was null!");
+									FMLCommonHandler.instance().getFMLLogger().warning("Attempted to render a tile for [" + littleBlock.getBlockName() + "] that was null!");
 								}
 							}
 						}
@@ -48,14 +52,11 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 				}
 			}
 		}
-		
 		littleTiles.renderLittleTiles(
+				tileentitylittleblocks,
 				x,
 				y,
 				z,
-				tileentitylittleblocks.xCoord,
-				tileentitylittleblocks.yCoord,
-				tileentitylittleblocks.zCoord,
 				f);
 	}
 }

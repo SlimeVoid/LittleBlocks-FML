@@ -9,31 +9,35 @@
  * Lesser General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>
  */
-package slimevoid.littleblocks.client.render;
+package slimevoid.littleblocks.client.render.tileentities;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderEngine;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import slimevoid.littleblocks.client.render.blocks.LittleBlockToRender;
 import slimevoid.littleblocks.core.LBCore;
+import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
 
 
 public class LittleTilesLittleRenderer {
 	private TileEntityRenderer tileEntityRenderer;
-	public Set<String> textures = new HashSet<String>();
-	public HashMap<String, HashMap<Integer, LittleTileToRender>> texturedTilesToRender = new HashMap<String, HashMap<Integer, LittleTileToRender>>();
+	private Set<String> textures = new HashSet<String>();
+	private HashMap<String, HashMap<Integer, LittleTileToRender>> texturedTilesToRender;
 	
 	public LittleTilesLittleRenderer(TileEntityRenderer tileEntityRenderer) {
 		this.tileEntityRenderer = tileEntityRenderer;
+		this.texturedTilesToRender = new HashMap<String, HashMap<Integer, LittleTileToRender>>();
 	}
 
 	public void addLittleTileToRender(TileEntity tileentity, String textureFile) {
@@ -44,29 +48,17 @@ public class LittleTilesLittleRenderer {
 			littleTilesToRender.put(nextInt, render);
 		} else {
 			this.textures.add(textureFile);
-			HashMap<Integer, LittleTileToRender> littleTilesToRender = new HashMap();
+			HashMap<Integer, LittleTileToRender> littleTilesToRender = new HashMap<Integer, LittleTileToRender>();
 			littleTilesToRender.put(0, render);
 			this.texturedTilesToRender.put(textureFile, littleTilesToRender);
 		}
 	}
-	
-	public class LittleTileToRender {
-		public TileEntity tileentity;
-		int x, y, z;
-		
-		public LittleTileToRender(TileEntity tileentity) {
-			this.tileentity = tileentity;
-			this.x = tileentity.xCoord;
-			this.y = tileentity.yCoord;
-			this.z = tileentity.zCoord;
-		}
-	}
 
-	public void renderLittleTiles(double x, double y, double z, int tileX, int tileY, int tileZ, float f) {
+	public void renderLittleTiles(TileEntityLittleBlocks tileentity, double x, double y, double z, float f) {
 		GL11.glPushMatrix();
 		
 		GL11.glTranslated(x, y, z);
-		GL11.glTranslated(-tileX, -tileY, -tileZ);
+		GL11.glTranslated(-tileentity.xCoord, -tileentity.yCoord, -tileentity.zCoord);
 		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 		float scale = 1F / LBCore.littleBlocksSize;
 		GL11.glScaled(scale, scale, scale);
@@ -82,37 +74,36 @@ public class LittleTilesLittleRenderer {
 		}
 		
 		for (String textureFile : this.textures) {
+			boolean customTexture = !textureFile.equals("/terrain.png");
 			if (this.texturedTilesToRender.containsKey(textureFile)) {
 				HashMap<Integer, LittleTileToRender> littleTilesToRender = this.texturedTilesToRender.get(textureFile);
 				
-				for (LittleTileToRender tile: littleTilesToRender.values()) {
-					boolean needsRendering = true;
-					if (this.tileEntityRenderer.hasSpecialRenderer(tile.tileentity)) {
-						TileEntitySpecialRenderer specialRenderer = this.tileEntityRenderer.getSpecialRendererForEntity(tile.tileentity);
-						//ModLoader.getLogger().fine("Renderer[" + specialRenderer.toString() + "]-Tile[" + tile.tileentity.toString() + "]");
-						if (specialRenderer != null) {
-							specialRenderer.renderTileEntityAt(
-									tile.tileentity,
-									tile.x,
-									tile.y,
-									tile.z,
-									f);
-							needsRendering = false;
-						}
-					}
-					if (needsRendering) {
-						this.tileEntityRenderer.renderTileEntityAt(
-								tile.tileentity,
-								tile.x,
-								tile.y,
-								tile.z,
-								f);
-					}
+				if (customTexture) {
+					bindTexture(textureFile);
 				}
+				for (LittleTileToRender littleTile: littleTilesToRender.values()) {
+					this.tileEntityRenderer.renderTileEntityAt(
+							littleTile.tileentity,
+							littleTile.x,
+							littleTile.y,
+							littleTile.z,
+							f);
+				}
+			}
+			if (customTexture) {
+				bindTexture("/terrain.png");
 			}
 		}
 		
 		GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 		GL11.glPopMatrix();
 	}
+	
+    public void bindTexture(String textureFile) {
+    	RenderEngine re = this.tileEntityRenderer.renderEngine;
+    	
+    	if (re != null) {
+    		re.bindTexture(re.getTexture(textureFile));
+    	}
+    }
 }
