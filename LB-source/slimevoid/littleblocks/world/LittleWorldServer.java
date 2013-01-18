@@ -28,6 +28,7 @@ import net.minecraft.world.chunk.Chunk;
 import slimevoid.lib.data.Logger;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.LoggerLittleBlocks;
+import slimevoid.littleblocks.core.lib.PlacementUtil;
 import slimevoid.littleblocks.network.CommonPacketHandler;
 import slimevoid.littleblocks.world.events.LittleBlockEvent;
 import slimevoid.littleblocks.world.events.LittleBlockEventList;
@@ -144,7 +145,7 @@ public class LittleWorldServer extends LittleWorld {
 					if (blockId == nextTick.blockID && blockId > 0) {
 						try {
 							Block littleBlock = Block.blocksList[blockId];
-							if (LBCore.isBlockAllowedToTick(littleBlock)) {
+							if (PlacementUtil.isBlockAllowedToTick(littleBlock)) {
 								littleBlock.updateTick(
 										this,
 										nextTick.xCoord,

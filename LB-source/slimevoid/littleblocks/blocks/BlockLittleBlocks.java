@@ -28,6 +28,7 @@ import slimevoid.littleblocks.blocks.core.CollisionRayTrace;
 import slimevoid.littleblocks.client.network.ClientPacketHandler;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.LBInit;
+import slimevoid.littleblocks.core.lib.PlacementUtil;
 import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
 import slimevoid.littleblocks.network.CommonPacketHandler;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocksCollection;
@@ -173,12 +174,12 @@ public class BlockLittleBlocks extends BlockContainer {
 				item = (Item) itemHeld;
 			}
 			if (block != null) {
-				if (!LBCore.isBlockAllowed(block)) {
+				if (!PlacementUtil.isBlockAllowed(block)) {
 					denyPlacement = true;
 					placementMessage = LBCore.denyPlacementMessage;
 				}
-				if (LBCore.hasTile(block.blockID)) {
-					if (!LBCore.isTileEntityAllowed(block.createTileEntity(
+				if (PlacementUtil.hasTile(block.blockID)) {
+					if (!PlacementUtil.isTileEntityAllowed(block.createTileEntity(
 							world,
 							0))) {
 						denyPlacement = true;
@@ -193,8 +194,8 @@ public class BlockLittleBlocks extends BlockContainer {
 			if (item != null) {
 				if (item instanceof ItemBlock) {
 					int itemBlockId = ((ItemBlock) item).getBlockID();
-					if (LBCore.hasTile(itemBlockId)) {
-						if (!LBCore
+					if (PlacementUtil.hasTile(itemBlockId)) {
+						if (!PlacementUtil
 								.isTileEntityAllowed(Block.blocksList[itemBlockId]
 										.createTileEntity(world, 0))) {
 							denyPlacement = true;
@@ -202,7 +203,7 @@ public class BlockLittleBlocks extends BlockContainer {
 						}
 					}
 				}
-				if (!LBCore.isItemAllowed(item)) {
+				if (!PlacementUtil.isItemAllowed(item)) {
 					denyPlacement = true;
 					placementMessage = LBCore.denyUseMessage;
 				}
