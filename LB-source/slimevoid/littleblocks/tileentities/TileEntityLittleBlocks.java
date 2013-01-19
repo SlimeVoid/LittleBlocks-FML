@@ -441,11 +441,12 @@ public class TileEntityLittleBlocks extends TileEntity implements ILittleBlocks 
 	}
 
 	public void setTileEntity(int x, int y, int z, TileEntity tile) {
-		if (tile != null) {
-			tile.setWorldObj((World) getLittleWorld());
-			tile.xCoord = (xCoord << 3) + x;
-			tile.yCoord = (yCoord << 3) + y;
-			tile.zCoord = (zCoord << 3) + z;
+		tile.setWorldObj((World) getLittleWorld());
+		tile.xCoord = (xCoord << 3) + x;
+		tile.yCoord = (yCoord << 3) + y;
+		tile.zCoord = (zCoord << 3) + z;
+		Block block = Block.blocksList[this.getContent(x, y, z)];
+		if (block != null && block.hasTileEntity(this.getMetadata(x, y, z))) {
 			removeTileEntity(x, y, z);
 			tile.validate();
 			addTileEntity(tile);
@@ -454,7 +455,11 @@ public class TileEntityLittleBlocks extends TileEntity implements ILittleBlocks 
 
 	public TileEntity getTileEntity(int x, int y, int z) {
 		for (TileEntity tile : tiles) {
-			if (tile.xCoord == (xCoord << 3) + x && tile.yCoord == (yCoord << 3) + y && tile.zCoord == (zCoord << 3) + z) {
+			if (
+					tile.xCoord == (this.xCoord << 3) + x && 
+					tile.yCoord == (this.yCoord << 3) + y &&
+					tile.zCoord == (this.zCoord << 3) + z	
+				) {
 				return tile;
 			}
 		}
@@ -463,12 +468,21 @@ public class TileEntityLittleBlocks extends TileEntity implements ILittleBlocks 
 
 	private void addTileEntity(TileEntity tile) {
 		tiles.add(tile);
+		((World) this.getLittleWorld()).addTileEntity(tile);
+	}
+	
+	public void cleanTileEntity(int x, int y, int z) {
+		TileEntity tileentity = this.getTileEntity(x, y, z);
+		if (tileentity != null && tileentity.isInvalid()) {
+			removeTileEntity(tileentity);
+		}
 	}
 
 	public void removeTileEntity(int x, int y, int z) {
 		TileEntity toRm = getTileEntity(x, y, z);
 
 		if (toRm != null) {
+			toRm.invalidate();
 			removeTileEntity(toRm);
 		}
 	}
@@ -662,26 +676,23 @@ public class TileEntityLittleBlocks extends TileEntity implements ILittleBlocks 
 	@SideOnly(Side.CLIENT)
 	public void handleBlockAdded(World world, EntityPlayer entityplayer,
 			PacketLittleBlocks packetLB) {
+		int id = packetLB.getBlockID(),
+			meta = packetLB.getMetadata(),
+			x = packetLB.xPosition,
+			y = packetLB.yPosition,
+			z = packetLB.zPosition;
+		System.out.println("X| " + x + " Y| " + y + " Z| " + z + " ID| " + id + " META| " + meta);
 		this.setContent(
-				packetLB.xPosition & 7,
-				packetLB.yPosition & 7,
-				packetLB.zPosition & 7,
-				packetLB.getBlockID(),
-				packetLB.getMetadata());
-		if (packetLB.hasTileEntity()) {
-			TileEntity tile = TileEntity
-					.createAndLoadEntity(packetLB.getTileEntityData());
-			this.setTileEntity(
-					tile.xCoord & 7,
-					tile.yCoord & 7,
-					tile.zCoord & 7,
-					tile);
-		}
+				x & 7,
+				y & 7,
+				z & 7,
+				id,
+				meta);
 		Block.blocksList[packetLB.getBlockID()].onBlockAdded(
 				(World) this.getLittleWorld(),
-				packetLB.xPosition,
-				packetLB.yPosition,
-				packetLB.zPosition);
+				x,
+				y,
+				z);
 		this.onInventoryChanged();
 	}
 
@@ -693,11 +704,6 @@ public class TileEntityLittleBlocks extends TileEntity implements ILittleBlocks 
 				packetLB.yPosition & 7,
 				packetLB.zPosition & 7,
 				0);
-		if (packetLB.hasTileEntity()) {
-			TileEntity tile = TileEntity
-					.createAndLoadEntity(packetLB.getTileEntityData());
-			this.removeTileEntity(tile);
-		}
 		Block.blocksList[packetLB.getBlockID()].breakBlock(
 				(World) this.getLittleWorld(),
 				packetLB.xPosition,
@@ -711,20 +717,54 @@ public class TileEntityLittleBlocks extends TileEntity implements ILittleBlocks 
 	@SideOnly(Side.CLIENT)
 	public void handleUpdateMetadata(World world, EntityPlayer entityplayer,
 			PacketLittleBlocks packetLB) {
+		int id = packetLB.getBlockID(),
+			meta = packetLB.getMetadata(),
+			x = packetLB.xPosition,
+			y = packetLB.yPosition,
+			z = packetLB.zPosition;
+		System.out.println("X| " + x + " Y| " + y + " Z| " + z + " ID| " + id + " META| " + meta);
 		this.setMetadata(
-				packetLB.xPosition & 7,
-				packetLB.yPosition & 7,
-				packetLB.zPosition & 7,
-				packetLB.getMetadata());
-		if (packetLB.hasTileEntity()) {
-			TileEntity tile = TileEntity
-					.createAndLoadEntity(packetLB.getTileEntityData());
-			this.setTileEntity(
-				tile.xCoord & 7,
-				tile.yCoord & 7,
-				tile.zCoord & 7,
-				tile);
-		}
+				x & 7,
+				y & 7,
+				z & 7,
+				meta);
+		Block.blocksList[id].onSetBlockIDWithMetaData((World) this.getLittleWorld(), x, y, z, meta);
 		this.onInventoryChanged();
+	}
+	
+	@SideOnly(Side.CLIENT)
+	public void handleTilePacket(World world, PacketTileEntityLB packetLB) {
+		int numberOfBlocks = packetLB.getNumberOfBlocks();
+		int index = 1;
+		for (int i = 0; i < numberOfBlocks; i++) {
+			int id = packetLB.payload.getIntPayload(index),
+				meta = packetLB.payload.getIntPayload(index + 1),
+				x = packetLB.payload.getIntPayload(index + 2),
+				y = packetLB.payload.getIntPayload(index + 3),
+				z = packetLB.payload.getIntPayload(index + 4);
+			this.setContent(x, y, z, id, meta);
+			System.out.println("X| " + x + " Y| " + y + " Z| " + z + " ID| " + id + " META| " + meta);
+			index += 5;
+		}
+		this.setTiles(packetLB.getTileEntities());
+		world.markBlockForRenderUpdate(
+				packetLB.xPosition,
+				packetLB.yPosition,
+				packetLB.zPosition);
+	}
+
+	public void handleLittleTilePacket(World world, PacketLittleBlocks packetLB) {
+		int x = packetLB.xPosition,
+			y =	packetLB.yPosition,
+			z =	packetLB.zPosition;
+		TileEntity littleTile = TileEntity.createAndLoadEntity(
+				packetLB.getTileEntityData());
+		if (littleTile != null) {
+			this.setTileEntity(
+				x & 7,
+				y & 7,
+				z & 7,
+				littleTile);
+		}
 	}
 }

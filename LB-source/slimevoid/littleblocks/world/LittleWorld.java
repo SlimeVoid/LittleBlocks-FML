@@ -1,5 +1,9 @@
 package slimevoid.littleblocks.world;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,7 +22,6 @@ import slimevoid.lib.data.Logger;
 import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.LoggerLittleBlocks;
-import slimevoid.littleblocks.core.lib.PacketLib;
 import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -96,16 +99,6 @@ public class LittleWorld extends World implements ILittleWorld {
 			this.ticksInWorld = 0;
 		}
 	}
-	
-	@Override
-	public void updateTileEntityChunkAndDoNothing(int x, int y, int z,
-			TileEntity tileentity) {
-		if (!this.isRemote) {
-			if (this.blockExists(x, y, z)) {
-				PacketLib.sendTileEntity(this, tileentity, x, y, z);
-			}
-		}
-	}
 
 	/**
 	 * Runs through the list of updates to run and ticks them
@@ -113,6 +106,74 @@ public class LittleWorld extends World implements ILittleWorld {
 	@Override
 	public boolean tickUpdates(boolean tick) {
 		return false;
+	}
+	
+    public List loadedTiles = new ArrayList();
+    private List addedTiles = new ArrayList();
+    private boolean scanningTiles;
+	
+	@Override
+	public void updateEntities() {
+		this.scanningTiles = true;
+		Iterator loadedTile = this.loadedTiles.iterator();
+
+		while (loadedTile.hasNext()) {
+			System.out.println("Contains Tiles");
+			TileEntity tileentity = (TileEntity) loadedTile.next();
+
+			if (!tileentity.isInvalid()
+					&& tileentity.func_70309_m()
+					&& this.blockExists(tileentity.xCoord, tileentity.yCoord,
+							tileentity.zCoord)) {
+				try {
+					tileentity.updateEntity();
+				} catch (Throwable t) {
+					
+				}
+			}
+
+			if (tileentity.isInvalid()) {
+				loadedTile.remove();
+
+				TileEntity tileentitylb = this.realWorld.getBlockTileEntity(
+						tileentity.xCoord >> 3,
+						tileentity.yCoord >> 3,
+						tileentity.zCoord >> 3);
+				if (tileentitylb != null && tileentitylb instanceof TileEntityLittleBlocks) {
+						((TileEntityLittleBlocks)tileentitylb).cleanTileEntity(
+								tileentity.xCoord & 7,
+								tileentity.yCoord & 7,
+								tileentity.zCoord & 7);
+				}
+			}
+		}
+
+		this.scanningTiles = false;
+
+		if (!this.addedTiles.isEmpty()) {
+			for (int i = 0; i < this.addedTiles.size(); ++i) {
+				TileEntity tileentity = (TileEntity) this.addedTiles
+						.get(i);
+
+				if (!tileentity.isInvalid()) {
+					if (!this.loadedTiles.contains(tileentity)) {
+						this.loadedTiles.add(tileentity);
+					}
+				} else {
+					if (this.chunkExists(tileentity.xCoord >> 4, tileentity.zCoord >> 4)) {
+						Chunk var15 = this.getChunkFromChunkCoords(
+								tileentity.xCoord >> 4, tileentity.zCoord >> 4);
+
+						if (var15 != null) {
+							var15.cleanChunkBlockTileEntity(tileentity.xCoord & 15,
+									tileentity.yCoord, tileentity.zCoord & 15);
+						}
+					}
+				}
+			}
+
+			this.addedTiles.clear();
+		}
 	}
 
 	@Override
@@ -895,26 +956,30 @@ public class LittleWorld extends World implements ILittleWorld {
 	}
 
 	@Override
-	public void setBlockTileEntity(int x, int y, int z, TileEntity tileEntity) {
-		if (x < 0xfe363c80 || z < 0xfe363c80 || x >= 0x1c9c380 || z >= 0x1c9c380) {
+	public void setBlockTileEntity(int x, int y, int z, TileEntity tileentity) {
+		if (tileentity == null || tileentity.isInvalid()) {
 			return;
 		}
-		if (y < 0) {
-			return;
+		
+		if (tileentity.canUpdate()) {
+			List dest = scanningTiles ? addedTiles : loadedTiles;
+			dest.add(tileentity);
 		}
-		if (y >= this.getHeight()) {
-			return;
+		Chunk chunk = realWorld.getChunkFromChunkCoords(x >> 7, z >> 7);
+		if (chunk.getBlockID((x & 0x7f) >> 3, y >> 3, (z & 0x7f) >> 3) == LBCore.littleBlocksID) {
+			TileEntityLittleBlocks tile = (TileEntityLittleBlocks) realWorld
+					.getBlockTileEntity(x >> 3, y >> 3, z >> 3);
+			tile.setTileEntity(x & 7, y & 7, z & 7, tileentity);
 		} else {
-			Chunk chunk = realWorld.getChunkFromChunkCoords(x >> 7, z >> 7);
-			if (chunk.getBlockID((x & 0x7f) >> 3, y >> 3, (z & 0x7f) >> 3) == LBCore.littleBlocksID) {
-				TileEntityLittleBlocks tile = (TileEntityLittleBlocks) realWorld
-						.getBlockTileEntity(x >> 3, y >> 3, z >> 3);
-				tile.setTileEntity(x & 7, y & 7, z & 7, tileEntity);
-			} else {
-				realWorld
-						.setBlockTileEntity(x >> 3, y >> 3, z >> 3, tileEntity);
-			}
-			return;
+			realWorld.setBlockTileEntity(x >> 3, y >> 3, z >> 3, tileentity);
+		}
+	}
+
+	@Override
+	public void addTileEntity(TileEntity tileentity) {
+		List dest = scanningTiles ? addedTiles : loadedTiles;
+		if (tileentity.canUpdate()) {
+			dest.add(tileentity);
 		}
 	}
 

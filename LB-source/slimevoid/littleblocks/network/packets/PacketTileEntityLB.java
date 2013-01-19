@@ -63,13 +63,9 @@ public class PacketTileEntityLB extends PacketTileEntity {
 		this.setCommand(CommandLib.UPDATE_CLIENT);
 	}
 
-/*	public int getSender() {
-		return this.sender;
+	public int getNumberOfBlocks() {
+		return this.payload.getIntPayload(0);
 	}
-
-	public void setSender(int sender) {
-		this.sender = sender;
-	}*/
 	
 	public List<NBTTagCompound> getTileEntities() {
 		return this.tileEntities;

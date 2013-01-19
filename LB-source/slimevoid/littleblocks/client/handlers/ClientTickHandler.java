@@ -17,6 +17,9 @@ public class ClientTickHandler implements ITickHandler {
 		if (world != null) {
 			((ILBCommonProxy) LBInit.LBM.getProxy()).getLittleWorld(
 					world,
+					false).updateEntities();
+			((ILBCommonProxy) LBInit.LBM.getProxy()).getLittleWorld(
+					world,
 					false).tick();
 		} else {
 			((ILBCommonProxy) LBInit.LBM.getProxy()).resetLittleBlocks();

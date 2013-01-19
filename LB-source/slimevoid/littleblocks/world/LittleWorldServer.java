@@ -15,6 +15,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.packet.Packet60Explosion;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.ChunkCoordIntPair;
@@ -483,6 +484,16 @@ public class LittleWorldServer extends LittleWorld {
 					blockId,
 					side,
 					metadata);
+		}
+	}
+	
+	@Override
+	public void updateTileEntityChunkAndDoNothing(int x, int y, int z,
+			TileEntity tileentity) {
+		if (!this.isRemote) {
+			if (this.blockExists(x, y, z)) {
+				PacketLib.sendTileEntity(this, tileentity, x, y, z);
+			}
 		}
 	}
 
