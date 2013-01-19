@@ -23,14 +23,12 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import slimevoid.littleblocks.api.ILBCommonProxy;
 import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.blocks.core.CollisionRayTrace;
 import slimevoid.littleblocks.core.LBCore;
-import slimevoid.littleblocks.core.LBInit;
 import slimevoid.littleblocks.core.lib.CommandLib;
 import slimevoid.littleblocks.core.lib.PacketLib;
-import slimevoid.littleblocks.core.lib.PlacementUtil;
+import slimevoid.littleblocks.core.lib.BlockUtil;
 import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocksCollection;
 import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
@@ -175,12 +173,12 @@ public class BlockLittleBlocks extends BlockContainer {
 				item = (Item) itemHeld;
 			}
 			if (block != null) {
-				if (!PlacementUtil.isBlockAllowed(block)) {
+				if (!BlockUtil.isBlockAllowed(block)) {
 					denyPlacement = true;
 					placementMessage = LBCore.denyPlacementMessage;
 				}
-				if (PlacementUtil.hasTile(block.blockID)) {
-					if (!PlacementUtil.isTileEntityAllowed(block.createTileEntity(
+				if (BlockUtil.hasTile(block.blockID)) {
+					if (!BlockUtil.isTileEntityAllowed(block.createTileEntity(
 							world,
 							0))) {
 						denyPlacement = true;
@@ -195,8 +193,8 @@ public class BlockLittleBlocks extends BlockContainer {
 			if (item != null) {
 				if (item instanceof ItemBlock) {
 					int itemBlockId = ((ItemBlock) item).getBlockID();
-					if (PlacementUtil.hasTile(itemBlockId)) {
-						if (!PlacementUtil
+					if (BlockUtil.hasTile(itemBlockId)) {
+						if (!BlockUtil
 								.isTileEntityAllowed(Block.blocksList[itemBlockId]
 										.createTileEntity(world, 0))) {
 							denyPlacement = true;
@@ -204,7 +202,7 @@ public class BlockLittleBlocks extends BlockContainer {
 						}
 					}
 				}
-				if (!PlacementUtil.isItemAllowed(item)) {
+				if (!BlockUtil.isItemAllowed(item)) {
 					denyPlacement = true;
 					placementMessage = LBCore.denyUseMessage;
 				}
@@ -232,8 +230,7 @@ public class BlockLittleBlocks extends BlockContainer {
 				if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
 					TileEntityLittleBlocks tile = (TileEntityLittleBlocks) tileentity;
 					int xx = (x << 3) + xSelected, yy = (y << 3) + ySelected, zz = (z << 3) + zSelected;
-					ILittleWorld littleWorld = ((ILBCommonProxy) LBInit.LBM
-							.getProxy()).getLittleWorld(world, false);
+					World littleWorld = (World) tile.getLittleWorld();
 					int blockId = tile.getContent(
 							xSelected,
 							ySelected,
@@ -244,7 +241,7 @@ public class BlockLittleBlocks extends BlockContainer {
 							ItemInWorldManager itemManager = player.theItemInWorldManager;
 							if (itemManager.activateBlockOrUseItem(
 									entityplayer,
-									(World) littleWorld,
+									littleWorld,
 									entityplayer.getCurrentEquippedItem(),
 									xx,
 									yy,
@@ -259,7 +256,7 @@ public class BlockLittleBlocks extends BlockContainer {
 							if (entityplayer.getCurrentEquippedItem() != null) {
 								if (itemManager.tryUseItem(
 										entityplayer,
-										(World) littleWorld,
+										littleWorld,
 										entityplayer.getCurrentEquippedItem())) {
 									return true;
 								}
@@ -272,7 +269,7 @@ public class BlockLittleBlocks extends BlockContainer {
 		return false;
 	}
 
-	private void checkPlacement(ILittleWorld littleWorld, EntityPlayer entityplayer, int x, int y, int z, int l, int xx, int yy, int zz, int side) {
+	private void checkPlacement(World littleWorld, EntityPlayer entityplayer, int x, int y, int z, int l, int xx, int yy, int zz, int side) {
 		if (side == 0) {
 			--yy;
 		}
@@ -299,7 +296,7 @@ public class BlockLittleBlocks extends BlockContainer {
 		Block block = Block.blocksList[littleWorld.getBlockId(xx, yy, zz)];
 		if (block != null && block instanceof BlockPistonBase) {
 			int newData = BlockPistonBase.determineOrientation(
-					littleWorld.getRealWorld(),
+					((ILittleWorld) littleWorld).getRealWorld(),
 					x,
 					y,
 					z,
@@ -333,7 +330,7 @@ public class BlockLittleBlocks extends BlockContainer {
 
 	public void onServerBlockClicked(
 			World world,
-			int x, int y, int z,
+			int x, int y, int z, int side,
 			EntityPlayer entityplayer,
 			int xSelected, int ySelected, int zSelected) {
 		TileEntityLittleBlocks tile = (TileEntityLittleBlocks) world
@@ -342,23 +339,18 @@ public class BlockLittleBlocks extends BlockContainer {
 				xSelected,
 				ySelected,
 				zSelected);
-		int contentMeta = tile.getMetadata(
-				xSelected,
-				ySelected,
-				zSelected);
 		int xx = (x << 3) + xSelected, yy = (y << 3) + ySelected, zz = (z << 3) + zSelected;
-		if (content > 0 && Block.blocksList[content] != null) {
-			if (!entityplayer.capabilities.isCreativeMode) {
-				ItemStack itemToDrop = dropLittleBlockAsNormalBlock(
-						world,
-						x,
-						y,
-						z,
-						content,
-						contentMeta);
-				this.dropLittleBlockAsItem_do(world, x, y, z, itemToDrop);
+		if (content > 0) {
+			Block blockClicked = Block.blocksList[content];
+			if (blockClicked != null) {
+				World littleWorld = (World) tile.getLittleWorld();
+				if (littleWorld != null) {
+					if (entityplayer instanceof EntityPlayerMP) {
+						EntityPlayerMP player = (EntityPlayerMP) entityplayer;
+						BlockUtil.getLittleItemManager(player).onBlockClicked(xx, yy, zz, side);
+					}
+				}
 			}
-			tile.setContent(xSelected, ySelected, zSelected, 0);
 		}
 	}
 

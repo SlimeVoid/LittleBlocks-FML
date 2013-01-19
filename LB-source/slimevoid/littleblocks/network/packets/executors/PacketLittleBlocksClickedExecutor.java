@@ -25,6 +25,7 @@ public class PacketLittleBlocksClickedExecutor implements IPacketExecutor {
 								packet.xPosition,
 								packet.yPosition,
 								packet.zPosition,
+								packet.side,
 								entityplayer,
 								((PacketLittleBlocks) packet).getSelectedX(),
 								((PacketLittleBlocks) packet).getSelectedY(),

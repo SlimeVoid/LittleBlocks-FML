@@ -15,7 +15,7 @@ import net.minecraftforge.common.MinecraftForge;
 import slimevoid.lib.core.SlimevoidCore;
 import slimevoid.littleblocks.api.ILBCommonProxy;
 import slimevoid.littleblocks.blocks.BlockLittleBlocks;
-import slimevoid.littleblocks.core.lib.PlacementUtil;
+import slimevoid.littleblocks.core.lib.BlockUtil;
 import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
 import slimevoid.littleblocks.items.ItemLittleBlocksCopier;
 import slimevoid.littleblocks.items.LittleBlocksCollectionPickup;
@@ -91,7 +91,7 @@ public class LBCore {
 		GameRegistry.registerTileEntity(
 				TileEntityLittleBlocks.class,
 				"littleBlocks");
-		PlacementUtil.registerPlacementInfo();
+		BlockUtil.registerPlacementInfo();
 		MinecraftForge.EVENT_BUS.register(new LittleBlocksCollectionPickup());
 		// MinecraftForge.EVENT_BUS.register(new LittleContainerInteract());
 		// MinecraftForge.EVENT_BUS.register(new PistonOrientation());

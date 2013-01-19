@@ -1,11 +1,13 @@
 package slimevoid.littleblocks.core.lib;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFlowing;
 import net.minecraft.block.BlockFluid;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemMonsterPlacer;
@@ -14,11 +16,27 @@ import slimevoid.lib.data.Logger;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.LoggerLittleBlocks;
 import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
+import slimevoid.littleblocks.world.ItemInLittleWorldManager;
 import buildcraft.core.IItemPipe;
 
-public class PlacementUtil {
+public class BlockUtil {
 	
+	private static HashMap<EntityPlayerMP, ItemInLittleWorldManager> itemInLittleWorldManagers;
+	
+	public static ItemInLittleWorldManager getLittleItemManager(EntityPlayerMP entityplayer) {
+		if (itemInLittleWorldManagers.containsKey(entityplayer)) {
+			return itemInLittleWorldManagers.get(entityplayer);
+		}
+		return setLittleItemManagerForPlayer(entityplayer);
+	}
+	
+	private static ItemInLittleWorldManager setLittleItemManagerForPlayer(EntityPlayerMP entityplayer) {
+		itemInLittleWorldManagers.put(entityplayer, new ItemInLittleWorldManager(entityplayer.worldObj, entityplayer));
+		return itemInLittleWorldManagers.get(entityplayer);
+	}
+
 	public static void registerPlacementInfo() {
+		itemInLittleWorldManagers = new HashMap<EntityPlayerMP, ItemInLittleWorldManager>();
 		registerDisallowedBlockTick(BlockFluid.class);
 		registerDisallowedBlockTick(BlockFlowing.class);
 		registerDisallowedTile(TileEntityLittleBlocks.class);
