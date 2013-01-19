@@ -25,16 +25,17 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import slimevoid.littleblocks.api.ILBCommonProxy;
 import slimevoid.littleblocks.blocks.core.CollisionRayTrace;
-import slimevoid.littleblocks.client.network.ClientPacketHandler;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.LBInit;
+import slimevoid.littleblocks.core.lib.CommandLib;
+import slimevoid.littleblocks.core.lib.PacketLib;
 import slimevoid.littleblocks.core.lib.PlacementUtil;
 import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
-import slimevoid.littleblocks.network.CommonPacketHandler;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocksCollection;
 import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
 import slimevoid.littleblocks.world.LittleWorld;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.relauncher.Side;
 
 public class BlockLittleBlocks extends BlockContainer {
@@ -108,7 +109,7 @@ public class BlockLittleBlocks extends BlockContainer {
 			if (!world.isRemote) {
 				world.spawnEntityInWorld(collection);
 				PacketLittleBlocksCollection packet = new PacketLittleBlocksCollection(collection);
-				CommonPacketHandler.sendToAll(packet);
+				PacketDispatcher.sendPacketToAllPlayers(packet.getPacket());
 			}
 		}
 		return super.removeBlockByPlayer(world, entityplayer, x, y, z);
@@ -143,7 +144,7 @@ public class BlockLittleBlocks extends BlockContainer {
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int q, float a, float b, float c) {
 		if (world.isRemote) {
-			ClientPacketHandler.blockUpdate(
+			PacketLib.blockUpdate(
 					world,
 					entityplayer,
 					x,
@@ -154,7 +155,7 @@ public class BlockLittleBlocks extends BlockContainer {
 					b,
 					c,
 					this,
-					LBCore.blockActivateCommand);
+					CommandLib.BLOCK_ACTIVATED);
 		}
 		return true;
 	}
@@ -315,7 +316,7 @@ public class BlockLittleBlocks extends BlockContainer {
 	@Override
 	public void onBlockClicked(World world, int x, int y, int z, EntityPlayer entityplayer) {
 		if (world.isRemote) {
-			ClientPacketHandler.blockUpdate(
+			PacketLib.blockUpdate(
 					world,
 					entityplayer,
 					x,
@@ -326,7 +327,7 @@ public class BlockLittleBlocks extends BlockContainer {
 					0,
 					0,
 					this,
-					LBCore.blockClickCommand);
+					CommandLib.BLOCK_CLICKED);
 		}
 	}
 

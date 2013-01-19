@@ -3,12 +3,6 @@ package slimevoid.littleblocks.core.lib;
 import java.util.HashSet;
 import java.util.Set;
 
-import slimevoid.lib.data.Logger;
-import slimevoid.littleblocks.core.LBCore;
-import slimevoid.littleblocks.core.LoggerLittleBlocks;
-import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
-import buildcraft.core.IItemPipe;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFlowing;
 import net.minecraft.block.BlockFluid;
@@ -16,6 +10,11 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemMonsterPlacer;
 import net.minecraft.tileentity.TileEntity;
+import slimevoid.lib.data.Logger;
+import slimevoid.littleblocks.core.LBCore;
+import slimevoid.littleblocks.core.LoggerLittleBlocks;
+import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
+import buildcraft.core.IItemPipe;
 
 public class PlacementUtil {
 	

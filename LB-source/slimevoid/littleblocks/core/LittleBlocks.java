@@ -42,6 +42,7 @@ public class LittleBlocks {
 
 	@PreInit
 	public void LittleBlocksPreInit(FMLPreInitializationEvent event) {
+		proxy.preInit();
 	}
 
 	@Init

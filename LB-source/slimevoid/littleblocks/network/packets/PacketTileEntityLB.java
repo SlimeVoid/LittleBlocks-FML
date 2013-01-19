@@ -9,11 +9,12 @@ import java.util.List;
 import net.minecraft.nbt.NBTTagCompound;
 import slimevoid.lib.network.PacketTileEntity;
 import slimevoid.littleblocks.core.LBInit;
+import slimevoid.littleblocks.core.lib.CommandLib;
 import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
 
 public class PacketTileEntityLB extends PacketTileEntity {
 
-	private int sender;
+	//private int sender;
 	private List<NBTTagCompound> tileEntities = new ArrayList<NBTTagCompound>();
 
 	public PacketTileEntityLB() {
@@ -24,7 +25,7 @@ public class PacketTileEntityLB extends PacketTileEntity {
 	@Override
 	public void writeData(DataOutputStream data) throws IOException {
 		super.writeData(data);
-		data.writeInt(this.sender);
+		//data.writeInt(this.sender);
 		this.writeTileEntities(data);
 	}
 
@@ -38,7 +39,7 @@ public class PacketTileEntityLB extends PacketTileEntity {
 	@Override
 	public void readData(DataInputStream data) throws IOException {
 		super.readData(data);
-		this.sender = data.readInt();
+		//this.sender = data.readInt();
 		this.readTileEntities(data);
 	}
 
@@ -59,15 +60,16 @@ public class PacketTileEntityLB extends PacketTileEntity {
 				0);
 		this.payload = tileentity.getTileEntityPayload();
 		this.setTileEntities(tileentity.getTiles());
+		this.setCommand(CommandLib.UPDATE_CLIENT);
 	}
 
-	public int getSender() {
+/*	public int getSender() {
 		return this.sender;
 	}
 
 	public void setSender(int sender) {
 		this.sender = sender;
-	}
+	}*/
 	
 	public List<NBTTagCompound> getTileEntities() {
 		return this.tileEntities;

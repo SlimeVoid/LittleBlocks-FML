@@ -29,7 +29,6 @@ public class LBInit {
 	}
 
 	public static void load() {
-		LBM.getProxy().preInit();
 		SlimevoidCore.console(LBM.getModName(), "Registering items...");
 		LBCore.addItems();
 		GameRegistry.registerTileEntity(

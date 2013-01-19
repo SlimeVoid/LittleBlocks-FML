@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderEngine;
 import net.minecraft.client.renderer.RenderHelper;
@@ -25,7 +24,6 @@ import net.minecraft.tileentity.TileEntity;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
-import slimevoid.littleblocks.client.render.blocks.LittleBlockToRender;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
 

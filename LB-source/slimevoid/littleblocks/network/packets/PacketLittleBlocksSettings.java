@@ -27,12 +27,4 @@ public class PacketLittleBlocksSettings extends PacketUpdate {
 		return this.payload.getBoolPayload(0);
 	}
 
-	public void setCommand(int command) {
-		this.payload.setIntPayload(0, command);
-	}
-
-	public int getCommand() {
-		return this.payload.getIntPayload(0);
-	}
-
 }

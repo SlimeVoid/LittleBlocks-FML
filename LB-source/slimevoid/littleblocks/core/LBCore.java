@@ -30,12 +30,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class LBCore {
 	public static File configFile;
 	public static Configuration configuration;
-	public static String metaDataModifiedCommand = "METADATA";
-	public static String idModifiedCommand = "IDMOD";
-	public static String blockClickCommand = "BLOCKCLICK";
-	public static String blockActivateCommand = "BLOCKACTIVATE";
-	public static String littleNotifyCommand = "LITTLENOTIFY";
-	public static String updateClientCommand = "UPDATECLIENT";
 	public static boolean littleBlocksForceUpdate;
 	public static String loggerLevel = "INFO";
 	public static Block littleBlocks;
@@ -67,8 +61,6 @@ public class LBCore {
 	public static int littleDimensionServer;
 	public static int littleProviderTypeServer;
 	public static WorldProvider littleProviderServer;
-	public static String breakBlock = "breakBlock";
-	public static String blockAdded = "blockAdded";
 
 	public static void initialize(ICommonProxy proxy) {
 		LBInit.initialize(proxy);

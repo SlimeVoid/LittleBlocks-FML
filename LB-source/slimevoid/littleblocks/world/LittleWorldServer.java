@@ -26,10 +26,9 @@ import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.chunk.Chunk;
 import slimevoid.lib.data.Logger;
-import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.LoggerLittleBlocks;
+import slimevoid.littleblocks.core.lib.PacketLib;
 import slimevoid.littleblocks.core.lib.PlacementUtil;
-import slimevoid.littleblocks.network.CommonPacketHandler;
 import slimevoid.littleblocks.world.events.LittleBlockEvent;
 import slimevoid.littleblocks.world.events.LittleBlockEventList;
 
@@ -481,7 +480,7 @@ public class LittleWorldServer extends LittleWorld {
 							blockX,
 							blockY,
 							blockZ) : null;
-			CommonPacketHandler.sendMetadata(
+			PacketLib.sendMetadata(
 					this,
 					blockX,
 					blockY,
@@ -519,7 +518,7 @@ public class LittleWorldServer extends LittleWorld {
 						blockZ,
 						side,
 						metadata);
-				CommonPacketHandler.sendBreakBlock(
+				PacketLib.sendBreakBlock(
 						this,
 						blockX,
 						blockY,
@@ -544,7 +543,7 @@ public class LittleWorldServer extends LittleWorld {
 								blockX,
 								blockY,
 								blockZ) : null;
-				CommonPacketHandler.sendBlockAdded(
+				PacketLib.sendBlockAdded(
 						this,
 						blockX,
 						blockY,

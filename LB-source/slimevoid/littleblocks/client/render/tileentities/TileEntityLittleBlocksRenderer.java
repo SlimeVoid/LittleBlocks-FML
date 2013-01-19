@@ -1,12 +1,10 @@
 package slimevoid.littleblocks.client.render.tileentities;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
-import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
+import cpw.mods.fml.common.FMLCommonHandler;
 
 public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 		

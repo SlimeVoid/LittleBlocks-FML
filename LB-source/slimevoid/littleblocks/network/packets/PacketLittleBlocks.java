@@ -14,13 +14,13 @@ import slimevoid.littleblocks.core.LBInit;
 
 public class PacketLittleBlocks extends PacketUpdate {
 
-	private int sender;
+	//private int sender;
 	private NBTTagCompound tileEntityData;
 
 	@Override
 	public void writeData(DataOutputStream data) throws IOException {
 		super.writeData(data);
-		data.writeInt(sender);
+		//data.writeInt(sender);
 		writeTileEntityData(data);
 	}
 
@@ -31,7 +31,7 @@ public class PacketLittleBlocks extends PacketUpdate {
 	@Override
 	public void readData(DataInputStream data) throws IOException {
 		super.readData(data);
-		sender = data.readInt();
+		//sender = data.readInt();
 		readTileEntityData(data);
 	}
 
@@ -47,8 +47,8 @@ public class PacketLittleBlocks extends PacketUpdate {
 	public PacketLittleBlocks(String command, int x, int y, int z, int side, float vecX, float vecY, float vecZ, int selectedX, int selectedY, int selectedZ, int blockId, int metadata) {
 		this();
 		this.setPosition(x, y, z, side);
-		this.setVecs(vecX, vecY, vecZ);
-		this.payload = new PacketPayload(5, 0, 1, 0);
+		this.setHitVectors(vecX, vecY, vecZ);
+		this.payload = new PacketPayload(5, 0, 0, 0);
 		this.setCommand(command);
 		this.setBlockId(blockId);
 		this.setMetadata(metadata);
@@ -58,19 +58,11 @@ public class PacketLittleBlocks extends PacketUpdate {
 	public PacketLittleBlocks(String command, int x, int y, int z, int side, int blockId, int metadata) {
 		this();
 		this.setPosition(x, y, z, side);
-		this.payload = new PacketPayload(2, 0, 1, 1);
+		this.payload = new PacketPayload(2, 0, 0, 1);
 		this.setCommand(command);
 		this.setBlockId(blockId);
 		this.setMetadata(metadata);
 		this.payload.setBoolPayload(0, false);
-	}
-
-	private void setCommand(String command) {
-		this.payload.setStringPayload(0, command);
-	}
-
-	public String getCommand() {
-		return this.payload.getStringPayload(0);
 	}
 
 	public void setSelectedXYZ(int selectedX, int selectedY, int selectedZ) {
@@ -115,13 +107,13 @@ public class PacketLittleBlocks extends PacketUpdate {
 		return this.payload.getIntPayload(4);
 	}
 
-	public int getSender() {
+/*	public int getSender() {
 		return this.sender;
 	}
 
 	public void setSender(int sender) {
 		this.sender = sender;
-	}
+	}*/
 	
 	public void setTileEntityData(TileEntity tileData) {
 		NBTTagCompound tileTag = new NBTTagCompound();

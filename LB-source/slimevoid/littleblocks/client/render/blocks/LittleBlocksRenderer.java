@@ -17,7 +17,7 @@ public class LittleBlocksRenderer implements ISimpleBlockRenderingHandler {
 	@Override
 	public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
 		if (block.blockID == LBCore.littleBlocksID) {
-			if (!LBCore.optifine) {
+			//if (!LBCore.optifine) {
 				TileEntityLittleBlocks tile = (TileEntityLittleBlocks) world
 						.getBlockTileEntity(x, y, z);
 				if (tile == null) {
@@ -48,7 +48,7 @@ public class LittleBlocksRenderer implements ISimpleBlockRenderingHandler {
 					}
 				}
 				littleBlocks.renderLittleBlocks(world, x, y, z);
-			}
+			//}
 			return true;
 		}
 		return false;
