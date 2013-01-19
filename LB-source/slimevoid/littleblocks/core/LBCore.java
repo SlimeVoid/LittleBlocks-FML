@@ -8,11 +8,13 @@ import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.src.ModLoader;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
 import slimevoid.lib.ICommonProxy;
+import slimevoid.lib.core.SlimevoidCore;
 import slimevoid.littleblocks.api.ILBCommonProxy;
 import slimevoid.littleblocks.blocks.BlockLittleBlocks;
 import slimevoid.littleblocks.core.lib.PlacementUtil;
@@ -62,11 +64,15 @@ public class LBCore {
 	public static int littleProviderTypeServer;
 	public static WorldProvider littleProviderServer;
 
-	public static void initialize(ICommonProxy proxy) {
-		LBInit.initialize(proxy);
+	public static void initialize() {
+		LBCore.configFile = new File(
+				LBInit.LBM.getProxy().getMinecraftDir(),
+					"config/LittleBlocks.cfg");
+		LBCore.configuration = new Configuration(LBCore.configFile);
 	}
 
 	public static void addItems() {
+		SlimevoidCore.console(LBInit.LBM.getModName(), "Registering items...");
 		littleBlocksID = configurationProperties();
 		littleBlocks = new BlockLittleBlocks(
 				littleBlocksID,
@@ -84,6 +90,9 @@ public class LBCore {
 				256,
 				1,
 				false);
+		GameRegistry.registerTileEntity(
+				TileEntityLittleBlocks.class,
+				"littleBlocks");
 		PlacementUtil.registerPlacementInfo();
 		MinecraftForge.EVENT_BUS.register(new LittleBlocksCollectionPickup());
 		// MinecraftForge.EVENT_BUS.register(new LittleContainerInteract());
@@ -91,11 +100,13 @@ public class LBCore {
 	}
 
 	public static void addNames() {
+		SlimevoidCore.console(LBInit.LBM.getModName(), "Naming items...");
 		ModLoader.addName(littleBlocks, "Little Blocks Block");
 		ModLoader.addName(littleBlocksCopier, "Little Blocks Tool");
 	}
 
 	public static void addRecipes() {
+		SlimevoidCore.console(LBInit.LBM.getModName(), "Registering recipes...");
 		GameRegistry.addRecipe(new ItemStack(littleBlocks), new Object[] {
 				"#",
 				Character.valueOf('#'),

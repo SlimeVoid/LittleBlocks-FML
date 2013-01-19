@@ -11,6 +11,7 @@ import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.DimensionManager;
 import slimevoid.lib.IPacketHandling;
 import slimevoid.littleblocks.api.ILBCommonProxy;
+import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.lib.PacketLib;
 import slimevoid.littleblocks.handlers.CommonTickHandler;
@@ -92,7 +93,7 @@ public class CommonProxy implements ILBCommonProxy {
 	}
 
 	@Override
-	public LittleWorld getLittleWorld(World world, boolean needsRefresh) {
+	public ILittleWorld getLittleWorld(World world, boolean needsRefresh) {
 		if (world != null) {
 			if (LBCore.littleDimensionServer == -1) {
 				this.setLittleDimension(

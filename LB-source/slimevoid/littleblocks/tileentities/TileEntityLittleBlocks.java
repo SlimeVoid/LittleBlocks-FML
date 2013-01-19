@@ -17,16 +17,17 @@ import net.minecraft.world.World;
 import slimevoid.lib.network.PacketPayload;
 import slimevoid.lib.network.PacketUpdate;
 import slimevoid.littleblocks.api.ILBCommonProxy;
+import slimevoid.littleblocks.api.ILittleBlocks;
+import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.LBInit;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocks;
 import slimevoid.littleblocks.network.packets.PacketTileEntityLB;
-import slimevoid.littleblocks.world.LittleWorld;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class TileEntityLittleBlocks extends TileEntity {
+public class TileEntityLittleBlocks extends TileEntity implements ILittleBlocks {
 	public int size = LBCore.littleBlocksSize;
 	private int content[][][] = new int[size][size][size];
 	private int metadatas[][][] = new int[size][size][size];
@@ -84,7 +85,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 		return content;
 	}
 
-	public LittleWorld getLittleWorld() {
+	public ILittleWorld getLittleWorld() {
 		return ((ILBCommonProxy) LBInit.LBM.getProxy()).getLittleWorld(
 				this.worldObj,
 				false);
@@ -442,7 +443,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 
 	public void setTileEntity(int x, int y, int z, TileEntity tile) {
 		if (tile != null) {
-			tile.setWorldObj(getLittleWorld());
+			tile.setWorldObj((World) getLittleWorld());
 			tile.xCoord = (xCoord << 3) + x;
 			tile.yCoord = (yCoord << 3) + y;
 			tile.zCoord = (zCoord << 3) + z;
@@ -482,7 +483,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 		for (int i = 0; i < tiles.size(); i++) {
 			TileEntity tile = tiles.get(i);
 			if (tile.worldObj == null || tile.worldObj != getLittleWorld()) {
-				tile.worldObj = getLittleWorld();
+				tile.worldObj = (World) getLittleWorld();
 			}
 			tiles.get(i).updateEntity();
 		}
@@ -680,7 +681,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 					tile);
 		}
 		Block.blocksList[packetLB.getBlockID()].onBlockAdded(
-				this.getLittleWorld(),
+				(World) this.getLittleWorld(),
 				packetLB.xPosition,
 				packetLB.yPosition,
 				packetLB.zPosition);
@@ -701,7 +702,7 @@ public class TileEntityLittleBlocks extends TileEntity {
 			this.removeTileEntity(tile);
 		}
 		Block.blocksList[packetLB.getBlockID()].breakBlock(
-				this.getLittleWorld(),
+				(World) this.getLittleWorld(),
 				packetLB.xPosition,
 				packetLB.yPosition,
 				packetLB.zPosition,

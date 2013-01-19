@@ -21,7 +21,7 @@ public class CollisionRayTrace {
 						Block block = Block.blocksList[content[x][y][z]];
 						if (block != null) {
 							block.collisionRayTrace(
-									tile.getLittleWorld(),
+									(World) tile.getLittleWorld(),
 									(i << 3) + x,
 									(j << 3) + y,
 									(k << 3) + z,

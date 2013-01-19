@@ -24,6 +24,7 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import slimevoid.littleblocks.api.ILBCommonProxy;
+import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.blocks.core.CollisionRayTrace;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.LBInit;
@@ -232,7 +233,7 @@ public class BlockLittleBlocks extends BlockContainer {
 				if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
 					TileEntityLittleBlocks tile = (TileEntityLittleBlocks) tileentity;
 					int xx = (x << 3) + xSelected, yy = (y << 3) + ySelected, zz = (z << 3) + zSelected;
-					LittleWorld littleWorld = ((ILBCommonProxy) LBInit.LBM
+					ILittleWorld littleWorld = ((ILBCommonProxy) LBInit.LBM
 							.getProxy()).getLittleWorld(world, false);
 					int blockId = tile.getContent(
 							xSelected,
@@ -244,7 +245,7 @@ public class BlockLittleBlocks extends BlockContainer {
 							ItemInWorldManager itemManager = player.theItemInWorldManager;
 							if (itemManager.activateBlockOrUseItem(
 									entityplayer,
-									littleWorld,
+									(World) littleWorld,
 									entityplayer.getCurrentEquippedItem(),
 									xx,
 									yy,
@@ -259,7 +260,7 @@ public class BlockLittleBlocks extends BlockContainer {
 							if (entityplayer.getCurrentEquippedItem() != null) {
 								if (itemManager.tryUseItem(
 										entityplayer,
-										littleWorld,
+										(World) littleWorld,
 										entityplayer.getCurrentEquippedItem())) {
 									return true;
 								}
@@ -272,7 +273,7 @@ public class BlockLittleBlocks extends BlockContainer {
 		return false;
 	}
 
-	private void checkPlacement(LittleWorld littleWorld, EntityPlayer entityplayer, int x, int y, int z, int l, int xx, int yy, int zz, int side) {
+	private void checkPlacement(ILittleWorld littleWorld, EntityPlayer entityplayer, int x, int y, int z, int l, int xx, int yy, int zz, int side) {
 		if (side == 0) {
 			--yy;
 		}
@@ -538,7 +539,7 @@ public class BlockLittleBlocks extends BlockContainer {
 							this.zSelected)];
 					if (littleBlock != null) {
 						littleBlock.collisionRayTrace(
-								tile.getLittleWorld(),
+								(World) tile.getLittleWorld(),
 								(x << 3) + this.xSelected,
 								(y << 3) + this.ySelected,
 								(z << 3) + this.zSelected,
@@ -768,7 +769,7 @@ public class BlockLittleBlocks extends BlockContainer {
 									Block littleBlock = Block.blocksList[content[xx][yy][zz]];
 									if (littleBlock != null) {
 											littleBlock.onNeighborBlockChange(
-													tile.getLittleWorld(),
+													(World) tile.getLittleWorld(),
 													(x << 3) + xx,
 													(y << 3) + yy,
 													(z << 3) + zz,

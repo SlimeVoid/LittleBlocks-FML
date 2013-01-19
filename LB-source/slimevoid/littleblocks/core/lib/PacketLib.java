@@ -9,6 +9,7 @@ import slimevoid.littleblocks.client.network.ClientPacketHandler;
 import slimevoid.littleblocks.client.network.packets.executors.ClientBlockAddedExecutor;
 import slimevoid.littleblocks.client.network.packets.executors.ClientBreakBlockExecutor;
 import slimevoid.littleblocks.client.network.packets.executors.ClientLittleCollectionExecutor;
+import slimevoid.littleblocks.client.network.packets.executors.ClientLittleTileEntityUpdate;
 import slimevoid.littleblocks.client.network.packets.executors.ClientMetadataUpdateExecutor;
 import slimevoid.littleblocks.client.network.packets.executors.ClientPacketLittleBlocksLoginExecutor;
 import slimevoid.littleblocks.client.network.packets.executors.ClientPacketTileEntityLBExecutor;
@@ -57,6 +58,9 @@ public class PacketLib {
 		clientLittleBlocksHandler.registerPacketHandler(
 				CommandLib.METADATA_MODIFIED,
 				new ClientMetadataUpdateExecutor());
+		clientLittleBlocksHandler.registerPacketHandler(
+				CommandLib.TILE_ENTITY_UPDATE,
+				new ClientLittleTileEntityUpdate());
 		
 		ClientPacketHandler.registerPacketHandler(PacketIds.UPDATE, clientLittleBlocksHandler);
 		
@@ -166,5 +170,21 @@ public class PacketLib {
 		}
 		PacketDispatcher.sendPacketToAllPlayers(
 				packetLB.getPacket());
+	}
+	
+	public static void sendTileEntity(
+			LittleWorld littleWorld,
+			TileEntity tileentity,
+			int x, int y, int z) {
+		PacketLittleBlocks packetTile = new PacketLittleBlocks(
+			CommandLib.TILE_ENTITY_UPDATE,
+			x,
+			y,
+			z,
+			0,
+			littleWorld.getBlockId(x, y, z),
+			littleWorld.getBlockMetadata(x, y, z));
+		packetTile.setTileEntityData(tileentity);
+		PacketDispatcher.sendPacketToAllPlayers(packetTile.getPacket());
 	}
 }

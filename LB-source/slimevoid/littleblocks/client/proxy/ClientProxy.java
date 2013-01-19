@@ -13,6 +13,7 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
+import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.client.handlers.ClientTickHandler;
 import slimevoid.littleblocks.client.handlers.DrawCopierHighlight;
 import slimevoid.littleblocks.client.network.ClientPacketHandler;
@@ -27,6 +28,7 @@ import slimevoid.littleblocks.core.lib.PacketLib;
 import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocksSettings;
 import slimevoid.littleblocks.proxy.CommonProxy;
+import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
 import slimevoid.littleblocks.world.LittleWorld;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
@@ -79,6 +81,8 @@ public class ClientProxy extends CommonProxy {
 		MinecraftForge.EVENT_BUS.register(new DrawCopierHighlight());
 		RenderingRegistry.registerBlockHandler(new LittleBlocksRenderer());
 		RenderingRegistry.registerEntityRenderingHandler(EntityItemLittleBlocksCollection.class, new EntityItemLittleBlocksCollectionRenderer());
+		this.registerTileEntitySpecialRenderer(
+				TileEntityLittleBlocks.class);
 	}
 
 	@Override
@@ -118,7 +122,7 @@ public class ClientProxy extends CommonProxy {
 	}
 
 	@Override
-	public LittleWorld getLittleWorld(World world, boolean needsRefresh) {
+	public ILittleWorld getLittleWorld(World world, boolean needsRefresh) {
 		if (world != null) {
 			if (world.isRemote) {
 				if (LBCore.littleWorldClient == null || LBCore.littleWorldClient

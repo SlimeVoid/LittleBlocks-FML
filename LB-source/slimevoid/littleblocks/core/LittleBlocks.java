@@ -47,7 +47,12 @@ public class LittleBlocks {
 
 	@Init
 	public void LittleBlocksInit(FMLInitializationEvent event) {
-		LBCore.initialize(proxy);
+		LBInit.initialize(proxy);
+		LBCore.initialize();
+		LBCore.addItems();
+		LBCore.addNames();
+		LBCore.addRecipes();
+		LBInit.load();
 	}
 
 	@PostInit

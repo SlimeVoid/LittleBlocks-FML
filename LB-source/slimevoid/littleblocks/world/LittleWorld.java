@@ -15,13 +15,16 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.common.ForgeDirection;
 import slimevoid.lib.data.Logger;
+import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.LoggerLittleBlocks;
+import slimevoid.littleblocks.core.lib.PacketLib;
 import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
+import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class LittleWorld extends World {
+public class LittleWorld extends World implements ILittleWorld {
 
 	protected int ticksInWorld = 0;
 	protected static final int MAX_TICKS_IN_WORLD = 5;
@@ -92,6 +95,16 @@ public class LittleWorld extends World {
 		this.setWorldTime(this.getWorldTime() + 1L);
 		if (this.ticksInWorld >= MAX_TICKS_IN_WORLD) {
 			this.ticksInWorld = 0;
+		}
+	}
+	
+	@Override
+	public void updateTileEntityChunkAndDoNothing(int x, int y, int z,
+			TileEntity tileentity) {
+		if (!this.isRemote) {
+			if (this.blockExists(x, y, z)) {
+				PacketLib.sendTileEntity(this, tileentity, x, y, z);
+			}
 		}
 	}
 
