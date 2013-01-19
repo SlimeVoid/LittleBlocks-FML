@@ -32,7 +32,6 @@ public class TileEntityLittleBlocks extends TileEntity implements ILittleBlocks 
 	private int content[][][] = new int[size][size][size];
 	private int metadatas[][][] = new int[size][size][size];
 	private List<TileEntity> tiles = new ArrayList<TileEntity>();
-	private boolean upToDate = false;
 
 	@Override
 	public void onDataPacket(INetworkManager net, Packet132TileEntityData pkt) {
@@ -574,7 +573,6 @@ public class TileEntityLittleBlocks extends TileEntity implements ILittleBlocks 
 
 	@Override
 	public void onInventoryChanged() {
-		this.upToDate = false;
 		super.onInventoryChanged();
 	}
 
@@ -627,7 +625,6 @@ public class TileEntityLittleBlocks extends TileEntity implements ILittleBlocks 
 			p.setIntPayload(i + 4, data[i + 3]);
 			p.setIntPayload(i + 5, data[i + 4]);
 		}
-		this.upToDate = true;
 		return p;
 	}
 

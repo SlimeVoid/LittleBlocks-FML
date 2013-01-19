@@ -44,7 +44,7 @@ public class LittleBlocksLittleRenderer {
 			littleBlocksToRender.put(nextInt, render);
 		} else {
 			this.textures.add(block.getTextureFile());
-			HashMap<Integer, LittleBlockToRender> littleBlocksToRender = new HashMap();
+			HashMap<Integer, LittleBlockToRender> littleBlocksToRender = new HashMap<Integer, LittleBlockToRender>();
 			littleBlocksToRender.put(0, render);
 			texturedBlocksToRender.put(block.getTextureFile(), littleBlocksToRender);
 		}

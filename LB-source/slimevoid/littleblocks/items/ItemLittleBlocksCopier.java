@@ -19,7 +19,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemLittleBlocksCopier extends Item {
 
-	public static HashMap<EntityPlayer, TileEntityLittleBlocks> selectedLittleTiles = new HashMap();
+	public static HashMap<EntityPlayer, TileEntityLittleBlocks> selectedLittleTiles = new HashMap<EntityPlayer, TileEntityLittleBlocks>();
 	public static ReadWriteLock tileLock = new ReadWriteLock();
 
 	public ItemLittleBlocksCopier(int id) {

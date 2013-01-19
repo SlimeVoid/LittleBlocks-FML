@@ -67,6 +67,7 @@ public class BlockUtil {
 		return true;
 	}
 
+	@SuppressWarnings("unused")
 	private static void registerDisallowedBlock(Class<? extends Block> blockClass) {
 		if (blockClass != null) {
 			if (!disallowedBlocks.contains(blockClass)) {
@@ -84,6 +85,7 @@ public class BlockUtil {
 		return true;
 	}
 
+	@SuppressWarnings("unused")
 	private static void registerDisallowedItemIDs(Integer itemID) {
 		if (itemID > Block.blocksList.length) {
 			if (!disallowedItemIDs.contains(itemID)) {

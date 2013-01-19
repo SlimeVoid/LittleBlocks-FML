@@ -431,7 +431,6 @@ public class LittleWorld extends World implements ILittleWorld {
 			if (id == LBCore.littleBlocksID) {
 				TileEntityLittleBlocks tile = (TileEntityLittleBlocks) realWorld
 						.getBlockTileEntity(x >> 3, y >> 3, z >> 3);
-				int littleBlockId = tile.getContent(x & 7, y & 7, z & 7);
 				int littleMetaData = tile.getMetadata(x & 7, y & 7, z & 7);
 				return littleMetaData;
 			} else {

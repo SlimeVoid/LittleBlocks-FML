@@ -26,9 +26,9 @@ import net.minecraft.world.World;
 import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.blocks.core.CollisionRayTrace;
 import slimevoid.littleblocks.core.LBCore;
+import slimevoid.littleblocks.core.lib.BlockUtil;
 import slimevoid.littleblocks.core.lib.CommandLib;
 import slimevoid.littleblocks.core.lib.PacketLib;
-import slimevoid.littleblocks.core.lib.BlockUtil;
 import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocksCollection;
 import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
@@ -42,9 +42,9 @@ public class BlockLittleBlocks extends BlockContainer {
 
 	public boolean updateEveryone = true;
 
-	private Class clazz;
+	private Class<? extends TileEntity> clazz;
 
-	public BlockLittleBlocks(int id, Class clazz, Material material, float hardness, boolean selfNotify) {
+	public BlockLittleBlocks(int id, Class<? extends TileEntity> clazz, Material material, float hardness, boolean selfNotify) {
 		super(id, material);
 		this.clazz = clazz;
 		setHardness(hardness);
@@ -231,10 +231,6 @@ public class BlockLittleBlocks extends BlockContainer {
 					TileEntityLittleBlocks tile = (TileEntityLittleBlocks) tileentity;
 					int xx = (x << 3) + xSelected, yy = (y << 3) + ySelected, zz = (z << 3) + zSelected;
 					World littleWorld = (World) tile.getLittleWorld();
-					int blockId = tile.getContent(
-							xSelected,
-							ySelected,
-							zSelected);
 					if (littleWorld != null) {
 						if (entityplayer instanceof EntityPlayerMP) {
 							EntityPlayerMP player = (EntityPlayerMP) entityplayer;
@@ -361,7 +357,7 @@ public class BlockLittleBlocks extends BlockContainer {
 	@Override
 	public TileEntity createNewTileEntity(World par1World) {
 		try {
-			return (TileEntity) this.clazz.newInstance();
+			return this.clazz.newInstance();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -433,6 +429,7 @@ public class BlockLittleBlocks extends BlockContainer {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void addCollidingBlockToList(World world, int x, int y, int z, AxisAlignedBB axisalignedbb, List list, Entity entity) {
 		TileEntity tileentity = world.getBlockTileEntity(x, y, z);

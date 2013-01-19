@@ -5,9 +5,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import slimevoid.lib.IPacketExecutor;
 import slimevoid.lib.network.PacketUpdate;
-import slimevoid.littleblocks.api.ILBCommonProxy;
-import slimevoid.littleblocks.core.LBInit;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocks;
+import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
 
 public class ClientLittleTileEntityUpdate implements IPacketExecutor {
 
@@ -18,14 +17,21 @@ public class ClientLittleTileEntityUpdate implements IPacketExecutor {
 			PacketLittleBlocks packetLB = (PacketLittleBlocks) packet;
 			if (packetLB.hasTileEntity()) {
 				System.out.println("Has TileEntity");
-				((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(world, false)
-					.setBlockTileEntity(
-							packet.xPosition,
-							packet.yPosition,
-							packet.zPosition,
-							TileEntity.createAndLoadEntity(
-									packetLB.getTileEntityData())
-							);
+				TileEntity tileentity = world.getBlockTileEntity(
+						packet.xPosition >> 3,
+						packet.yPosition >> 3,
+						packet.zPosition >> 3);
+				if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
+					TileEntity littleTile = TileEntity.createAndLoadEntity(
+							packetLB.getTileEntityData());
+					if (littleTile != null) {
+						((TileEntityLittleBlocks)tileentity).setTileEntity(
+								packet.xPosition & 7,
+								packet.yPosition & 7,
+								packet.zPosition & 7,
+								littleTile);
+					}
+				}
 			}
 		}
 	}

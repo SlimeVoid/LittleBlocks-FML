@@ -10,7 +10,7 @@ import net.minecraft.world.World;
 import slimevoid.littleblocks.core.LBCore;
 
 public class EntityItemLittleBlocksCollection extends EntityItem {
-	public HashMap<String, ItemStack> itemstackCollection = new HashMap();
+	public HashMap<String, ItemStack> itemstackCollection = new HashMap<String, ItemStack>();
 
     public EntityItemLittleBlocksCollection(World world) {
     	super(world);

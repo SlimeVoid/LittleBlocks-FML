@@ -15,7 +15,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.packet.Packet60Explosion;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.ChunkCoordIntPair;
@@ -27,8 +26,8 @@ import net.minecraft.world.WorldSettings;
 import net.minecraft.world.chunk.Chunk;
 import slimevoid.lib.data.Logger;
 import slimevoid.littleblocks.core.LoggerLittleBlocks;
-import slimevoid.littleblocks.core.lib.PacketLib;
 import slimevoid.littleblocks.core.lib.BlockUtil;
+import slimevoid.littleblocks.core.lib.PacketLib;
 import slimevoid.littleblocks.world.events.LittleBlockEvent;
 import slimevoid.littleblocks.world.events.LittleBlockEventList;
 
@@ -38,10 +37,10 @@ public class LittleWorldServer extends LittleWorld {
 	 * TreeSet of scheduled ticks which is used as a priority queue for the
 	 * ticks
 	 */
-	private TreeSet pendingTickListEntries;
+	private TreeSet<NextTickListEntry> pendingTickListEntries;
 
 	/** Set of scheduled ticks (used for checking if a tick already exists) */
-	private Set scheduledTickSet;
+	private Set<NextTickListEntry> scheduledTickSet;
 
 	/**
 	 * Double buffer of ServerBlockEventList[] for holding pending
@@ -71,21 +70,21 @@ public class LittleWorldServer extends LittleWorld {
 				LoggerLittleBlocks.LogLevel.DEBUG
 		);
 		if (this.scheduledTickSet == null) {
-			this.scheduledTickSet = new HashSet();
+			this.scheduledTickSet = new HashSet<NextTickListEntry>();
 		}
 
 		if (this.pendingTickListEntries == null) {
-			this.pendingTickListEntries = new TreeSet();
+			this.pendingTickListEntries = new TreeSet<NextTickListEntry>();
 		}
 	}
 
 	@Override
 	protected void initialize(WorldSettings worldSettings) {
 		if (this.scheduledTickSet == null) {
-			this.scheduledTickSet = new HashSet();
+			this.scheduledTickSet = new HashSet<NextTickListEntry>();
 		}
 		if (this.pendingTickListEntries == null) {
-			this.pendingTickListEntries = new TreeSet();
+			this.pendingTickListEntries = new TreeSet<NextTickListEntry>();
 		}
 		super.initialize(worldSettings);
 	}
@@ -107,7 +106,6 @@ public class LittleWorldServer extends LittleWorld {
 
 	@Override
 	public boolean tickUpdates(boolean tick) {
-		Set<TileEntity> littleBlockTiles = new HashSet();
 		int numberOfUpdates = this.pendingTickListEntries.size();
 
 		if (numberOfUpdates != this.scheduledTickSet.size()) {
@@ -118,7 +116,7 @@ public class LittleWorldServer extends LittleWorld {
 			}
 
 			for (int update = 0; update < numberOfUpdates; ++update) {
-				NextTickListEntry nextTick = (NextTickListEntry) this.pendingTickListEntries
+				NextTickListEntry nextTick = this.pendingTickListEntries
 						.first();
 
 				if (!tick && nextTick.scheduledTime > this.realWorld.getWorldInfo()
@@ -216,7 +214,8 @@ public class LittleWorldServer extends LittleWorld {
     /**
      * returns a new explosion. Does initiation (at time of writing Explosion is not finished)
      */
-    @Override
+    @SuppressWarnings("rawtypes")
+	@Override
 	public Explosion newExplosion(Entity entity, double x, double y, double z, float strength, boolean isFlaming, boolean isSmoking)
     {
         Explosion explosion = new Explosion(this, entity, x, y, z, strength / 8);
@@ -253,6 +252,7 @@ public class LittleWorldServer extends LittleWorld {
 	 * Send and apply locally all pending BlockEvents to each player with 64m
 	 * radius of the event.
 	 */
+	@SuppressWarnings("rawtypes")
 	private void sendAndApplyBlockEvents() {
 		//Set<TileEntityLittleBlocks> tileentities = new HashSet();
 		while (!this.blockEventCache[this.blockEventCacheIndex].isEmpty()) {
@@ -327,6 +327,7 @@ public class LittleWorldServer extends LittleWorld {
 	 * called with the given parameters. Args: X,Y,Z, BlockID, EventID,
 	 * EventParameter
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void addBlockEvent(int x, int y, int z, int blockID, int eventID, int eventParam) {
 		BlockEventData eventData = new BlockEventData(
@@ -351,17 +352,17 @@ public class LittleWorldServer extends LittleWorld {
 	}
 
 	@Override
-	public List getPendingBlockUpdates(Chunk chunk, boolean forceRemove) {
-		ArrayList pendingUpdates = null;
+	public List<NextTickListEntry> getPendingBlockUpdates(Chunk chunk, boolean forceRemove) {
+		ArrayList<NextTickListEntry> pendingUpdates = null;
 		ChunkCoordIntPair chunkPair = chunk.getChunkCoordIntPair();
 		int x = chunkPair.chunkXPos << 4;
 		int maxX = x + 16;
 		int z = chunkPair.chunkZPos << 4;
 		int maxZ = z + 16;
-		Iterator pendingTicks = this.pendingTickListEntries.iterator();
+		Iterator<NextTickListEntry> pendingTicks = this.pendingTickListEntries.iterator();
 
 		while (pendingTicks.hasNext()) {
-			NextTickListEntry nextTick = (NextTickListEntry) pendingTicks
+			NextTickListEntry nextTick = pendingTicks
 					.next();
 
 			if (nextTick.xCoord >= x && nextTick.xCoord < maxX && nextTick.zCoord >= z && nextTick.zCoord < maxZ) {
@@ -371,7 +372,7 @@ public class LittleWorldServer extends LittleWorld {
 				}
 
 				if (pendingUpdates == null) {
-					pendingUpdates = new ArrayList();
+					pendingUpdates = new ArrayList<NextTickListEntry>();
 				}
 
 				pendingUpdates.add(nextTick);
@@ -474,12 +475,6 @@ public class LittleWorldServer extends LittleWorld {
 				blockId);
 		Block block = Block.blocksList[blockId];
 		if (block != null) {
-			TileEntity tileentity = 
-					block.hasTileEntity(metadata) 
-					? this.getBlockTileEntity(
-							blockX,
-							blockY,
-							blockZ) : null;
 			PacketLib.sendMetadata(
 					this,
 					blockX,
@@ -487,8 +482,7 @@ public class LittleWorldServer extends LittleWorld {
 					blockZ,
 					blockId,
 					side,
-					metadata,
-					tileentity);
+					metadata);
 		}
 	}
 
@@ -505,12 +499,6 @@ public class LittleWorldServer extends LittleWorld {
 		if (lastBlockId != 0) {
 			Block block = Block.blocksList[lastBlockId];
 			if (block != null) {
-				TileEntity tileentity = 
-						block.hasTileEntity(metadata) 
-						? this.getBlockTileEntity(
-								blockX,
-								blockY,
-								blockZ) : null;
 				block.breakBlock(
 						this,
 						blockX,
@@ -525,8 +513,7 @@ public class LittleWorldServer extends LittleWorld {
 						blockZ,
 						side,
 						lastBlockId,
-						metadata,
-						tileentity);
+						metadata);
 			}
 		}
 		if (blockId != 0) {
@@ -537,12 +524,6 @@ public class LittleWorldServer extends LittleWorld {
 						blockX,
 						blockY,
 						blockZ);
-				TileEntity tileentity = 
-						Block.blocksList[blockId].hasTileEntity(metadata) 
-						? this.getBlockTileEntity(
-								blockX,
-								blockY,
-								blockZ) : null;
 				PacketLib.sendBlockAdded(
 						this,
 						blockX,
@@ -550,8 +531,7 @@ public class LittleWorldServer extends LittleWorld {
 						blockZ,
 						side,
 						blockId,
-						metadata,
-						tileentity);
+						metadata);
 			}
 		}
 	}

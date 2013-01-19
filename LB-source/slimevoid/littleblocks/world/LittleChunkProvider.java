@@ -93,6 +93,7 @@ public class LittleChunkProvider implements IChunkProvider {
 	 * Returns a list of creatures of the specified type that can spawn at the
 	 * given location.
 	 */
+	@SuppressWarnings("rawtypes")
 	@Override
 	public List getPossibleCreatures(EnumCreatureType par1EnumCreatureType, int par2, int par3, int par4) {
 		return null;

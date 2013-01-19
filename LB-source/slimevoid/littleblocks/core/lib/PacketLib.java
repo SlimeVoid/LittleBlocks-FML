@@ -118,7 +118,7 @@ public class PacketLib {
 	public static void sendBreakBlock(
 			LittleWorld littleWorld,
 			int blockX, int blockY, int blockZ, int side,
-			int lastBlockId, int metadata, TileEntity tileData) {
+			int lastBlockId, int metadata) {
 		
 		PacketLittleBlocks packetLB = new PacketLittleBlocks(
 				CommandLib.BREAK_BLOCK,
@@ -126,9 +126,6 @@ public class PacketLib {
 				side,
 				lastBlockId,
 				metadata);
-		if (tileData != null) {
-			packetLB.setTileEntityData(tileData);
-		}
 		PacketDispatcher.sendPacketToAllPlayers(
 				packetLB.getPacket());
 	}
@@ -136,7 +133,7 @@ public class PacketLib {
 	public static void sendBlockAdded(
 			LittleWorld littleWorld,
 			int blockX, int blockY, int blockZ, int side,
-			int blockId, int metadata, TileEntity tileentity) {
+			int blockId, int metadata) {
 		
 		PacketLittleBlocks packetLB = new PacketLittleBlocks(
 				CommandLib.BLOCK_ADDED,
@@ -146,9 +143,6 @@ public class PacketLib {
 				side,
 				blockId,
 				metadata);
-		if (tileentity != null) {
-			packetLB.setTileEntityData(tileentity);
-		}
 		PacketDispatcher.sendPacketToAllPlayers(
 				packetLB.getPacket());
 	}
@@ -156,7 +150,7 @@ public class PacketLib {
 	public static void sendMetadata(
 			LittleWorld littleWorld,
 			int blockX, int blockY, int blockZ,
-			int blockId, int side, int metadata, TileEntity tileData) {
+			int blockId, int side, int metadata) {
 		PacketLittleBlocks packetLB = new PacketLittleBlocks(
 				CommandLib.METADATA_MODIFIED,
 				blockX,
@@ -165,9 +159,6 @@ public class PacketLib {
 				side,
 				blockId,
 				metadata);
-		if (tileData != null) {
-			packetLB.setTileEntityData(tileData);
-		}
 		PacketDispatcher.sendPacketToAllPlayers(
 				packetLB.getPacket());
 	}

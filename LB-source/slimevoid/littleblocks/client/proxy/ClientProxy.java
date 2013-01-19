@@ -96,8 +96,6 @@ public class ClientProxy extends CommonProxy {
 	public void displayTileEntityGui(EntityPlayer entityplayer, TileEntity tileentity) {
 	}
 
-	private static Minecraft mc = ModLoader.getMinecraftInstance();
-
 	@Override
 	public void registerTickHandler() {
 		LBCore.littleDimensionClient = -1;

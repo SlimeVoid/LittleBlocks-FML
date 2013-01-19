@@ -1,8 +1,5 @@
 package slimevoid.littleblocks.client.render.tileentities;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderHelper;
@@ -17,7 +14,6 @@ import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
 
 public class TileEntityLittleBlocksRendererOld extends TileEntitySpecialRenderer {
 	private Tessellator tessellator = Tessellator.instance;
-	private List<TileEntity> entitiesToDraw = new ArrayList<TileEntity>();
 
 	@Override
 	public void renderTileEntityAt(TileEntity tileentity, double d, double d1, double d2, float f) {

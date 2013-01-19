@@ -12,7 +12,7 @@ import slimevoid.littleblocks.core.lib.CommandLib;
 import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
 
 public class PacketLittleBlocksCollection extends PacketEntity {
-	public HashMap<String, ItemStack> itemstackCollection = new HashMap();
+	public HashMap<String, ItemStack> itemstackCollection = new HashMap<String, ItemStack>();
 
 	public PacketLittleBlocksCollection() {
 		super();

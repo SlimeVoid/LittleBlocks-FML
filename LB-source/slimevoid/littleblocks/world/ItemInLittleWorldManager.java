@@ -1,13 +1,13 @@
 package slimevoid.littleblocks.world;
 
-import slimevoid.littleblocks.api.ILBCommonProxy;
-import slimevoid.littleblocks.core.LBInit;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemInWorldManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import slimevoid.littleblocks.api.ILBCommonProxy;
+import slimevoid.littleblocks.core.LBInit;
 
 public class ItemInLittleWorldManager extends ItemInWorldManager {
 

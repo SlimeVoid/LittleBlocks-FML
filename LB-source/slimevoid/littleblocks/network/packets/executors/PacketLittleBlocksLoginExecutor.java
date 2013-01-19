@@ -16,6 +16,7 @@ import cpw.mods.fml.common.network.Player;
 
 public class PacketLittleBlocksLoginExecutor implements IPacketExecutor {
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void execute(PacketUpdate packet, World world,
 			EntityPlayer entityplayer) {
