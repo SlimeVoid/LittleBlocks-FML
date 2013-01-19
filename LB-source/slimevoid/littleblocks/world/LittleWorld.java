@@ -108,17 +108,16 @@ public class LittleWorld extends World implements ILittleWorld {
 		return false;
 	}
 	
-    public List loadedTiles = new ArrayList();
-    private List addedTiles = new ArrayList();
+    public List<TileEntity> loadedTiles = new ArrayList<TileEntity>();
+    private List<TileEntity> addedTiles = new ArrayList<TileEntity>();
     private boolean scanningTiles;
 	
 	@Override
 	public void updateEntities() {
 		this.scanningTiles = true;
-		Iterator loadedTile = this.loadedTiles.iterator();
+		Iterator<TileEntity> loadedTile = this.loadedTiles.iterator();
 
 		while (loadedTile.hasNext()) {
-			System.out.println("Contains Tiles");
 			TileEntity tileentity = (TileEntity) loadedTile.next();
 
 			if (!tileentity.isInvalid()
@@ -128,7 +127,6 @@ public class LittleWorld extends World implements ILittleWorld {
 				try {
 					tileentity.updateEntity();
 				} catch (Throwable t) {
-					
 				}
 			}
 
@@ -962,7 +960,7 @@ public class LittleWorld extends World implements ILittleWorld {
 		}
 		
 		if (tileentity.canUpdate()) {
-			List dest = scanningTiles ? addedTiles : loadedTiles;
+			List<TileEntity> dest = scanningTiles ? addedTiles : loadedTiles;
 			dest.add(tileentity);
 		}
 		Chunk chunk = realWorld.getChunkFromChunkCoords(x >> 7, z >> 7);
@@ -977,7 +975,7 @@ public class LittleWorld extends World implements ILittleWorld {
 
 	@Override
 	public void addTileEntity(TileEntity tileentity) {
-		List dest = scanningTiles ? addedTiles : loadedTiles;
+		List<TileEntity> dest = scanningTiles ? addedTiles : loadedTiles;
 		if (tileentity.canUpdate()) {
 			dest.add(tileentity);
 		}
