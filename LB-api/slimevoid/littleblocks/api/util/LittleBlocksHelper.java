@@ -1,10 +1,10 @@
 package slimevoid.littleblocks.api.util;
 
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import slimevoid.littleblocks.api.ILBCommonProxy;
 import slimevoid.littleblocks.api.ILittleBlocks;
 import slimevoid.littleblocks.core.LBInit;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 
 public class LittleBlocksHelper {
 

@@ -1,8 +1,5 @@
 package slimevoid.littleblocks.core;
 
-import java.io.File;
-
-import net.minecraftforge.common.Configuration;
 import slimevoid.lib.ICommonProxy;
 import slimevoid.lib.ICore;
 import slimevoid.lib.core.Core;

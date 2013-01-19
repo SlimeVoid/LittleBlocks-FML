@@ -20,7 +20,6 @@ import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.LoggerLittleBlocks;
 import slimevoid.littleblocks.core.lib.PacketLib;
 import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
-import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -824,6 +823,7 @@ public class LittleWorld extends World implements ILittleWorld {
 		}
 	}
 
+	@Override
 	public void idModified(int lastBlockId, int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
 		int blockX = (x << 3) + littleX,
 			blockY = (y << 3) + littleY,
@@ -839,6 +839,7 @@ public class LittleWorld extends World implements ILittleWorld {
 		}
 	}
 
+	@Override
 	public void metadataModified(int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
 		int blockX = (x << 3) + littleX,
 			blockY = (y << 3) + littleY,
@@ -1038,6 +1039,7 @@ public class LittleWorld extends World implements ILittleWorld {
 		return new LittleChunkProvider(this);
 	}
 
+	@Override
 	public World getRealWorld() {
 		return this.realWorld;
 	}

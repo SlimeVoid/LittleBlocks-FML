@@ -16,7 +16,6 @@ import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.lib.PacketLib;
 import slimevoid.littleblocks.handlers.CommonTickHandler;
 import slimevoid.littleblocks.network.CommonPacketHandler;
-import slimevoid.littleblocks.world.LittleWorld;
 import slimevoid.littleblocks.world.LittleWorldServer;
 import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.common.registry.TickRegistry;

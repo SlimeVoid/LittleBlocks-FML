@@ -5,7 +5,6 @@ import net.minecraft.world.World;
 import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
-import slimevoid.littleblocks.world.LittleWorld;
 
 public class LittleBlocksRotationHandler {
 	World world;
