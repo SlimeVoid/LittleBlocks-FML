@@ -1,5 +1,5 @@
 package slimevoid.littleblocks.api;
 
-public interface ILittleWorld {
-	
+public interface ILittleBlocks {
+
 }
