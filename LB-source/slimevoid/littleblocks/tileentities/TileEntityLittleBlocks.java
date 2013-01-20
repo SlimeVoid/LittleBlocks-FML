@@ -11,7 +11,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet132TileEntityData;
-import net.minecraft.src.ModLoader;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import slimevoid.lib.network.PacketPayload;
@@ -22,8 +21,6 @@ import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.LBInit;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocks;
-import slimevoid.littleblocks.network.packets.PacketTileEntityLB;
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -34,19 +31,8 @@ public class TileEntityLittleBlocks extends TileEntity implements ILittleBlocks 
 	private List<TileEntity> tiles = new ArrayList<TileEntity>();
 
 	@Override
-	public void onDataPacket(INetworkManager net, Packet132TileEntityData pkt) {
-		if (FMLCommonHandler.instance().getSide().isClient()) {
-			ModLoader.getMinecraftInstance().thePlayer
-					.addChatMessage("Data Packet");
-		}
-	}
-
-	@Override
 	public void setWorldObj(World par1World) {
 		this.worldObj = par1World;
-		//((ILBCommonProxy) LBInit.LBM.getProxy()).getLittleWorld(
-		//		this.worldObj,
-		//		false);
 	}
 
 	public TileEntityLittleBlocks() {
@@ -468,7 +454,10 @@ public class TileEntityLittleBlocks extends TileEntity implements ILittleBlocks 
 
 	private void addTileEntity(TileEntity tile) {
 		tiles.add(tile);
-		((World) this.getLittleWorld()).addTileEntity(tile);
+		World world = (World) this.getLittleWorld();
+		if (world != null) {
+			world.addTileEntity(tile);
+		}
 	}
 	
 	public void cleanTileEntity(int x, int y, int z) {
@@ -591,55 +580,17 @@ public class TileEntityLittleBlocks extends TileEntity implements ILittleBlocks 
 	}
 
 	@Override
+	public void onDataPacket(INetworkManager net, Packet132TileEntityData pkt) {
+		System.out.println("Reading Data Packet");
+		this.readFromNBT(pkt.customParam1);
+	}
+
+	@Override
 	public Packet getDescriptionPacket() {
-		return this.getUpdatePacket();
-	}
-
-	public Packet getUpdatePacket() {
-		return getPacketUpdate().getPacket();
-	}
-
-	public PacketUpdate getPacketUpdate() {
-		return new PacketTileEntityLB(this);
-	}
-
-	public PacketPayload getTileEntityPayload() {
-		return getPayload();
-	}
-
-	public PacketPayload getPayload() {
-		int MAX_SIZE = ((size * size * size) * 2) * 3;
-
-		int[] data = new int[MAX_SIZE];
-		int position = 0;
-		int numberOfBlocks = 0;
-		for (int x = 0; x < content.length; x++) {
-			for (int y = 0; y < content[x].length; y++) {
-				for (int z = 0; z < content[x][y].length; z++) {
-					if (content[x][y][z] > 0) {
-						data[position] = content[x][y][z];
-						data[position + 1] = metadatas[x][y][z];
-						data[position + 2] = x;
-						data[position + 3] = y;
-						data[position + 4] = z;
-						position += 5;
-						numberOfBlocks += 1;
-						
-					}
-				}
-			}
-		}
-
-		PacketPayload p = new PacketPayload(numberOfBlocks * 5 + 1, 0, 0, 0);
-		p.setIntPayload(0, numberOfBlocks);
-		for (int i = 0; i < (numberOfBlocks * 5); i += 5) {
-			p.setIntPayload(i + 1, data[i]);
-			p.setIntPayload(i + 2, data[i + 1]);
-			p.setIntPayload(i + 3, data[i + 2]);
-			p.setIntPayload(i + 4, data[i + 3]);
-			p.setIntPayload(i + 5, data[i + 4]);
-		}
-		return p;
+		NBTTagCompound nbttagcompound = new NBTTagCompound();
+		this.writeToNBT(nbttagcompound);
+		Packet packet = new Packet132TileEntityData(this.xCoord, this.yCoord, this.zCoord, 0, nbttagcompound);
+		return packet;
 	}
 
 	public void setMetadata(int[][][] metadata) {
@@ -681,7 +632,7 @@ public class TileEntityLittleBlocks extends TileEntity implements ILittleBlocks 
 			x = packetLB.xPosition,
 			y = packetLB.yPosition,
 			z = packetLB.zPosition;
-		System.out.println("X| " + x + " Y| " + y + " Z| " + z + " ID| " + id + " META| " + meta);
+		//System.out.println("X| " + x + " Y| " + y + " Z| " + z + " ID| " + id + " META| " + meta);
 		this.setContent(
 				x & 7,
 				y & 7,
@@ -722,7 +673,7 @@ public class TileEntityLittleBlocks extends TileEntity implements ILittleBlocks 
 			x = packetLB.xPosition,
 			y = packetLB.yPosition,
 			z = packetLB.zPosition;
-		System.out.println("X| " + x + " Y| " + y + " Z| " + z + " ID| " + id + " META| " + meta);
+		//System.out.println("X| " + x + " Y| " + y + " Z| " + z + " ID| " + id + " META| " + meta);
 		this.setMetadata(
 				x & 7,
 				y & 7,
@@ -731,28 +682,8 @@ public class TileEntityLittleBlocks extends TileEntity implements ILittleBlocks 
 		Block.blocksList[id].onSetBlockIDWithMetaData((World) this.getLittleWorld(), x, y, z, meta);
 		this.onInventoryChanged();
 	}
-	
-	@SideOnly(Side.CLIENT)
-	public void handleTilePacket(World world, PacketTileEntityLB packetLB) {
-		int numberOfBlocks = packetLB.getNumberOfBlocks();
-		int index = 1;
-		for (int i = 0; i < numberOfBlocks; i++) {
-			int id = packetLB.payload.getIntPayload(index),
-				meta = packetLB.payload.getIntPayload(index + 1),
-				x = packetLB.payload.getIntPayload(index + 2),
-				y = packetLB.payload.getIntPayload(index + 3),
-				z = packetLB.payload.getIntPayload(index + 4);
-			this.setContent(x, y, z, id, meta);
-			System.out.println("X| " + x + " Y| " + y + " Z| " + z + " ID| " + id + " META| " + meta);
-			index += 5;
-		}
-		this.setTiles(packetLB.getTileEntities());
-		world.markBlockForRenderUpdate(
-				packetLB.xPosition,
-				packetLB.yPosition,
-				packetLB.zPosition);
-	}
 
+	@SideOnly(Side.CLIENT)
 	public void handleLittleTilePacket(World world, PacketLittleBlocks packetLB) {
 		int x = packetLB.xPosition,
 			y =	packetLB.yPosition,
@@ -766,5 +697,6 @@ public class TileEntityLittleBlocks extends TileEntity implements ILittleBlocks 
 				z & 7,
 				littleTile);
 		}
+		this.onInventoryChanged();
 	}
 }

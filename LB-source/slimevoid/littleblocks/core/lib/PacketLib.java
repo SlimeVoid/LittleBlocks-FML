@@ -12,12 +12,10 @@ import slimevoid.littleblocks.client.network.packets.executors.ClientLittleColle
 import slimevoid.littleblocks.client.network.packets.executors.ClientLittleTileEntityUpdate;
 import slimevoid.littleblocks.client.network.packets.executors.ClientMetadataUpdateExecutor;
 import slimevoid.littleblocks.client.network.packets.executors.ClientPacketLittleBlocksLoginExecutor;
-import slimevoid.littleblocks.client.network.packets.executors.ClientPacketTileEntityLBExecutor;
 import slimevoid.littleblocks.network.CommonPacketHandler;
 import slimevoid.littleblocks.network.handlers.PacketLittleBlockCollectionHandler;
 import slimevoid.littleblocks.network.handlers.PacketLittleBlocksHandler;
 import slimevoid.littleblocks.network.handlers.PacketLoginHandler;
-import slimevoid.littleblocks.network.handlers.PacketTileEntityHandler;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocks;
 import slimevoid.littleblocks.network.packets.executors.PacketLittleBlocksActivatedExecutor;
 import slimevoid.littleblocks.network.packets.executors.PacketLittleBlocksClickedExecutor;
@@ -28,6 +26,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class PacketLib {	
+	
 	@SideOnly(Side.CLIENT)
 	public static void registerClientPacketHandlers() {
 		PacketLoginHandler clientLoginHandler = new PacketLoginHandler();
@@ -38,15 +37,6 @@ public class PacketLib {
 		ClientPacketHandler.registerPacketHandler(
 				PacketIds.LOGIN,
 				clientLoginHandler);
-		
-		PacketTileEntityHandler clientTileEntityHandler = new PacketTileEntityHandler();
-		clientTileEntityHandler.registerPacketHandler(
-				CommandLib.UPDATE_CLIENT,
-				new ClientPacketTileEntityLBExecutor());
-		
-		ClientPacketHandler.registerPacketHandler(
-				PacketIds.TILE,
-				clientTileEntityHandler);
 		
 		PacketLittleBlocksHandler clientLittleBlocksHandler = new PacketLittleBlocksHandler();
 		clientLittleBlocksHandler.registerPacketHandler(
