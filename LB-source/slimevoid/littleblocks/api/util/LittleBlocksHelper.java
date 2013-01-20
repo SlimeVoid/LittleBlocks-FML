@@ -84,7 +84,7 @@ public class LittleBlocksHelper implements ISlimevoidHelper {
 			double zDiff, 
 			double distance) {
 		if (isLittleBlock(world, xCoord, yCoord, zCoord)) {
-			return player.getDistanceSq((double)(xCoord / size) + xDiff, (double)(yCoord / size) + yDiff, (double)(zCoord / size) + zDiff) <= distance;
+			return player.getDistanceSq((xCoord / size) + xDiff, (yCoord / size) + yDiff, (zCoord / size) + zDiff) <= distance;
 		}
 		return false;
 	}

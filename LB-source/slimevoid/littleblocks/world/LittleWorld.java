@@ -118,7 +118,7 @@ public class LittleWorld extends World implements ILittleWorld {
 		Iterator<TileEntity> loadedTile = this.loadedTiles.iterator();
 
 		while (loadedTile.hasNext()) {
-			TileEntity tileentity = (TileEntity) loadedTile.next();
+			TileEntity tileentity = loadedTile.next();
 
 			if (!tileentity.isInvalid()
 					&& tileentity.func_70309_m()
@@ -150,7 +150,7 @@ public class LittleWorld extends World implements ILittleWorld {
 
 		if (!this.addedTiles.isEmpty()) {
 			for (int i = 0; i < this.addedTiles.size(); ++i) {
-				TileEntity tileentity = (TileEntity) this.addedTiles
+				TileEntity tileentity = this.addedTiles
 						.get(i);
 
 				if (!tileentity.isInvalid()) {
