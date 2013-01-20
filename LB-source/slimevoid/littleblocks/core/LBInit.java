@@ -3,7 +3,6 @@ package slimevoid.littleblocks.core;
 import slimevoid.lib.ICommonProxy;
 import slimevoid.lib.ICore;
 import slimevoid.lib.core.Core;
-import slimevoid.littleblocks.api.util.LittleBlocksHelper;
 
 public class LBInit {
 	public static ICore LBM;
@@ -16,7 +15,6 @@ public class LBInit {
 		LBM = new Core(proxy);
 		LBM.setModName("LittleBlocks");
 		LBM.setModChannel("LITTLEBLOCKS");
-		LittleBlocksHelper.init(proxy);
 	}
 
 	public static void load() {

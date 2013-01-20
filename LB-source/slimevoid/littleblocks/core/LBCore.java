@@ -14,6 +14,7 @@ import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
 import slimevoid.lib.core.SlimevoidCore;
 import slimevoid.littleblocks.api.ILBCommonProxy;
+import slimevoid.littleblocks.api.util.LittleBlocksHelper;
 import slimevoid.littleblocks.blocks.BlockLittleBlocks;
 import slimevoid.littleblocks.core.lib.BlockUtil;
 import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
@@ -67,11 +68,12 @@ public class LBCore {
 				LBInit.LBM.getProxy().getMinecraftDir(),
 					"config/LittleBlocks.cfg");
 		LBCore.configuration = new Configuration(LBCore.configFile);
+		littleBlocksID = configurationProperties();
+		LittleBlocksHelper.init(LBInit.LBM.getProxy(), littleBlocksSize);
 	}
 
 	public static void addItems() {
 		SlimevoidCore.console(LBInit.LBM.getModName(), "Registering items...");
-		littleBlocksID = configurationProperties();
 		littleBlocks = new BlockLittleBlocks(
 				littleBlocksID,
 					TileEntityLittleBlocks.class,
