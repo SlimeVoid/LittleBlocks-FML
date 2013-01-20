@@ -581,8 +581,8 @@ public class TileEntityLittleBlocks extends TileEntity implements ILittleBlocks 
 
 	@Override
 	public void onDataPacket(INetworkManager net, Packet132TileEntityData pkt) {
-		System.out.println("Reading Data Packet");
 		this.readFromNBT(pkt.customParam1);
+		this.onInventoryChanged();
 	}
 
 	@Override
