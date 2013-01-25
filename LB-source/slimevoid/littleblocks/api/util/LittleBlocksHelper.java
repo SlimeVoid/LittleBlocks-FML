@@ -5,7 +5,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import slimevoid.lib.ICommonProxy;
 import slimevoid.lib.ISlimevoidHelper;
-import slimevoid.lib.core.SlimevoidHelper;
+import slimevoid.lib.util.SlimevoidHelper;
 import slimevoid.littleblocks.api.ILBCommonProxy;
 import slimevoid.littleblocks.api.ILittleBlocks;
 

@@ -13,8 +13,6 @@ import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import slimevoid.lib.network.PacketPayload;
-import slimevoid.lib.network.PacketUpdate;
 import slimevoid.littleblocks.api.ILBCommonProxy;
 import slimevoid.littleblocks.api.ILittleBlocks;
 import slimevoid.littleblocks.api.ILittleWorld;
