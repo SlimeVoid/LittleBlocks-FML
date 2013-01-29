@@ -8,6 +8,7 @@ import slimevoid.lib.ISlimevoidHelper;
 import slimevoid.lib.util.SlimevoidHelper;
 import slimevoid.littleblocks.api.ILBCommonProxy;
 import slimevoid.littleblocks.api.ILittleBlocks;
+import slimevoid.littleblocks.api.ILittleWorld;
 
 public class LittleBlocksHelper implements ISlimevoidHelper {
 	
@@ -67,6 +68,9 @@ public class LittleBlocksHelper implements ISlimevoidHelper {
 	}
 
 	private boolean isLittleBlock(World world, int x, int y, int z) {
+		if (world instanceof ILittleWorld) {
+			return true;
+		}
 		if (world.getBlockTileEntity(x >> 3, y >> 3, z >> 3) instanceof ILittleBlocks) {
 			return true;
 		}
