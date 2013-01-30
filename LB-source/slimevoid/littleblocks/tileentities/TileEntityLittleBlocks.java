@@ -653,13 +653,13 @@ public class TileEntityLittleBlocks extends TileEntity implements ILittleBlocks 
 				packetLB.yPosition & 7,
 				packetLB.zPosition & 7,
 				0);
-		Block.blocksList[packetLB.getBlockID()].breakBlock(
+/*		Block.blocksList[packetLB.getBlockID()].breakBlock(
 				(World) this.getLittleWorld(),
 				packetLB.xPosition,
 				packetLB.yPosition,
 				packetLB.zPosition,
 				packetLB.side,
-				packetLB.getMetadata());
+				packetLB.getMetadata());*/
 		this.onInventoryChanged();
 	}
 

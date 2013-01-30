@@ -507,7 +507,7 @@ public class LittleWorldServer extends LittleWorld {
 				blockY,
 				blockZ,
 				blockId);
-		if (lastBlockId != 0) {
+		if (blockId == 0 && lastBlockId != 0) {
 			Block block = Block.blocksList[lastBlockId];
 			if (block != null) {
 				block.breakBlock(
