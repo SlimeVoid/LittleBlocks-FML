@@ -4,13 +4,13 @@ import net.minecraft.world.World;
 import slimevoid.lib.network.PacketIds;
 import slimevoid.lib.network.PacketPayload;
 import slimevoid.lib.network.PacketUpdate;
-import slimevoid.littleblocks.core.LBInit;
+import slimevoid.littleblocks.core.lib.ReferenceLib;
 
 public class PacketLittleBlocksSettings extends PacketUpdate {
 
 	public PacketLittleBlocksSettings() {
 		super(PacketIds.LOGIN);
-		this.setChannel(LBInit.LBM.getModChannel());
+		this.setChannel(ReferenceLib.MOD_CHANNEL);
 		this.payload = new PacketPayload(1, 0, 0, 1);
 	}
 

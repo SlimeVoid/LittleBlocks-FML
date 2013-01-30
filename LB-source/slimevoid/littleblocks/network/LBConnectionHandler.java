@@ -5,7 +5,7 @@ import net.minecraft.network.NetLoginHandler;
 import net.minecraft.network.packet.NetHandler;
 import net.minecraft.network.packet.Packet1Login;
 import net.minecraft.server.MinecraftServer;
-import slimevoid.littleblocks.core.LBInit;
+import slimevoid.littleblocks.core.LittleBlocks;
 import cpw.mods.fml.common.network.IConnectionHandler;
 import cpw.mods.fml.common.network.Player;
 
@@ -35,7 +35,7 @@ public class LBConnectionHandler implements IConnectionHandler {
 
 	@Override
 	public void clientLoggedIn(NetHandler clientHandler, INetworkManager manager, Packet1Login login) {
-		LBInit.LBM.getProxy().login(clientHandler, manager, login);
+		LittleBlocks.proxy.login(clientHandler, manager, login);
 	}
 
 }

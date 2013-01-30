@@ -9,12 +9,14 @@ import slimevoid.littleblocks.client.network.ClientPacketHandler;
 import slimevoid.littleblocks.client.network.packets.executors.ClientBlockAddedExecutor;
 import slimevoid.littleblocks.client.network.packets.executors.ClientBreakBlockExecutor;
 import slimevoid.littleblocks.client.network.packets.executors.ClientLittleCollectionExecutor;
+import slimevoid.littleblocks.client.network.packets.executors.ClientCopierNotifyExecutor;
 import slimevoid.littleblocks.client.network.packets.executors.ClientLittleTileEntityUpdate;
 import slimevoid.littleblocks.client.network.packets.executors.ClientMetadataUpdateExecutor;
 import slimevoid.littleblocks.client.network.packets.executors.ClientPacketLittleBlocksLoginExecutor;
 import slimevoid.littleblocks.network.CommonPacketHandler;
 import slimevoid.littleblocks.network.handlers.PacketLittleBlockCollectionHandler;
 import slimevoid.littleblocks.network.handlers.PacketLittleBlocksHandler;
+import slimevoid.littleblocks.network.handlers.PacketLittleNotifyHandler;
 import slimevoid.littleblocks.network.handlers.PacketLoginHandler;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocks;
 import slimevoid.littleblocks.network.packets.executors.PacketLittleBlocksActivatedExecutor;
@@ -52,15 +54,27 @@ public class PacketLib {
 				CommandLib.TILE_ENTITY_UPDATE,
 				new ClientLittleTileEntityUpdate());
 		
-		ClientPacketHandler.registerPacketHandler(PacketIds.UPDATE, clientLittleBlocksHandler);
+		ClientPacketHandler.registerPacketHandler(
+				PacketIds.UPDATE,
+				clientLittleBlocksHandler);
 		
 		PacketLittleBlockCollectionHandler clientCollectionHandler = new PacketLittleBlockCollectionHandler();
-		clientCollectionHandler.registerPacketHandler(CommandLib.ENTITY_COLLECTION, new ClientLittleCollectionExecutor());
+		clientCollectionHandler.registerPacketHandler(
+				CommandLib.ENTITY_COLLECTION,
+				new ClientLittleCollectionExecutor());
 		
 		ClientPacketHandler.registerPacketHandler(
 				PacketIds.ENTITY,
 				clientCollectionHandler);
 		
+		PacketLittleNotifyHandler clientLittleNotifyHandler = new PacketLittleNotifyHandler();
+		clientLittleNotifyHandler.registerPacketHandler(
+				CommandLib.COPIER_MESSAGE,
+				new ClientCopierNotifyExecutor());
+		
+		ClientPacketHandler.registerPacketHandler(
+				PacketIds.PLAYER,
+				clientLittleNotifyHandler);
 	}
 
 	@SideOnly(Side.CLIENT)

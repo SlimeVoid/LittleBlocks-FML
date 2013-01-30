@@ -6,13 +6,12 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemInWorldManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import slimevoid.littleblocks.api.ILBCommonProxy;
-import slimevoid.littleblocks.core.LBInit;
+import slimevoid.littleblocks.core.LittleBlocks;
 
 public class ItemInLittleWorldManager extends ItemInWorldManager {
 
 	public ItemInLittleWorldManager(World world, EntityPlayerMP entityplayer) {
-		super((World) ((ILBCommonProxy) LBInit.LBM.getProxy()).getLittleWorld(
+		super((World) LittleBlocks.proxy.getLittleWorld(
 				world, false));
 		this.thisPlayerMP = entityplayer;
 	}

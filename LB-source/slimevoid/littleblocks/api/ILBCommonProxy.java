@@ -13,4 +13,6 @@ public interface ILBCommonProxy extends ICommonProxy {
 	int getLittleDimension();
 
 	void resetLittleBlocks();
+
+	void registerConfigurationProperties();
 }

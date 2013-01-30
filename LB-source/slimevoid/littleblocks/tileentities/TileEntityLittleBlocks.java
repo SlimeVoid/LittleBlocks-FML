@@ -13,11 +13,10 @@ import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import slimevoid.littleblocks.api.ILBCommonProxy;
 import slimevoid.littleblocks.api.ILittleBlocks;
 import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.core.LBCore;
-import slimevoid.littleblocks.core.LBInit;
+import slimevoid.littleblocks.core.LittleBlocks;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocks;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -69,7 +68,7 @@ public class TileEntityLittleBlocks extends TileEntity implements ILittleBlocks 
 	}
 
 	public ILittleWorld getLittleWorld() {
-		return ((ILBCommonProxy) LBInit.LBM.getProxy()).getLittleWorld(
+		return LittleBlocks.proxy.getLittleWorld(
 				this.worldObj,
 				false);
 	}
@@ -234,7 +233,7 @@ public class TileEntityLittleBlocks extends TileEntity implements ILittleBlocks 
 		content[x][y][z] = id;
 		setMetadata(x, y, z, 0);
 		if (lastId != id) {
-			((ILBCommonProxy) LBInit.LBM.getProxy()).getLittleWorld(
+			LittleBlocks.proxy.getLittleWorld(
 					this.worldObj,
 					false).idModified(
 					lastId,
@@ -311,7 +310,7 @@ public class TileEntityLittleBlocks extends TileEntity implements ILittleBlocks 
 		int blockId = content[x][y][z];
 
 		if (lastData != metadata) {
-			((ILBCommonProxy) LBInit.LBM.getProxy()).getLittleWorld(
+			LittleBlocks.proxy.getLittleWorld(
 					this.worldObj,
 					false).metadataModified(
 					this.xCoord,
@@ -390,7 +389,7 @@ public class TileEntityLittleBlocks extends TileEntity implements ILittleBlocks 
 		metadatas[x][y][z] = metadata;
 
 		if (lastData != metadata) {
-			((ILBCommonProxy) LBInit.LBM.getProxy()).getLittleWorld(
+			LittleBlocks.proxy.getLittleWorld(
 					this.worldObj,
 					false).metadataModified(
 					this.xCoord,
@@ -404,7 +403,7 @@ public class TileEntityLittleBlocks extends TileEntity implements ILittleBlocks 
 					metadata);
 		}
 		if (lastId != id) {
-			((ILBCommonProxy) LBInit.LBM.getProxy()).getLittleWorld(
+			LittleBlocks.proxy.getLittleWorld(
 					this.worldObj,
 					false).idModified(
 					lastId,

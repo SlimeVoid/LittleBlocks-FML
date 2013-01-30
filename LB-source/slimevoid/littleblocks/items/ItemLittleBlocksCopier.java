@@ -10,10 +10,14 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import slimevoid.lib.data.ReadWriteLock;
 import slimevoid.littleblocks.core.LBCore;
-import slimevoid.littleblocks.core.LBInit;
 import slimevoid.littleblocks.core.LoggerLittleBlocks;
+import slimevoid.littleblocks.core.lib.CommandLib;
+import slimevoid.littleblocks.core.lib.ResourceLib;
 import slimevoid.littleblocks.handlers.LittleBlocksRotationHandler;
+import slimevoid.littleblocks.network.packets.PacketLittleNotify;
 import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
+import cpw.mods.fml.common.network.PacketDispatcher;
+import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -134,7 +138,10 @@ public class ItemLittleBlocksCopier extends Item {
 					}
 				}
 			} else {
-				entityplayer.addChatMessage(LBCore.littleBlockCopierMessage);
+				PacketDispatcher.sendPacketToPlayer(
+						new PacketLittleNotify(
+								CommandLib.COPIER_MESSAGE).getPacket(),
+								(Player) entityplayer);
 			}
 		}
 		return false;
@@ -143,6 +150,6 @@ public class ItemLittleBlocksCopier extends Item {
 	@SideOnly(Side.CLIENT)
 	@Override
 	public String getTextureFile() {
-		return LBInit.LBM.getItemSheet();
+		return ResourceLib.ITEM_SPRITE_PATH;
 	}
 }

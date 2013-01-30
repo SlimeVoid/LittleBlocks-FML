@@ -1,7 +1,8 @@
 package slimevoid.littleblocks.core;
 
-import slimevoid.lib.ICommonProxy;
+import slimevoid.littleblocks.api.ILBCommonProxy;
 import slimevoid.littleblocks.client.network.ClientPacketHandler;
+import slimevoid.littleblocks.core.lib.ReferenceLib;
 import slimevoid.littleblocks.network.CommonPacketHandler;
 import slimevoid.littleblocks.network.LBConnectionHandler;
 import cpw.mods.fml.common.Mod;
@@ -17,27 +18,27 @@ import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
 
 @Mod(
-		modid = "LittleBlocksMod",
-		name = "Little Blocks",
-		version = "2.0.2.1",
-		dependencies = "after:SlimevoidLib")
+		modid = ReferenceLib.MOD_ID,
+		name = ReferenceLib.MOD_NAME,
+		version = ReferenceLib.MOD_VERSION,
+		dependencies = ReferenceLib.MOD_DEPENDENCIES)
 @NetworkMod(
 		clientSideRequired = true,
 		serverSideRequired = false,
 		clientPacketHandlerSpec = @SidedPacketHandler(
-				channels = { "LITTLEBLOCKS" },
+				channels = { ReferenceLib.MOD_CHANNEL },
 				packetHandler = ClientPacketHandler.class),
 		serverPacketHandlerSpec = @SidedPacketHandler(
-				channels = { "LITTLEBLOCKS" },
+				channels = { ReferenceLib.MOD_CHANNEL },
 				packetHandler = CommonPacketHandler.class),
 		connectionHandler = LBConnectionHandler.class)
 public class LittleBlocks {
 	@SidedProxy(
-			clientSide = "slimevoid.littleblocks.client.proxy.ClientProxy",
-			serverSide = "slimevoid.littleblocks.proxy.CommonProxy")
-	public static ICommonProxy proxy;
+			clientSide = ReferenceLib.CLIENT_PROXY,
+			serverSide = ReferenceLib.COMMON_PROXY)
+	public static ILBCommonProxy proxy;
 	
-	@Instance("LittleBlocksMod")
+	@Instance(ReferenceLib.MOD_ID)
 	public static LittleBlocks instance;
 
 	@PreInit
@@ -48,11 +49,6 @@ public class LittleBlocks {
 	@Init
 	public void LittleBlocksInit(FMLInitializationEvent event) {
 		LBInit.initialize(proxy);
-		LBCore.initialize();
-		LBCore.addItems();
-		LBCore.addNames();
-		LBCore.addRecipes();
-		LBInit.load();
 	}
 
 	@PostInit

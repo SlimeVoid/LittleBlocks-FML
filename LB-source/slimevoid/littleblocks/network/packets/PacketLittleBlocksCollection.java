@@ -7,8 +7,8 @@ import java.util.HashMap;
 
 import net.minecraft.item.ItemStack;
 import slimevoid.lib.network.PacketEntity;
-import slimevoid.littleblocks.core.LBInit;
 import slimevoid.littleblocks.core.lib.CommandLib;
+import slimevoid.littleblocks.core.lib.ReferenceLib;
 import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
 
 public class PacketLittleBlocksCollection extends PacketEntity {
@@ -16,7 +16,7 @@ public class PacketLittleBlocksCollection extends PacketEntity {
 
 	public PacketLittleBlocksCollection() {
 		super();
-		this.setChannel(LBInit.LBM.getModChannel());
+		this.setChannel(ReferenceLib.MOD_CHANNEL);
 	}
 
 	public PacketLittleBlocksCollection(EntityItemLittleBlocksCollection entitylb) {

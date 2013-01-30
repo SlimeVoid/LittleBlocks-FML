@@ -13,6 +13,7 @@ import slimevoid.lib.IPacketHandling;
 import slimevoid.littleblocks.api.ILBCommonProxy;
 import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.core.LBCore;
+import slimevoid.littleblocks.core.lib.ConfigurationLib;
 import slimevoid.littleblocks.core.lib.PacketLib;
 import slimevoid.littleblocks.handlers.CommonTickHandler;
 import slimevoid.littleblocks.network.CommonPacketHandler;
@@ -158,5 +159,10 @@ public class CommonProxy implements ILBCommonProxy {
 			LBCore.littleProviderServer = null;
 			LBCore.littleDimensionServer = -2;
 		}
+	}
+
+	@Override
+	public void registerConfigurationProperties() {
+		ConfigurationLib.CommonConfig();
 	}
 }

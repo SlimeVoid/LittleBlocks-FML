@@ -14,4 +14,5 @@ public class CommandLib {
 	public static final String SETTINGS = "SETTINGS";
 	public static final String ENTITY_COLLECTION = "COLLECTION";
 	public static final String TILE_ENTITY_UPDATE = "TILEENTITY";
+	public static final String COPIER_MESSAGE = "COPIER";
 }

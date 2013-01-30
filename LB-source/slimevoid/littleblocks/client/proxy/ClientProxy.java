@@ -21,15 +21,15 @@ import slimevoid.littleblocks.client.render.EntityItemLittleBlocksCollectionRend
 import slimevoid.littleblocks.client.render.blocks.LittleBlocksRenderer;
 import slimevoid.littleblocks.client.render.tileentities.TileEntityLittleBlocksRenderer;
 import slimevoid.littleblocks.core.LBCore;
-import slimevoid.littleblocks.core.LBInit;
-import slimevoid.littleblocks.core.LoggerLittleBlocks;
 import slimevoid.littleblocks.core.lib.CommandLib;
+import slimevoid.littleblocks.core.lib.ConfigurationLib;
 import slimevoid.littleblocks.core.lib.PacketLib;
 import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocksSettings;
 import slimevoid.littleblocks.proxy.CommonProxy;
 import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
 import slimevoid.littleblocks.world.LittleWorld;
+import slimevoid.littleblocks.core.lib.ResourceLib;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -42,28 +42,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class ClientProxy extends CommonProxy {
 	
 	@Override
-	public void preInit() {
-		try {
-			this.getClass().getClassLoader().loadClass("TextureHDCompassFX");
-			LBCore.optifine = true;
-			LoggerLittleBlocks.getInstance(
-					"ClientProxy"
-			).write(
-					true,
-					"Optifine Loaded - RenderBlocks Configured",
-					LoggerLittleBlocks.LogLevel.DEBUG
-			);
-		} catch (ClassNotFoundException e) {
-			LBCore.optifine = false;
-			LoggerLittleBlocks.getInstance(
-					"ClientProxy"
-			).write(
-					true,
-					"Optifine not Loaded - RenderBlocks Configured",
-					LoggerLittleBlocks.LogLevel.DEBUG
-			);
-		}
-		
+	public void preInit() {		
 		super.preInit();
 		ClientPacketHandler.init();
 		PacketLib.registerClientPacketHandlers();
@@ -76,8 +55,8 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void registerRenderInformation() {
-		MinecraftForgeClient.preloadTexture(LBInit.LBM.getBlockSheet());
-		MinecraftForgeClient.preloadTexture(LBInit.LBM.getItemSheet());
+		MinecraftForgeClient.preloadTexture(ResourceLib.BLOCK_TEXTURE_PATH);
+		MinecraftForgeClient.preloadTexture(ResourceLib.ITEM_SPRITE_PATH);
 		MinecraftForge.EVENT_BUS.register(new DrawCopierHighlight());
 		RenderingRegistry.registerBlockHandler(new LittleBlocksRenderer());
 		RenderingRegistry.registerEntityRenderingHandler(EntityItemLittleBlocksCollection.class, new EntityItemLittleBlocksCollectionRenderer());
@@ -201,5 +180,11 @@ public class ClientProxy extends CommonProxy {
 			}
 		}
 		LBCore.setLittleRenderer(null);
+	}
+
+	@Override
+	public void registerConfigurationProperties() {
+		super.registerConfigurationProperties();
+		ConfigurationLib.ClientConfig();
 	}
 }

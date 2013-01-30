@@ -28,12 +28,14 @@ import slimevoid.littleblocks.blocks.core.CollisionRayTrace;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.lib.BlockUtil;
 import slimevoid.littleblocks.core.lib.CommandLib;
+import slimevoid.littleblocks.core.lib.MessageLib;
 import slimevoid.littleblocks.core.lib.PacketLib;
 import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocksCollection;
 import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
+import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 
 public class BlockLittleBlocks extends BlockContainer {
@@ -175,19 +177,19 @@ public class BlockLittleBlocks extends BlockContainer {
 			if (block != null) {
 				if (!BlockUtil.isBlockAllowed(block)) {
 					denyPlacement = true;
-					placementMessage = LBCore.denyPlacementMessage;
+					placementMessage = MessageLib.DENY_PLACEMENT;
 				}
 				if (BlockUtil.hasTile(block.blockID)) {
 					if (!BlockUtil.isTileEntityAllowed(block.createTileEntity(
 							world,
 							0))) {
 						denyPlacement = true;
-						placementMessage = LBCore.denyPlacementMessage;
+						placementMessage = MessageLib.DENY_PLACEMENT;
 					}
 				}
 				if (block.getRenderType() == 1) {
 					denyPlacement = true;
-					placementMessage = LBCore.denyPlacementMessage;
+					placementMessage = MessageLib.DENY_PLACEMENT;
 				}
 			}
 			if (item != null) {
@@ -198,18 +200,18 @@ public class BlockLittleBlocks extends BlockContainer {
 								.isTileEntityAllowed(Block.blocksList[itemBlockId]
 										.createTileEntity(world, 0))) {
 							denyPlacement = true;
-							placementMessage = LBCore.denyPlacementMessage;
+							placementMessage = MessageLib.DENY_PLACEMENT;
 						}
 					}
 				}
 				if (!BlockUtil.isItemAllowed(item)) {
 					denyPlacement = true;
-					placementMessage = LBCore.denyUseMessage;
+					placementMessage = MessageLib.DENY_USE;
 				}
 			}
 		}
 		if (denyPlacement) {
-			entityplayer.addChatMessage(placementMessage);
+			entityplayer.addChatMessage(LanguageRegistry.instance().getStringLocalization(placementMessage));
 			return false;
 		}
 		return true;
