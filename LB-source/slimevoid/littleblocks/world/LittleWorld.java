@@ -1001,6 +1001,9 @@ public class LittleWorld extends World implements ILittleWorld {
 
 	@Override
 	public void notifyBlocksOfNeighborChange(int x, int y, int z, int blockId) {
+		System.out.println("InitialWorld[" + this.toString() + "]" +
+				" | BlockID[" + blockId + "]" + 
+				" | x[" + x + "]" + " | y[" + y + "]" + " | z[" + z + "]");
 		LoggerLittleBlocks.getInstance(
 				Logger.filterClassName(
 						this.getClass().toString()
@@ -1010,12 +1013,12 @@ public class LittleWorld extends World implements ILittleWorld {
 				"notifyBlocksOfNeighborChange(" + x + ", " + y + ", " + z + ", " + blockId + ")",
 				LoggerLittleBlocks.LogLevel.DEBUG
 		);
-		notifyBlockOfNeighborChange(x - 1, y, z, blockId);
-		notifyBlockOfNeighborChange(x + 1, y, z, blockId);
-		notifyBlockOfNeighborChange(x, y - 1, z, blockId);
-		notifyBlockOfNeighborChange(x, y + 1, z, blockId);
-		notifyBlockOfNeighborChange(x, y, z - 1, blockId);
-		notifyBlockOfNeighborChange(x, y, z + 1, blockId);
+		this.notifyBlockOfNeighborChange(x - 1, y, z, blockId);
+		this.notifyBlockOfNeighborChange(x + 1, y, z, blockId);
+		this.notifyBlockOfNeighborChange(x, y - 1, z, blockId);
+		this.notifyBlockOfNeighborChange(x, y + 1, z, blockId);
+		this.notifyBlockOfNeighborChange(x, y, z - 1, blockId);
+		this.notifyBlockOfNeighborChange(x, y, z + 1, blockId);
 	}
 
 	@Override
@@ -1031,6 +1034,9 @@ public class LittleWorld extends World implements ILittleWorld {
 			world = this.realWorld;
 		}
 		if (!world.isRemote) {
+			System.out.println("World[" + world.toString() + "]" +
+								" | BlockID[" + blockId + "]" + 
+								" | x[" + x + "]" + " | y[" + y + "]" + " | z[" + z + "]");
 			Block block = Block.blocksList[world.getBlockId(x, y, z)];
 			if (block != null) {
 				try {
@@ -1063,14 +1069,14 @@ public class LittleWorld extends World implements ILittleWorld {
 
 	@Override
 	public void idModified(int lastBlockId, int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
-		int blockX = (x << 3) + littleX,
+		/*int blockX = (x << 3) + littleX,
 			blockY = (y << 3) + littleY,
 			blockZ = (z << 3) + littleZ;
 		this.notifyBlockChange(
 				blockX,
 				blockY,
 				blockZ,
-				blockId);
+				blockId);*/
 		if (this.realWorld != null) {
 			this.realWorld.updateAllLightTypes(x, y, z);
 			this.realWorld.markBlockForRenderUpdate(x, y, z);
@@ -1079,14 +1085,14 @@ public class LittleWorld extends World implements ILittleWorld {
 
 	@Override
 	public void metadataModified(int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
-		int blockX = (x << 3) + littleX,
+		/*int blockX = (x << 3) + littleX,
 			blockY = (y << 3) + littleY,
 			blockZ = (z << 3) + littleZ;
 		this.notifyBlockChange(
 				blockX,
 				blockY,
 				blockZ,
-				blockId);
+				blockId);*/
 		if (this.realWorld != null) {
 			this.realWorld.updateAllLightTypes(x, y, z);
 			this.realWorld.markBlockForRenderUpdate(x, y, z);

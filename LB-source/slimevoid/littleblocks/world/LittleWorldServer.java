@@ -42,6 +42,9 @@ public class LittleWorldServer extends LittleWorld {
 
 	/** Set of scheduled ticks (used for checking if a tick already exists) */
 	private Set<NextTickListEntry> scheduledTickSet;
+	
+	
+    private ArrayList tickedEntries = new ArrayList();
 
 	/**
 	 * Double buffer of ServerBlockEventList[] for holding pending
@@ -92,17 +95,21 @@ public class LittleWorldServer extends LittleWorld {
 
 	@Override
 	public void tick() {
-		/*if (this.worldInfo.getWorldTime() != this.getWorldTime()) {
-			this.worldInfo.setWorldTime(this.getWorldTime());
-			this.worldInfo.incrementTotalWorldTime(this.getTotalWorldTime());
-			this.scheduledTickSet.clear();
-			this.pendingTickListEntries.clear();
-		}*/
-		this.sendAndApplyBlockEvents();
-        this.worldInfo.incrementTotalWorldTime(this.realWorld.getWorldInfo().getWorldTotalTime() + 1L);
-        this.worldInfo.setWorldTime(this.realWorld.getWorldInfo().getWorldTime() + 1L);
+        this.worldInfo.incrementTotalWorldTime(this.worldInfo.getWorldTotalTime() + 1L);
+        this.worldInfo.setWorldTime(this.worldInfo.getWorldTime() + 1L);
 		this.tickUpdates(false);
 		this.sendAndApplyBlockEvents();
+	}
+
+	/**
+	 * Returns true if the given block will receive a scheduled tick in the
+	 * future. Args: X, Y, Z, blockID
+	 */
+	public boolean isBlockTickScheduled(int x, int y, int z, int blockId) {
+		System.out.println("isBlockTickScheduled");
+		NextTickListEntry nextticklistentry = new NextTickListEntry(x, y,
+				z, blockId);
+		return this.tickedEntries.contains(nextticklistentry);
 	}
 
 	@Override
@@ -115,9 +122,9 @@ public class LittleWorldServer extends LittleWorld {
 			if (numberOfUpdates > 1000) {
 				numberOfUpdates = 1000;
 			}
-
+			NextTickListEntry nextTick;
 			for (int update = 0; update < numberOfUpdates; ++update) {
-				NextTickListEntry nextTick = this.pendingTickListEntries
+				nextTick = (NextTickListEntry)this.pendingTickListEntries
 						.first();
 
 				if (!tick && nextTick.scheduledTime > this.realWorld.getWorldInfo()
@@ -127,7 +134,14 @@ public class LittleWorldServer extends LittleWorld {
 
 				this.pendingTickListEntries.remove(nextTick);
 				this.scheduledTickSet.remove(nextTick);
-				byte max = 8;
+                this.tickedEntries.add(nextTick);
+			}
+            Iterator tickedEntryList = this.tickedEntries.iterator();
+
+            while (tickedEntryList.hasNext()) {
+            	nextTick = (NextTickListEntry)tickedEntryList.next();
+            	tickedEntryList.remove();
+				byte max = 0;
 				if (this.checkChunksExist(
 						nextTick.xCoord - max,
 						nextTick.yCoord - max,
@@ -135,15 +149,18 @@ public class LittleWorldServer extends LittleWorld {
 						nextTick.xCoord + max,
 						nextTick.yCoord + max,
 						nextTick.zCoord + max)) {
+					System.out.println("Existing Chunk");
 					int blockId = this.getBlockId(
 							nextTick.xCoord,
 							nextTick.yCoord,
 							nextTick.zCoord);
 
-					if (blockId == nextTick.blockID && blockId > 0) {
+					if (blockId > 0 && Block.isAssociatedBlockID(blockId, nextTick.blockID)) {
+						System.out.println("Associated Ticking Block");
 						try {
 							Block littleBlock = Block.blocksList[blockId];
 							if (BlockUtil.isBlockAllowedToTick(littleBlock)) {
+								System.out.println("Allowed to Tick");
 								littleBlock.updateTick(
 										this,
 										nextTick.xCoord,
@@ -202,12 +219,16 @@ public class LittleWorldServer extends LittleWorld {
 							}
 						}*/
 					}
-				}
+				} else {
+					System.out.println("Scheduling Update....");
+                    this.scheduleBlockUpdate(nextTick.xCoord, nextTick.yCoord, nextTick.zCoord, nextTick.blockID, 0);
+                }
 			}
 			/*if (this.ticksInWorld >= MAX_TICKS_IN_WORLD) {
 				for (TileEntity tile : littleBlockTiles) {
 				}
 			}*/
+            this.tickedEntries.clear();
 			return !this.pendingTickListEntries.isEmpty();
 		}
 	}
@@ -253,7 +274,6 @@ public class LittleWorldServer extends LittleWorld {
 	 * Send and apply locally all pending BlockEvents to each player with 64m
 	 * radius of the event.
 	 */
-	@SuppressWarnings("rawtypes")
 	private void sendAndApplyBlockEvents() {
 		//Set<TileEntityLittleBlocks> tileentities = new HashSet();
 		while (!this.blockEventCache[this.blockEventCacheIndex].isEmpty()) {
@@ -328,7 +348,6 @@ public class LittleWorldServer extends LittleWorld {
 	 * called with the given parameters. Args: X,Y,Z, BlockID, EventID,
 	 * EventParameter
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void addBlockEvent(int x, int y, int z, int blockID, int eventID, int eventParam) {
 		BlockEventData eventData = new BlockEventData(
@@ -352,14 +371,14 @@ public class LittleWorldServer extends LittleWorld {
 		} while (!newBlockEvent.equals(eventData));
 	}
 
-	@Override
+/*	@Override
 	public List<NextTickListEntry> getPendingBlockUpdates(Chunk chunk, boolean forceRemove) {
 		ArrayList<NextTickListEntry> pendingUpdates = null;
 		ChunkCoordIntPair chunkPair = chunk.getChunkCoordIntPair();
-		int x = chunkPair.chunkXPos << 4;
-		int maxX = x + 16;
-		int z = chunkPair.chunkZPos << 4;
-		int maxZ = z + 16;
+		int x = (chunkPair.chunkXPos << 4) + 2;
+		int maxX = x + 16 + 2;
+		int z = (chunkPair.chunkZPos << 4) + 2;
+		int maxZ = z + 16 + 2;
 		Iterator<NextTickListEntry> pendingTicks = this.pendingTickListEntries.iterator();
 
 		while (pendingTicks.hasNext()) {
@@ -381,7 +400,7 @@ public class LittleWorldServer extends LittleWorld {
 		}
 
 		return pendingUpdates;
-	}
+	}*/
 
 	/**
 	 * Schedules a tick to a block with a delay (Most commonly the tick rate)
@@ -470,11 +489,11 @@ public class LittleWorldServer extends LittleWorld {
 		int blockX = (x << 3) + littleX,
 				blockY = (y << 3) + littleY,
 				blockZ = (z << 3) + littleZ;
-		this.notifyBlockChange(
+/*		this.notifyBlockChange(
 				blockX,
 				blockY,
 				blockZ,
-				blockId);
+				blockId);*/
 		Block block = Block.blocksList[blockId];
 		if (block != null) {
 			PacketLib.sendMetadata(
@@ -503,11 +522,6 @@ public class LittleWorldServer extends LittleWorld {
 		int blockX = (x << 3) + littleX,
 			blockY = (y << 3) + littleY,
 			blockZ = (z << 3) + littleZ;
-		this.notifyBlockChange(
-				blockX,
-				blockY,
-				blockZ,
-				blockId);
 		if (blockId == 0 && lastBlockId != 0) {
 			Block block = Block.blocksList[lastBlockId];
 			if (block != null) {
@@ -546,5 +560,10 @@ public class LittleWorldServer extends LittleWorld {
 						metadata);
 			}
 		}
+/*		this.notifyBlockChange(
+				blockX,
+				blockY,
+				blockZ,
+				blockId);*/
 	}
 }
