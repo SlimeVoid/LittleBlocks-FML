@@ -157,7 +157,7 @@ public class LittleWorldServer extends LittleWorld {
 										)
 								).write(
 										this.isRemote,
-										"BlockUpdateTick Prohibited[" + Block.blocksList[littleBlock.blockID].getBlockName() + "].("+ 
+										"BlockUpdateTick Prohibited[" + Block.blocksList[littleBlock.blockID].getLocalizedName() + "].("+ 
 												nextTick.xCoord + ", " +
 												nextTick.yCoord + ", " +
 												nextTick.zCoord + ")",
@@ -171,7 +171,7 @@ public class LittleWorldServer extends LittleWorld {
 									)
 							).write(
 									this.isRemote,
-									"BlockUpdateTick FAILED[" + Block.blocksList[blockId].getBlockName() + "].("+ 
+									"BlockUpdateTick FAILED[" + Block.blocksList[blockId].getLocalizedName() + "].("+ 
 											nextTick.xCoord + ", " +
 											nextTick.yCoord + ", " +
 											nextTick.zCoord + ")",
@@ -451,11 +451,12 @@ public class LittleWorldServer extends LittleWorld {
 	 * when the chunk is loaded.
 	 */
 	@Override
-	public void scheduleBlockUpdateFromLoad(int x, int y, int z, int blockId, int tickRate) {
+	public void scheduleBlockUpdateFromLoad(int x, int y, int z, int blockId, int tickRate, int par6) {
 		NextTickListEntry nextTick = new NextTickListEntry(x, y, z, blockId);
+		nextTick.func_82753_a(par6);
 
 		if (blockId > 0) {
-			nextTick.setScheduledTime(tickRate + this.realWorld.getWorldInfo().getWorldTotalTime());
+			nextTick.setScheduledTime((long)tickRate + this.realWorld.getWorldInfo().getWorldTotalTime());
 		}
 
 		if (!this.scheduledTickSet.contains(nextTick)) {

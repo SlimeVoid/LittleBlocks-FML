@@ -108,16 +108,16 @@ public class ItemLittleBlocksCopier extends Item {
 									for (int x1 = 0; x1 < LBCore.littleBlocksSize; x1++) {
 										for (int y1 = 0; y1 < LBCore.littleBlocksSize; y1++) {
 											for (int z1 = 0; z1 < LBCore.littleBlocksSize; z1++) {
-												if (oldtile.getContent(x1, y1, z1) > 0) {
-													newtilelb.setContent(
+												if (oldtile.getBlockID(x1, y1, z1) > 0) {
+													newtilelb.setBlockIDWithMetadata(
 															x1,
 															y1,
 															z1,
-															oldtile.getContent(
+															oldtile.getBlockID(
 																	x1,
 																	y1,
 																	z1),
-															oldtile.getMetadata(
+															oldtile.getBlockMetadata(
 																	x1,
 																	y1,
 																	z1));
@@ -145,11 +145,5 @@ public class ItemLittleBlocksCopier extends Item {
 			}
 		}
 		return false;
-	}
-
-	@SideOnly(Side.CLIENT)
-	@Override
-	public String getTextureFile() {
-		return ResourceLib.ITEM_SPRITE_PATH;
 	}
 }

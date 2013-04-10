@@ -140,10 +140,10 @@ public class CommonProxy implements ILBCommonProxy {
 	@Override
 	public void setLittleDimension(World world, Configuration configuration, int nextFreeDimId) {
 		configuration.load();
-		LBCore.littleDimensionServer = Integer.parseInt(configuration.get(
+		LBCore.littleDimensionServer = configuration.get(
 				Configuration.CATEGORY_GENERAL,
 				"littleDimension",
-				nextFreeDimId).value);
+				nextFreeDimId).getInt();
 		configuration.save();
 	}
 

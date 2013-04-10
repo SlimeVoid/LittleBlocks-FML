@@ -17,35 +17,43 @@ public class ConfigurationLib {
 	
 	public static void CommonConfig() {
 		LBCore.configuration.load();
-		LBCore.littleBlocksID = Integer.parseInt(LBCore.configuration.get(
+		LBCore.littleBlocksID = LBCore.configuration.get(
 				Configuration.CATEGORY_BLOCK,
 				"littleBlocksID",
-				150).value);
-		LBCore.littleBlocksCopierID = Integer.parseInt(LBCore.configuration.get(
+				1150).getInt();
+		LBCore.littleBlocksCopierID = LBCore.configuration.get(
 				Configuration.CATEGORY_ITEM,
 				"littleBlocksCopierID",
-				29999).value);
-		LBCore.littleBlocksCollectionID = Integer.parseInt(LBCore.configuration.get(
+				29999).getInt();
+		LBCore.littleBlockID = LBCore.configuration.get(
+				Configuration.CATEGORY_ITEM,
+				"chiseledBlockID",
+				29998).getInt();
+		LBCore.littleBlockChiselID = LBCore.configuration.get(
+				Configuration.CATEGORY_ITEM,
+				"chiselID",
+				29997).getInt();
+		LBCore.littleBlocksCollectionID = LBCore.configuration.get(
 				Configuration.CATEGORY_GENERAL,
 				"littleBlocksCollectionID",
-				EntityRegistry.findGlobalUniqueEntityId()).value);
-		LBCore.littleBlocksClip = Boolean.parseBoolean(LBCore.configuration.get(
+				EntityRegistry.findGlobalUniqueEntityId()).getInt();
+		LBCore.littleBlocksClip = LBCore.configuration.get(
 				Configuration.CATEGORY_GENERAL,
 				"littleBlocksClip",
-				true).value);
-		LBCore.littleBlocksForceUpdate = Boolean.parseBoolean(LBCore.configuration.get(
+				true).getBoolean(true);
+		LBCore.littleBlocksForceUpdate = LBCore.configuration.get(
 				Configuration.CATEGORY_GENERAL,
 				"littleBlocksForceUpdate",
-				false).value);
-		LBCore.renderingMethod = Integer.parseInt(LBCore.configuration.get(
+				false).getBoolean(false);
+		LBCore.renderingMethod = LBCore.configuration.get(
 				Configuration.CATEGORY_GENERAL,
 				"renderingMethod",
-				0).value);
+				0).getInt();
 		LBCore.renderType = RenderingRegistry.getNextAvailableRenderId();
-		LBCore.loggerLevel = String.valueOf(LBCore.configuration.get(
+		LBCore.loggerLevel = LBCore.configuration.get(
 				Configuration.CATEGORY_GENERAL,
 				"loggerLevel",
-				"INFO").value);
+				"INFO").getString();
 		LBCore.configuration.save();
 		LoggerLittleBlocks.getInstance("LittleBlocksConfig").setFilterLevel(LBCore.loggerLevel);
 	}

@@ -27,8 +27,8 @@ public class LittleBlocksRotationHandler {
 	}
 	
 	public void rotateTile() {
-		int[][][] content = this.tile.getContent();
-		int[][][] metadata = this.tile.getMetadata();
+		int[][][] content = this.tile.getContents();
+		int[][][] metadata = this.tile.getMetadatas();
 		int max = LBCore.littleBlocksSize-1;
 		for (int y = 0; y < LBCore.littleBlocksSize; y++) {
 			for (int x = 0; x < LBCore.littleBlocksSize; x++) {
@@ -43,7 +43,7 @@ public class LittleBlocksRotationHandler {
 		for (int x = 0; x < LBCore.littleBlocksSize; x++) {
 			for (int y = 0; y < LBCore.littleBlocksSize; y++) {
 				for (int z = 0; z < LBCore.littleBlocksSize; z++) {
-					this.tile.setContent(x, y, z, newContent[x][y][z], newMetadata[x][y][z]);
+					this.tile.setBlockIDWithMetadata(x, y, z, newContent[x][y][z], newMetadata[x][y][z]);
 				}
 			}
 		}

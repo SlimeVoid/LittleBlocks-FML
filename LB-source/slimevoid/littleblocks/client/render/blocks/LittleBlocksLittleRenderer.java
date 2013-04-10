@@ -11,8 +11,10 @@
  */
 package slimevoid.littleblocks.client.render.blocks;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import net.minecraft.block.Block;
@@ -31,14 +33,16 @@ public class LittleBlocksLittleRenderer {
 	private RenderBlocks renderBlocks;
 	private Set<String> textures = new HashSet<String>();
 	private HashMap<String, HashMap<Integer, LittleBlockToRender>> texturedBlocksToRender = new HashMap<String, HashMap<Integer, LittleBlockToRender>>();
+	private List<LittleBlockToRender> littleBlocksToRender;
 	
 	public LittleBlocksLittleRenderer(RenderBlocks renderBlocks) {
 		this.renderBlocks = renderBlocks;
+		this.littleBlocksToRender = new ArrayList<LittleBlockToRender>();
 	}
 
 	public void addLittleBlockToRender(Block block, int x, int y, int z) {
 		LittleBlockToRender render = new LittleBlockToRender(block, x, y, z);
-		if (texturedBlocksToRender.containsKey(block.getTextureFile())) {
+/**		if (texturedBlocksToRender.containsKey(block.getTextureFile())) {
 			HashMap<Integer, LittleBlockToRender> littleBlocksToRender = texturedBlocksToRender.get(block.getTextureFile());
 			int nextInt = littleBlocksToRender.size();
 			littleBlocksToRender.put(nextInt, render);
@@ -47,11 +51,14 @@ public class LittleBlocksLittleRenderer {
 			HashMap<Integer, LittleBlockToRender> littleBlocksToRender = new HashMap<Integer, LittleBlockToRender>();
 			littleBlocksToRender.put(0, render);
 			texturedBlocksToRender.put(block.getTextureFile(), littleBlocksToRender);
+		}**/
+		if (!this.littleBlocksToRender.contains(render)) {
+			this.littleBlocksToRender.add(render);
 		}
 	}
 
 	public void renderLittleBlocks(IBlockAccess iblockaccess, int x, int y, int z) {
-		if (this.texturedBlocksToRender.size() > 0) {
+		if (this.littleBlocksToRender.size() > 0) {
 			Tessellator tessellator = Tessellator.instance;
 	        int mode = tessellator.drawMode;
 			tessellator.draw();
@@ -65,8 +72,20 @@ public class LittleBlocksLittleRenderer {
 			float scale = 1 / (float) LBCore.littleBlocksSize;
 			GL11.glScalef(scale, scale, scale);
 			GL11.glTranslated(-xS, -yS, -zS);
-			
-			for (String textureFile : this.textures) {
+			for (LittleBlockToRender littleBlockToRender : this.littleBlocksToRender) {
+				// TODO :: Performance Degradation - Start
+				tessellator.draw();
+				tessellator.startDrawingQuads();
+				this.renderBlocks.renderBlockByRenderType(
+						littleBlockToRender.block,
+						littleBlockToRender.x,
+						littleBlockToRender.y,
+						littleBlockToRender.z);
+				tessellator.draw();
+				tessellator.startDrawingQuads();
+				// TODO :: Performance Degradation - Stop
+			}
+/*			for (String textureFile : this.textures) {
 				if (this.texturedBlocksToRender.containsKey(textureFile)) {
 					HashMap<Integer, LittleBlockToRender> littleBlocksToRender = this.texturedBlocksToRender.get(textureFile);
 					
@@ -93,14 +112,14 @@ public class LittleBlocksLittleRenderer {
 						unbindTexture();
 					}
 				}
-			}
+			}*/
 			
 			GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 			GL11.glPopMatrix();
 		}
 	}
 	
-	private void bindTexture(String textureFile) {
+/*	private void bindTexture(String textureFile) {
 		int texture = ModLoader.getMinecraftInstance(
 				).renderEngine.getTexture(
 						textureFile
@@ -114,5 +133,5 @@ public class LittleBlocksLittleRenderer {
 						"/terrain.png"
 		);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
-	}
+	}*/
 }

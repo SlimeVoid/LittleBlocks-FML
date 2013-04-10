@@ -17,14 +17,14 @@ import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.client.handlers.ClientTickHandler;
 import slimevoid.littleblocks.client.handlers.DrawCopierHighlight;
 import slimevoid.littleblocks.client.network.ClientPacketHandler;
-import slimevoid.littleblocks.client.render.EntityItemLittleBlocksCollectionRenderer;
 import slimevoid.littleblocks.client.render.blocks.LittleBlocksRenderer;
+//import slimevoid.littleblocks.client.render.items.EntityItemLittleCollectionRenderer;
 import slimevoid.littleblocks.client.render.tileentities.TileEntityLittleBlocksRenderer;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.lib.CommandLib;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
 import slimevoid.littleblocks.core.lib.PacketLib;
-import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
+//import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocksSettings;
 import slimevoid.littleblocks.proxy.CommonProxy;
 import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
@@ -59,7 +59,7 @@ public class ClientProxy extends CommonProxy {
 		MinecraftForgeClient.preloadTexture(ResourceLib.ITEM_SPRITE_PATH);
 		MinecraftForge.EVENT_BUS.register(new DrawCopierHighlight());
 		RenderingRegistry.registerBlockHandler(new LittleBlocksRenderer());
-		RenderingRegistry.registerEntityRenderingHandler(EntityItemLittleBlocksCollection.class, new EntityItemLittleBlocksCollectionRenderer());
+		//RenderingRegistry.registerEntityRenderingHandler(EntityItemLittleBlocksCollection.class, new EntityItemLittleCollectionRenderer());
 		this.registerTileEntitySpecialRenderer(
 				TileEntityLittleBlocks.class);
 	}
@@ -154,10 +154,10 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void setLittleDimension(World world, Configuration configuration, int nextFreeDimId) {
 		configuration.load();
-		LBCore.littleDimensionClient = Integer.parseInt(configuration.get(
+		LBCore.littleDimensionClient = configuration.get(
 				Configuration.CATEGORY_GENERAL,
 				"littleDimensionClient",
-				nextFreeDimId).value);
+				nextFreeDimId).getInt();
 		configuration.save();
 		if (!world.isRemote) {
 			super.setLittleDimension(world, configuration, nextFreeDimId);

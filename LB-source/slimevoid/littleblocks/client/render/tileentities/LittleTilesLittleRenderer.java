@@ -11,8 +11,10 @@
  */
 package slimevoid.littleblocks.client.render.tileentities;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import net.minecraft.client.Minecraft;
@@ -32,10 +34,19 @@ public class LittleTilesLittleRenderer {
 	private TileEntityRenderer tileEntityRenderer;
 	private Set<String> textures = new HashSet<String>();
 	private HashMap<String, HashMap<Integer, LittleTileToRender>> texturedTilesToRender;
+	private List<LittleTileToRender> tilesToRender;
 	
 	public LittleTilesLittleRenderer(TileEntityRenderer tileEntityRenderer) {
 		this.tileEntityRenderer = tileEntityRenderer;
 		this.texturedTilesToRender = new HashMap<String, HashMap<Integer, LittleTileToRender>>();
+		this.tilesToRender = new ArrayList<LittleTileToRender>();
+	}
+	
+	public void addLittleTileToRender(TileEntity tileentity) {
+		LittleTileToRender render = new LittleTileToRender(tileentity);
+		if (!tilesToRender.contains(render)) {
+			tilesToRender.add(render);
+		}
 	}
 
 	public void addLittleTileToRender(TileEntity tileentity, String textureFile) {
@@ -71,7 +82,7 @@ public class LittleTilesLittleRenderer {
 			GL11.glShadeModel(GL11.GL_FLAT);
 		}
 		
-		for (String textureFile : this.textures) {
+		/**for (String textureFile : this.textures) {
 			boolean customTexture = !textureFile.equals("/terrain.png");
 			if (this.texturedTilesToRender.containsKey(textureFile)) {
 				HashMap<Integer, LittleTileToRender> littleTilesToRender = this.texturedTilesToRender.get(textureFile);
@@ -91,17 +102,21 @@ public class LittleTilesLittleRenderer {
 			if (customTexture) {
 				bindTexture("/terrain.png");
 			}
+		}**/
+		
+		for (LittleTileToRender tileToRender : this.tilesToRender) {
+			this.tileEntityRenderer.renderTileEntityAt(tileToRender.tileentity, tileToRender.x, tileToRender.y, tileToRender.z, f);
 		}
 		
 		GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 		GL11.glPopMatrix();
 	}
 	
-    public void bindTexture(String textureFile) {
+/**    public void bindTexture(String textureFile) {
     	RenderEngine re = this.tileEntityRenderer.renderEngine;
     	
     	if (re != null) {
     		re.bindTexture(re.getTexture(textureFile));
     	}
-    }
+    }**/
 }

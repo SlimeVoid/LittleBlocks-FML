@@ -6,4 +6,8 @@ public class ItemLib {
 	
 	public static final String COPIER_TOOL = 			ITEM_PREFIX + 			"copier";
 
+	public static final String CHISELEDBLOCKS = 		ITEM_PREFIX + 			"chiseledBlocks";
+
+	public static final String CHISEL = 				ITEM_PREFIX +			"chisel";
+
 }

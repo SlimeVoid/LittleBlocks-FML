@@ -64,16 +64,6 @@ public class LittleChunkProvider implements IChunkProvider {
 	}
 
 	/**
-	 * Unloads the 100 oldest chunks from memory, due to a bug with
-	 * chunkSet.add() never being called it thinks the list is always empty and
-	 * will not remove any chunks.
-	 */
-	@Override
-	public boolean unload100OldestChunks() {
-		return false;
-	}
-
-	/**
 	 * Returns if the IChunkProvider supports saving.
 	 */
 	@Override
@@ -115,5 +105,10 @@ public class LittleChunkProvider implements IChunkProvider {
 
 	@Override
 	public void recreateStructures(int var1, int var2) {
+	}
+
+	@Override
+	public boolean unloadQueuedChunks() {
+		return false;
 	}
 }

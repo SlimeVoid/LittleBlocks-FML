@@ -51,7 +51,7 @@ public class BlockLittleBlocks extends BlockContainer {
 		this.clazz = clazz;
 		setHardness(hardness);
 		if (selfNotify) {
-			setRequiresSelfNotify();
+			// TODO :: setRequiresSelfNotify();
 		}
 		this.setCreativeTab(CreativeTabs.tabDecorations);
 	}
@@ -78,13 +78,13 @@ public class BlockLittleBlocks extends BlockContainer {
 					this.onBlockClicked(world, x, y, z, entityplayer);
 					return false;
 				} else {
-					int[][][] content = tile.getContent();
+					int[][][] content = tile.getContents();
 					if (collection != null) {
 						for (int x1 = 0; x1 < content.length; x1++) {
 							for (int y1 = 0; y1 < content[x1].length; y1++) {
 								for (int z1 = 0; z1 < content[x1][y1].length; z1++) {
 									int blockId = content[x1][y1][z1];
-									int contentMeta = tile.getMetadata(x1, y1, z1);
+									int contentMeta = tile.getBlockMetadata(x1, y1, z1);
 									if (blockId > 0 && Block.blocksList[blockId] != null) {
 										ItemStack itemToDrop = dropLittleBlockAsNormalBlock(
 												world,
@@ -299,7 +299,7 @@ public class BlockLittleBlocks extends BlockContainer {
 					y,
 					z,
 					entityplayer);
-			littleWorld.setBlockAndMetadataWithNotify(
+			littleWorld.func_82739_e/**.setBlockAndMetadataWithNotify**/(
 					xx,
 					yy,
 					zz,
@@ -333,7 +333,7 @@ public class BlockLittleBlocks extends BlockContainer {
 			int xSelected, int ySelected, int zSelected) {
 		TileEntityLittleBlocks tile = (TileEntityLittleBlocks) world
 				.getBlockTileEntity(x, y, z);
-		int content = tile.getContent(
+		int content = tile.getBlockID(
 				xSelected,
 				ySelected,
 				zSelected);
@@ -395,7 +395,7 @@ public class BlockLittleBlocks extends BlockContainer {
 		} else {
 			TileEntityLittleBlocks tile = (TileEntityLittleBlocks) world
 					.getBlockTileEntity(x, y, z);
-			int content = tile.getContent(this.xSelected, this.ySelected, this.zSelected);
+			int content = tile.getBlockID(this.xSelected, this.ySelected, this.zSelected);
 			if (content <= 0) {
 				setBlockBounds(
 						this.xSelected / m,
@@ -433,12 +433,12 @@ public class BlockLittleBlocks extends BlockContainer {
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	public void addCollidingBlockToList(World world, int x, int y, int z, AxisAlignedBB axisalignedbb, List list, Entity entity) {
+	public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB axisalignedbb, List list, Entity entity) {
 		TileEntity tileentity = world.getBlockTileEntity(x, y, z);
 		if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
 			TileEntityLittleBlocks tile = (TileEntityLittleBlocks) tileentity;
 
-			int[][][] content = tile.getContent();
+			int[][][] content = tile.getContents();
 			float m = LBCore.littleBlocksSize;
 
 			for (int xx = 0; xx < content.length; xx++) {
@@ -454,7 +454,7 @@ public class BlockLittleBlocks extends BlockContainer {
 										(float) (xx + block.getBlockBoundsMaxX()) / m,
 										(float) (yy + block.getBlockBoundsMaxY()) / m,
 										(float) (zz + block.getBlockBoundsMaxZ()) / m);
-								super.addCollidingBlockToList(
+								super.addCollisionBoxesToList(
 										world,
 										x,
 										y,
@@ -482,7 +482,7 @@ public class BlockLittleBlocks extends BlockContainer {
 			return null;
 		}
 
-		int[][][] content = tile.getContent();
+		int[][][] content = tile.getContents();
 
 		List<Object[]> returns = new ArrayList<Object[]>();
 
@@ -522,8 +522,8 @@ public class BlockLittleBlocks extends BlockContainer {
 				this.xSelected = (Integer) min[3];
 				this.ySelected = (Integer) min[4];
 				this.zSelected = (Integer) min[5];
-				if (tile.getContent(this.xSelected, this.ySelected, this.zSelected) > 0) {
-					Block littleBlock = Block.blocksList[tile.getContent(
+				if (tile.getBlockID(this.xSelected, this.ySelected, this.zSelected) > 0) {
+					Block littleBlock = Block.blocksList[tile.getBlockID(
 							this.xSelected,
 							this.ySelected,
 							this.zSelected)];
@@ -655,14 +655,15 @@ public class BlockLittleBlocks extends BlockContainer {
 	}
 
 	@Override
-	public boolean isProvidingWeakPower(IBlockAccess iblockaccess, int x, int y, int z, int side) {
-		if (super.isProvidingWeakPower(iblockaccess, x, y, z, side)) {
-			return true;
+	public int isProvidingWeakPower(IBlockAccess iblockaccess, int x, int y, int z, int side) {
+		int weakPower = super.isProvidingWeakPower(iblockaccess, x, y, z, side); 
+		if (weakPower > 0) {
+			return weakPower;
 		} else {
 			TileEntityLittleBlocks tile = (TileEntityLittleBlocks) iblockaccess
 					.getBlockTileEntity(x, y, z);
 			if (tile != null) {
-				int[][][] content = tile.getContent();
+				int[][][] content = tile.getContents();
 				int maX = tile.size, maY = tile.size, maZ = tile.size;
 				int startX = 0, startY = 0, startZ = 0;
 	
@@ -697,21 +698,21 @@ public class BlockLittleBlocks extends BlockContainer {
 						for (int zz = startZ; zz < maZ; zz++) {
 							if (content[xx][yy][zz] > 0) {
 								Block littleBlock = Block.blocksList[content[xx][yy][zz]];
-								if (littleBlock != null && littleBlock
-										.isProvidingWeakPower(
-												tile.getLittleWorld(),
-												(x << 3) + xx,
-												(y << 3) + yy,
-												(z << 3) + zz,
-												side)) {
-									return true;
+								if (littleBlock != null) {
+									return littleBlock
+											.isProvidingWeakPower(
+													tile.getLittleWorld(),
+													(x << 3) + xx,
+													(y << 3) + yy,
+													(z << 3) + zz,
+													side);
 								}
 							}
 						}
 					}
 				}
 			}
-			return false;
+			return 0;
 		}
 	}
 
@@ -722,7 +723,7 @@ public class BlockLittleBlocks extends BlockContainer {
 			TileEntityLittleBlocks tile = (TileEntityLittleBlocks) world
 					.getBlockTileEntity(x, y, z);
 			if (tile != null) {
-				int[][][] content = tile.getContent();
+				int[][][] content = tile.getContents();
 				int maX = tile.size, maY = tile.size, maZ = tile.size;
 				int startX = 0, startY = 0, startZ = 0;
 				for (int side = 0; side < 6; side++) {

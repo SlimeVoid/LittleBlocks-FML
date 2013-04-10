@@ -27,7 +27,7 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 		LittleTilesLittleRenderer littleTiles = new LittleTilesLittleRenderer(this.tileEntityRenderer);
 		
 		
-		int[][][] content = tileentitylittleblocks.getContent();
+		int[][][] content = tileentitylittleblocks.getContents();
 		//boolean optifineEnabled = LBCore.optifine;
 		
 		for (int x1 = 0; x1 < content.length; x1++) {
@@ -37,12 +37,12 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 					if (blockId > 0) {
 						Block littleBlock = Block.blocksList[blockId];
 						if (littleBlock != null) {
-							if (littleBlock.hasTileEntity(tileentitylittleblocks.getMetadata(x1, y1, z1))) {
+							if (littleBlock.hasTileEntity(tileentitylittleblocks.getBlockMetadata(x1, y1, z1))) {
 								TileEntity tileentity = tileentitylittleblocks.getTileEntity(x1, y1, z1);
 								if (tileentity != null) {
-									littleTiles.addLittleTileToRender(tileentity, littleBlock.getTextureFile());
+									littleTiles.addLittleTileToRender(tileentity/**, littleBlock.getTextureFile()**/);
 								} else {
-									FMLCommonHandler.instance().getFMLLogger().warning("Attempted to render a tile for [" + littleBlock.getBlockName() + "] that was null!");
+									//FMLCommonHandler.instance().getFMLLogger().warning("Attempted to render a tile for [" + littleBlock.getLocalizedName() + "] that was null!");
 								}
 							}
 						}
