@@ -88,7 +88,7 @@ public class LBCore {
 				"#",
 				Character.valueOf('#'),
 				Block.dirt });
-		GameRegistry.addRecipe(new RecipesChisel());
+		//GameRegistry.addRecipe(new RecipesChisel());
 	}
 	
 	public static void registerBlocks() {
