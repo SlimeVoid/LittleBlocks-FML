@@ -29,10 +29,6 @@ public class ConfigurationLib {
 				Configuration.CATEGORY_ITEM,
 				"chiseledBlockID",
 				29998).getInt();
-		LBCore.littleBlockChiselID = LBCore.configuration.get(
-				Configuration.CATEGORY_ITEM,
-				"chiselID",
-				29997).getInt();
 		LBCore.littleBlocksCollectionID = LBCore.configuration.get(
 				Configuration.CATEGORY_GENERAL,
 				"littleBlocksCollectionID",

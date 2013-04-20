@@ -4,6 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import slimevoid.lib.network.PacketIds;
+import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.blocks.BlockLittleBlocks;
 import slimevoid.littleblocks.client.network.ClientPacketHandler;
 import slimevoid.littleblocks.client.network.packets.executors.ClientBlockAddedExecutor;
@@ -22,7 +23,6 @@ import slimevoid.littleblocks.network.packets.PacketLittleBlocks;
 import slimevoid.littleblocks.network.packets.executors.PacketLittleBlocksActivatedExecutor;
 import slimevoid.littleblocks.network.packets.executors.PacketLittleBlocksClickedExecutor;
 import slimevoid.littleblocks.network.packets.executors.PacketLittleBlocksLoginExecutor;
-import slimevoid.littleblocks.world.LittleWorld;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -120,7 +120,7 @@ public class PacketLib {
 	}
 
 	public static void sendBreakBlock(
-			LittleWorld littleWorld,
+			ILittleWorld littleWorld,
 			int blockX, int blockY, int blockZ, int side,
 			int lastBlockId, int metadata) {
 		
@@ -135,7 +135,7 @@ public class PacketLib {
 	}
 
 	public static void sendBlockAdded(
-			LittleWorld littleWorld,
+			ILittleWorld littleWorld,
 			int blockX, int blockY, int blockZ, int side,
 			int blockId, int metadata) {
 		
@@ -152,7 +152,7 @@ public class PacketLib {
 	}
 
 	public static void sendMetadata(
-			LittleWorld littleWorld,
+			ILittleWorld littleWorld,
 			int blockX, int blockY, int blockZ,
 			int blockId, int side, int metadata) {
 		PacketLittleBlocks packetLB = new PacketLittleBlocks(
@@ -168,7 +168,7 @@ public class PacketLib {
 	}
 	
 	public static void sendTileEntity(
-			LittleWorld littleWorld,
+			ILittleWorld littleWorld,
 			TileEntity tileentity,
 			int x, int y, int z) {
 		PacketLittleBlocks packetTile = new PacketLittleBlocks(

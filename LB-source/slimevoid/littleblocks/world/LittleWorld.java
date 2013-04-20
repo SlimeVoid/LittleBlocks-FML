@@ -1001,9 +1001,9 @@ public class LittleWorld extends World implements ILittleWorld {
 
 	@Override
 	public void notifyBlocksOfNeighborChange(int x, int y, int z, int blockId) {
-		System.out.println("InitialWorld[" + this.toString() + "]" +
-				" | BlockID[" + blockId + "]" + 
-				" | x[" + x + "]" + " | y[" + y + "]" + " | z[" + z + "]");
+		//System.out.println("InitialWorld[" + this.toString() + "]" +
+		//		" | BlockID[" + blockId + "]" + 
+		//		" | x[" + x + "]" + " | y[" + y + "]" + " | z[" + z + "]");
 		LoggerLittleBlocks.getInstance(
 				Logger.filterClassName(
 						this.getClass().toString()
@@ -1034,9 +1034,9 @@ public class LittleWorld extends World implements ILittleWorld {
 			world = this.realWorld;
 		}
 		if (!world.isRemote) {
-			System.out.println("World[" + world.toString() + "]" +
-								" | BlockID[" + blockId + "]" + 
-								" | x[" + x + "]" + " | y[" + y + "]" + " | z[" + z + "]");
+			//System.out.println("World[" + world.toString() + "]" +
+			//					" | BlockID[" + blockId + "]" + 
+			//					" | x[" + x + "]" + " | y[" + y + "]" + " | z[" + z + "]");
 			Block block = Block.blocksList[world.getBlockId(x, y, z)];
 			if (block != null) {
 				try {
@@ -1052,7 +1052,6 @@ public class LittleWorld extends World implements ILittleWorld {
 							LoggerLittleBlocks.LogLevel.DEBUG
 					);
 				}
-				world.markBlockForRenderUpdate(x, y, z);
 			} else {
 				LoggerLittleBlocks.getInstance(
 						Logger.filterClassName(
@@ -1175,12 +1174,12 @@ public class LittleWorld extends World implements ILittleWorld {
 
 	@Override
 	public void setBlockTileEntity(int x, int y, int z, TileEntity tileentity) {
-		System.out.println("Setting TileEntity: " + tileentity.toString());
 		Chunk chunk = realWorld.getChunkFromChunkCoords(x >> 7, z >> 7);
 		if (chunk.getBlockID((x & 0x7f) >> 3, y >> 3, (z & 0x7f) >> 3) == LBCore.littleBlocksID) {
 			if (tileentity == null || tileentity.isInvalid()) {
 				return;
 			}
+			//System.out.println("Setting TileEntity: " + tileentity.toString());
 			if (tileentity.canUpdate()) {
 	            if (scanningTiles) {
 	                Iterator iterator = addedTiles.iterator();
@@ -1209,7 +1208,7 @@ public class LittleWorld extends World implements ILittleWorld {
 
 	@Override
 	public void addTileEntity(TileEntity tileentity) {
-		System.out.println("Adding TileEntity: " + tileentity.toString());
+		//System.out.println("Adding TileEntity: " + tileentity.toString());
 		List<TileEntity> dest = scanningTiles ? addedTiles : loadedTiles;
 		if (tileentity.canUpdate()) {
 			dest.add(tileentity);

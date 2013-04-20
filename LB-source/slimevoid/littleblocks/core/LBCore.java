@@ -17,11 +17,8 @@ import slimevoid.littleblocks.core.lib.BlockUtil;
 import slimevoid.littleblocks.core.lib.ItemLib;
 import slimevoid.littleblocks.core.lib.LocalizationLib;
 import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
-import slimevoid.littleblocks.items.ItemLittleBlocks;
-import slimevoid.littleblocks.items.ItemLittleBlocksChisel;
 import slimevoid.littleblocks.items.ItemLittleBlocksCopier;
 import slimevoid.littleblocks.items.LittleBlocksCollectionPickup;
-import slimevoid.littleblocks.recipe.RecipesChisel;
 import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
 import slimevoid.littleblocks.world.LittleWorld;
 import cpw.mods.fml.common.registry.EntityRegistry;
@@ -61,8 +58,6 @@ public class LBCore {
 	public static WorldProvider littleProviderServer;
 	public static int littleBlockID;
 	public static Item littleBlock;
-	public static Item littleBlockChisel;
-	public static int littleBlockChiselID;
 
 	public static void registerItems() {
 		littleBlocks = new BlockLittleBlocks(
@@ -72,8 +67,6 @@ public class LBCore {
 					2F,
 					true).setUnlocalizedName(BlockLib.LITTLEBLOCKS);
 		littleBlocksCopier = new ItemLittleBlocksCopier(littleBlocksCopierID).setUnlocalizedName(ItemLib.COPIER_TOOL);
-		littleBlock = new ItemLittleBlocks(littleBlockID).setUnlocalizedName(ItemLib.CHISELEDBLOCKS);
-		//littleBlockChisel = new ItemLittleBlocksChisel(littleBlockChiselID).setUnlocalizedName(ItemLib.CHISEL);
 		MinecraftForge.EVENT_BUS.register(new LittleBlocksCollectionPickup());
 		// MinecraftForge.EVENT_BUS.register(new LittleContainerInteract());
 		// MinecraftForge.EVENT_BUS.register(new PistonOrientation());
@@ -88,7 +81,6 @@ public class LBCore {
 				"#",
 				Character.valueOf('#'),
 				Block.dirt });
-		//GameRegistry.addRecipe(new RecipesChisel());
 	}
 	
 	public static void registerBlocks() {
