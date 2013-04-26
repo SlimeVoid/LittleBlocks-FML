@@ -61,10 +61,9 @@ public class LittleBlocksLittleRenderer {
 		if (this.littleBlocksToRender.size() > 0) {
 			Tessellator tessellator = Tessellator.instance;
 	        int mode = tessellator.drawMode;
-			tessellator.draw();
-			GL11.glPushMatrix();
-			tessellator.startDrawing(mode);
-			
+	        tessellator.draw();
+	        GL11.glPushMatrix();			
+	        
 			double xS = -((x >> 4) << 4), yS = -((y >> 4) << 4), zS = -((z >> 4) << 4);
 	
 			GL11.glTranslated(xS, yS, zS);
@@ -72,19 +71,18 @@ public class LittleBlocksLittleRenderer {
 			float scale = 1 / (float) LBCore.littleBlocksSize;
 			GL11.glScalef(scale, scale, scale);
 			GL11.glTranslated(-xS, -yS, -zS);
+			
+			tessellator.startDrawing(mode);
 			for (LittleBlockToRender littleBlockToRender : this.littleBlocksToRender) {
 				// TODO :: Performance Degradation - Start
-				tessellator.draw();
-				tessellator.startDrawingQuads();
 				this.renderBlocks.renderBlockByRenderType(
 						littleBlockToRender.block,
 						littleBlockToRender.x,
 						littleBlockToRender.y,
 						littleBlockToRender.z);
-				tessellator.draw();
-				tessellator.startDrawingQuads();
 				// TODO :: Performance Degradation - Stop
 			}
+			tessellator.draw();
 /*			for (String textureFile : this.textures) {
 				if (this.texturedBlocksToRender.containsKey(textureFile)) {
 					HashMap<Integer, LittleBlockToRender> littleBlocksToRender = this.texturedBlocksToRender.get(textureFile);
@@ -116,6 +114,7 @@ public class LittleBlocksLittleRenderer {
 			
 			GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 			GL11.glPopMatrix();
+			tessellator.startDrawingQuads();
 		}
 	}
 	
