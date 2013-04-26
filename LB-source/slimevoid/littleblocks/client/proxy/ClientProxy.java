@@ -112,8 +112,8 @@ public class ClientProxy extends CommonProxy {
 						LBCore.littleProviderTypeClient = DimensionManager
 								.getProviderType(world.provider.dimensionId);
 						if (LBCore.littleProviderClient == null) {
-							System.out
-									.println("Registering Dimension: " + LBCore.littleDimensionClient);
+							//System.out
+							//		.println("Registering Dimension: " + LBCore.littleDimensionClient);
 							DimensionManager.registerDimension(
 									LBCore.littleDimensionClient,
 									LBCore.littleProviderTypeClient);

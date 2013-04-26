@@ -106,7 +106,7 @@ public class LittleWorldServer extends LittleWorld {
 	 * future. Args: X, Y, Z, blockID
 	 */
 	public boolean isBlockTickScheduled(int x, int y, int z, int blockId) {
-		System.out.println("isBlockTickScheduled");
+		//System.out.println("isBlockTickScheduled");
 		NextTickListEntry nextticklistentry = new NextTickListEntry(x, y,
 				z, blockId);
 		return this.tickedEntries.contains(nextticklistentry);
@@ -149,18 +149,18 @@ public class LittleWorldServer extends LittleWorld {
 						nextTick.xCoord + max,
 						nextTick.yCoord + max,
 						nextTick.zCoord + max)) {
-					System.out.println("Existing Chunk");
+					//System.out.println("Existing Chunk");
 					int blockId = this.getBlockId(
 							nextTick.xCoord,
 							nextTick.yCoord,
 							nextTick.zCoord);
 
 					if (blockId > 0 && Block.isAssociatedBlockID(blockId, nextTick.blockID)) {
-						System.out.println("Associated Ticking Block");
+						//System.out.println("Associated Ticking Block");
 						try {
 							Block littleBlock = Block.blocksList[blockId];
 							if (BlockUtil.isBlockAllowedToTick(littleBlock)) {
-								System.out.println("Allowed to Tick");
+								//System.out.println("Allowed to Tick");
 								littleBlock.updateTick(
 										this,
 										nextTick.xCoord,
@@ -220,7 +220,7 @@ public class LittleWorldServer extends LittleWorld {
 						}*/
 					}
 				} else {
-					System.out.println("Scheduling Update....");
+					//System.out.println("Scheduling Update....");
                     this.scheduleBlockUpdate(nextTick.xCoord, nextTick.yCoord, nextTick.zCoord, nextTick.blockID, 0);
                 }
 			}

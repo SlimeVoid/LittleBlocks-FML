@@ -13,7 +13,7 @@ public class LBConnectionHandler implements IConnectionHandler {
 
 	@Override
 	public void playerLoggedIn(Player player, NetHandler netHandler, INetworkManager manager) {
-		System.out.println("LoggedIn");
+		//System.out.println("LoggedIn");
 	}
 
 	@Override
