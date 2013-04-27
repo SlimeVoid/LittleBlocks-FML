@@ -28,7 +28,7 @@ public class PacketLittleBlocksCollection extends PacketEntity {
 				0);
 		this.setEntityId(entitylb.entityId);
 		this.setCommand(CommandLib.ENTITY_COLLECTION);
-		this.itemstackCollection = entitylb.itemstackCollection;
+		this.itemstackCollection = entitylb.getCollection();
 	}
 
 	@Override

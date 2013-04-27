@@ -10,7 +10,7 @@ import slimevoid.lib.network.PacketUpdate;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.lib.CommandLib;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocksSettings;
-import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
+import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
 
@@ -27,7 +27,7 @@ public class PacketLittleBlocksLoginExecutor implements IPacketExecutor {
 			PacketDispatcher.sendPacketToPlayer(packet.getPacket(), (Player) entityplayer);
 			List<TileEntity> tileEntities = world.loadedTileEntityList;
 			for (TileEntity tileentity : tileEntities) {
-				if (tileentity instanceof TileEntityLittleBlocks) {
+				if (tileentity instanceof TileEntityLittleChunk) {
 					world.markBlockForUpdate(tileentity.xCoord, tileentity.yCoord+1, tileentity.zCoord);
 				}
 			}

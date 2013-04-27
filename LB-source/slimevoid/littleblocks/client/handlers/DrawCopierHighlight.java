@@ -12,7 +12,7 @@ import org.lwjgl.opengl.GL12;
 
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.lib.TextureLib;
-import slimevoid.littleblocks.items.ItemLittleBlocksCopier;
+import slimevoid.littleblocks.items.ItemLittleBlocksWand;
 
 public class DrawCopierHighlight {
 
@@ -22,7 +22,7 @@ public class DrawCopierHighlight {
 	@ForgeSubscribe
 	public void onDrawBlockHighlightEvent(DrawBlockHighlightEvent event) {
 		if (event.currentItem != null) {
-			if (event.currentItem.getItem() instanceof ItemLittleBlocksCopier) {
+			if (event.currentItem.getItem() instanceof ItemLittleBlocksWand) {
                 drawInWorldCopierOverlay(event);
 			}
 		}
@@ -46,7 +46,7 @@ public class DrawCopierHighlight {
         float zShift = 1F;
 
         World world = ModLoader.getMinecraftInstance().theWorld;
-        if (world.getBlockId(event.target.blockX, event.target.blockY, event.target.blockZ) == LBCore.littleBlocksID) {
+        if (world.getBlockId(event.target.blockX, event.target.blockY, event.target.blockZ) == LBCore.littleChunkID) {
         	xShift = 0;
         	yShift = 0;
         	zShift = 0;

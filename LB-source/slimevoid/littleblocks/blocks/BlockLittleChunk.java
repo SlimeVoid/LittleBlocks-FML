@@ -32,13 +32,13 @@ import slimevoid.littleblocks.core.lib.MessageLib;
 import slimevoid.littleblocks.core.lib.PacketLib;
 import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocksCollection;
-import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
+import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 
-public class BlockLittleBlocks extends BlockContainer {
+public class BlockLittleChunk extends BlockContainer {
 
 	public int xSelected = -10, ySelected = -10, zSelected = -10, side = -1;
 
@@ -46,7 +46,7 @@ public class BlockLittleBlocks extends BlockContainer {
 
 	private Class<? extends TileEntity> clazz;
 
-	public BlockLittleBlocks(int id, Class<? extends TileEntity> clazz, Material material, float hardness, boolean selfNotify) {
+	public BlockLittleChunk(int id, Class<? extends TileEntity> clazz, Material material, float hardness, boolean selfNotify) {
 		super(id, material);
 		this.clazz = clazz;
 		setHardness(hardness);
@@ -64,8 +64,8 @@ public class BlockLittleBlocks extends BlockContainer {
 	@Override
 	public boolean removeBlockByPlayer(World world, EntityPlayer entityplayer, int x, int y, int z) {
 		int id = world.getBlockId(x, y, z);
-		if (id == LBCore.littleBlocksID) {
-			TileEntityLittleBlocks tile = (TileEntityLittleBlocks) world
+		if (id == LBCore.littleChunkID) {
+			TileEntityLittleChunk tile = (TileEntityLittleChunk) world
 					.getBlockTileEntity(x, y, z);
 			EntityItemLittleBlocksCollection collection = new EntityItemLittleBlocksCollection(world, x, y, z);
 			if (!tile.isEmpty()) {
@@ -107,9 +107,11 @@ public class BlockLittleBlocks extends BlockContainer {
 				}
 			}
 			if (!world.isRemote) {
-				world.spawnEntityInWorld(collection);
-				PacketLittleBlocksCollection packet = new PacketLittleBlocksCollection(collection);
-				PacketDispatcher.sendPacketToAllPlayers(packet.getPacket());
+				if (!collection.isEmpty()) {
+					world.spawnEntityInWorld(collection);
+					PacketLittleBlocksCollection packet = new PacketLittleBlocksCollection(collection);
+					PacketDispatcher.sendPacketToAllPlayers(packet.getPacket());
+				}
 			}
 		}
 		return super.removeBlockByPlayer(world, entityplayer, x, y, z);
@@ -224,13 +226,13 @@ public class BlockLittleBlocks extends BlockContainer {
 			int q, float a, float b, float c,
 			int xSelected, int ySelected, int zSelected, int side) {
 		if (entityplayer.canPlayerEdit(x, y, z, q, entityplayer.getHeldItem())) {
-			if (entityplayer.getHeldItem() != null && entityplayer.getHeldItem().getItem() == LBCore.littleBlocksCopier) {
+			if (entityplayer.getHeldItem() != null && entityplayer.getHeldItem().getItem() == LBCore.littleBlocksWand) {
 				return true;
 			}
 			if (canPlayerPlaceBlock(world, entityplayer)) {
 				TileEntity tileentity = world.getBlockTileEntity(x, y, z);
-				if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
-					TileEntityLittleBlocks tile = (TileEntityLittleBlocks) tileentity;
+				if (tileentity != null && tileentity instanceof TileEntityLittleChunk) {
+					TileEntityLittleChunk tile = (TileEntityLittleChunk) tileentity;
 					int xx = (x << 3) + xSelected, yy = (y << 3) + ySelected, zz = (z << 3) + zSelected;
 					World littleWorld = (World) tile.getLittleWorld();
 					if (littleWorld != null) {
@@ -331,7 +333,7 @@ public class BlockLittleBlocks extends BlockContainer {
 			int x, int y, int z, int side,
 			EntityPlayer entityplayer,
 			int xSelected, int ySelected, int zSelected) {
-		TileEntityLittleBlocks tile = (TileEntityLittleBlocks) world
+		TileEntityLittleChunk tile = (TileEntityLittleChunk) world
 				.getBlockTileEntity(x, y, z);
 		int content = tile.getBlockID(
 				xSelected,
@@ -393,7 +395,7 @@ public class BlockLittleBlocks extends BlockContainer {
 		if (this.xSelected == -10) {
 			setBlockBounds(0f, 0f, 0f, 0f, 0f, 0f);
 		} else {
-			TileEntityLittleBlocks tile = (TileEntityLittleBlocks) world
+			TileEntityLittleChunk tile = (TileEntityLittleChunk) world
 					.getBlockTileEntity(x, y, z);
 			int content = tile.getBlockID(this.xSelected, this.ySelected, this.zSelected);
 			if (content <= 0) {
@@ -435,8 +437,8 @@ public class BlockLittleBlocks extends BlockContainer {
 	@Override
 	public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB axisalignedbb, List list, Entity entity) {
 		TileEntity tileentity = world.getBlockTileEntity(x, y, z);
-		if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
-			TileEntityLittleBlocks tile = (TileEntityLittleBlocks) tileentity;
+		if (tileentity != null && tileentity instanceof TileEntityLittleChunk) {
+			TileEntityLittleChunk tile = (TileEntityLittleChunk) tileentity;
 
 			int[][][] content = tile.getContents();
 			float m = LBCore.littleBlocksSize;
@@ -473,7 +475,7 @@ public class BlockLittleBlocks extends BlockContainer {
 
 	@Override
 	public MovingObjectPosition collisionRayTrace(World world, int x, int y, int z, Vec3 player, Vec3 view) {
-		TileEntityLittleBlocks tile = (TileEntityLittleBlocks) world
+		TileEntityLittleChunk tile = (TileEntityLittleChunk) world
 				.getBlockTileEntity(x, y, z);
 
 		player = player.addVector(-x, -y, -z);
@@ -660,7 +662,7 @@ public class BlockLittleBlocks extends BlockContainer {
 		if (weakPower > 0) {
 			return weakPower;
 		} else {
-			TileEntityLittleBlocks tile = (TileEntityLittleBlocks) iblockaccess
+			TileEntityLittleChunk tile = (TileEntityLittleChunk) iblockaccess
 					.getBlockTileEntity(x, y, z);
 			if (tile != null) {
 				int[][][] content = tile.getContents();
@@ -720,7 +722,7 @@ public class BlockLittleBlocks extends BlockContainer {
 	public void onNeighborBlockChange(World world, int x, int y, int z, int blockId) {
 		super.onNeighborBlockChange(world, x, y, z, blockId);
 		if (updateEveryone) {
-			TileEntityLittleBlocks tile = (TileEntityLittleBlocks) world
+			TileEntityLittleChunk tile = (TileEntityLittleChunk) world
 					.getBlockTileEntity(x, y, z);
 			if (tile != null) {
 				int[][][] content = tile.getContents();

@@ -4,18 +4,18 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.core.LBCore;
-import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
+import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 
 public class LittleBlocksRotationHandler {
 	World world;
 	ILittleWorld littleWorld;
 	EntityPlayer entityplayer;
-	TileEntityLittleBlocks tile;
+	TileEntityLittleChunk tile;
 	int x, y, z, side;
 	int[][][] newContent = new int[LBCore.littleBlocksSize][LBCore.littleBlocksSize][LBCore.littleBlocksSize];
 	int[][][] newMetadata = new int[LBCore.littleBlocksSize][LBCore.littleBlocksSize][LBCore.littleBlocksSize];
 	
-	public LittleBlocksRotationHandler(World world, EntityPlayer entityplayer, TileEntityLittleBlocks tile, int x, int y, int z, int side) {
+	public LittleBlocksRotationHandler(World world, EntityPlayer entityplayer, TileEntityLittleChunk tile, int x, int y, int z, int side) {
 		this.world = world;
 		this.littleWorld = tile.getLittleWorld();
 		this.entityplayer = entityplayer;

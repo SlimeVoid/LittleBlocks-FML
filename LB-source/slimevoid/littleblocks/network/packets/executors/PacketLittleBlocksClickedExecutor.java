@@ -4,7 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import slimevoid.lib.IPacketExecutor;
 import slimevoid.lib.network.PacketUpdate;
-import slimevoid.littleblocks.blocks.BlockLittleBlocks;
+import slimevoid.littleblocks.blocks.BlockLittleChunk;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.lib.CommandLib;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocks;
@@ -18,8 +18,8 @@ public class PacketLittleBlocksClickedExecutor implements IPacketExecutor {
 			if (world.getBlockId(
 					packet.xPosition,
 					packet.yPosition,
-					packet.zPosition) == LBCore.littleBlocksID) {
-				((BlockLittleBlocks) LBCore.littleBlocks)
+					packet.zPosition) == LBCore.littleChunkID) {
+				((BlockLittleChunk) LBCore.littleChunk)
 						.onServerBlockClicked(
 								world,
 								packet.xPosition,

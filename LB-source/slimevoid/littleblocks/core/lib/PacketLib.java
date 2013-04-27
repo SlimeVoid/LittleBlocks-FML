@@ -5,7 +5,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import slimevoid.lib.network.PacketIds;
 import slimevoid.littleblocks.api.ILittleWorld;
-import slimevoid.littleblocks.blocks.BlockLittleBlocks;
+import slimevoid.littleblocks.blocks.BlockLittleChunk;
 import slimevoid.littleblocks.client.network.ClientPacketHandler;
 import slimevoid.littleblocks.client.network.packets.executors.ClientBlockAddedExecutor;
 import slimevoid.littleblocks.client.network.packets.executors.ClientBreakBlockExecutor;
@@ -78,7 +78,7 @@ public class PacketLib {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public static void blockUpdate(World world, EntityPlayer entityplayer, int x, int y, int z, int q, float a, float b, float c, BlockLittleBlocks block, String command) {
+	public static void blockUpdate(World world, EntityPlayer entityplayer, int x, int y, int z, int q, float a, float b, float c, BlockLittleChunk block, String command) {
 		PacketLittleBlocks packetLB = new PacketLittleBlocks(
 				command,
 					x,

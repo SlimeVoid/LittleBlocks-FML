@@ -6,7 +6,7 @@ import slimevoid.lib.IPacketExecutor;
 import slimevoid.lib.network.PacketUpdate;
 import slimevoid.littleblocks.core.lib.CommandLib;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocks;
-import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
+import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 
 public class ClientMetadataUpdateExecutor implements IPacketExecutor {
 
@@ -14,7 +14,7 @@ public class ClientMetadataUpdateExecutor implements IPacketExecutor {
 	public void execute(PacketUpdate packet, World world,
 			EntityPlayer entityplayer) {
 		if (packet instanceof PacketLittleBlocks && packet.getCommand().equals(CommandLib.METADATA_MODIFIED)) {
-			TileEntityLittleBlocks tileentitylittleblocks = (TileEntityLittleBlocks) world.getBlockTileEntity(
+			TileEntityLittleChunk tileentitylittleblocks = (TileEntityLittleChunk) world.getBlockTileEntity(
 					packet.xPosition >> 3,
 					packet.yPosition >> 3,
 					packet.zPosition >> 3);

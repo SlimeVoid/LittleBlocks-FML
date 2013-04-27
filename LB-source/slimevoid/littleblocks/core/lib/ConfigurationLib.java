@@ -17,18 +17,14 @@ public class ConfigurationLib {
 	
 	public static void CommonConfig() {
 		LBCore.configuration.load();
-		LBCore.littleBlocksID = LBCore.configuration.get(
+		LBCore.littleChunkID = LBCore.configuration.get(
 				Configuration.CATEGORY_BLOCK,
-				"littleBlocksID",
+				"littleChunkID",
 				1150).getInt();
-		LBCore.littleBlocksCopierID = LBCore.configuration.get(
+		LBCore.littleBlocksWandID = LBCore.configuration.get(
 				Configuration.CATEGORY_ITEM,
-				"littleBlocksCopierID",
+				"littleBlocksWandID",
 				29999).getInt();
-		LBCore.littleBlockID = LBCore.configuration.get(
-				Configuration.CATEGORY_ITEM,
-				"chiseledBlockID",
-				29998).getInt();
 		LBCore.littleBlocksCollectionID = LBCore.configuration.get(
 				Configuration.CATEGORY_GENERAL,
 				"littleBlocksCollectionID",

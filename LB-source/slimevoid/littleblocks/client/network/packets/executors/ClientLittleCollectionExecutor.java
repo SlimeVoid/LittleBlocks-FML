@@ -17,7 +17,7 @@ public class ClientLittleCollectionExecutor implements IPacketExecutor {
 		if (packet instanceof PacketLittleBlocksCollection && packet.getCommand().equals(CommandLib.ENTITY_COLLECTION)) {
 			Entity entity = ((PacketLittleBlocksCollection)packet).getEntity(world);
 			if (entity instanceof EntityItemLittleBlocksCollection) {
-				((EntityItemLittleBlocksCollection)entity).itemstackCollection = ((PacketLittleBlocksCollection)packet).itemstackCollection;
+				((EntityItemLittleBlocksCollection)entity).setCollection(((PacketLittleBlocksCollection)packet).itemstackCollection);
 			}
 		}
 	}

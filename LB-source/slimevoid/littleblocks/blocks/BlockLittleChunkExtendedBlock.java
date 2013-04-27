@@ -2,17 +2,17 @@ package slimevoid.littleblocks.blocks;
 
 import slimevoid.littleblocks.blocks.core.LittleBlockCoordinates;
 
-public class BlockLittleBlocksBlock {
+public class BlockLittleChunkExtendedBlock {
 	private int blockId;
 	private int metadata;
 	private LittleBlockCoordinates parentBlock;
 	private LittleBlockCoordinates littleBlock;
 
-	public BlockLittleBlocksBlock(int x, int y, int z) {
+	public BlockLittleChunkExtendedBlock(int x, int y, int z) {
 		this.littleBlock = new LittleBlockCoordinates(x, y, z);
 	}
 
-	public BlockLittleBlocksBlock(int blockId, int metadata, int x, int y, int z) {
+	public BlockLittleChunkExtendedBlock(int blockId, int metadata, int x, int y, int z) {
 		this.blockId = blockId;
 		this.metadata = metadata;
 		this.littleBlock = new LittleBlockCoordinates(x, y, z);

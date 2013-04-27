@@ -6,13 +6,13 @@ import net.minecraft.block.Block;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-import slimevoid.littleblocks.blocks.BlockLittleBlocks;
+import slimevoid.littleblocks.blocks.BlockLittleChunk;
 import slimevoid.littleblocks.core.LBCore;
-import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
+import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 
 public class CollisionRayTrace {
 
-	public static List<Object[]> rayTraceLittleBlocks(BlockLittleBlocks littleBlocks, Vec3 player, Vec3 view, int i, int j, int k, List<Object[]> returns, int[][][] content, TileEntityLittleBlocks tile) {
+	public static List<Object[]> rayTraceLittleBlocks(BlockLittleChunk littleBlocks, Vec3 player, Vec3 view, int i, int j, int k, List<Object[]> returns, int[][][] content, TileEntityLittleChunk tile) {
 		float m = LBCore.littleBlocksSize;
 		for (int x = 0; x < content.length; x++) {
 			for (int y = 0; y < content[x].length; y++) {
@@ -57,7 +57,7 @@ public class CollisionRayTrace {
 		return returns;
 	}
 
-	public static List<Object[]> collisionRayTracerX(BlockLittleBlocks littleBlocks, World world, Vec3 player, Vec3 view, int x, int y, int z, int xx, List<Object[]> returns) {
+	public static List<Object[]> collisionRayTracerX(BlockLittleChunk littleBlocks, World world, Vec3 player, Vec3 view, int x, int y, int z, int xx, List<Object[]> returns) {
 		int m = LBCore.littleBlocksSize;
 		int block = world.getBlockId(x, y, z); // -X
 		if (block > 0 && Block.blocksList[block].isOpaqueCube()) {
@@ -91,7 +91,7 @@ public class CollisionRayTrace {
 		return returns;
 	}
 
-	public static List<Object[]> collisionRayTracerY(BlockLittleBlocks littleBlocks, World world, Vec3 player, Vec3 view, int x, int y, int z, int yy, List<Object[]> returns) {
+	public static List<Object[]> collisionRayTracerY(BlockLittleChunk littleBlocks, World world, Vec3 player, Vec3 view, int x, int y, int z, int yy, List<Object[]> returns) {
 		int m = LBCore.littleBlocksSize;
 		int block = world.getBlockId(x, y, z); // DOWN
 		if (block > 0 && Block.blocksList[block].isOpaqueCube()) {
@@ -125,7 +125,7 @@ public class CollisionRayTrace {
 		return returns;
 	}
 
-	public static List<Object[]> collisionRayTracerZ(BlockLittleBlocks littleBlocks, World world, Vec3 player, Vec3 view, int x, int y, int z, int zz, List<Object[]> returns) {
+	public static List<Object[]> collisionRayTracerZ(BlockLittleChunk littleBlocks, World world, Vec3 player, Vec3 view, int x, int y, int z, int zz, List<Object[]> returns) {
 		int m = LBCore.littleBlocksSize;
 		int block = world.getBlockId(x, y, z); // -Z
 		if (block > 0 && Block.blocksList[block].isOpaqueCube()) {
@@ -159,7 +159,7 @@ public class CollisionRayTrace {
 		return returns;
 	}
 
-	public static List<Object[]> collisionRayTracer(BlockLittleBlocks littleBlocks, World world, Vec3 player, Vec3 view, int x, int y, int z, List<Object[]> returns) {
+	public static List<Object[]> collisionRayTracer(BlockLittleChunk littleBlocks, World world, Vec3 player, Vec3 view, int x, int y, int z, List<Object[]> returns) {
 		int m = LBCore.littleBlocksSize;
 		/*
 		 * UP

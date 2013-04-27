@@ -5,7 +5,7 @@ set packagedir="%programdir%\Packages"
 set repodir="%programdir%\Repositories"
 set forgedir="%repodir%\MinecraftForge"
 set fmldir="%repodir%\MinecraftForge\fml"
-set mcpdir="%programdir%\mcp"
+set mcpdir="%forgedir%\mcp"
 set littleblocks="%repodir%\LittleBlocks-FML"
 set euryscore="%repodir%\EurysCore-FML"
 cd %mcpdir%

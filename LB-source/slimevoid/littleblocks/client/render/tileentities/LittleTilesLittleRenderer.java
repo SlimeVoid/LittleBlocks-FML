@@ -27,7 +27,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import slimevoid.littleblocks.core.LBCore;
-import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
+import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 
 
 public class LittleTilesLittleRenderer {
@@ -63,7 +63,7 @@ public class LittleTilesLittleRenderer {
 		}
 	}
 
-	public void renderLittleTiles(TileEntityLittleBlocks tileentity, double x, double y, double z, float f) {
+	public void renderLittleTiles(TileEntityLittleChunk tileentity, double x, double y, double z, float f) {
 		GL11.glPushMatrix();
 		
 		GL11.glTranslated(x, y, z);

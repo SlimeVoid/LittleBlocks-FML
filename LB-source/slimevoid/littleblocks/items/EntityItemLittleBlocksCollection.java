@@ -10,14 +10,22 @@ import net.minecraft.world.World;
 import slimevoid.littleblocks.core.LBCore;
 
 public class EntityItemLittleBlocksCollection extends EntityItem {
-	public HashMap<String, ItemStack> itemstackCollection = new HashMap<String, ItemStack>();
+	private HashMap<String, ItemStack> itemstackCollection = new HashMap<String, ItemStack>();
+	
+	public HashMap<String, ItemStack> getCollection() {
+		return this.itemstackCollection;
+	}
+
+	public void setCollection(HashMap<String, ItemStack> itemstackCollection) {
+		this.itemstackCollection = itemstackCollection;
+	}
 
     public EntityItemLittleBlocksCollection(World world) {
     	super(world);
     }
 
 	public EntityItemLittleBlocksCollection(World world, double x, double y, double z) {
-		super(world, x, y, z, new ItemStack(LBCore.littleBlocksID, 1, 0));
+		super(world, x, y, z, new ItemStack(LBCore.littleChunkID, 1, 0));
 	}
 
 	public void dropItems(EntityPlayer entityplayer) {
@@ -79,5 +87,9 @@ public class EntityItemLittleBlocksCollection extends EntityItem {
 		nbttagcompound.setInteger("ItemID["+itemnumber+"]", id);
 		nbttagcompound.setInteger("ItemDamage["+itemnumber+"]", damage);
 		nbttagcompound.setInteger("StackSize["+itemnumber+"]", stackSize);
+	}
+	
+	public boolean isEmpty() {
+		return !(this.itemstackCollection.size() > 0);
 	}
 }

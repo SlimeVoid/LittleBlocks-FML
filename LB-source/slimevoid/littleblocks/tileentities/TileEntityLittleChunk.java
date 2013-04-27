@@ -21,7 +21,7 @@ import slimevoid.littleblocks.network.packets.PacketLittleBlocks;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class TileEntityLittleBlocks extends TileEntity implements ILittleBlocks {
+public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 	public int size = LBCore.littleBlocksSize;
 	private int content[][][] = new int[size][size][size];
 	private int metadatas[][][] = new int[size][size][size];
@@ -32,7 +32,7 @@ public class TileEntityLittleBlocks extends TileEntity implements ILittleBlocks 
 		this.worldObj = par1World;
 	}
 
-	public TileEntityLittleBlocks() {
+	public TileEntityLittleChunk() {
 		for (int x = 0; x < this.content.length; x++) {
 			for (int y = 0; y < this.content[x].length; y++) {
 				for (int z = 0; z < this.content[x][y].length; z++) {
@@ -78,8 +78,8 @@ public class TileEntityLittleBlocks extends TileEntity implements ILittleBlocks 
 			if (worldObj.getBlockId(
 					xCoord + (x >= size ? 1 : 0),
 					yCoord + (y >= size ? 1 : 0),
-					zCoord + (z >= size ? 1 : 0)) == LBCore.littleBlocksID) {
-				TileEntityLittleBlocks tile = (TileEntityLittleBlocks) worldObj
+					zCoord + (z >= size ? 1 : 0)) == LBCore.littleChunkID) {
+				TileEntityLittleChunk tile = (TileEntityLittleChunk) worldObj
 						.getBlockTileEntity(
 								xCoord + (x >= size ? 1 : 0),
 								yCoord + (y >= size ? 1 : 0),
@@ -100,8 +100,8 @@ public class TileEntityLittleBlocks extends TileEntity implements ILittleBlocks 
 			if (worldObj.getBlockId(
 					xCoord - (x < 0 ? 1 : 0),
 					yCoord - (y < 0 ? 1 : 0),
-					zCoord - (z < 0 ? 1 : 0)) == LBCore.littleBlocksID) {
-				TileEntityLittleBlocks tile = (TileEntityLittleBlocks) worldObj
+					zCoord - (z < 0 ? 1 : 0)) == LBCore.littleChunkID) {
+				TileEntityLittleChunk tile = (TileEntityLittleChunk) worldObj
 						.getBlockTileEntity(
 								xCoord - (x < 0 ? 1 : 0),
 								yCoord - (y < 0 ? 1 : 0),
@@ -128,8 +128,8 @@ public class TileEntityLittleBlocks extends TileEntity implements ILittleBlocks 
 			if (worldObj.getBlockId(
 					xCoord + (x >= size ? 1 : 0),
 					yCoord + (y >= size ? 1 : 0),
-					zCoord + (z >= size ? 1 : 0)) == LBCore.littleBlocksID) {
-				TileEntityLittleBlocks tile = (TileEntityLittleBlocks) worldObj
+					zCoord + (z >= size ? 1 : 0)) == LBCore.littleChunkID) {
+				TileEntityLittleChunk tile = (TileEntityLittleChunk) worldObj
 						.getBlockTileEntity(
 								xCoord + (x >= size ? 1 : 0),
 								yCoord + (y >= size ? 1 : 0),
@@ -150,8 +150,8 @@ public class TileEntityLittleBlocks extends TileEntity implements ILittleBlocks 
 			if (worldObj.getBlockId(
 					xCoord - (x < 0 ? 1 : 0),
 					yCoord - (y < 0 ? 1 : 0),
-					zCoord - (z < 0 ? 1 : 0)) == LBCore.littleBlocksID) {
-				TileEntityLittleBlocks tile = (TileEntityLittleBlocks) worldObj
+					zCoord - (z < 0 ? 1 : 0)) == LBCore.littleChunkID) {
+				TileEntityLittleChunk tile = (TileEntityLittleChunk) worldObj
 						.getBlockTileEntity(
 								xCoord - (x < 0 ? 1 : 0),
 								yCoord - (y < 0 ? 1 : 0),
@@ -260,13 +260,13 @@ public class TileEntityLittleBlocks extends TileEntity implements ILittleBlocks 
 						xCoord + (x >= size ? 1 : 0),
 						yCoord + (y >= size ? 1 : 0),
 						zCoord + (z >= size ? 1 : 0),
-						LBCore.littleBlocksID, 0, 0x02);
+						LBCore.littleChunkID, 0, 0x02);
 			}
 			if (worldObj.getBlockId(
 					xCoord + (x >= size ? 1 : 0),
 					yCoord + (y >= size ? 1 : 0),
-					zCoord + (z >= size ? 1 : 0)) == LBCore.littleBlocksID) {
-				TileEntityLittleBlocks tile = (TileEntityLittleBlocks) worldObj
+					zCoord + (z >= size ? 1 : 0)) == LBCore.littleChunkID) {
+				TileEntityLittleChunk tile = (TileEntityLittleChunk) worldObj
 						.getBlockTileEntity(
 								xCoord + (x >= size ? 1 : 0),
 								yCoord + (y >= size ? 1 : 0),
@@ -287,13 +287,13 @@ public class TileEntityLittleBlocks extends TileEntity implements ILittleBlocks 
 						xCoord - (x < 0 ? 1 : 0),
 						yCoord - (y < 0 ? 1 : 0),
 						zCoord - (z < 0 ? 1 : 0),
-						LBCore.littleBlocksID, 0, 0x02);
+						LBCore.littleChunkID, 0, 0x02);
 			}
 			if (worldObj.getBlockId(
 					xCoord - (x < 0 ? 1 : 0),
 					yCoord - (y < 0 ? 1 : 0),
-					zCoord - (z < 0 ? 1 : 0)) == LBCore.littleBlocksID) {
-				TileEntityLittleBlocks tile = (TileEntityLittleBlocks) worldObj
+					zCoord - (z < 0 ? 1 : 0)) == LBCore.littleChunkID) {
+				TileEntityLittleChunk tile = (TileEntityLittleChunk) worldObj
 						.getBlockTileEntity(
 								xCoord - (x < 0 ? 1 : 0),
 								yCoord - (y < 0 ? 1 : 0),
@@ -334,13 +334,13 @@ public class TileEntityLittleBlocks extends TileEntity implements ILittleBlocks 
 						xCoord + (x >= size ? 1 : 0),
 						yCoord + (y >= size ? 1 : 0),
 						zCoord + (z >= size ? 1 : 0),
-						LBCore.littleBlocksID, 0 , 0x02);
+						LBCore.littleChunkID, 0 , 0x02);
 			}
 			if (worldObj.getBlockId(
 					xCoord + (x >= size ? 1 : 0),
 					yCoord + (y >= size ? 1 : 0),
-					zCoord + (z >= size ? 1 : 0)) == LBCore.littleBlocksID) {
-				TileEntityLittleBlocks tile = (TileEntityLittleBlocks) worldObj
+					zCoord + (z >= size ? 1 : 0)) == LBCore.littleChunkID) {
+				TileEntityLittleChunk tile = (TileEntityLittleChunk) worldObj
 						.getBlockTileEntity(
 								xCoord + (x >= size ? 1 : 0),
 								yCoord + (y >= size ? 1 : 0),
@@ -362,13 +362,13 @@ public class TileEntityLittleBlocks extends TileEntity implements ILittleBlocks 
 						xCoord - (x < 0 ? 1 : 0),
 						yCoord - (y < 0 ? 1 : 0),
 						zCoord - (z < 0 ? 1 : 0),
-						LBCore.littleBlocksID, 0, 0x02);
+						LBCore.littleChunkID, 0, 0x02);
 			}
 			if (worldObj.getBlockId(
 					xCoord - (x < 0 ? 1 : 0),
 					yCoord - (y < 0 ? 1 : 0),
-					zCoord - (z < 0 ? 1 : 0)) == LBCore.littleBlocksID) {
-				TileEntityLittleBlocks tile = (TileEntityLittleBlocks) worldObj
+					zCoord - (z < 0 ? 1 : 0)) == LBCore.littleChunkID) {
+				TileEntityLittleChunk tile = (TileEntityLittleChunk) worldObj
 						.getBlockTileEntity(
 								xCoord - (x < 0 ? 1 : 0),
 								yCoord - (y < 0 ? 1 : 0),
@@ -420,9 +420,9 @@ public class TileEntityLittleBlocks extends TileEntity implements ILittleBlocks 
 
 	public void setTileEntity(int x, int y, int z, TileEntity tile) {
 		tile.setWorldObj((World) getLittleWorld());
-		tile.xCoord = (xCoord << 3) + x;
-		tile.yCoord = (yCoord << 3) + y;
-		tile.zCoord = (zCoord << 3) + z;
+		tile.xCoord = (this.xCoord << 3) + x;
+		tile.yCoord = (this.yCoord << 3) + y;
+		tile.zCoord = (this.zCoord << 3) + z;
 		Block block = Block.blocksList[this.getBlockID(x, y, z)];
 		if (block != null && block.hasTileEntity(this.getBlockMetadata(x, y, z))) {
 			removeTileEntity(x, y, z);

@@ -15,7 +15,7 @@ import net.minecraft.tileentity.TileEntity;
 import slimevoid.lib.data.Logger;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.LoggerLittleBlocks;
-import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
+import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 import slimevoid.littleblocks.world.ItemInLittleWorldManager;
 import buildcraft.core.IItemPipe;
 
@@ -39,7 +39,7 @@ public class BlockUtil {
 		itemInLittleWorldManagers = new HashMap<EntityPlayerMP, ItemInLittleWorldManager>();
 		registerDisallowedBlockTick(BlockFluid.class);
 		registerDisallowedBlockTick(BlockFlowing.class);
-		registerDisallowedTile(TileEntityLittleBlocks.class);
+		registerDisallowedTile(TileEntityLittleChunk.class);
 		registerDisallowedItem(ItemHoe.class);
 		registerDisallowedItem(ItemMonsterPlacer.class);
 	}

@@ -3,7 +3,7 @@ package slimevoid.littleblocks.client.render.tileentities;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
-import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
+import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 import cpw.mods.fml.common.FMLCommonHandler;
 
 public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
@@ -11,14 +11,14 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 	@Override
 	public void renderTileEntityAt(TileEntity tileentity, double d, double d1, double d2, float f) {
 		renderTileEntityLittleBlocks(
-				(TileEntityLittleBlocks) tileentity,
+				(TileEntityLittleChunk) tileentity,
 				d,
 				d1,
 				d2,
 				f);
 	}
 
-	private void renderTileEntityLittleBlocks(TileEntityLittleBlocks tileentitylittleblocks, double x, double y, double z, float f) {
+	private void renderTileEntityLittleBlocks(TileEntityLittleChunk tileentitylittleblocks, double x, double y, double z, float f) {
 
 		if (tileentitylittleblocks == null || tileentitylittleblocks.isEmpty()) {
 			return;

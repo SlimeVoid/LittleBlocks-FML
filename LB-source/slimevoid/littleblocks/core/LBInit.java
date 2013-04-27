@@ -17,6 +17,7 @@ import net.minecraftforge.common.Configuration;
 import slimevoid.lib.ICommonProxy;
 import slimevoid.lib.core.SlimevoidCore;
 import slimevoid.littleblocks.api.util.LittleBlocksHelper;
+import slimevoid.littleblocks.core.lib.EnumWandAction;
 import slimevoid.littleblocks.core.lib.ReferenceLib;
 
 public class LBInit {
@@ -53,5 +54,6 @@ public class LBInit {
 		LBCore.registerRecipes();
 
 		LittleBlocksHelper.init(LittleBlocks.proxy, LBCore.littleBlocksSize);
+		EnumWandAction.registerWandActions();
 	}
 }

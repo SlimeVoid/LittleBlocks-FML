@@ -27,7 +27,7 @@ import slimevoid.littleblocks.core.lib.PacketLib;
 //import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocksSettings;
 import slimevoid.littleblocks.proxy.CommonProxy;
-import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
+import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 import slimevoid.littleblocks.world.LittleWorld;
 import slimevoid.littleblocks.core.lib.ResourceLib;
 import cpw.mods.fml.client.registry.ClientRegistry;
@@ -61,7 +61,7 @@ public class ClientProxy extends CommonProxy {
 		RenderingRegistry.registerBlockHandler(new LittleBlocksRenderer());
 		//RenderingRegistry.registerEntityRenderingHandler(EntityItemLittleBlocksCollection.class, new EntityItemLittleCollectionRenderer());
 		this.registerTileEntitySpecialRenderer(
-				TileEntityLittleBlocks.class);
+				TileEntityLittleChunk.class);
 	}
 
 	@Override

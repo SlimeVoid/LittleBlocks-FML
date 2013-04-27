@@ -11,15 +11,15 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
-import slimevoid.littleblocks.blocks.BlockLittleBlocks;
+import slimevoid.littleblocks.blocks.BlockLittleChunk;
 import slimevoid.littleblocks.core.lib.BlockLib;
 import slimevoid.littleblocks.core.lib.BlockUtil;
 import slimevoid.littleblocks.core.lib.ItemLib;
 import slimevoid.littleblocks.core.lib.LocalizationLib;
 import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
-import slimevoid.littleblocks.items.ItemLittleBlocksCopier;
+import slimevoid.littleblocks.items.ItemLittleBlocksWand;
 import slimevoid.littleblocks.items.LittleBlocksCollectionPickup;
-import slimevoid.littleblocks.tileentities.TileEntityLittleBlocks;
+import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 import slimevoid.littleblocks.world.LittleWorld;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -31,13 +31,13 @@ public class LBCore {
 	public static Configuration configuration;
 	public static boolean littleBlocksForceUpdate;
 	public static String loggerLevel = "INFO";
-	public static Block littleBlocks;
-	public static Item littleBlocksCopier;
+	public static Block littleChunk;
+	public static Item littleBlocksWand;
 	@SideOnly(Side.CLIENT)
 	public static LittleWorld littleWorldClient;
 	public static LittleWorld littleWorldServer;
-	public static int littleBlocksID;
-	public static int littleBlocksCopierID;
+	public static int littleChunkID;
+	public static int littleBlocksWandID;
 	public static int littleBlocksCollectionID;
 	public static boolean littleBlocksClip;
 	public static int renderingMethod;
@@ -56,17 +56,15 @@ public class LBCore {
 	public static int littleDimensionServer;
 	public static int littleProviderTypeServer;
 	public static WorldProvider littleProviderServer;
-	public static int littleBlockID;
-	public static Item littleBlock;
 
 	public static void registerItems() {
-		littleBlocks = new BlockLittleBlocks(
-				littleBlocksID,
-					TileEntityLittleBlocks.class,
+		littleChunk = new BlockLittleChunk(
+				littleChunkID,
+					TileEntityLittleChunk.class,
 					Material.wood,
 					2F,
-					true).setUnlocalizedName(BlockLib.LITTLEBLOCKS);
-		littleBlocksCopier = new ItemLittleBlocksCopier(littleBlocksCopierID).setUnlocalizedName(ItemLib.COPIER_TOOL);
+					true).setUnlocalizedName(BlockLib.LITTLECHUNK);
+		littleBlocksWand = new ItemLittleBlocksWand(littleBlocksWandID).setUnlocalizedName(ItemLib.COPIER_TOOL);
 		MinecraftForge.EVENT_BUS.register(new LittleBlocksCollectionPickup());
 		// MinecraftForge.EVENT_BUS.register(new LittleContainerInteract());
 		// MinecraftForge.EVENT_BUS.register(new PistonOrientation());
@@ -77,14 +75,14 @@ public class LBCore {
 	}
 
 	public static void registerRecipes() {
-		GameRegistry.addRecipe(new ItemStack(littleBlocks), new Object[] {
+		GameRegistry.addRecipe(new ItemStack(littleBlocksWand), new Object[] {
 				"#",
 				Character.valueOf('#'),
 				Block.dirt });
 	}
 	
 	public static void registerBlocks() {
-		GameRegistry.registerBlock(littleBlocks, BlockLib.LITTLEBLOCKS);
+		GameRegistry.registerBlock(littleChunk, BlockLib.LITTLECHUNK);
 		EntityRegistry.registerModEntity(
 				EntityItemLittleBlocksCollection.class,
 				"LittleBlocksCollection",
@@ -94,8 +92,8 @@ public class LBCore {
 				1,
 				false);
 		GameRegistry.registerTileEntity(
-				TileEntityLittleBlocks.class,
-				BlockLib.TILE_LITTLEBLOCKS);
+				TileEntityLittleChunk.class,
+				BlockLib.TILE_LITTLECHUNK);
 		BlockUtil.registerPlacementInfo();
 	}
 
