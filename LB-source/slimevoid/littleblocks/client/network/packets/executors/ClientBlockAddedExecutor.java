@@ -30,7 +30,6 @@ public class ClientBlockAddedExecutor implements IPacketExecutor {
 					packet.yPosition >> 3,
 					packet.zPosition >> 3);
 			if (tileentitylittleblocks != null) {
-				System.out.println("BLOCK ADDED");
 				tileentitylittleblocks.handleBlockAdded(world, entityplayer, (PacketLittleBlocks)packet);
 			}
 			world.markBlockForUpdate(

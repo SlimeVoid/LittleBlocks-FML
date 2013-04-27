@@ -2,17 +2,20 @@ package slimevoid.littleblocks.items;
 
 import java.util.HashMap;
 
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import slimevoid.lib.data.ReadWriteLock;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.LoggerLittleBlocks;
 import slimevoid.littleblocks.core.lib.CommandLib;
 import slimevoid.littleblocks.core.lib.EnumWandAction;
+import slimevoid.littleblocks.core.lib.IconLib;
 import slimevoid.littleblocks.core.lib.ResourceLib;
 import slimevoid.littleblocks.handlers.LittleBlocksRotationHandler;
 import slimevoid.littleblocks.network.packets.PacketLittleNotify;
@@ -23,6 +26,19 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemLittleBlocksWand extends Item {
+	
+	protected Icon[] iconList;
+	
+    @SideOnly(Side.CLIENT)
+    public void updateIcons(IconRegister iconRegister) {
+		iconList = new Icon[1];
+		iconList[0] = iconRegister.registerIcon(IconLib.LB_WAND);
+    }
+
+	@Override
+	public Icon getIconFromDamage(int i) {
+		return iconList[0];
+	}
 
 	public static HashMap<EntityPlayer, TileEntityLittleChunk> selectedLittleTiles = new HashMap<EntityPlayer, TileEntityLittleChunk>();
 	public static ReadWriteLock tileLock = new ReadWriteLock();
@@ -51,6 +67,11 @@ public class ItemLittleBlocksWand extends Item {
 		return false;
 	}
 
+	@Override
+	public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int l, float a, float b, float c) {
+		return true;
+	}
+
 	private boolean doRotateLB(ItemStack itemstack, EntityPlayer entityplayer,
 			World world, int x, int y, int z, int l, float a, float b, float c) {
 		TileEntity tileentity = world.getBlockTileEntity(x, y, z);
@@ -66,7 +87,6 @@ public class ItemLittleBlocksWand extends Item {
 	private boolean doPlaceLB(ItemStack itemstack, EntityPlayer entityplayer,
 			World world, int x, int y, int z, int l, float a, float b, float c) {
 		if (world.getBlockId(x, y, z) != LBCore.littleChunkID) {
-			System.out.println("Place");
 			if (l == 0) {
 				--y;
 			}
