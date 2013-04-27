@@ -37,8 +37,8 @@ public class BlockUtil {
 
 	public static void registerPlacementInfo() {
 		itemInLittleWorldManagers = new HashMap<EntityPlayerMP, ItemInLittleWorldManager>();
-		registerDisallowedBlockTick(BlockFluid.class);
-		registerDisallowedBlockTick(BlockFlowing.class);
+		//registerDisallowedBlockTick(BlockFluid.class);
+		//registerDisallowedBlockTick(BlockFlowing.class);
 		registerDisallowedTile(TileEntityLittleChunk.class);
 		registerDisallowedItem(ItemHoe.class);
 		registerDisallowedItem(ItemMonsterPlacer.class);

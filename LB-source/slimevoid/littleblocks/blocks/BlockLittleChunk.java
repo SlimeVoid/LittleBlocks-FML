@@ -8,6 +8,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockPistonBase;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,6 +29,7 @@ import slimevoid.littleblocks.blocks.core.CollisionRayTrace;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.lib.BlockUtil;
 import slimevoid.littleblocks.core.lib.CommandLib;
+import slimevoid.littleblocks.core.lib.IconLib;
 import slimevoid.littleblocks.core.lib.MessageLib;
 import slimevoid.littleblocks.core.lib.PacketLib;
 import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
@@ -40,6 +42,10 @@ import cpw.mods.fml.relauncher.Side;
 
 public class BlockLittleChunk extends BlockContainer {
 
+    public void registerIcons(IconRegister iconRegister) {
+    	this.blockIcon = iconRegister.registerIcon(IconLib.LB_CHUNK);
+    }
+	
 	public int xSelected = -10, ySelected = -10, zSelected = -10, side = -1;
 
 	public boolean updateEveryone = true;

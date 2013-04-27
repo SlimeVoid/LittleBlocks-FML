@@ -3,7 +3,6 @@ package slimevoid.littleblocks.world;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -18,13 +17,11 @@ import net.minecraft.network.packet.Packet60Explosion;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.Vec3;
-import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.NextTickListEntry;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldSettings;
-import net.minecraft.world.chunk.Chunk;
 import slimevoid.lib.data.Logger;
 import slimevoid.littleblocks.core.LoggerLittleBlocks;
 import slimevoid.littleblocks.core.lib.BlockUtil;
@@ -44,7 +41,7 @@ public class LittleWorldServer extends LittleWorld {
 	private Set<NextTickListEntry> scheduledTickSet;
 	
 	
-    private ArrayList tickedEntries = new ArrayList();
+    private ArrayList<NextTickListEntry> tickedEntries = new ArrayList<NextTickListEntry>();
 
 	/**
 	 * Double buffer of ServerBlockEventList[] for holding pending
@@ -136,7 +133,7 @@ public class LittleWorldServer extends LittleWorld {
 				this.scheduledTickSet.remove(nextTick);
                 this.tickedEntries.add(nextTick);
 			}
-            Iterator tickedEntryList = this.tickedEntries.iterator();
+            Iterator<NextTickListEntry> tickedEntryList = this.tickedEntries.iterator();
 
             while (tickedEntryList.hasNext()) {
             	nextTick = (NextTickListEntry)tickedEntryList.next();

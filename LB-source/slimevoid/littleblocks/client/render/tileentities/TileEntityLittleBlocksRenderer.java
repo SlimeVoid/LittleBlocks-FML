@@ -1,10 +1,10 @@
 package slimevoid.littleblocks.client.render.tileentities;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
-import cpw.mods.fml.common.FMLCommonHandler;
 
 public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 		
@@ -42,7 +42,7 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 								if (tileentity != null) {
 									littleTiles.addLittleTileToRender(tileentity/**, littleBlock.getTextureFile()**/);
 								} else {
-									//FMLCommonHandler.instance().getFMLLogger().warning("Attempted to render a tile for [" + littleBlock.getLocalizedName() + "] that was null!");
+									FMLCommonHandler.instance().getFMLLogger().warning("Attempted to render a tile for [" + littleBlock.getLocalizedName() + "] that was null!");
 								}
 							}
 						}

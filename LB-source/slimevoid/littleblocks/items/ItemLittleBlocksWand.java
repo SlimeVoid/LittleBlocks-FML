@@ -16,7 +16,6 @@ import slimevoid.littleblocks.core.LoggerLittleBlocks;
 import slimevoid.littleblocks.core.lib.CommandLib;
 import slimevoid.littleblocks.core.lib.EnumWandAction;
 import slimevoid.littleblocks.core.lib.IconLib;
-import slimevoid.littleblocks.core.lib.ResourceLib;
 import slimevoid.littleblocks.handlers.LittleBlocksRotationHandler;
 import slimevoid.littleblocks.network.packets.PacketLittleNotify;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;

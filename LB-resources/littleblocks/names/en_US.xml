@@ -5,6 +5,6 @@
 	<entry key="message.lb.deny.copier">Sorry, that feature is only available in Creative Mode!</entry>
 	<entry key="message.lb.deny.place">Sorry, you cannot place that here!</entry>
 	<entry key="message.lb.deny.use">Sorry, you cannot use that here!</entry>
-	<entry key="tile.lb.littleblocks.name">Little Blocks Tile</entry>
+	<entry key="tile.lb.littleblocks.name">Little Chunk</entry>
 	<entry key="item.lb.copier.name">Little Blocks Wand</entry>
 </properties>

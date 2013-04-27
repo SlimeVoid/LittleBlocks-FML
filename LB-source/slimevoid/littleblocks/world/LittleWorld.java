@@ -551,7 +551,6 @@ public class LittleWorld extends World implements ILittleWorld {
 			);
 			return false;
 		} else {
-			boolean needsUpdate = false;
 			boolean flag = false;
 			Chunk chunk = this.getRealWorld().getChunkFromChunkCoords(x >> 7, z >> 7);
 			if (chunk.getBlockID((x & 0x7f) >> 3, y >> 3, (z & 0x7f) >> 3) != LBCore.littleChunkID) {
@@ -642,7 +641,6 @@ public class LittleWorld extends World implements ILittleWorld {
 			);
 			return false;
 		} else {
-			boolean flag = false;
 			Chunk chunk = this.getRealWorld().getChunkFromChunkCoords(x >> 7, z >> 7);
 			if (chunk.getBlockID((x & 0x7f) >> 3, y >> 3, (z & 0x7f) >> 3) != LBCore.littleChunkID) {
 				this.getRealWorld().setBlock(
@@ -1155,7 +1153,7 @@ public class LittleWorld extends World implements ILittleWorld {
 			//System.out.println("Setting TileEntity: " + tileentity.toString());
 			if (tileentity.canUpdate()) {
 	            if (scanningTiles) {
-	                Iterator iterator = addedTiles.iterator();
+	                Iterator<TileEntity> iterator = addedTiles.iterator();
 	                while (iterator.hasNext()) {
 	                    TileEntity tileentity1 = (TileEntity)iterator.next();
 	    
