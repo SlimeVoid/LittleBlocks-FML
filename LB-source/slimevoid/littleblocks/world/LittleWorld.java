@@ -31,7 +31,7 @@ public class LittleWorld extends World implements ILittleWorld {
 	protected int ticksInWorld = 0;
 	protected static final int MAX_TICKS_IN_WORLD = 5;
 
-	protected World realWorld;
+	private World realWorld;
 
 	@SideOnly(Side.CLIENT)
 	public LittleWorld(World world) {
@@ -133,7 +133,7 @@ public class LittleWorld extends World implements ILittleWorld {
 			if (tileentity.isInvalid()) {
 				loadedTile.remove();
 
-				TileEntity tileentitylb = this.realWorld.getBlockTileEntity(
+				TileEntity tileentitylb = this.getRealWorld().getBlockTileEntity(
 						tileentity.xCoord >> 3,
 						tileentity.yCoord >> 3,
 						tileentity.zCoord >> 3);
@@ -176,8 +176,8 @@ public class LittleWorld extends World implements ILittleWorld {
 
 	@Override
 	public int getSkyBlockTypeBrightness(EnumSkyBlock enumskyblock, int x, int y, int z) {
-		if (this.realWorld != null) {
-			return this.realWorld.getSkyBlockTypeBrightness(enumskyblock, x >> 3, y >> 3, z >> 3);
+		if (this.getRealWorld() != null) {
+			return this.getRealWorld().getSkyBlockTypeBrightness(enumskyblock, x >> 3, y >> 3, z >> 3);
 		} else {
 			LoggerLittleBlocks.getInstance(
 					Logger.filterClassName(
@@ -196,8 +196,8 @@ public class LittleWorld extends World implements ILittleWorld {
 
 	@Override
     public long getWorldTime() {
-		if (this.realWorld != null) {
-			return this.realWorld.provider.getWorldTime();
+		if (this.getRealWorld() != null) {
+			return this.getRealWorld().provider.getWorldTime();
 		} else {
 			LoggerLittleBlocks.getInstance(
 					Logger.filterClassName(
@@ -214,8 +214,8 @@ public class LittleWorld extends World implements ILittleWorld {
 
 	@Override
 	public long getTotalWorldTime() {
-		if (this.realWorld != null) {
-			return this.realWorld.getWorldInfo().getWorldTotalTime();
+		if (this.getRealWorld() != null) {
+			return this.getRealWorld().getWorldInfo().getWorldTotalTime();
 		} else {
 			LoggerLittleBlocks.getInstance(
 					Logger.filterClassName(
@@ -232,7 +232,7 @@ public class LittleWorld extends World implements ILittleWorld {
 
 	@Override
 	public int getLightBrightnessForSkyBlocks(int x, int y, int z, int l) {
-		if (this.realWorld != null) {
+		if (this.getRealWorld() != null) {
 			return realWorld.getLightBrightnessForSkyBlocks(
 				x >> 3,
 				y >> 3,
@@ -424,7 +424,7 @@ public class LittleWorld extends World implements ILittleWorld {
 		entity.motionX /= LBCore.littleBlocksSize;
 		entity.motionY /= LBCore.littleBlocksSize;
 		entity.motionZ /= LBCore.littleBlocksSize;
-		entity.worldObj = this.realWorld;
+		entity.worldObj = this.getRealWorld();
 		LoggerLittleBlocks.getInstance(
 				Logger.filterClassName(
 						this.getClass().toString()
@@ -437,7 +437,7 @@ public class LittleWorld extends World implements ILittleWorld {
 						entity.posZ + "]",
 				LoggerLittleBlocks.LogLevel.DEBUG
 		);
-		return this.realWorld.spawnEntityInWorld(entity);
+		return this.getRealWorld().spawnEntityInWorld(entity);
 	}
 
 	@Override
@@ -747,7 +747,7 @@ public class LittleWorld extends World implements ILittleWorld {
 						LoggerLittleBlocks.LogLevel.ERROR
 				);
 			}
-			this.realWorld.updateAllLightTypes(x >> 3, y >> 3, z >> 3);
+			this.getRealWorld().updateAllLightTypes(x >> 3, y >> 3, z >> 3);
 			this.markBlockForRenderUpdate(x, y, z);
 			return flag;
 		}
@@ -827,7 +827,7 @@ public class LittleWorld extends World implements ILittleWorld {
 							LoggerLittleBlocks.LogLevel.DEBUG
 					);
 				}
-				this.realWorld.updateAllLightTypes(x >> 3, y >> 3, z >> 3);
+				this.getRealWorld().updateAllLightTypes(x >> 3, y >> 3, z >> 3);
 				this.markBlockForRenderUpdate(x, y, z);
 			}
 			return flag;
@@ -898,7 +898,7 @@ public class LittleWorld extends World implements ILittleWorld {
 						LoggerLittleBlocks.LogLevel.DEBUG
 				);
 			}
-			this.realWorld.updateAllLightTypes(x >> 3, y >> 3, z >> 3);
+			this.getRealWorld().updateAllLightTypes(x >> 3, y >> 3, z >> 3);
 			this.markBlockForRenderUpdate(x, y, z);
 			return flag;
 		}
@@ -977,7 +977,7 @@ public class LittleWorld extends World implements ILittleWorld {
 						(z & 0x7f) >> 3,
 						metadata);
 			}
-			this.realWorld.updateAllLightTypes(x >> 3, y >> 3, z >> 3);
+			this.getRealWorld().updateAllLightTypes(x >> 3, y >> 3, z >> 3);
 			this.markBlockForRenderUpdate(x, y, z);
 			return true;
 		}
@@ -1024,14 +1024,14 @@ public class LittleWorld extends World implements ILittleWorld {
 	@Override
 	public void notifyBlockOfNeighborChange(int x, int y, int z, int blockId) {
 		World world;
-		int id = this.realWorld.getBlockId(x >> 3, y >> 3, z >> 3);
+		int id = this.getRealWorld().getBlockId(x >> 3, y >> 3, z >> 3);
 		if (id == LBCore.littleBlocksID) {
 			world = this;
 		} else {
 			x >>= 3;
 			y >>= 3;
 			z >>= 3;
-			world = this.realWorld;
+			world = this.getRealWorld();
 		}
 		if (!world.isRemote) {
 			//System.out.println("World[" + world.toString() + "]" +
@@ -1063,38 +1063,6 @@ public class LittleWorld extends World implements ILittleWorld {
 						LoggerLittleBlocks.LogLevel.DEBUG
 				);
 			}
-		}
-	}
-
-	@Override
-	public void idModified(int lastBlockId, int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
-		/*int blockX = (x << 3) + littleX,
-			blockY = (y << 3) + littleY,
-			blockZ = (z << 3) + littleZ;
-		this.notifyBlockChange(
-				blockX,
-				blockY,
-				blockZ,
-				blockId);*/
-		if (this.realWorld != null) {
-			this.realWorld.updateAllLightTypes(x, y, z);
-			this.realWorld.markBlockForRenderUpdate(x, y, z);
-		}
-	}
-
-	@Override
-	public void metadataModified(int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
-		/*int blockX = (x << 3) + littleX,
-			blockY = (y << 3) + littleY,
-			blockZ = (z << 3) + littleZ;
-		this.notifyBlockChange(
-				blockX,
-				blockY,
-				blockZ,
-				blockId);*/
-		if (this.realWorld != null) {
-			this.realWorld.updateAllLightTypes(x, y, z);
-			this.realWorld.markBlockForRenderUpdate(x, y, z);
 		}
 	}
 
@@ -1255,23 +1223,8 @@ public class LittleWorld extends World implements ILittleWorld {
 	}
 
 	@Override
-	public void markBlockForUpdate(int x, int y, int z) {
-		this.realWorld.markBlockForUpdate(x >> 3, y >> 3, z >> 3);
-	}
-
-	@Override
-	public void markBlockForRenderUpdate(int x, int y, int z) {
-		this.realWorld.markBlockForRenderUpdate(x >> 3, y >> 3, z >> 3);
-	}
-	
-	@Override
-    public void markBlockRangeForRenderUpdate(int x, int y, int z, int x2, int y2, int z2) {
-		this.realWorld.markBlockRangeForRenderUpdate(x >> 3, y >> 3, z >> 3, x2 >> 3, y2 >> 3, z2 >> 3);
-	}
-
-	@Override
 	public void playSoundEffect(double x, double y, double z, String s, float f, float f1) {
-		this.realWorld.playSoundEffect(
+		this.getRealWorld().playSoundEffect(
 				x / LBCore.littleBlocksSize,
 				y / LBCore.littleBlocksSize,
 				z / LBCore.littleBlocksSize,
@@ -1282,12 +1235,12 @@ public class LittleWorld extends World implements ILittleWorld {
 
 	@Override
 	public void playRecord(String s, int x, int y, int z) {
-		this.realWorld.playRecord(s, x, y, z);
+		this.getRealWorld().playRecord(s, x, y, z);
 	}
 
 	@Override
 	public void playAuxSFX(int x, int y, int z, int l, int i1) {
-		this.realWorld.playAuxSFX(
+		this.getRealWorld().playAuxSFX(
 				x / LBCore.littleBlocksSize,
 				y / LBCore.littleBlocksSize,
 				z / LBCore.littleBlocksSize,
@@ -1297,7 +1250,7 @@ public class LittleWorld extends World implements ILittleWorld {
 
 	@Override
 	public void spawnParticle(String s, double x, double y, double z, double d3, double d4, double d5) {
-		this.realWorld.spawnParticle(
+		this.getRealWorld().spawnParticle(
 				s,
 				x / LBCore.littleBlocksSize,
 				y / LBCore.littleBlocksSize,
@@ -1336,22 +1289,69 @@ public class LittleWorld extends World implements ILittleWorld {
 	}
 
 	@Override
-	public World getRealWorld() {
-		return this.realWorld;
-	}
-
-	@Override
 	public Entity getEntityByID(int entityId) {
 		return null;
 	}
 	
 	@Override
     public EntityPlayer getClosestPlayer(double par1, double par3, double par5, double par7) {
-		return this.realWorld.getClosestPlayer(par1, par3, par5, par7);
+		return this.getRealWorld().getClosestPlayer(par1, par3, par5, par7);
 	}
 	
 	@Override
     public EntityPlayer getClosestVulnerablePlayer(double par1, double par3, double par5, double par7) {
-		return this.realWorld.getClosestPlayer(par1, par3, par5, par7);
+		return this.getRealWorld().getClosestPlayer(par1, par3, par5, par7);
+	}
+
+	@Override
+	public World getRealWorld() {
+		return this.getRealWorld();
+	}
+
+	@Override
+	public void markBlockForUpdate(int x, int y, int z) {	
+		this.getRealWorld().markBlockForUpdate(x >> 3, y >> 3, z >> 3);
+	}
+
+	@Override
+	public void markBlockForRenderUpdate(int x, int y, int z) {
+		this.getRealWorld().markBlockForRenderUpdate(x >> 3, y >> 3, z >> 3);
+	}
+	
+	@Override
+    public void markBlockRangeForRenderUpdate(int x, int y, int z, int x2, int y2, int z2) {
+		this.getRealWorld().markBlockRangeForRenderUpdate(x >> 3, y >> 3, z >> 3, x2 >> 3, y2 >> 3, z2 >> 3);
+	}
+
+	@Override
+	public void idModified(int lastBlockId, int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
+		/*int blockX = (x << 3) + littleX,
+			blockY = (y << 3) + littleY,
+			blockZ = (z << 3) + littleZ;
+		this.notifyBlockChange(
+				blockX,
+				blockY,
+				blockZ,
+				blockId);*/
+		if (this.getRealWorld() != null) {
+			this.getRealWorld().updateAllLightTypes(x, y, z);
+			this.getRealWorld().markBlockForRenderUpdate(x, y, z);
+		}
+	}
+
+	@Override
+	public void metadataModified(int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
+		/*int blockX = (x << 3) + littleX,
+			blockY = (y << 3) + littleY,
+			blockZ = (z << 3) + littleZ;
+		this.notifyBlockChange(
+				blockX,
+				blockY,
+				blockZ,
+				blockId);*/
+		if (this.getRealWorld() != null) {
+			this.getRealWorld().updateAllLightTypes(x, y, z);
+			this.getRealWorld().markBlockForRenderUpdate(x, y, z);
+		}
 	}
 }

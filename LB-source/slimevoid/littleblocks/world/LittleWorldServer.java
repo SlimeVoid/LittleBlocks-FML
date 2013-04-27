@@ -127,7 +127,7 @@ public class LittleWorldServer extends LittleWorld {
 				nextTick = (NextTickListEntry)this.pendingTickListEntries
 						.first();
 
-				if (!tick && nextTick.scheduledTime > this.realWorld.getWorldInfo()
+				if (!tick && nextTick.scheduledTime > this.getRealWorld().getWorldInfo()
 						.getWorldTotalTime()) {
 					break;
 				}
@@ -255,7 +255,7 @@ public class LittleWorldServer extends LittleWorld {
         double yCoord = (int)y >> 3;
         double zCoord = (int)z >> 3;
 
-        Iterator players = this.realWorld.playerEntities.iterator();
+        Iterator players = this.getRealWorld().playerEntities.iterator();
 
         while (players.hasNext())
         {
@@ -453,7 +453,7 @@ public class LittleWorldServer extends LittleWorld {
 				y + max,
 				z + max)) {
 			if (blockId > 0) {
-				nextTickEntry.setScheduledTime(tickRate + this.realWorld.getWorldInfo()
+				nextTickEntry.setScheduledTime(tickRate + this.getRealWorld().getWorldInfo()
 						.getWorldTotalTime());
 				nextTickEntry.func_82753_a(someValue);
 			}
@@ -475,7 +475,7 @@ public class LittleWorldServer extends LittleWorld {
 		nextTick.func_82753_a(par6);
 
 		if (blockId > 0) {
-			nextTick.setScheduledTime((long)tickRate + this.realWorld.getWorldInfo().getWorldTotalTime());
+			nextTick.setScheduledTime((long)tickRate + this.getRealWorld().getWorldInfo().getWorldTotalTime());
 		}
 
 		if (!this.scheduledTickSet.contains(nextTick)) {
@@ -483,12 +483,22 @@ public class LittleWorldServer extends LittleWorld {
 			this.pendingTickListEntries.add(nextTick);
 		}
 	}
+	
+	@Override
+	public void updateTileEntityChunkAndDoNothing(int x, int y, int z,
+			TileEntity tileentity) {
+		if (!this.isRemote) {
+			if (this.blockExists(x, y, z)) {
+				PacketLib.sendTileEntity(this, tileentity, x, y, z);
+			}
+		}
+	}
 
 	@Override
 	public void metadataModified(int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
 		int blockX = (x << 3) + littleX,
-				blockY = (y << 3) + littleY,
-				blockZ = (z << 3) + littleZ;
+			blockY = (y << 3) + littleY,
+			blockZ = (z << 3) + littleZ;
 /*		this.notifyBlockChange(
 				blockX,
 				blockY,
@@ -504,16 +514,6 @@ public class LittleWorldServer extends LittleWorld {
 					blockId,
 					side,
 					metadata);
-		}
-	}
-	
-	@Override
-	public void updateTileEntityChunkAndDoNothing(int x, int y, int z,
-			TileEntity tileentity) {
-		if (!this.isRemote) {
-			if (this.blockExists(x, y, z)) {
-				PacketLib.sendTileEntity(this, tileentity, x, y, z);
-			}
 		}
 	}
 
