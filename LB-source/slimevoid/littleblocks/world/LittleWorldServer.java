@@ -133,7 +133,7 @@ public class LittleWorldServer extends LittleWorld {
 				this.scheduledTickSet.remove(nextTick);
                 this.tickedEntries.add(nextTick);
 			}
-            Iterator<NextTickListEntry> tickedEntryList = this.tickedEntries.iterator();
+            Iterator tickedEntryList = this.tickedEntries.iterator();
 
             while (tickedEntryList.hasNext()) {
             	nextTick = (NextTickListEntry)tickedEntryList.next();

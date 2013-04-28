@@ -1153,7 +1153,7 @@ public class LittleWorld extends World implements ILittleWorld {
 			//System.out.println("Setting TileEntity: " + tileentity.toString());
 			if (tileentity.canUpdate()) {
 	            if (scanningTiles) {
-	                Iterator<TileEntity> iterator = addedTiles.iterator();
+	                Iterator iterator = addedTiles.iterator();
 	                while (iterator.hasNext()) {
 	                    TileEntity tileentity1 = (TileEntity)iterator.next();
 	    
@@ -1169,7 +1169,7 @@ public class LittleWorld extends World implements ILittleWorld {
 	            	loadedTiles.add(tileentity);
 	            }
 	        }
-			TileEntityLittleChunk tile = (TileEntityLittleChunk) realWorld
+			TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getRealWorld()
 					.getBlockTileEntity(x >> 3, y >> 3, z >> 3);
 			tile.setTileEntity(x & 7, y & 7, z & 7, tileentity);
 		} else {

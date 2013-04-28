@@ -15,6 +15,7 @@ public class LittleBlocksCollectionPickup {
 		if (item instanceof EntityItemLittleBlocksCollection) {
 			((EntityItemLittleBlocksCollection)item).dropItems(entityplayer);
 			event.setResult(Result.ALLOW);
+			event.item.setDead();
 		}
 	}
 }

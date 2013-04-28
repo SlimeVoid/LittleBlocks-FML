@@ -29,7 +29,8 @@ public class ItemLittleBlocksWand extends Item {
 	protected Icon[] iconList;
 	
     @SideOnly(Side.CLIENT)
-    public void updateIcons(IconRegister iconRegister) {
+    @Override
+    public void registerIcons(IconRegister iconRegister) {
 		iconList = new Icon[1];
 		iconList[0] = iconRegister.registerIcon(IconLib.LB_WAND);
     }

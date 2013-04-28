@@ -6,8 +6,6 @@ import net.minecraft.world.World;
 
 public interface ILittleWorld extends IBlockAccess {
 
-	void tick();
-
 	World getRealWorld();
 
 	void idModified(int lastId, int xCoord, int yCoord, int zCoord, int i,
@@ -18,7 +16,4 @@ public interface ILittleWorld extends IBlockAccess {
 
 	void setBlockTileEntity(int x, int y, int z,
 			TileEntity tileentity);
-
-	void updateEntities();
-
 }

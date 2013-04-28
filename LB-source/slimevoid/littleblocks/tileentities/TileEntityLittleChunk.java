@@ -18,6 +18,7 @@ import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.LittleBlocks;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocks;
+import slimevoid.littleblocks.world.LittleWorld;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -419,7 +420,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 	}
 
 	public void setTileEntity(int x, int y, int z, TileEntity tile) {
-		tile.setWorldObj((World) getLittleWorld());
+		tile.setWorldObj((World) this.getLittleWorld());
 		tile.xCoord = (this.xCoord << 3) + x;
 		tile.yCoord = (this.yCoord << 3) + y;
 		tile.zCoord = (this.zCoord << 3) + z;
@@ -453,13 +454,13 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 			if (id <= 0 || !Block.blocksList[id].hasTileEntity(meta)) {
 				return null;
 			}
-			if (tileentity == null) {
-				tileentity = Block.blocksList[id].createTileEntity(this.worldObj,
-						meta);
-				this.getLittleWorld().setBlockTileEntity(((this.xCoord << 3) + x),
-						((this.yCoord << 3) + y), ((this.zCoord << 3) + z),
-						tileentity);
-			}
+			tileentity = Block.blocksList[id].createTileEntity(this.worldObj,
+					meta);
+			((LittleWorld)this.getLittleWorld()).setBlockTileEntity(
+					((this.xCoord << 3) + x),
+					((this.yCoord << 3) + y),
+					((this.zCoord << 3) + z),
+					tileentity);
 			tileentity = this.getTileEntityFromList(x, y, z);
 		}
 		return tileentity;
@@ -467,9 +468,9 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 
 	private void addTileEntity(TileEntity tile) {
 		this.tiles.add(tile);
-		World world = (World) this.getLittleWorld();
-		if (world != null) {
-			world.addTileEntity(tile);
+		LittleWorld littleWorld = (LittleWorld) this.getLittleWorld();
+		if (littleWorld != null) {
+			littleWorld.addTileEntity(tile);
 		}
 	}
 	
