@@ -73,7 +73,7 @@ public class BlockLittleChunk extends BlockContainer {
 		if (id == LBCore.littleChunkID) {
 			TileEntityLittleChunk tile = (TileEntityLittleChunk) world
 					.getBlockTileEntity(x, y, z);
-			EntityItemLittleBlocksCollection collection = new EntityItemLittleBlocksCollection(world, x, y, z);
+			EntityItemLittleBlocksCollection collection = new EntityItemLittleBlocksCollection(world, x, y, z, new ItemStack(LBCore.littleChunk));
 			if (!tile.isEmpty()) {
 				if (FMLCommonHandler.instance().getSide() == Side.CLIENT && ModLoader
 						.getMinecraftInstance().playerController

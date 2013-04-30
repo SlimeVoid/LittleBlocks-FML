@@ -25,8 +25,8 @@ public class EntityItemLittleBlocksCollection extends EntityItem {
     	super(world);
     }
 
-	public EntityItemLittleBlocksCollection(World world, double x, double y, double z) {
-		super(world, x, y, z, new ItemStack(LBCore.littleChunkID, 1, 0));
+	public EntityItemLittleBlocksCollection(World world, double x, double y, double z, ItemStack itemStack) {
+		super(world, x, y, z, itemStack);
 	}
 
 	public void dropItems(EntityPlayer entityplayer) {
