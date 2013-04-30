@@ -6,6 +6,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
 import slimevoid.littleblocks.core.LBCore;
 
@@ -36,20 +37,24 @@ public class EntityItemLittleBlocksCollection extends EntityItem {
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
-		int stacks = nbttagcompound.getInteger("LittleBlocks");
-		for (int i = 0; i < stacks; i++) {
-			this.readItemStackFromNBT(nbttagcompound, i);
+		NBTTagList itemStacksTag = nbttagcompound.getTagList("ItemStacks");
+		for (int i = 0; i < itemStacksTag.tagCount(); i++) {
+			ItemStack itemstack = ItemStack
+					.loadItemStackFromNBT((NBTTagCompound) itemStacksTag.tagAt(i));
+			this.addItemToDrop(itemstack);
 		}
 	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
-		int stacks = 0;
-		nbttagcompound.setInteger("LittleBlocks", itemstackCollection.size());
-		for (ItemStack itemstack : itemstackCollection.values()) {
-			writeItemStackToNBT(nbttagcompound, itemstack, stacks);
-			stacks++;
+		HashMap <Integer, ItemStack> collection = this.itemstackCollection;
+		NBTTagList itemStacksTag = new NBTTagList();
+		for (ItemStack itemstack : collection.values()) {
+			NBTTagCompound itemTag = new NBTTagCompound();
+			itemstack.writeToNBT(itemTag);
+			itemStacksTag.appendTag(itemTag);
 		}
+		nbttagcompound.setTag("ItemStacks", itemStacksTag);
 	}
 	
 	@Override
@@ -70,24 +75,6 @@ public class EntityItemLittleBlocksCollection extends EntityItem {
 		} else {
 			itemstackCollection.put(itemstack.getItem().itemID, itemstack);
 		}
-	}
-	
-	private void readItemStackFromNBT(NBTTagCompound nbttagcompound, int itemnumber) {
-		int id = nbttagcompound.getInteger("ItemID["+itemnumber+"]");
-		int damage = nbttagcompound.getInteger("ItemDamage["+itemnumber+"]");
-		int stackSize = nbttagcompound.getInteger("StackSize["+itemnumber+"]");
-		System.out.println("read: " + stackSize);
-		ItemStack itemstack = new ItemStack(id, damage, stackSize);
-		this.addItemToDrop(itemstack);
-	}
-
-	private void writeItemStackToNBT(NBTTagCompound nbttagcompound, ItemStack itemstack, int itemnumber) {
-		int id = itemstack.itemID;
-		int damage = itemstack.getItemDamage();
-		int stackSize = itemstack.stackSize;
-		nbttagcompound.setInteger("ItemID["+itemnumber+"]", id);
-		nbttagcompound.setInteger("ItemDamage["+itemnumber+"]", damage);
-		nbttagcompound.setInteger("StackSize["+itemnumber+"]", stackSize);
 	}
 	
 	public boolean isEmpty() {
