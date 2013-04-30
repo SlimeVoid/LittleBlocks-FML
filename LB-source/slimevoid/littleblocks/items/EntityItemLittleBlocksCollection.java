@@ -10,13 +10,13 @@ import net.minecraft.world.World;
 import slimevoid.littleblocks.core.LBCore;
 
 public class EntityItemLittleBlocksCollection extends EntityItem {
-	private HashMap<String, ItemStack> itemstackCollection = new HashMap<String, ItemStack>();
+	private HashMap<Integer, ItemStack> itemstackCollection = new HashMap<Integer, ItemStack>();
 	
-	public HashMap<String, ItemStack> getCollection() {
+	public HashMap<Integer, ItemStack> getCollection() {
 		return this.itemstackCollection;
 	}
 
-	public void setCollection(HashMap<String, ItemStack> itemstackCollection) {
+	public void setCollection(HashMap<Integer, ItemStack> itemstackCollection) {
 		this.itemstackCollection = itemstackCollection;
 	}
 
@@ -65,10 +65,10 @@ public class EntityItemLittleBlocksCollection extends EntityItem {
 	}
 	
 	public void addItemToDrop(ItemStack itemstack) {
-		if (itemstackCollection.containsKey(itemstack.getItemName())) {
-			itemstackCollection.get(itemstack.getItemName()).stackSize ++;
+		if (itemstackCollection.containsKey(itemstack.getItem().itemID)) {
+			itemstackCollection.get(itemstack.getItem().itemID).stackSize ++;
 		} else {
-			itemstackCollection.put(itemstack.getItemName(), itemstack);
+			itemstackCollection.put(itemstack.getItem().itemID, itemstack);
 		}
 	}
 	
@@ -76,6 +76,7 @@ public class EntityItemLittleBlocksCollection extends EntityItem {
 		int id = nbttagcompound.getInteger("ItemID["+itemnumber+"]");
 		int damage = nbttagcompound.getInteger("ItemDamage["+itemnumber+"]");
 		int stackSize = nbttagcompound.getInteger("StackSize["+itemnumber+"]");
+		System.out.println("read: " + stackSize);
 		ItemStack itemstack = new ItemStack(id, damage, stackSize);
 		this.addItemToDrop(itemstack);
 	}

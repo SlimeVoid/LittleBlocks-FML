@@ -12,7 +12,7 @@ import slimevoid.littleblocks.core.lib.ReferenceLib;
 import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
 
 public class PacketLittleBlocksCollection extends PacketEntity {
-	public HashMap<String, ItemStack> itemstackCollection = new HashMap<String, ItemStack>();
+	public HashMap<Integer, ItemStack> itemstackCollection = new HashMap<Integer, ItemStack>();
 
 	public PacketLittleBlocksCollection() {
 		super();
@@ -46,14 +46,15 @@ public class PacketLittleBlocksCollection extends PacketEntity {
 		data.writeInt(itemstackCollection.size());
 		for (ItemStack itemstack : itemstackCollection.values()) {
 			writeItemStackToData(data, itemstack);
+			System.out.println(itemstack.stackSize);
 		}
 	}
 	
 	public void addItemToDrop(ItemStack itemstack) {
-		if (itemstackCollection.containsKey(itemstack.getItemName())) {
-			itemstackCollection.get(itemstack.getItemName()).stackSize ++;
+		if (itemstackCollection.containsKey(itemstack.getItem().itemID)) {
+			itemstackCollection.get(itemstack.getItem().itemID).stackSize ++;
 		} else {
-			itemstackCollection.put(itemstack.getItemName(), itemstack);
+			itemstackCollection.put(itemstack.getItem().itemID, itemstack);
 		}
 	}
 	

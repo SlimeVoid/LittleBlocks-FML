@@ -17,11 +17,13 @@ import slimevoid.littleblocks.client.handlers.ClientTickHandler;
 import slimevoid.littleblocks.client.handlers.DrawCopierHighlight;
 import slimevoid.littleblocks.client.network.ClientPacketHandler;
 import slimevoid.littleblocks.client.render.blocks.LittleBlocksRenderer;
+import slimevoid.littleblocks.client.render.entities.LittleBlocksCollectionRenderer;
 import slimevoid.littleblocks.client.render.tileentities.TileEntityLittleBlocksRenderer;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.lib.CommandLib;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
 import slimevoid.littleblocks.core.lib.PacketLib;
+import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocksSettings;
 import slimevoid.littleblocks.proxy.CommonProxy;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
@@ -53,7 +55,7 @@ public class ClientProxy extends CommonProxy {
 	public void registerRenderInformation() {
 		MinecraftForge.EVENT_BUS.register(new DrawCopierHighlight());
 		RenderingRegistry.registerBlockHandler(new LittleBlocksRenderer());
-		//RenderingRegistry.registerEntityRenderingHandler(EntityItemLittleBlocksCollection.class, new EntityItemLittleCollectionRenderer());
+		RenderingRegistry.registerEntityRenderingHandler(EntityItemLittleBlocksCollection.class, new LittleBlocksCollectionRenderer());
 		this.registerTileEntitySpecialRenderer(
 				TileEntityLittleChunk.class);
 	}
