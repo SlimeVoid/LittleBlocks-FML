@@ -111,4 +111,10 @@ public class LittleChunkProvider implements IChunkProvider {
 	public boolean unloadQueuedChunks() {
 		return false;
 	}
+
+	@Override
+	public void func_104112_b() {
+		// TODO :: Auto-generated method stub
+		
+	}
 }
