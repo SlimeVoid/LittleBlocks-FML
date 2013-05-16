@@ -12,6 +12,7 @@ import net.minecraft.world.WorldProvider;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
 import slimevoid.littleblocks.blocks.BlockLittleChunk;
+import slimevoid.littleblocks.blocks.core.BlockLittleChunkShiftRightClick;
 import slimevoid.littleblocks.core.lib.BlockLib;
 import slimevoid.littleblocks.core.lib.BlockUtil;
 import slimevoid.littleblocks.core.lib.ItemLib;
@@ -66,6 +67,7 @@ public class LBCore {
 					true).setUnlocalizedName(BlockLib.LITTLECHUNK);
 		littleBlocksWand = new ItemLittleBlocksWand(littleBlocksWandID).setUnlocalizedName(ItemLib.COPIER_TOOL);
 		MinecraftForge.EVENT_BUS.register(new LittleBlocksCollectionPickup());
+		MinecraftForge.EVENT_BUS.register(new BlockLittleChunkShiftRightClick());
 		// MinecraftForge.EVENT_BUS.register(new LittleContainerInteract());
 		// MinecraftForge.EVENT_BUS.register(new PistonOrientation());
 	}
