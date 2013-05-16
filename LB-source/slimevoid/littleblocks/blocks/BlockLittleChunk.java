@@ -784,4 +784,35 @@ public class BlockLittleChunk extends BlockContainer {
 			}
 		}
 	}
+	
+	/**
+     * only called by clickMiddleMouseButton , and passed to inventory.setCurrentItem (along with isCreative)
+     */
+    public int idPicked(World world, int x, int y, int z)
+    {
+    	int id = this.blockID;
+    	TileEntity tileentity = world.getBlockTileEntity(x, y, z);
+		if (tileentity != null && tileentity instanceof TileEntityLittleChunk) {
+    	int xx = (x << 3) + xSelected, yy = (y << 3) + ySelected, zz = (z << 3) + zSelected;
+	World littleWorld = (World) ((TileEntityLittleChunk)tileentity).getLittleWorld();
+		id = littleWorld.getBlockId(xx, yy, zz);
+		}
+        return id==0?this.blockID:id;
+    }
+
+    /**
+     * Get the block's damage value (for use with pick block).
+     */
+    public int getDamageValue(World par1World, int par2, int par3, int par4)
+    {
+    	int damage = this.damageDropped(par1World.getBlockMetadata(par2, par3, par4));
+    	TileEntity tileentity = par1World.getBlockTileEntity(par2, par3, par4);
+		if (tileentity != null && tileentity instanceof TileEntityLittleChunk) {
+    	int xx = (par2 << 3) + xSelected, yy = (par3 << 3) + ySelected, zz = (par4 << 3) + zSelected;
+		World littleWorld = (World) ((TileEntityLittleChunk)tileentity).getLittleWorld();
+		damage =this.damageDropped(littleWorld.getBlockMetadata(xx, yy, zz));;
+		}
+        return damage;
+    }
+
 }
