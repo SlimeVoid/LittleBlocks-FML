@@ -110,13 +110,15 @@ public class ItemLittleBlocksWand extends Item {
 			if (l == 5) {
 				++x;
 			}
-			world.setBlock(x, y, z, LBCore.littleChunkID);
-			TileEntity newtile = world.getBlockTileEntity(
-					x,
-					y,
-					z);
-			newtile.onInventoryChanged();
-			world.markBlockForUpdate(x, y, z);
+			if (world.getBlockId(x, y, z) == 0) {
+				world.setBlock(x, y, z, LBCore.littleChunkID);
+				TileEntity newtile = world.getBlockTileEntity(
+						x,
+						y,
+						z);
+				newtile.onInventoryChanged();
+				world.markBlockForUpdate(x, y, z);
+			}
 			return true;
 		}
 		return false;
