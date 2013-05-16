@@ -63,6 +63,40 @@ public class BlockLittleChunk extends BlockContainer {
 	}
 	
 	@Override
+    public boolean isBlockSolid(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5) {
+		return false;
+	}
+	
+	@Override
+    public int idPicked(World world, int x, int y, int z) {
+		TileEntity tileentity = world.getBlockTileEntity(x, y, z);
+		if (tileentity != null && tileentity instanceof TileEntityLittleChunk) {
+			TileEntityLittleChunk tilelb = (TileEntityLittleChunk) tileentity;
+			int pickedID = tilelb.getBlockID(this.xSelected, this.ySelected, this.zSelected);
+			if (pickedID > 0) {
+				return pickedID;
+			}
+		}
+		return LBCore.littleBlocksWandID;
+	}
+	
+	@Override
+    public int getDamageValue(World world, int x, int y, int z) {
+		TileEntity tileentity = world.getBlockTileEntity(x, y, z);
+		if (tileentity != null && tileentity instanceof TileEntityLittleChunk) {
+			TileEntityLittleChunk tilelb = (TileEntityLittleChunk) tileentity;
+			int pickedID = tilelb.getBlockID(this.xSelected, this.ySelected, this.zSelected);
+			if (pickedID > 0) {
+				int xx = (x << 3) + this.xSelected,
+					yy = (y << 3) + this.ySelected,
+					zz = (z << 3) + this.zSelected;
+				return Block.blocksList[pickedID].getDamageValue((World)tilelb.getLittleWorld(), xx, yy, zz);
+			}
+		}
+		return 0;
+	}
+	
+	@Override
 	public int quantityDropped(Random random) {
 		return 0;
 	}
@@ -151,6 +185,7 @@ public class BlockLittleChunk extends BlockContainer {
 
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int q, float a, float b, float c) {
+		System.out.println("Activated");
 		if (world.isRemote) {
 			PacketLib.blockUpdate(
 					world,
@@ -307,12 +342,13 @@ public class BlockLittleChunk extends BlockContainer {
 					y,
 					z,
 					entityplayer);
-			littleWorld.func_82739_e/**.setBlockAndMetadataWithNotify**/(
+			littleWorld.setBlock/**.setBlockAndMetadataWithNotify**/(
 					xx,
 					yy,
 					zz,
 					block.blockID,
-					newData);
+					newData,
+					3);
 		}
 	}
 
