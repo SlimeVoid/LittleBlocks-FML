@@ -810,7 +810,7 @@ public class BlockLittleChunk extends BlockContainer {
 		if (tileentity != null && tileentity instanceof TileEntityLittleChunk) {
     	int xx = (par2 << 3) + xSelected, yy = (par3 << 3) + ySelected, zz = (par4 << 3) + zSelected;
 		World littleWorld = (World) ((TileEntityLittleChunk)tileentity).getLittleWorld();
-		damage =this.damageDropped(littleWorld.getBlockMetadata(par2, par3, par4));;
+		damage =this.damageDropped(littleWorld.getBlockMetadata(xx, yy, zz));;
 		}
         return damage;
     }
