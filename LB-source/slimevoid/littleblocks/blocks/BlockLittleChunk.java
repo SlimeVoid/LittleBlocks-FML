@@ -7,6 +7,7 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockPistonBase;
+import net.minecraft.block.BlockStairs;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
@@ -39,6 +40,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockLittleChunk extends BlockContainer {
 
@@ -424,15 +426,7 @@ public class BlockLittleChunk extends BlockContainer {
 		return false;
 	}
 
-	@Override
-	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z) {
-		if (LBCore.littleBlocksClip) {
-			return super.getCollisionBoundingBoxFromPool(world, x, y, z);
-		}
-		return null;
-	}
-
-	public void setBlockBoundsBasedOnSelection(World world, int x, int y, int z) {
+	private void setBlockBoundsBasedOnSelection(World world, int x, int y, int z) {
 		float m = LBCore.littleBlocksSize;
 		if (this.xSelected == -10) {
 			setBlockBounds(0f, 0f, 0f, 0f, 0f, 0f);
@@ -456,23 +450,24 @@ public class BlockLittleChunk extends BlockContainer {
 							(x << 3) + this.xSelected,
 							(y << 3) + this.ySelected,
 							(z << 3) + this.zSelected);
-					AxisAlignedBB bound = AxisAlignedBB.getBoundingBox(
-							(this.xSelected + block.getBlockBoundsMinX()) / m,
-							(this.ySelected + block.getBlockBoundsMinY()) / m,
-							(this.zSelected + block.getBlockBoundsMinZ()) / m,
-							(this.xSelected + block.getBlockBoundsMaxX()) / m,
-							(this.ySelected + block.getBlockBoundsMaxY()) / m,
-							(this.zSelected + block.getBlockBoundsMaxZ()) / m);
 					setBlockBounds(
-							(float) bound.minX,
-							(float) bound.minY,
-							(float) bound.minZ,
-							(float) bound.maxX,
-							(float) bound.maxY,
-							(float) bound.maxZ);
+							(float) (this.xSelected + block.getBlockBoundsMinX()) / m,
+							(float) (this.ySelected + block.getBlockBoundsMinY()) / m,
+							(float) (this.zSelected + block.getBlockBoundsMinZ()) / m,
+							(float) (this.xSelected + block.getBlockBoundsMaxX()) / m,
+							(float) (this.ySelected + block.getBlockBoundsMaxY()) / m,
+							(float) (this.zSelected + block.getBlockBoundsMaxZ()) / m);
 				}
 			}
 		}
+	}
+
+	@Override
+	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z) {
+		if (LBCore.littleBlocksClip) {
+			return super.getCollisionBoundingBoxFromPool(world, x, y, z);
+		}
+		return null;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -515,6 +510,7 @@ public class BlockLittleChunk extends BlockContainer {
 		}
 	}
 
+	@SideOnly(Side.CLIENT)
 	@Override
 	public MovingObjectPosition collisionRayTrace(World world, int x, int y, int z, Vec3 player, Vec3 view) {
 		TileEntityLittleChunk tile = (TileEntityLittleChunk) world
@@ -561,16 +557,14 @@ public class BlockLittleChunk extends BlockContainer {
 					min = ret;
 				}
 			}
+			int littleBlockID = tile.getBlockID(this.xSelected, this.ySelected, this.zSelected);
 			if (min != null) {
 				this.side = (Byte) min[1];
 				this.xSelected = (Integer) min[3];
 				this.ySelected = (Integer) min[4];
 				this.zSelected = (Integer) min[5];
-				if (tile.getBlockID(this.xSelected, this.ySelected, this.zSelected) > 0) {
-					Block littleBlock = Block.blocksList[tile.getBlockID(
-							this.xSelected,
-							this.ySelected,
-							this.zSelected)];
+				if (littleBlockID > 0) {
+					Block littleBlock = Block.blocksList[littleBlockID];
 					if (littleBlock != null) {
 						littleBlock.collisionRayTrace(
 								(World) tile.getLittleWorld(),
