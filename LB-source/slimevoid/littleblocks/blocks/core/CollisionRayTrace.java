@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import slimevoid.littleblocks.blocks.BlockLittleChunk;
@@ -12,7 +13,7 @@ import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 
 public class CollisionRayTrace {
 
-	public static List<Object[]> rayTraceLittleBlocks(BlockLittleChunk littleBlocks, Vec3 player, Vec3 view, int i, int j, int k, List<Object[]> returns, int[][][] content, TileEntityLittleChunk tile) {
+	public static List<MovingObjectPosition> rayTraceLittleBlocks(BlockLittleChunk littleBlocks, Vec3 player, Vec3 view, int i, int j, int k, List<MovingObjectPosition> returns, int[][][] content, TileEntityLittleChunk tile) {
 		float m = LBCore.littleBlocksSize;
 		for (int x = 0; x < content.length; x++) {
 			for (int y = 0; y < content[x].length; y++) {
@@ -20,34 +21,28 @@ public class CollisionRayTrace {
 					if (content[x][y][z] > 0) {
 						Block block = Block.blocksList[content[x][y][z]];
 						if (block != null) {
-							block.collisionRayTrace(
+							MovingObjectPosition ret = block.collisionRayTrace(
 									(World) tile.getLittleWorld(),
 									(i << 3) + x,
 									(j << 3) + y,
 									(k << 3) + z,
 									player,
 									view);
-							Object[] ret = littleBlocks.rayTraceBound(
-									AxisAlignedBB.getBoundingBox(
-											(x + block.getBlockBoundsMinX()) / m,
-											(y + block.getBlockBoundsMinY()) / m,
-											(z + block.getBlockBoundsMinZ()) / m,
-											(x + block.getBlockBoundsMaxX()) / m,
-											(y + block.getBlockBoundsMaxY()) / m,
-											(z + block.getBlockBoundsMaxZ()) / m),
-									i,
-									j,
-									k,
-									player,
-									view);
+//							MovingObjectPosition ret = littleBlocks.rayTraceBound(
+//									AxisAlignedBB.getBoundingBox(
+//											(x + block.getBlockBoundsMinX()) / m,
+//											(y + block.getBlockBoundsMinY()) / m,
+//											(z + block.getBlockBoundsMinZ()) / m,
+//											(x + block.getBlockBoundsMaxX()) / m,
+//											(y + block.getBlockBoundsMaxY()) / m,
+//											(z + block.getBlockBoundsMaxZ()) / m),
+//									i,
+//									j,
+//									k,
+//									player,
+//									view);
 							if (ret != null) {
-								returns.add(new Object[] {
-										ret[0],
-										ret[1],
-										ret[2],
-										x,
-										y,
-										z });
+								returns.add(ret);
 							}
 						}
 					}
@@ -57,13 +52,13 @@ public class CollisionRayTrace {
 		return returns;
 	}
 
-	public static List<Object[]> collisionRayTracerX(BlockLittleChunk littleBlocks, World world, Vec3 player, Vec3 view, int x, int y, int z, int xx, List<Object[]> returns) {
+	public static List<MovingObjectPosition> collisionRayTracerX(BlockLittleChunk littleBlocks, World world, Vec3 player, Vec3 view, int x, int y, int z, int xx, List<MovingObjectPosition> returns) {
 		int m = LBCore.littleBlocksSize;
 		int block = world.getBlockId(x, y, z); // -X
 		if (block > 0 && Block.blocksList[block].isOpaqueCube()) {
 			for (int yy = 0; yy < m; yy++) {
 				for (int zz = 0; zz < m; zz++) {
-					Object[] ret = littleBlocks.rayTraceBound(
+					MovingObjectPosition ret = littleBlocks.rayTraceBound(
 							AxisAlignedBB.getBoundingBox(
 									xx / (float) m,
 									yy / (float) m,
@@ -77,13 +72,7 @@ public class CollisionRayTrace {
 							player,
 							view);
 					if (ret != null) {
-						returns.add(new Object[] {
-								ret[0],
-								ret[1],
-								ret[2],
-								xx,
-								yy,
-								zz });
+						returns.add(ret);
 					}
 				}
 			}
@@ -91,13 +80,13 @@ public class CollisionRayTrace {
 		return returns;
 	}
 
-	public static List<Object[]> collisionRayTracerY(BlockLittleChunk littleBlocks, World world, Vec3 player, Vec3 view, int x, int y, int z, int yy, List<Object[]> returns) {
+	public static List<MovingObjectPosition> collisionRayTracerY(BlockLittleChunk littleBlocks, World world, Vec3 player, Vec3 view, int x, int y, int z, int yy, List<MovingObjectPosition> returns) {
 		int m = LBCore.littleBlocksSize;
 		int block = world.getBlockId(x, y, z); // DOWN
 		if (block > 0 && Block.blocksList[block].isOpaqueCube()) {
 			for (int xx = 0; xx < m; xx++) {
 				for (int zz = 0; zz < m; zz++) {
-					Object[] ret = littleBlocks.rayTraceBound(
+					MovingObjectPosition ret = littleBlocks.rayTraceBound(
 							AxisAlignedBB.getBoundingBox(
 									xx / (float) m,
 									yy / (float) m,
@@ -111,13 +100,7 @@ public class CollisionRayTrace {
 							player,
 							view);
 					if (ret != null) {
-						returns.add(new Object[] {
-								ret[0],
-								ret[1],
-								ret[2],
-								xx,
-								yy,
-								zz });
+						returns.add(ret);
 					}
 				}
 			}
@@ -125,13 +108,13 @@ public class CollisionRayTrace {
 		return returns;
 	}
 
-	public static List<Object[]> collisionRayTracerZ(BlockLittleChunk littleBlocks, World world, Vec3 player, Vec3 view, int x, int y, int z, int zz, List<Object[]> returns) {
+	public static List<MovingObjectPosition> collisionRayTracerZ(BlockLittleChunk littleBlocks, World world, Vec3 player, Vec3 view, int x, int y, int z, int zz, List<MovingObjectPosition> returns) {
 		int m = LBCore.littleBlocksSize;
 		int block = world.getBlockId(x, y, z); // -Z
 		if (block > 0 && Block.blocksList[block].isOpaqueCube()) {
 			for (int yy = 0; yy < m; yy++) {
 				for (int xx = 0; xx < m; xx++) {
-					Object[] ret = littleBlocks.rayTraceBound(
+					MovingObjectPosition ret = littleBlocks.rayTraceBound(
 							AxisAlignedBB.getBoundingBox(
 									xx / (float) m,
 									yy / (float) m,
@@ -145,13 +128,7 @@ public class CollisionRayTrace {
 							player,
 							view);
 					if (ret != null) {
-						returns.add(new Object[] {
-								ret[0],
-								ret[1],
-								ret[2],
-								xx,
-								yy,
-								zz });
+						returns.add(ret);
 					}
 				}
 			}
@@ -159,7 +136,7 @@ public class CollisionRayTrace {
 		return returns;
 	}
 
-	public static List<Object[]> collisionRayTracer(BlockLittleChunk littleBlocks, World world, Vec3 player, Vec3 view, int x, int y, int z, List<Object[]> returns) {
+	public static List<MovingObjectPosition> collisionRayTracer(BlockLittleChunk littleBlocks, World world, Vec3 player, Vec3 view, int x, int y, int z, List<MovingObjectPosition> returns) {
 		int m = LBCore.littleBlocksSize;
 		/*
 		 * UP

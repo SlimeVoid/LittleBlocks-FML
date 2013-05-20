@@ -460,6 +460,13 @@ public class BlockLittleChunk extends BlockContainer {
 				}
 			}
 		}
+//		setBlockBounds(
+//				this.xSelected / m,
+//				this.ySelected / m,
+//				this.zSelected / m,
+//				(this.xSelected + 1) / m,
+//				(this.ySelected + 1) / m,
+//				(this.zSelected + 1) / m);
 	}
 
 	@Override
@@ -486,6 +493,7 @@ public class BlockLittleChunk extends BlockContainer {
 						if (content[xx][yy][zz] > 0) {
 							Block block = Block.blocksList[content[xx][yy][zz]];
 							if (block != null) {
+//								block.setBlockBoundsBasedOnState(tile.getLittleWorld(), x << 3 + xx, y << 3 + yy, z << 3 + zz); TODO diojzehtl
 								setBlockBounds(
 										(float) (xx + block.getBlockBoundsMinX()) / m,
 										(float) (yy + block.getBlockBoundsMinY()) / m,
@@ -524,7 +532,7 @@ public class BlockLittleChunk extends BlockContainer {
 
 		int[][][] content = tile.getContents();
 
-		List<Object[]> returns = new ArrayList<Object[]>();
+		List<MovingObjectPosition> returns = new ArrayList<MovingObjectPosition>();
 
 		returns = CollisionRayTrace.rayTraceLittleBlocks(
 				this,
@@ -548,10 +556,10 @@ public class BlockLittleChunk extends BlockContainer {
 				returns);
 
 		if (!returns.isEmpty()) {
-			Object[] min = null;
+			MovingObjectPosition min = null;
 			double distMin = 0;
-			for (Object[] ret : returns) {
-				double dist = (Double) ret[2];
+			for (MovingObjectPosition ret : returns) {
+				double dist = (double) ret.hitVec.squareDistanceTo(player);
 				if (min == null || dist < distMin) {
 					distMin = dist;
 					min = ret;
@@ -559,10 +567,10 @@ public class BlockLittleChunk extends BlockContainer {
 			}
 			int littleBlockID = tile.getBlockID(this.xSelected, this.ySelected, this.zSelected);
 			if (min != null) {
-				this.side = (Byte) min[1];
-				this.xSelected = (Integer) min[3];
-				this.ySelected = (Integer) min[4];
-				this.zSelected = (Integer) min[5];
+				this.side = (byte) min.sideHit;
+				this.xSelected = (int) min.blockX;
+				this.ySelected = (int) min.blockY;
+				this.zSelected = (int) min.blockZ;
 				if (littleBlockID > 0) {
 					Block littleBlock = Block.blocksList[littleBlockID];
 					if (littleBlock != null) {
@@ -577,11 +585,11 @@ public class BlockLittleChunk extends BlockContainer {
 				}
 				setBlockBoundsBasedOnSelection(world, x, y, z);
 				return new MovingObjectPosition(
-						x,
+							x,
 							y,
 							z,
-							(Byte) min[1],
-							((Vec3) min[0]).addVector(x, y, z));
+							(byte) min.sideHit,
+							((Vec3) min.hitVec).addVector(x, y, z));
 			}
 		}
 		this.xSelected = -10;
@@ -593,7 +601,7 @@ public class BlockLittleChunk extends BlockContainer {
 		return null;
 	}
 
-	public Object[] rayTraceBound(AxisAlignedBB bound, int i, int j, int k, Vec3 player, Vec3 view) {
+	public MovingObjectPosition rayTraceBound(AxisAlignedBB bound, int i, int j, int k, Vec3 player, Vec3 view) {
 		Vec3 minX = player.getIntermediateWithXValue(view, bound.minX);
 		Vec3 maxX = player.getIntermediateWithXValue(view, bound.maxX);
 		Vec3 minY = player.getIntermediateWithYValue(view, bound.minY);
@@ -619,28 +627,28 @@ public class BlockLittleChunk extends BlockContainer {
 			maxZ = null;
 		}
 		Vec3 tracedBound = null;
-		if (minX != null && (tracedBound == null || player.distanceTo(minX) < player
-				.distanceTo(tracedBound))) {
+		if (minX != null && (tracedBound == null || player.squareDistanceTo(minX) < player
+				.squareDistanceTo(tracedBound))) {
 			tracedBound = minX;
 		}
-		if (maxX != null && (tracedBound == null || player.distanceTo(maxX) < player
-				.distanceTo(tracedBound))) {
+		if (maxX != null && (tracedBound == null || player.squareDistanceTo(maxX) < player
+				.squareDistanceTo(tracedBound))) {
 			tracedBound = maxX;
 		}
-		if (minY != null && (tracedBound == null || player.distanceTo(minY) < player
-				.distanceTo(tracedBound))) {
+		if (minY != null && (tracedBound == null || player.squareDistanceTo(minY) < player
+				.squareDistanceTo(tracedBound))) {
 			tracedBound = minY;
 		}
-		if (maxY != null && (tracedBound == null || player.distanceTo(maxY) < player
-				.distanceTo(tracedBound))) {
+		if (maxY != null && (tracedBound == null || player.squareDistanceTo(maxY) < player
+				.squareDistanceTo(tracedBound))) {
 			tracedBound = maxY;
 		}
-		if (minZ != null && (tracedBound == null || player.distanceTo(minZ) < player
-				.distanceTo(tracedBound))) {
+		if (minZ != null && (tracedBound == null || player.squareDistanceTo(minZ) < player
+				.squareDistanceTo(tracedBound))) {
 			tracedBound = minZ;
 		}
-		if (maxZ != null && (tracedBound == null || player.distanceTo(maxZ) < player
-				.distanceTo(tracedBound))) {
+		if (maxZ != null && (tracedBound == null || player.squareDistanceTo(maxZ) < player
+				.squareDistanceTo(tracedBound))) {
 			tracedBound = maxZ;
 		}
 		if (tracedBound == null) {
@@ -665,7 +673,7 @@ public class BlockLittleChunk extends BlockContainer {
 		if (tracedBound == maxZ) {
 			side = 3;
 		}
-		return new Object[] { tracedBound, side, player.distanceTo(tracedBound) };
+		return new MovingObjectPosition(i, j, k, side, tracedBound.addVector(i, j, k));
 	}
 
 	private boolean isVecInsideYZBounds(AxisAlignedBB bound, Vec3 Vec3) {
