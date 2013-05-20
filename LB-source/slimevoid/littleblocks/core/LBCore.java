@@ -1,6 +1,7 @@
 package slimevoid.littleblocks.core;
 
 import java.io.File;
+import java.util.Set;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -31,6 +32,7 @@ public class LBCore {
 	public static Configuration configuration;
 	public static boolean littleBlocksForceUpdate;
 	public static String loggerLevel = "INFO";
+	public static Set<Integer> prohibitIDList;
 	public static Block littleChunk;
 	public static Item littleBlocksWand;
 	@SideOnly(Side.CLIENT)
