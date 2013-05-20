@@ -81,6 +81,9 @@ public class BlockUtil {
 			if (disallowedBlocks.contains(block.getClass())) {
 				return false;
 			}
+			if (LBCore.prohibitIDList.contains(block.blockID)) {
+				return false;
+			}
 		}
 		return true;
 	}
@@ -110,6 +113,9 @@ public class BlockUtil {
 				isAllowed = false;
 			}
 			if (disallowedItemIDs.contains(item.itemID)) {
+				isAllowed = false;
+			}
+			if (LBCore.prohibitIDList.contains(item.itemID)) {
 				isAllowed = false;
 			}
 			if (item instanceof IItemPipe) {
