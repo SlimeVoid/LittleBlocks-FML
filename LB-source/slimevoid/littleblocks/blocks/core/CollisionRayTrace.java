@@ -26,8 +26,8 @@ public class CollisionRayTrace {
 									(i << 3) + x,
 									(j << 3) + y,
 									(k << 3) + z,
-									player,
-									view);
+									player.myVec3LocalPool.getVecFromPool(player.xCoord * 8, player.yCoord * 8, player.zCoord * 8),
+									view.myVec3LocalPool.getVecFromPool(view.xCoord * 8, view.yCoord * 8, view.zCoord * 8));
 //							MovingObjectPosition ret = littleBlocks.rayTraceBound(
 //									AxisAlignedBB.getBoundingBox(
 //											(x + block.getBlockBoundsMinX()) / m,
@@ -42,6 +42,11 @@ public class CollisionRayTrace {
 //									player,
 //									view);
 							if (ret != null) {
+								ret.blockX -= (i << 3);
+								ret.blockY -= (j << 3);
+								ret.blockZ -= (k << 3);
+								ret.hitVec = ret.hitVec.myVec3LocalPool.getVecFromPool(ret.hitVec.xCoord / 8.0, ret.hitVec.yCoord / 8.0, ret.hitVec.zCoord / 8.0);
+								ret.hitVec = ret.hitVec.addVector(-i, -j, -k);
 								returns.add(ret);
 							}
 						}
@@ -66,9 +71,9 @@ public class CollisionRayTrace {
 									(xx + 1) / (float) m,
 									(yy + 1) / (float) m,
 									(zz + 1) / (float) m),
-							x,
-							y,
-							z,
+							xx,
+							yy,
+							zz,
 							player,
 							view);
 					if (ret != null) {
@@ -94,9 +99,9 @@ public class CollisionRayTrace {
 									(xx + 1) / (float) m,
 									(yy + 1) / (float) m,
 									(zz + 1) / (float) m),
-							x,
-							y,
-							z,
+							xx,
+							yy,
+							zz,
 							player,
 							view);
 					if (ret != null) {
@@ -122,9 +127,9 @@ public class CollisionRayTrace {
 									(xx + 1) / (float) m,
 									(yy + 1) / (float) m,
 									(zz + 1) / (float) m),
-							x,
-							y,
-							z,
+							xx,
+							yy,
+							zz,
 							player,
 							view);
 					if (ret != null) {

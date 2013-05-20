@@ -524,8 +524,6 @@ public class BlockLittleChunk extends BlockContainer {
 		TileEntityLittleChunk tile = (TileEntityLittleChunk) world
 				.getBlockTileEntity(x, y, z);
 
-		player = player.addVector(-x, -y, -z);
-		view = view.addVector(-x, -y, -z);
 		if (tile == null) {
 			return null;
 		}
@@ -544,7 +542,8 @@ public class BlockLittleChunk extends BlockContainer {
 				returns,
 				content,
 				tile);
-
+		player = player.addVector(-x, -y, -z);
+		view = view.addVector(-x, -y, -z);
 		returns = CollisionRayTrace.collisionRayTracer(
 				this,
 				world,
@@ -571,6 +570,7 @@ public class BlockLittleChunk extends BlockContainer {
 				this.xSelected = (int) min.blockX;
 				this.ySelected = (int) min.blockY;
 				this.zSelected = (int) min.blockZ;
+				System.out.println(xSelected+" "+ySelected+" "+zSelected);
 				if (littleBlockID > 0) {
 					Block littleBlock = Block.blocksList[littleBlockID];
 					if (littleBlock != null) {
