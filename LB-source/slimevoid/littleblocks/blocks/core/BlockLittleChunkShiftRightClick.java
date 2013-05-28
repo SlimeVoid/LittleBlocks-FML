@@ -24,7 +24,7 @@ public class BlockLittleChunkShiftRightClick {
 				if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
 					Block.blocksList[LBCore.littleChunkID].onBlockActivated(world, x, y, z, entityplayer, event.face, 0, 0, 0);
 				}
-				event.setResult(Result.DENY);
+				event.setCanceled(true);
 			}
 		}
 	}
