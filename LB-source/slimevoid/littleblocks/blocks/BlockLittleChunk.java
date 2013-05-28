@@ -189,7 +189,7 @@ public class BlockLittleChunk extends BlockContainer {
 
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int q, float a, float b, float c) {
-		System.out.println("Activated");
+		//System.out.println("Activated");
 		if (world.isRemote) {
 			PacketLib.blockUpdate(
 					world,
