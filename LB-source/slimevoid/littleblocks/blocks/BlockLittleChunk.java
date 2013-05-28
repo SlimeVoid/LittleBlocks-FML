@@ -557,19 +557,15 @@ public class BlockLittleChunk extends BlockContainer {
 				returns);
 
 		if (!returns.isEmpty()) {
-			boolean d = Keyboard.isKeyDown(Keyboard.KEY_A);
 			MovingObjectPosition min = null;
 			double distMin = 0;
-			if(d) System.out.println("PLAYER: "+player);
 			for (MovingObjectPosition ret : returns) {
-				if(d) System.out.println("["+ret.blockX+", "+ret.blockY+", "+ret.blockZ+"] "+ret.hitVec);
 				double dist = (double) ret.hitVec.squareDistanceTo(player);
 				if (min == null || dist < distMin) {
 					distMin = dist;
 					min = ret;
 				}
 			}
-			if(d) System.out.println("MIN ["+min.blockX+", "+min.blockY+", "+min.blockZ+"] "+min.hitVec);
 			int littleBlockID = tile.getBlockID(this.xSelected, this.ySelected, this.zSelected);
 			if (min != null) {
 				this.side = (byte) min.sideHit;
