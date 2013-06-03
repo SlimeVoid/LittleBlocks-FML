@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.lwjgl.input.Keyboard;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockPistonBase;
@@ -187,7 +189,7 @@ public class BlockLittleChunk extends BlockContainer {
 
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int q, float a, float b, float c) {
-		System.out.println("Activated");
+		//System.out.println("Activated");
 		if (world.isRemote) {
 			PacketLib.blockUpdate(
 					world,
@@ -445,11 +447,15 @@ public class BlockLittleChunk extends BlockContainer {
 			} else {
 				Block block = Block.blocksList[content];
 				if (block != null) {
-					block.setBlockBoundsBasedOnState(
-							tile.getLittleWorld(),
-							(x << 3) + this.xSelected,
-							(y << 3) + this.ySelected,
-							(z << 3) + this.zSelected);
+					if(BlockStairs.isBlockStairsID(block.blockID)) {
+						block.setBlockBounds(0, 0, 0, 1, 1, 1);
+					} else {
+						block.setBlockBoundsBasedOnState(
+								tile.getLittleWorld(),
+								(x << 3) + this.xSelected,
+								(y << 3) + this.ySelected,
+								(z << 3) + this.zSelected);
+					}
 					setBlockBounds(
 							(float) (this.xSelected + block.getBlockBoundsMinX()) / m,
 							(float) (this.ySelected + block.getBlockBoundsMinY()) / m,
@@ -460,13 +466,6 @@ public class BlockLittleChunk extends BlockContainer {
 				}
 			}
 		}
-//		setBlockBounds(
-//				this.xSelected / m,
-//				this.ySelected / m,
-//				this.zSelected / m,
-//				(this.xSelected + 1) / m,
-//				(this.ySelected + 1) / m,
-//				(this.zSelected + 1) / m);
 	}
 
 	@Override
@@ -487,32 +486,35 @@ public class BlockLittleChunk extends BlockContainer {
 			int[][][] content = tile.getContents();
 			float m = LBCore.littleBlocksSize;
 
+			AxisAlignedBB bb = AxisAlignedBB.getBoundingBox(
+					axisalignedbb.minX * m,
+					axisalignedbb.minY * m,
+					axisalignedbb.minZ * m,
+					axisalignedbb.maxX * m,
+					axisalignedbb.maxY * m,
+					axisalignedbb.maxZ * m);
+			List<AxisAlignedBB> bbs = new ArrayList<AxisAlignedBB>();
 			for (int xx = 0; xx < content.length; xx++) {
 				for (int yy = 0; yy < content[xx].length; yy++) {
 					for (int zz = 0; zz < content[xx][yy].length; zz++) {
 						if (content[xx][yy][zz] > 0) {
 							Block block = Block.blocksList[content[xx][yy][zz]];
 							if (block != null) {
-//								block.setBlockBoundsBasedOnState(tile.getLittleWorld(), x << 3 + xx, y << 3 + yy, z << 3 + zz); TODO diojzehtl
-								setBlockBounds(
-										(float) (xx + block.getBlockBoundsMinX()) / m,
-										(float) (yy + block.getBlockBoundsMinY()) / m,
-										(float) (zz + block.getBlockBoundsMinZ()) / m,
-										(float) (xx + block.getBlockBoundsMaxX()) / m,
-										(float) (yy + block.getBlockBoundsMaxY()) / m,
-										(float) (zz + block.getBlockBoundsMaxZ()) / m);
-								super.addCollisionBoxesToList(
-										world,
-										x,
-										y,
-										z,
-										axisalignedbb,
-										list,
-										entity);
+								block.addCollisionBoxesToList((World) tile.getLittleWorld(), (x << 3) + xx, (y << 3) + yy, (z << 3) + zz, bb, bbs, entity);
 							}
 						}
 					}
 				}
+			}
+			for(AxisAlignedBB aabb : bbs) {
+				aabb.setBounds(
+						aabb.minX / m,
+						aabb.minY / m,
+						aabb.minZ / m,
+						aabb.maxX / m,
+						aabb.maxY / m,
+						aabb.maxZ / m);
+				list.add(aabb);
 			}
 			setBlockBoundsBasedOnSelection(world, x, y, z);
 		}
@@ -570,17 +572,16 @@ public class BlockLittleChunk extends BlockContainer {
 				this.xSelected = (int) min.blockX;
 				this.ySelected = (int) min.blockY;
 				this.zSelected = (int) min.blockZ;
-				System.out.println(xSelected+" "+ySelected+" "+zSelected);
 				if (littleBlockID > 0) {
 					Block littleBlock = Block.blocksList[littleBlockID];
 					if (littleBlock != null) {
-						littleBlock.collisionRayTrace(
-								(World) tile.getLittleWorld(),
-								(x << 3) + this.xSelected,
-								(y << 3) + this.ySelected,
-								(z << 3) + this.zSelected,
-								player,
-								view);
+//						littleBlock.collisionRayTrace(
+//								(World) tile.getLittleWorld(),
+//								(x << 3) + this.xSelected,
+//								(y << 3) + this.ySelected,
+//								(z << 3) + this.zSelected,
+//								player,
+//								view);
 					}
 				}
 				setBlockBoundsBasedOnSelection(world, x, y, z);
@@ -673,7 +674,7 @@ public class BlockLittleChunk extends BlockContainer {
 		if (tracedBound == maxZ) {
 			side = 3;
 		}
-		return new MovingObjectPosition(i, j, k, side, tracedBound.addVector(i, j, k));
+		return new MovingObjectPosition(i, j, k, side, tracedBound);
 	}
 
 	private boolean isVecInsideYZBounds(AxisAlignedBB bound, Vec3 Vec3) {
