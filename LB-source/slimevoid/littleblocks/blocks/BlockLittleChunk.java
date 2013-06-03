@@ -455,6 +455,11 @@ public class BlockLittleChunk extends BlockContainer {
 						if (content[xx][yy][zz] > 0) {
 							Block block = Block.blocksList[content[xx][yy][zz]];
 							if (block != null) {
+								block.setBlockBoundsBasedOnState(
+										tile.getLittleWorld(),
+										(x << 3) + xx,
+										(y << 3) + yy,
+										(z << 3) + zz);
 								setBlockBounds(
 										(float) (xx + block.getBlockBoundsMinX()) / m,
 										(float) (yy + block.getBlockBoundsMinY()) / m,
