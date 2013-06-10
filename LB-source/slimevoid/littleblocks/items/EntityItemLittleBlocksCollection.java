@@ -23,6 +23,7 @@ public class EntityItemLittleBlocksCollection extends EntityItem {
 
     public EntityItemLittleBlocksCollection(World world) {
     	super(world);
+    	this.setEntityItemStack(new ItemStack(LBCore.littleChunk));
     }
 
 	public EntityItemLittleBlocksCollection(World world, double x, double y, double z, ItemStack itemStack) {
