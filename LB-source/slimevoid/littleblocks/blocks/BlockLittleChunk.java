@@ -14,6 +14,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
@@ -23,6 +24,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
@@ -45,7 +47,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockLittleChunk extends BlockContainer {
-
+	public Material blockMaterial;
     public void registerIcons(IconRegister iconRegister) {
     	this.blockIcon = iconRegister.registerIcon(IconLib.LB_CHUNK);
     }
@@ -58,6 +60,7 @@ public class BlockLittleChunk extends BlockContainer {
 
 	public BlockLittleChunk(int id, Class<? extends TileEntity> clazz, Material material, float hardness, boolean selfNotify) {
 		super(id, material);
+		this.blockMaterial = material;
 		this.clazz = clazz;
 		setHardness(hardness);
 		if (selfNotify) {
@@ -823,4 +826,87 @@ public class BlockLittleChunk extends BlockContainer {
 			}
 		}
 	}
+	 @Override
+	    public boolean isLadder(World world, int x, int y, int z,EntityLiving entity)
+	    {
+		 TileEntityLittleChunk tile = (TileEntityLittleChunk) world
+					.getBlockTileEntity(x, y, z);
+		 double i = entity.boundingBox.minX + 0.001D;
+	        double j = entity.boundingBox.minY;	        
+	        double k = entity.boundingBox.minZ + 0.001D;
+	        double l = entity.boundingBox.maxX - 0.001D;
+	        double j1 = entity.boundingBox.maxZ - 0.001D;
+<<<<<<< HEAD
+	       boolean result = false;
+	        if (!cpw.mods.fml.common.Loader.isModLoaded("GulliverForged") || (entity.boundingBox.maxY - entity.boundingBox.minY <= .5))
+=======
+	        
+	        if (!cpw.mods.fml.common.Loader.isModLoaded("GulliverForged") || (entity.boundingBox.maxY - entity.boundingBox.minY <= 1))
+>>>>>>> f33473ec2b72fbd7d1343785a5a6deda8e4cba07
+	        {
+	        	int xx = (x << 3) + MathHelper.floor_double((entity.boundingBox.minX - MathHelper.floor_double(entity.boundingBox.minX)) *100 / 8)-3, 
+	        			yy = MathHelper.floor_double((j - MathHelper.floor_double(j))*100 / 8)>7?7:MathHelper.floor_double((j - MathHelper.floor_double(j))*100 / 8) , 
+	        			zz = (z << 3) + MathHelper.floor_double((entity.boundingBox.minZ - MathHelper.floor_double(entity.boundingBox.minZ)) *100 / 8)-1;
+	        	
+	        	for (double k1 = i; k1 <= l; k1 += (1.0/10.0))
+	            {
+	                
+	                	int blockid1 = tile.getBlockID(MathHelper.floor_double((k1 - MathHelper.floor_double(k1))*100 / 8), yy, MathHelper.floor_double((k - MathHelper.floor_double(k))*100 / 8));
+	                	int blockid2 = tile.getBlockID(MathHelper.floor_double((k1 - MathHelper.floor_double(k1))*100 / 8), yy, MathHelper.floor_double((j1 - MathHelper.floor_double(j1))*100 / 8));
+	                    if (blockid1 > 0.0)
+	                    {
+	                    	result = Block.blocksList[blockid1].isLadder((World) tile.getLittleWorld(), xx, yy, zz,entity);
+	                    	if (result) break;
+	                    }
+	                    if (blockid2 > 0)
+	                    {
+	                    	result = Block.blocksList[blockid2].isLadder((World) tile.getLittleWorld(), xx, yy, zz,entity);
+	                    	if (result) break;
+	                    }
+	                }
+	            
+	            if (!result){
+	            	
+	            		for (double i2 = k; i2 <= j1; i2 += (1.0/10.0))
+	            		{
+	            			int blockid1 = tile.getBlockID(MathHelper.floor_double((i - MathHelper.floor_double(i))*100 / 8), yy, MathHelper.floor_double((i2 - MathHelper.floor_double(i2))*100 / 8));
+	            			int blockid2 = tile.getBlockID(MathHelper.floor_double((l - MathHelper.floor_double(l))*100 / 8), yy, MathHelper.floor_double((i2 - MathHelper.floor_double(i2))*100 / 8));
+	            			if (blockid1 > 0)
+	            			{	            			
+	            				result = Block.blocksList[blockid1].isLadder((World) tile.getLittleWorld(), xx, yy, zz,entity);
+	            				if (result) break;
+	            			}
+	            			if (blockid2 > 0)
+	            			{
+	            				result = Block.blocksList[blockid2].isLadder((World) tile.getLittleWorld(), xx, yy, zz,entity);
+	            				if (result) break;
+	            			}
+	            		}
+	            	}	            	
+	            }
+	        			
+	        return result;
+	    }
+	 
+	 @SideOnly(Side.CLIENT)
+
+	    /**
+	     * A randomly called display update to be able to add particles or other items for display
+	     */
+	 @Override
+	    public void randomDisplayTick(World world, int x, int y, int z, Random par5Random)
+	 {
+		 TileEntityLittleChunk tile = (TileEntityLittleChunk) world
+					.getBlockTileEntity(x, y, z);
+		 
+		 
+			int content = tile.getBlockID(
+					xSelected,
+					ySelected,
+					zSelected);
+			int xx = (x << 3) + xSelected, yy = (y << 3) + ySelected, zz = (z << 3) + zSelected;
+			if (content > 0) {
+			 this.blockMaterial = ((World) tile.getLittleWorld()).getBlockMaterial(xx, yy, zz);
+			}
+	 }
 }

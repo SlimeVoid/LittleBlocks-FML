@@ -2,13 +2,17 @@ package slimevoid.littleblocks.items;
 
 import java.util.HashMap;
 
+import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.packet.Packet15Place;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import slimevoid.lib.data.ReadWriteLock;
 import slimevoid.littleblocks.core.LBCore;
@@ -50,7 +54,7 @@ public class ItemLittleBlocksWand extends Item {
 	}
 
 	@Override
-	public boolean onItemUseFirst(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int l, float a, float b, float c) {
+	public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int l, float a, float b, float c) {
 		if (!world.isRemote) {
 			EnumWandAction playerWandAction = EnumWandAction.getWandActionForPlayer(entityplayer);
 			if (playerWandAction != null) {
@@ -67,8 +71,7 @@ public class ItemLittleBlocksWand extends Item {
 		return false;
 	}
 
-	@Override
-	public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int l, float a, float b, float c) {
+	public boolean onItemUseNever(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int l, float a, float b, float c) {
 		return true;
 	}
 
@@ -87,38 +90,14 @@ public class ItemLittleBlocksWand extends Item {
 	private boolean doPlaceLB(ItemStack itemstack, EntityPlayer entityplayer,
 			World world, int x, int y, int z, int l, float a, float b, float c) {
 		if (world.getBlockId(x, y, z) != LBCore.littleChunkID) {
-			if (l == 0) {
-				--y;
-			}
-	
-			if (l == 1) {
-				++y;
-			}
-	
-			if (l == 2) {
-				--z;
-			}
-	
-			if (l == 3) {
-				++z;
-			}
-	
-			if (l == 4) {
-				--x;
-			}
-	
-			if (l == 5) {
-				++x;
-			}
-			if (world.getBlockId(x, y, z) == 0) {
-				world.setBlock(x, y, z, LBCore.littleChunkID);
-				TileEntity newtile = world.getBlockTileEntity(
-						x,
-						y,
-						z);
-				newtile.onInventoryChanged();
-				world.markBlockForUpdate(x, y, z);
-			}
+			Vec3 vec = world.getWorldVec3Pool().getVecFromPool(a + (float)x,
+	        b +(float)y,
+	        c + (float)z);
+			Minecraft.getMinecraft().playerController.onPlayerRightClick(entityplayer, world, new ItemStack(Block.blocksList[LBCore.littleChunkID]), x, y, z, l, vec);
+			
+				
+							
+			
 			return true;
 		}
 		return false;
