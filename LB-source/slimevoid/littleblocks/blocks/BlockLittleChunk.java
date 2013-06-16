@@ -836,8 +836,13 @@ public class BlockLittleChunk extends BlockContainer {
 	        double k = entity.boundingBox.minZ + 0.001D;
 	        double l = entity.boundingBox.maxX - 0.001D;
 	        double j1 = entity.boundingBox.maxZ - 0.001D;
+<<<<<<< HEAD
 	       boolean result = false;
 	        if (!cpw.mods.fml.common.Loader.isModLoaded("GulliverForged") || (entity.boundingBox.maxY - entity.boundingBox.minY <= .5))
+=======
+	        
+	        if (!cpw.mods.fml.common.Loader.isModLoaded("GulliverForged") || (entity.boundingBox.maxY - entity.boundingBox.minY <= 1))
+>>>>>>> f33473ec2b72fbd7d1343785a5a6deda8e4cba07
 	        {
 	        	int xx = (x << 3) + MathHelper.floor_double((entity.boundingBox.minX - MathHelper.floor_double(entity.boundingBox.minX)) *100 / 8)-3, 
 	        			yy = MathHelper.floor_double((j - MathHelper.floor_double(j))*100 / 8)>7?7:MathHelper.floor_double((j - MathHelper.floor_double(j))*100 / 8) , 
