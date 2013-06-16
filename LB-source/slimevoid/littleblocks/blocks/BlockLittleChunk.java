@@ -832,35 +832,55 @@ public class BlockLittleChunk extends BlockContainer {
 		 TileEntityLittleChunk tile = (TileEntityLittleChunk) world
 					.getBlockTileEntity(x, y, z);
 		 double i = entity.boundingBox.minX + 0.001D;
-	        double j = entity.boundingBox.minY + 0.001D;
+	        double j = entity.boundingBox.minY;	        
 	        double k = entity.boundingBox.minZ + 0.001D;
 	        double l = entity.boundingBox.maxX - 0.001D;
-	        double i1 =entity.boundingBox.maxY - 0.001D;
 	        double j1 = entity.boundingBox.maxZ - 0.001D;
-	        
+	       boolean result = false;
 	        if (!cpw.mods.fml.common.Loader.isModLoaded("GulliverForged") || (entity.boundingBox.maxY - entity.boundingBox.minY <= .5))
 	        {
-	            for (double k1 = i; k1 <= l; k1 += (1.0/8.0))
+	        	int xx = (x << 3) + MathHelper.floor_double((entity.boundingBox.minX - MathHelper.floor_double(entity.boundingBox.minX)) *100 / 8)-3, 
+	        			yy = MathHelper.floor_double((j - MathHelper.floor_double(j))*100 / 8)>7?7:MathHelper.floor_double((j - MathHelper.floor_double(j))*100 / 8) , 
+	        			zz = (z << 3) + MathHelper.floor_double((entity.boundingBox.minZ - MathHelper.floor_double(entity.boundingBox.minZ)) *100 / 8)-1;
+	        	
+	        	for (double k1 = i; k1 <= l; k1 += (1.0/10.0))
 	            {
-	                for (double l1 = j; l1 <= i1; l1 += (1.0/8.0))
-	                {
-	                    for (double i2 = k; i2 <= j1; i2 += (1.0/8.0))
+	                
+	                	int blockid1 = tile.getBlockID(MathHelper.floor_double((k1 - MathHelper.floor_double(k1))*100 / 8), yy, MathHelper.floor_double((k - MathHelper.floor_double(k))*100 / 8));
+	                	int blockid2 = tile.getBlockID(MathHelper.floor_double((k1 - MathHelper.floor_double(k1))*100 / 8), yy, MathHelper.floor_double((j1 - MathHelper.floor_double(j1))*100 / 8));
+	                    if (blockid1 > 0.0)
 	                    {
-	                        int j2 = tile.getBlockID(MathHelper.floor_double((k1 - MathHelper.floor_double(k1))*100 / 8), MathHelper.floor_double((l1 - MathHelper.floor_double(l1))*100 / 8), MathHelper.floor_double((i2 - MathHelper.floor_double(i2))*100 / 8));
-
-	                        if (j2 > 0)
-	                        {
-	                            int xx = (x << 3) + MathHelper.floor_double((entity.boundingBox.minX - MathHelper.floor_double(entity.boundingBox.minX)) *100 / 8)-3, yy = (y << 3) + MathHelper.floor_double((entity.boundingBox.minY - MathHelper.floor_double(entity.boundingBox.minY)) *100 / 8), zz = (z << 3) + MathHelper.floor_double((entity.boundingBox.minZ - MathHelper.floor_double(entity.boundingBox.minZ)) *100 / 8)-1;
-	                            return Block.blocksList[j2].isLadder((World) tile.getLittleWorld(), xx, yy, zz,entity);
-	                        }
+	                    	result = Block.blocksList[blockid1].isLadder((World) tile.getLittleWorld(), xx, yy, zz,entity);
+	                    	if (result) break;
+	                    }
+	                    if (blockid2 > 0)
+	                    {
+	                    	result = Block.blocksList[blockid2].isLadder((World) tile.getLittleWorld(), xx, yy, zz,entity);
+	                    	if (result) break;
 	                    }
 	                }
+	            
+	            if (!result){
+	            	
+	            		for (double i2 = k; i2 <= j1; i2 += (1.0/10.0))
+	            		{
+	            			int blockid1 = tile.getBlockID(MathHelper.floor_double((i - MathHelper.floor_double(i))*100 / 8), yy, MathHelper.floor_double((i2 - MathHelper.floor_double(i2))*100 / 8));
+	            			int blockid2 = tile.getBlockID(MathHelper.floor_double((l - MathHelper.floor_double(l))*100 / 8), yy, MathHelper.floor_double((i2 - MathHelper.floor_double(i2))*100 / 8));
+	            			if (blockid1 > 0)
+	            			{	            			
+	            				result = Block.blocksList[blockid1].isLadder((World) tile.getLittleWorld(), xx, yy, zz,entity);
+	            				if (result) break;
+	            			}
+	            			if (blockid2 > 0)
+	            			{
+	            				result = Block.blocksList[blockid2].isLadder((World) tile.getLittleWorld(), xx, yy, zz,entity);
+	            				if (result) break;
+	            			}
+	            		}
+	            	}	            	
 	            }
-	        }	
-					
-			
-			
-	        return false;
+	        			
+	        return result;
 	    }
 	 
 	 @SideOnly(Side.CLIENT)
