@@ -14,6 +14,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
@@ -23,6 +24,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
@@ -823,4 +825,62 @@ public class BlockLittleChunk extends BlockContainer {
 			}
 		}
 	}
+	@Override
+    public boolean isLadder(World world, int x, int y, int z,EntityLiving entity)
+    {
+		TileEntityLittleChunk tile = (TileEntityLittleChunk) world
+				.getBlockTileEntity(x, y, z);
+		/*
+		 * Much Better Algorithm
+		 * thank's to unclemion
+		 */
+		int minXLBCord = entity.boundingBox.minX + 0.001D < x?0:MathHelper.floor_double((entity.boundingBox.minX + 0.001D)* (double)tile.size)% tile.size ;
+        int yLBCord = MathHelper.floor_double(entity.boundingBox.minY * (double)tile.size) % tile.size;
+        int minZLBCord = entity.boundingBox.minZ + 0.001D < z?0:MathHelper.floor_double((entity.boundingBox.minZ + 0.001D)* (double)tile.size)% tile.size;
+        int maxXLBCord = entity.boundingBox.maxX - 0.001D > (x+1)?7:MathHelper.floor_double((entity.boundingBox.maxX - 0.001D)*(double)tile.size)% tile.size;
+        int maxZLBCord = entity.boundingBox.maxZ - 0.001D > (z+1)?7:MathHelper.floor_double((entity.boundingBox.maxZ - 0.001D)*(double)tile.size)% tile.size;;
+        boolean result = false;
+        if (!cpw.mods.fml.common.Loader.isModLoaded("GulliverForged") || (entity.boundingBox.maxY - entity.boundingBox.minY <= 1))
+
+        {       	
+        	int blockid =0;
+        	for (int currXLBCord = minXLBCord; currXLBCord <= maxXLBCord; currXLBCord++)
+            {
+                	blockid = tile.getBlockID(currXLBCord, yLBCord, minZLBCord);
+                	
+                    if (blockid > 0)
+                    {
+                    	result = Block.blocksList[blockid].isLadder((World) tile.getLittleWorld(), currXLBCord, yLBCord, minZLBCord,entity);
+                    	if (result) break;
+                    }
+                	blockid = tile.getBlockID(currXLBCord, yLBCord, maxZLBCord);
+                    if (blockid > 0)
+                    {
+                    	result = Block.blocksList[blockid].isLadder((World) tile.getLittleWorld(), currXLBCord, yLBCord, maxZLBCord,entity);
+                    	if (result) break;
+                    }
+            }
+
+            if (!result){
+
+            		for (int currZLBCord = minZLBCord; currZLBCord <= maxZLBCord; currZLBCord ++)
+            		{
+            			blockid = tile.getBlockID(minXLBCord, yLBCord,currZLBCord);
+            			if (blockid > 0)
+            			{	            			
+            				result = Block.blocksList[blockid].isLadder((World) tile.getLittleWorld(), minXLBCord, yLBCord, currZLBCord,entity);
+            				if (result) break;
+            			}
+            			blockid = tile.getBlockID(maxXLBCord, yLBCord, currZLBCord);
+            			if (blockid > 0)
+            			{
+            				result = Block.blocksList[blockid].isLadder((World) tile.getLittleWorld(), maxXLBCord, yLBCord, currZLBCord,entity);
+            				if (result) break;
+            			}
+            		}
+            	}	            	
+            }
+
+        return result;
+    }
 }
