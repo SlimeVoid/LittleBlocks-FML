@@ -825,8 +825,7 @@ public class BlockLittleChunk extends BlockContainer {
 			}
 		}
 	}
-	@Override
-    public boolean isLadder(World world, int x, int y, int z,EntityLiving entity)
+	public boolean isLadder(World world, int x, int y, int z,EntityLiving entity)
     {
 		TileEntityLittleChunk tile = (TileEntityLittleChunk) world
 				.getBlockTileEntity(x, y, z);
