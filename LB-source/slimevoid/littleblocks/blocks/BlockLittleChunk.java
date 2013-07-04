@@ -108,6 +108,7 @@ public class BlockLittleChunk extends BlockContainer {
 	@Override
 	public boolean removeBlockByPlayer(World world, EntityPlayer entityplayer, int x, int y, int z) {
 		int id = world.getBlockId(x, y, z);
+		
 		if (id == LBCore.littleChunkID) {
 			TileEntityLittleChunk tile = (TileEntityLittleChunk) world
 					.getBlockTileEntity(x, y, z);
@@ -560,18 +561,33 @@ public class BlockLittleChunk extends BlockContainer {
 				y,
 				z,
 				returns);
-
 		if (!returns.isEmpty()) {
 			MovingObjectPosition min = null;
 			double distMin = 0;
+			boolean isSolid = false;
 			for (MovingObjectPosition ret : returns) {
 				double dist = (double) ret.hitVec.squareDistanceTo(player);
-				if (min == null || dist < distMin) {
+				
+//				int retBlockID = tile.getBlockID(ret.blockX, ret.blockY, ret.blockZ);
+//				if (retBlockID > 0)
+//					isSolid = Block.blocksList[retBlockID].isBlockSolid(tile.worldObj, ret.blockX, ret.blockY, ret.blockZ, ret.sideHit);
+//				
+//				System.out.println(isSolid);
+				
+				if ((min == null || dist < distMin) && !isSolid) {
 					distMin = dist;
 					min = ret;
 				}
 			}
 			int littleBlockID = tile.getBlockID(this.xSelected, this.ySelected, this.zSelected);
+			
+			
+//			if (littleBlockID > 0 && min != null) {
+////				isSolid = Block.blocksList[littleBlockID].isBlockSolid(tile.worldObj, this.xSelected, this.ySelected, this.zSelected, min.sideHit);
+//				System.out.println("Block! " + littleBlockID);
+//			}
+			
+			
 			if (min != null) {
 				this.side = (byte) min.sideHit;
 				this.xSelected = (int) min.blockX;
@@ -602,6 +618,7 @@ public class BlockLittleChunk extends BlockContainer {
 		this.ySelected = -10;
 		this.zSelected = -10;
 		this.side = -1;
+//		System.out.println("Block! " + tile.getBlockID(this.xSelected, this.ySelected, this.zSelected));
 		setBlockBoundsBasedOnSelection(world, x, y, z);
 
 		return null;

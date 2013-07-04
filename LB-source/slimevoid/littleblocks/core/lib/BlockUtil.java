@@ -74,8 +74,6 @@ public class BlockUtil {
 	}
 
 	public static boolean isBlockAllowed(Block block) {
-		System.out.println(block.blockID);
-		
 		if (block != null) {
 			if (disallowedBlocks.contains(block.getClass())) {
 				return false;
