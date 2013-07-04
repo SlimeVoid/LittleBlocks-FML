@@ -8,6 +8,7 @@ import org.lwjgl.input.Keyboard;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.BlockFluid;
 import net.minecraft.block.BlockPistonBase;
 import net.minecraft.block.BlockStairs;
 import net.minecraft.block.material.Material;
@@ -564,29 +565,22 @@ public class BlockLittleChunk extends BlockContainer {
 		if (!returns.isEmpty()) {
 			MovingObjectPosition min = null;
 			double distMin = 0;
-			boolean isSolid = false;
+			boolean isLiquid = false;
 			for (MovingObjectPosition ret : returns) {
 				double dist = (double) ret.hitVec.squareDistanceTo(player);
 				
-//				int retBlockID = tile.getBlockID(ret.blockX, ret.blockY, ret.blockZ);
-//				if (retBlockID > 0)
-//					isSolid = Block.blocksList[retBlockID].isBlockSolid(tile.worldObj, ret.blockX, ret.blockY, ret.blockZ, ret.sideHit);
-//				
-//				System.out.println(isSolid);
+				int retBlockID = tile.getBlockID(ret.blockX, ret.blockY, ret.blockZ);
+				if (retBlockID > 0) {
+					Block retBlock = Block.blocksList[retBlockID];//.isBlockSolid(tile.worldObj, ret.blockX, ret.blockY, ret.blockZ, ret.sideHit);
+					isLiquid = retBlock instanceof BlockFluid;
+				}
 				
-				if ((min == null || dist < distMin) && !isSolid) {
+				if ((min == null || dist < distMin) && !isLiquid) {
 					distMin = dist;
 					min = ret;
 				}
 			}
 			int littleBlockID = tile.getBlockID(this.xSelected, this.ySelected, this.zSelected);
-			
-			
-//			if (littleBlockID > 0 && min != null) {
-////				isSolid = Block.blocksList[littleBlockID].isBlockSolid(tile.worldObj, this.xSelected, this.ySelected, this.zSelected, min.sideHit);
-//				System.out.println("Block! " + littleBlockID);
-//			}
-			
 			
 			if (min != null) {
 				this.side = (byte) min.sideHit;
@@ -618,7 +612,6 @@ public class BlockLittleChunk extends BlockContainer {
 		this.ySelected = -10;
 		this.zSelected = -10;
 		this.side = -1;
-//		System.out.println("Block! " + tile.getBlockID(this.xSelected, this.ySelected, this.zSelected));
 		setBlockBoundsBasedOnSelection(world, x, y, z);
 
 		return null;
