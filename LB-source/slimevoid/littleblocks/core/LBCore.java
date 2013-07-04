@@ -1,6 +1,8 @@
 package slimevoid.littleblocks.core;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -34,6 +36,7 @@ public class LBCore {
 	public static String loggerLevel = "INFO";
 	public static Block littleChunk;
 	public static Item littleBlocksWand;
+	public static Map<Integer, Boolean> illegalBlocks = new HashMap<Integer, Boolean>();
 	@SideOnly(Side.CLIENT)
 	public static LittleWorld littleWorldClient;
 	public static LittleWorld littleWorldServer;

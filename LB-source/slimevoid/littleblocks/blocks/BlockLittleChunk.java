@@ -213,6 +213,7 @@ public class BlockLittleChunk extends BlockContainer {
 		ItemStack itemstack = entityplayer.getCurrentEquippedItem();
 		if (itemstack != null) {
 			Object itemHeld = itemstack.getItem();
+			ItemBlock itemBlock = null;
 			Block block = null;
 			Item item = null;
 			if (itemHeld instanceof Block) {
@@ -220,6 +221,10 @@ public class BlockLittleChunk extends BlockContainer {
 			}
 			if (itemHeld instanceof Item) {
 				item = (Item) itemHeld;
+			}
+			if (itemHeld instanceof ItemBlock) {
+				itemBlock = (ItemBlock) itemHeld;
+				block = Block.blocksList[itemBlock.getBlockID()];
 			}
 			if (block != null) {
 				if (!BlockUtil.isBlockAllowed(block)) {

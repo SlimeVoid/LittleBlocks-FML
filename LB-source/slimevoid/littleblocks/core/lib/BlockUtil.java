@@ -5,8 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockFlowing;
-import net.minecraft.block.BlockFluid;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemHoe;
@@ -67,7 +65,6 @@ public class BlockUtil {
 		return true;
 	}
 
-	@SuppressWarnings("unused")
 	private static void registerDisallowedBlock(Class<? extends Block> blockClass) {
 		if (blockClass != null) {
 			if (!disallowedBlocks.contains(blockClass)) {
@@ -77,15 +74,19 @@ public class BlockUtil {
 	}
 
 	public static boolean isBlockAllowed(Block block) {
+		System.out.println(block.blockID);
+		
 		if (block != null) {
 			if (disallowedBlocks.contains(block.getClass())) {
 				return false;
 			}
 		}
+		if (LBCore.illegalBlocks.get(block.blockID) != null)
+			return false;
+		
 		return true;
 	}
 
-	@SuppressWarnings("unused")
 	private static void registerDisallowedItemIDs(Integer itemID) {
 		if (itemID > Block.blocksList.length) {
 			if (!disallowedItemIDs.contains(itemID)) {

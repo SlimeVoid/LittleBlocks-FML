@@ -54,7 +54,6 @@ public abstract class SubPacketHandler implements IPacketHandler {
 	 * Receive a packet from the handler.<br>
 	 * Assembles the packet into an wireless packet and routes to handlePacket().
 	 */
-	@SuppressWarnings("unused")
 	@Override
 	public void onPacketData(INetworkManager manager, Packet250CustomPayload packet, Player player) {
 		EntityPlayer entityplayer = (EntityPlayer) player;
