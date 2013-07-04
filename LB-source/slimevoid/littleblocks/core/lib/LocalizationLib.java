@@ -15,7 +15,7 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 
 public class LocalizationLib {
 
-	private static final String LANGUAGE_PATH = "/littleblocks/names/";
+	private static final String LANGUAGE_PATH = "/assets/littleblocks/locale/";
 
 	public static String[] localeFiles = {
 		LANGUAGE_PATH + "en_US.xml",
@@ -29,6 +29,7 @@ public class LocalizationLib {
 					getLocaleFromFileName(localizationFile),
 					isXMLLanguageFile(localizationFile));
 		}
+		System.out.println(LanguageRegistry.instance().getStringLocalization("tile.lb.littleblocks.name"));
 	}
 
 	/***

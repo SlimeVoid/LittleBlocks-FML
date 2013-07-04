@@ -14,7 +14,6 @@ package slimevoid.littleblocks.core;
 import java.io.File;
 
 import net.minecraftforge.common.Configuration;
-import slimevoid.lib.ICommonProxy;
 import slimevoid.lib.core.SlimevoidCore;
 import slimevoid.littleblocks.api.util.LittleBlocksHelper;
 import slimevoid.littleblocks.core.lib.EnumWandAction;
@@ -23,10 +22,11 @@ import slimevoid.littleblocks.core.lib.ReferenceLib;
 public class LBInit {
 	private static boolean initialized = false;
 
-	public static void initialize(ICommonProxy proxy) {
+	public static void initialize() {
 		if (initialized)
 			return;
 		initialized = true;
+		LittleBlocks.proxy.preInit();
 		LBCore.configFile = new File(
 				LittleBlocks.proxy.getMinecraftDir(),
 					"config/LittleBlocks.cfg");
@@ -37,6 +37,9 @@ public class LBInit {
 	public static void load() {
 		LittleBlocks.proxy.registerConfigurationProperties();
 		
+		SlimevoidCore.console(ReferenceLib.MOD_ID, "Registering names...");
+		LBCore.registerNames();
+		
 		SlimevoidCore.console(ReferenceLib.MOD_ID, "Registering items...");
 		LBCore.registerItems();
 		
@@ -46,9 +49,6 @@ public class LBInit {
 		LittleBlocks.proxy.registerRenderInformation();
 		
 		LittleBlocks.proxy.registerTickHandler();
-		
-		SlimevoidCore.console(ReferenceLib.MOD_ID, "Registering names...");
-		LBCore.registerNames();
 		
 		SlimevoidCore.console(ReferenceLib.MOD_ID, "Registering recipes...");
 		LBCore.registerRecipes();

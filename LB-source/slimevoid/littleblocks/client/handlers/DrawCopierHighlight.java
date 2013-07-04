@@ -1,6 +1,7 @@
 package slimevoid.littleblocks.client.handlers;
 
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.resources.ResourceLocation;
 import net.minecraft.src.ModLoader;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
@@ -36,7 +37,8 @@ public class DrawCopierHighlight {
         double iPX = event.player.prevPosX + (event.player.posX - event.player.prevPosX) * event.partialTicks;
         double iPY = event.player.prevPosY + (event.player.posY - event.player.prevPosY) * event.partialTicks;
         double iPZ = event.player.prevPosZ + (event.player.posZ - event.player.prevPosZ) * event.partialTicks;
-        int texture = event.context.renderEngine.getTexture(TextureLib.COPIEROVERLAY);
+        ResourceLocation overlay = new ResourceLocation(TextureLib.COPIEROVERLAY);
+        int texture = event.context.renderEngine.func_110581_b(overlay).func_110552_b();
 
         float xScale = 1;
         float yScale = 1;
