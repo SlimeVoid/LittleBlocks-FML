@@ -1,6 +1,8 @@
 package slimevoid.littleblocks.client.handlers;
 
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.renderer.texture.TextureObject;
 import net.minecraft.client.resources.ResourceLocation;
 import net.minecraft.src.ModLoader;
 import net.minecraft.world.World;
@@ -37,8 +39,7 @@ public class DrawCopierHighlight {
         double iPX = event.player.prevPosX + (event.player.posX - event.player.prevPosX) * event.partialTicks;
         double iPY = event.player.prevPosY + (event.player.posY - event.player.prevPosY) * event.partialTicks;
         double iPZ = event.player.prevPosZ + (event.player.posZ - event.player.prevPosZ) * event.partialTicks;
-        ResourceLocation overlay = new ResourceLocation(TextureLib.COPIEROVERLAY);
-        int texture = event.context.renderEngine.func_110581_b(overlay).func_110552_b();
+        ResourceLocation overlay = new ResourceLocation("littleblocks", TextureLib.COPIEROVERLAY);
 
         float xScale = 1;
         float yScale = 1;
@@ -118,7 +119,7 @@ public class DrawCopierHighlight {
             GL11.glRotatef(90, forgeDir.offsetX, forgeDir.offsetY, forgeDir.offsetZ);
             GL11.glTranslated(0, 0, 0.5f * zCorrection);
             GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
-            renderPulsingQuad(texture, 0.75F);
+            renderPulsingQuad(event.context.renderEngine, overlay, 0.75F);
             GL11.glPopMatrix();
         }
 
@@ -126,11 +127,12 @@ public class DrawCopierHighlight {
         GL11.glDepthMask(true);
     }
 
-    public static void renderPulsingQuad(int texture, float maxTransparency) {
+    public static void renderPulsingQuad(TextureManager renderEngine, ResourceLocation overlay, float maxTransparency) {
 
         float pulseTransparency = (getPulseValue() * maxTransparency) / 3000f;
 
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
+        renderEngine.func_110577_a(overlay);
+        //GL11.glBindTexture(GL11.GL_TEXTURE_2D, overlay);
         Tessellator tessellator = Tessellator.instance;
 
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
