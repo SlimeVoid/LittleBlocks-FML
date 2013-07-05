@@ -2,7 +2,7 @@ package slimevoid.littleblocks.core;
 
 import slimevoid.littleblocks.api.ILBCommonProxy;
 import slimevoid.littleblocks.client.network.ClientPacketHandler;
-import slimevoid.littleblocks.core.lib.ReferenceLib;
+import slimevoid.littleblocks.core.lib.CoreLib;
 import slimevoid.littleblocks.network.CommonPacketHandler;
 import slimevoid.littleblocks.network.LBConnectionHandler;
 import cpw.mods.fml.common.Mod;
@@ -16,27 +16,27 @@ import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
 
 @Mod(
-		modid = ReferenceLib.MOD_ID,
-		name = ReferenceLib.MOD_NAME,
-		version = ReferenceLib.MOD_VERSION,
-		dependencies = ReferenceLib.MOD_DEPENDENCIES)
+		modid = CoreLib.MOD_ID,
+		name = CoreLib.MOD_NAME,
+		version = CoreLib.MOD_VERSION,
+		dependencies = CoreLib.MOD_DEPENDENCIES)
 @NetworkMod(
 		clientSideRequired = true,
 		serverSideRequired = false,
 		clientPacketHandlerSpec = @SidedPacketHandler(
-				channels = { ReferenceLib.MOD_CHANNEL },
+				channels = { CoreLib.MOD_CHANNEL },
 				packetHandler = ClientPacketHandler.class),
 		serverPacketHandlerSpec = @SidedPacketHandler(
-				channels = { ReferenceLib.MOD_CHANNEL },
+				channels = { CoreLib.MOD_CHANNEL },
 				packetHandler = CommonPacketHandler.class),
 		connectionHandler = LBConnectionHandler.class)
 public class LittleBlocks {
 	@SidedProxy(
-			clientSide = ReferenceLib.CLIENT_PROXY,
-			serverSide = ReferenceLib.COMMON_PROXY)
+			clientSide = CoreLib.CLIENT_PROXY,
+			serverSide = CoreLib.COMMON_PROXY)
 	public static ILBCommonProxy proxy;
 	
-	@Instance(ReferenceLib.MOD_ID)
+	@Instance(CoreLib.MOD_ID)
 	public static LittleBlocks instance;
 
 	@EventHandler

@@ -1,6 +1,6 @@
 package slimevoid.littleblocks.core.lib;
 
-public class ReferenceLib {
+public class CoreLib {
 	
 	public static final String MOD_ID = "LittleBlocksMod";
 	public static final String MOD_NAME = "Little Blocks";

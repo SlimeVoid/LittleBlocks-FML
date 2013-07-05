@@ -10,7 +10,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import slimevoid.lib.nbt.NBTHelper;
 import slimevoid.lib.network.PacketEntity;
 import slimevoid.littleblocks.core.lib.CommandLib;
-import slimevoid.littleblocks.core.lib.ReferenceLib;
+import slimevoid.littleblocks.core.lib.CoreLib;
 import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
 
 public class PacketLittleBlocksCollection extends PacketEntity {
@@ -18,7 +18,7 @@ public class PacketLittleBlocksCollection extends PacketEntity {
 
 	public PacketLittleBlocksCollection() {
 		super();
-		this.setChannel(ReferenceLib.MOD_CHANNEL);
+		this.setChannel(CoreLib.MOD_CHANNEL);
 	}
 
 	public PacketLittleBlocksCollection(EntityItemLittleBlocksCollection entitylb) {

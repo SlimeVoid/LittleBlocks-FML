@@ -2,13 +2,13 @@ package slimevoid.littleblocks.network.packets;
 
 import net.minecraft.world.World;
 import slimevoid.lib.network.PacketNotifyPlayer;
-import slimevoid.littleblocks.core.lib.ReferenceLib;
+import slimevoid.littleblocks.core.lib.CoreLib;
 
 public class PacketLittleNotify extends PacketNotifyPlayer {
 	
 	public PacketLittleNotify() {
 		super();
-		this.setChannel(ReferenceLib.MOD_CHANNEL);
+		this.setChannel(CoreLib.MOD_CHANNEL);
 	}
 	
 	public PacketLittleNotify(String command) {

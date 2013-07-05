@@ -17,7 +17,7 @@ import net.minecraftforge.common.Configuration;
 import slimevoid.lib.core.SlimevoidCore;
 import slimevoid.littleblocks.api.util.LittleBlocksHelper;
 import slimevoid.littleblocks.core.lib.EnumWandAction;
-import slimevoid.littleblocks.core.lib.ReferenceLib;
+import slimevoid.littleblocks.core.lib.CoreLib;
 
 public class LBInit {
 	private static boolean initialized = false;
@@ -37,20 +37,20 @@ public class LBInit {
 	public static void load() {
 		LittleBlocks.proxy.registerConfigurationProperties();
 		
-		SlimevoidCore.console(ReferenceLib.MOD_ID, "Registering names...");
+		SlimevoidCore.console(CoreLib.MOD_ID, "Registering names...");
 		LBCore.registerNames();
 		
-		SlimevoidCore.console(ReferenceLib.MOD_ID, "Registering items...");
+		SlimevoidCore.console(CoreLib.MOD_ID, "Registering items...");
 		LBCore.registerItems();
 		
-		SlimevoidCore.console(ReferenceLib.MOD_ID, "Registering blocks...");
+		SlimevoidCore.console(CoreLib.MOD_ID, "Registering blocks...");
 		LBCore.registerBlocks();
 		
 		LittleBlocks.proxy.registerRenderInformation();
 		
 		LittleBlocks.proxy.registerTickHandler();
 		
-		SlimevoidCore.console(ReferenceLib.MOD_ID, "Registering recipes...");
+		SlimevoidCore.console(CoreLib.MOD_ID, "Registering recipes...");
 		LBCore.registerRecipes();
 
 		LittleBlocksHelper.init(LittleBlocks.proxy, LBCore.littleBlocksSize);

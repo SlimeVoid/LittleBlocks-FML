@@ -10,7 +10,7 @@ import net.minecraft.world.World;
 import slimevoid.lib.network.PacketIds;
 import slimevoid.lib.network.PacketPayload;
 import slimevoid.lib.network.PacketUpdate;
-import slimevoid.littleblocks.core.lib.ReferenceLib;
+import slimevoid.littleblocks.core.lib.CoreLib;
 
 public class PacketLittleBlocks extends PacketUpdate {
 
@@ -41,7 +41,7 @@ public class PacketLittleBlocks extends PacketUpdate {
 
 	public PacketLittleBlocks() {
 		super(PacketIds.UPDATE);
-		this.setChannel(ReferenceLib.MOD_CHANNEL);
+		this.setChannel(CoreLib.MOD_CHANNEL);
 	}
 
 	public PacketLittleBlocks(String command, int x, int y, int z, int side, float vecX, float vecY, float vecZ, int selectedX, int selectedY, int selectedZ, int blockId, int metadata) {
