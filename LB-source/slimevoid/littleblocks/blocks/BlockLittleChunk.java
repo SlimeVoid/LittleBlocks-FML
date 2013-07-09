@@ -73,6 +73,12 @@ public class BlockLittleChunk extends BlockContainer {
 	}
 	
 	@Override
+	public int getRenderBlockPass()
+    {
+        return 1;
+    }
+	
+	@Override
     public int idPicked(World world, int x, int y, int z) {
 		TileEntity tileentity = world.getBlockTileEntity(x, y, z);
 		if (tileentity != null && tileentity instanceof TileEntityLittleChunk) {

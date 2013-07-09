@@ -29,7 +29,7 @@ public class LocalizationLib {
 					getLocaleFromFileName(localizationFile),
 					isXMLLanguageFile(localizationFile));
 		}
-		System.out.println(LanguageRegistry.instance().getStringLocalization("tile.lb.littleblocks.name"));
+//		System.out.println(LanguageRegistry.instance().getStringLocalization("tile.lb.littleblocks.name"));
 	}
 
 	/***
