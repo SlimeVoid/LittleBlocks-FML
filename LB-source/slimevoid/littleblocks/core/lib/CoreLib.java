@@ -2,7 +2,7 @@ package slimevoid.littleblocks.core.lib;
 
 public class CoreLib {
 	
-	public static final String MOD_ID = "LittleBlocksMod";
+	public static final String MOD_ID = "LittleBlocks";
 	public static final String MOD_NAME = "Little Blocks";
 	public static final String MOD_VERSION = "2.2.0.0";
 	public static final String MOD_DEPENDENCIES = "after:SlimevoidLib";

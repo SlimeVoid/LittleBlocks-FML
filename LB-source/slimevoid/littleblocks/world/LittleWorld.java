@@ -121,7 +121,7 @@ public class LittleWorld extends World implements ILittleWorld {
 			TileEntity tileentity = loadedTile.next();
 
 			if (!tileentity.isInvalid()
-					&& tileentity.func_70309_m()
+					&& tileentity.canUpdate()
 					&& this.blockExists(tileentity.xCoord, tileentity.yCoord,
 							tileentity.zCoord)) {
 				try {

@@ -3,7 +3,7 @@ package slimevoid.littleblocks.client.handlers;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureObject;
-import net.minecraft.client.resources.ResourceLocation;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.src.ModLoader;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
@@ -39,7 +39,6 @@ public class DrawCopierHighlight {
         double iPX = event.player.prevPosX + (event.player.posX - event.player.prevPosX) * event.partialTicks;
         double iPY = event.player.prevPosY + (event.player.posY - event.player.prevPosY) * event.partialTicks;
         double iPZ = event.player.prevPosZ + (event.player.posZ - event.player.prevPosZ) * event.partialTicks;
-        ResourceLocation overlay = new ResourceLocation("littleblocks", TextureLib.COPIEROVERLAY);
 
         float xScale = 1;
         float yScale = 1;
@@ -119,7 +118,7 @@ public class DrawCopierHighlight {
             GL11.glRotatef(90, forgeDir.offsetX, forgeDir.offsetY, forgeDir.offsetZ);
             GL11.glTranslated(0, 0, 0.5f * zCorrection);
             GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
-            renderPulsingQuad(event.context.renderEngine, overlay, 0.75F);
+            renderPulsingQuad(event.context.renderEngine, TextureLib.COPIER_OVERLAY, 0.75F);
             GL11.glPopMatrix();
         }
 
