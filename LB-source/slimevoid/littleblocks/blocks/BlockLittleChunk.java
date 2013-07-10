@@ -71,13 +71,12 @@ public class BlockLittleChunk extends BlockContainer {
     public boolean isBlockSolid(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5) {
 		return false;
 	}
-	
+
 	@Override
-	public int getRenderBlockPass()
-    {
-        return 1;
-    }
-	
+	public int getRenderBlockPass() {
+		return 1;
+	}
+
 	@Override
     public int idPicked(World world, int x, int y, int z) {
 		TileEntity tileentity = world.getBlockTileEntity(x, y, z);
