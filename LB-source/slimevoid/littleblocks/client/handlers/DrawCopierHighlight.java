@@ -36,7 +36,7 @@ public class DrawCopierHighlight {
         double iPX = event.player.prevPosX + (event.player.posX - event.player.prevPosX) * event.partialTicks;
         double iPY = event.player.prevPosY + (event.player.posY - event.player.prevPosY) * event.partialTicks;
         double iPZ = event.player.prevPosZ + (event.player.posZ - event.player.prevPosZ) * event.partialTicks;
-        int texture = event.context.renderEngine.getTexture(TextureLib.COPIEROVERLAY);
+        int texture = 0;//event.context.renderEngine.func_110581_b(TextureLib.COPIEROVERLAY);
 
         float xScale = 1;
         float yScale = 1;

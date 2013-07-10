@@ -48,7 +48,7 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public String getMinecraftDir() {
-		return Minecraft.getMinecraftDir().toString();
+		return Minecraft.getMinecraft().mcDataDir.toString();
 	}
 
 	@Override
