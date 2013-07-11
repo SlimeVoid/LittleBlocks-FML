@@ -12,6 +12,8 @@ import net.minecraft.block.BlockFluid;
 import net.minecraft.block.BlockPistonBase;
 import net.minecraft.block.BlockStairs;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.particle.EffectRenderer;
+import net.minecraft.client.particle.EntityDiggingFX;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -32,14 +34,17 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import slimevoid.lib.util.SlimevoidHelper;
 import slimevoid.littleblocks.api.ILittleWorld;
+import slimevoid.littleblocks.api.util.LittleBlocksHelper;
 import slimevoid.littleblocks.blocks.core.CollisionRayTrace;
 import slimevoid.littleblocks.core.LBCore;
+import slimevoid.littleblocks.core.LittleBlocks;
 import slimevoid.littleblocks.core.lib.BlockUtil;
 import slimevoid.littleblocks.core.lib.CommandLib;
 import slimevoid.littleblocks.core.lib.IconLib;
 import slimevoid.littleblocks.core.lib.MessageLib;
 import slimevoid.littleblocks.core.lib.PacketLib;
 import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
+import slimevoid.littleblocks.items.ItemLittleBlocksWand;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocksCollection;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -300,7 +305,7 @@ public class BlockLittleChunk extends BlockContainer {
 			int q, float a, float b, float c,
 			int xSelected, int ySelected, int zSelected, int side) {
 		if (entityplayer.canPlayerEdit(x, y, z, q, entityplayer.getHeldItem())) {
-			if (entityplayer.getHeldItem() != null && entityplayer.getHeldItem().getItem() == LBCore.littleBlocksWand) {
+			if (entityplayer.getHeldItem() != null && entityplayer.getHeldItem().getItem() instanceof ItemLittleBlocksWand) {
 				return true;
 			}
 			if (canPlayerPlaceBlock(world, entityplayer)) {
@@ -408,6 +413,9 @@ public class BlockLittleChunk extends BlockContainer {
 			int x, int y, int z, int side,
 			EntityPlayer entityplayer,
 			int xSelected, int ySelected, int zSelected) {
+		if (!entityplayer.canPlayerEdit(x, y, z, side, entityplayer.getHeldItem())) {
+			return;
+		}
 		TileEntityLittleChunk tile = (TileEntityLittleChunk) world
 				.getBlockTileEntity(x, y, z);
 		int content = tile.getBlockID(
@@ -859,5 +867,93 @@ public class BlockLittleChunk extends BlockContainer {
 				super.onNeighborBlockChange(world, x, y, z, blockId);
 			}
 		}
+	}
+	
+	@Override
+    public boolean addBlockDestroyEffects(World world, int x, int y, int z, int meta, EffectRenderer effectRenderer) {
+		int xx = (x << 3) + this.xSelected;
+		int yy = (y << 3) + this.ySelected;
+		int zz = (z << 3) + this.zSelected;
+		World littleWorld = (World) LittleBlocks.proxy.getLittleWorld(world, false);
+		int blockID = littleWorld.getBlockId(
+				xx,
+				yy,
+				zz);
+		Block block = Block.blocksList[blockID];
+		int littleMeta = littleWorld.getBlockMetadata(xx, yy, zz);
+		if (block != null) {
+            byte b0 = 4;
+
+            for (int j1 = 0; j1 < b0; ++j1)
+            {
+                for (int k1 = 0; k1 < b0; ++k1)
+                {
+                    for (int l1 = 0; l1 < b0; ++l1)
+                    {
+                        double d0 = (double)x + ((double)j1 + 0.5D) / (double)b0;
+                        double d1 = (double)y + ((double)k1 + 0.5D) / (double)b0;
+                        double d2 = (double)z + ((double)l1 + 0.5D) / (double)b0;
+                        effectRenderer.addEffect((new EntityDiggingFX(world, d0, d1, d2, d0 - (double)x - 0.5D, d1 - (double)y - 0.5D, d2 - (double)z - 0.5D, block, littleMeta)).applyColourMultiplier(x, y, z));
+                    }
+                }
+            }
+		}
+		return true;
+	}
+
+	@Override
+	public boolean addBlockHitEffects(World world, MovingObjectPosition target, EffectRenderer effectRenderer) {
+		int x = target.blockX;
+		int y = target.blockY;
+		int z = target.blockZ;
+		int xx = (x << 3) + this.xSelected;
+		int yy = (y << 3) + this.ySelected;
+		int zz = (z << 3) + this.zSelected;
+		World littleWorld = (World) LittleBlocks.proxy.getLittleWorld(world, false);
+		int blockID = littleWorld.getBlockId(
+				xx,
+				yy,
+				zz);
+		Block block = Block.blocksList[blockID];
+		int littleMeta = littleWorld.getBlockMetadata(xx, yy, zz);
+		if (block != null) {
+            float f = 0.1F;
+            double d0 = (double)x + world.rand.nextDouble() * (block.getBlockBoundsMaxX() - block.getBlockBoundsMinX() - (double)(f * 2.0F)) + (double)f + block.getBlockBoundsMinX();
+            double d1 = (double)y + world.rand.nextDouble() * (block.getBlockBoundsMaxY() - block.getBlockBoundsMinY() - (double)(f * 2.0F)) + (double)f + block.getBlockBoundsMinY();
+            double d2 = (double)z + world.rand.nextDouble() * (block.getBlockBoundsMaxZ() - block.getBlockBoundsMinZ() - (double)(f * 2.0F)) + (double)f + block.getBlockBoundsMinZ();
+
+            if (this.side == 0)
+            {
+                d1 = (double)y + block.getBlockBoundsMinY() - (double)f;
+            }
+
+            if (this.side == 1)
+            {
+                d1 = (double)y + block.getBlockBoundsMaxY() + (double)f;
+            }
+
+            if (this.side == 2)
+            {
+                d2 = (double)z + block.getBlockBoundsMinZ() - (double)f;
+            }
+
+            if (this.side == 3)
+            {
+                d2 = (double)z + block.getBlockBoundsMaxZ() + (double)f;
+            }
+
+            if (this.side == 4)
+            {
+                d0 = (double)x + block.getBlockBoundsMinX() - (double)f;
+            }
+
+            if (this.side == 5)
+            {
+                d0 = (double)x + block.getBlockBoundsMaxX() + (double)f;
+            }
+
+            effectRenderer.addEffect((new EntityDiggingFX(world, d0, d1, d2, 0.0D, 0.0D, 0.0D, block, littleMeta)).applyColourMultiplier(x, y, z).multiplyVelocity(0.2F).multipleParticleScaleBy(0.6F));
+		}
+		return true;
 	}
 }
