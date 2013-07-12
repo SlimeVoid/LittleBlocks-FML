@@ -94,7 +94,8 @@ public class BlockLittleChunk extends BlockContainer {
 	@Override
 	public boolean isLadder(World world, int x, int y, int z, EntityLivingBase entity) {
 		if (entity != null) {
-			SlimevoidHelper.isLadder(world, x, y, z, entity);
+			LittleBlocksHelper helper = new LittleBlocksHelper(null, 8);
+			return helper.isLadder(world, x, y, z, entity);
 		}
 		return false;
 	}
