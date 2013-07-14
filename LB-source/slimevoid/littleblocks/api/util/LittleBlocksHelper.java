@@ -128,8 +128,8 @@ public class LittleBlocksHelper implements ISlimevoidHelper {
 			minX = MathHelper.floor_double((minX - MathHelper.floor_double(minX))*tile.size) + ((MathHelper.floor_double(minX) - x) * tile.size);
 			minY = MathHelper.floor_double((minY - MathHelper.floor_double(minY))*tile.size) + ((MathHelper.floor_double(minY) - y) * tile.size);
 			minZ = MathHelper.floor_double((minZ - MathHelper.floor_double(minZ))*tile.size) + ((MathHelper.floor_double(minZ) - z) * tile.size);
-			maxX = MathHelper.floor_double((maxX - MathHelper.floor_double(maxX))*tile.size) + ((x -(MathHelper.floor_double(maxX))) * tile.size);
-			maxZ = MathHelper.floor_double((maxZ - MathHelper.floor_double(maxZ))*tile.size) + ((z -(MathHelper.floor_double(maxZ))) * tile.size);
+			maxX = MathHelper.floor_double((maxX - MathHelper.floor_double(maxX))*tile.size) + ((MathHelper.floor_double(maxX) - x) * tile.size);
+			maxZ = MathHelper.floor_double((maxZ - MathHelper.floor_double(maxZ))*tile.size) + ((MathHelper.floor_double(maxZ) - z) * tile.size);
 			for (int k1 = (int) minX; k1 <= maxX; k1 ++) {
 					for (int i2 = (int)minZ; i2 <= maxZ; i2 ++) {
 						int j2 = tile.getBlockID(k1,(int)minY,i2);
