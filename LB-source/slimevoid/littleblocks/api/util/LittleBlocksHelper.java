@@ -105,50 +105,45 @@ public class LittleBlocksHelper implements ISlimevoidHelper {
 	@Override
 	public boolean isLadder(World world, int x, int y, int z,
 			EntityLivingBase entity) {
+		
 		TileEntityLittleChunk tile = (TileEntityLittleChunk) world
 				.getBlockTileEntity(x, y, z);
-		double i = entity.boundingBox.minX + 0.001D;
-		double j = entity.boundingBox.minY + 0.001D;
-		double k = entity.boundingBox.minZ + 0.001D;
-		double l = entity.boundingBox.maxX - 0.001D;
-		double i1 = entity.boundingBox.maxY - 0.001D;
-		double j1 = entity.boundingBox.maxZ - 0.001D;
-		if (world.checkChunksExist(MathHelper.floor_double(i),
-				MathHelper.floor_double(j), MathHelper.floor_double(k),
-				MathHelper.floor_double(l), MathHelper.floor_double(i1),
-				MathHelper.floor_double(j1))) {
-			for (double k1 = i; k1 <= l; k1 += (1.0 / 8.0)) {
-				for (double l1 = j; l1 <= i1; l1 += (1.0 / 8.0)) {
-					for (double i2 = k; i2 <= j1; i2 += (1.0 / 8.0)) {
-						int j2 = tile.getBlockID(MathHelper
-								.floor_double((k1 - MathHelper
-										.floor_double(k1)) * 100 / 8),
-								MathHelper.floor_double((l1 - MathHelper
-										.floor_double(l1)) * 100 / 8),
-								MathHelper.floor_double((i2 - MathHelper
-										.floor_double(i2)) * 100 / 8));
+		double minX = entity.boundingBox.minX + 0.001D;
+		
+		double minY = entity.boundingBox.minY + 0.001D;
+		
+		double minZ = entity.boundingBox.minZ + 0.001D;
+		
+		double maxX = entity.boundingBox.maxX - 0.001D;
+		
+		double maxZ = entity.boundingBox.maxZ - 0.001D;
+		
+		if (world.checkChunksExist(MathHelper.floor_double(minX),
+				MathHelper.floor_double(minY), MathHelper.floor_double(minZ),
+				MathHelper.floor_double(maxX), MathHelper.floor_double(minY),
+				MathHelper.floor_double(maxZ))) {
+			boolean result = false;
+			//X/8 = .125 solve for the floor of X .125 * 8 = 1 the floor of 1 is 1
+			//X/8 = .123 solve for the floor of X .123 * 8 < 1 the floor of <1 is 0
+			minX = MathHelper.floor_double((minX - MathHelper.floor_double(minX))*tile.size) + ((MathHelper.floor_double(minX) - x) * tile.size);
+			minY = MathHelper.floor_double((minY - MathHelper.floor_double(minY))*tile.size) + ((MathHelper.floor_double(minY) - y) * tile.size);
+			minZ = MathHelper.floor_double((minZ - MathHelper.floor_double(minZ))*tile.size) + ((MathHelper.floor_double(minZ) - z) * tile.size);
+			maxX = MathHelper.floor_double((maxX - MathHelper.floor_double(maxX))*tile.size) + ((MathHelper.floor_double(maxX) - x) * tile.size);
+			maxZ = MathHelper.floor_double((maxZ - MathHelper.floor_double(maxZ))*tile.size) + ((MathHelper.floor_double(maxZ) - z) * tile.size);
+			for (int k1 = (int) minX; k1 <= maxX; k1 ++) {
+					for (int i2 = (int)minZ; i2 <= maxZ; i2 ++) {
+						int j2 = tile.getBlockID(k1,(int)minY,i2);
 						if (j2 > 0) {
-							int xx = (x << 3)
-									+ MathHelper
-											.floor_double((entity.boundingBox.minX - MathHelper
-													.floor_double(entity.boundingBox.minX)) * 100 / 8)
-									- 3, yy = (y << 3)
-									+ MathHelper
-											.floor_double((entity.boundingBox.minY - MathHelper
-													.floor_double(entity.boundingBox.minY)) * 100 / 8), zz = (z << 3)
-									+ MathHelper
-											.floor_double((entity.boundingBox.minZ - MathHelper
-													.floor_double(entity.boundingBox.minZ)) * 100 / 8)
-									- 1;
-							return Block.blocksList[j2].isLadder(
+							int xx = (x << 3)+k1, yy = (y << 3)	+ (int)minY, zz = (z << 3)+ i2;
+							if( Block.blocksList[j2].isLadder(
 									(World) tile.getLittleWorld(),
 									xx,
 									yy,
 									zz,
-									entity);
+									entity)) return true;
 						}
 					}
-				}
+				
 			}
 		}
 		return false;
