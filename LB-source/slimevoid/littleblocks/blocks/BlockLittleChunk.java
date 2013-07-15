@@ -85,17 +85,10 @@ public class BlockLittleChunk extends BlockContainer {
 		return 1;
 	}
 	
-	/**
-	 * Retrieves whether or not the block the entity has collided with is a Ladder
-	 * (Mainly used in Gulliver)
-	 * 
-	 * Credits : Tarig and Unclemion
-	 */
 	@Override
 	public boolean isLadder(World world, int x, int y, int z, EntityLivingBase entity) {
 		if (entity != null) {
-			LittleBlocksHelper helper = new LittleBlocksHelper(null, 8);
-			return helper.isLadder(world, x, y, z, entity);
+			return SlimevoidHelper.isLadder(world, x, y, z, entity);
 		}
 		return false;
 	}
