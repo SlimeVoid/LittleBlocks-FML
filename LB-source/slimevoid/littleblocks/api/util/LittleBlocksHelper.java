@@ -102,6 +102,12 @@ public class LittleBlocksHelper implements ISlimevoidHelper {
 		return "LittleBlocks Helper";
 	}
 
+	/**
+	 * Retrieves whether or not the block the entity has collided with is a Ladder
+	 * (Mainly used in Gulliver)
+	 * 
+	 * Credits : Tarig and Unclemion
+	 */
 	@Override
 	public boolean isLadder(World world, int x, int y, int z,
 			EntityLivingBase entity) {

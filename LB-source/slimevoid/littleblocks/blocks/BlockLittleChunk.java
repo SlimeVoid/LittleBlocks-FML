@@ -84,7 +84,7 @@ public class BlockLittleChunk extends BlockContainer {
 	public int getRenderBlockPass() {
 		return 1;
 	}
-	
+
 	@Override
 	public boolean isLadder(World world, int x, int y, int z, EntityLivingBase entity) {
 		if (entity != null) {
