@@ -5,13 +5,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Forge"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/EurysCore-FML"/>
-	<classpathentry kind="lib" path="jars/bin/jinput.jar"/>
-	<classpathentry kind="lib" path="jars/bin/lwjgl_util.jar"/>
-	<classpathentry kind="lib" path="jars/bin/lwjgl.jar"/>
-	<classpathentry kind="lib" path="jars/bin/minecraft.jar"/>
-	<classpathentry kind="lib" path="lib/argo-3.2-src.jar" sourcepath="lib/argo-3.2-src.jar"/>
-	<classpathentry kind="lib" path="lib/bcprov-debug-jdk15on-148.jar" sourcepath="lib/bcprov-jdk15on-148-src.zip"/>
-	<classpathentry kind="lib" path="lib/asm-debug-all-4.1.jar" sourcepath="lib/asm-4.1-bin.zip"/>
-	<classpathentry kind="lib" path="lib/guava-14.0-rc3.jar" sourcepath="lib/guava-14.0-rc3-sources.jar"/>
+	<classpathentry kind="lib" path="/Forge/jars/libraries/org/lwjgl/lwjgl/lwjgl/2.9.0/lwjgl-2.9.0.jar" sourcepath="/Forge/jars/libraries/org/lwjgl/lwjgl/lwjgl/2.9.0/lwjgl-2.9.0-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

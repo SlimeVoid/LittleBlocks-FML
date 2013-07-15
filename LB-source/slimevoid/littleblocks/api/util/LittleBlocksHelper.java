@@ -111,6 +111,7 @@ public class LittleBlocksHelper implements ISlimevoidHelper {
 	@Override
 	public boolean isLadder(World world, int x, int y, int z,
 			EntityLivingBase entity) {
+	
 		
 		TileEntityLittleChunk tile = (TileEntityLittleChunk) world
 				.getBlockTileEntity(x, y, z);
@@ -128,6 +129,7 @@ public class LittleBlocksHelper implements ISlimevoidHelper {
 				MathHelper.floor_double(minY), MathHelper.floor_double(minZ),
 				MathHelper.floor_double(maxX), MathHelper.floor_double(minY),
 				MathHelper.floor_double(maxZ))) {
+
 			boolean result = false;
 			//X/8 = .125 solve for the floor of X .125 * 8 = 1 the floor of 1 is 1
 			//X/8 = .123 solve for the floor of X .123 * 8 < 1 the floor of <1 is 0
@@ -136,19 +138,23 @@ public class LittleBlocksHelper implements ISlimevoidHelper {
 			minZ = MathHelper.floor_double((minZ - MathHelper.floor_double(minZ))*tile.size) + ((MathHelper.floor_double(minZ) - z) * tile.size);
 			maxX = MathHelper.floor_double((maxX - MathHelper.floor_double(maxX))*tile.size) + ((MathHelper.floor_double(maxX) - x) * tile.size);
 			maxZ = MathHelper.floor_double((maxZ - MathHelper.floor_double(maxZ))*tile.size) + ((MathHelper.floor_double(maxZ) - z) * tile.size);
-			for (int k1 = (int) minX; k1 <= maxX; k1 ++) {
-					for (int i2 = (int)minZ; i2 <= maxZ; i2 ++) {
-						int j2 = tile.getBlockID(k1,(int)minY,i2);
-						if (j2 > 0) {
-							int xx = (x << 3)+k1, yy = (y << 3)	+ (int)minY, zz = (z << 3)+ i2;
-							if( Block.blocksList[j2].isLadder(
-									(World) tile.getLittleWorld(),
-									xx,
-									yy,
-									zz,
-									entity)) return true;
+			for (int littleX = (int) minX; littleX <= maxX; littleX ++) {
+				for (int littleZ = (int)minZ; littleZ <= maxZ; littleZ ++) {
+					int blockID = tile.getBlockID(littleX, (int) minY, littleZ);
+					if (blockID > 0) {
+						int xx = (x << 3) + littleX,
+							yy = (y << 3) + (int)minY,
+							zz = (z << 3) + littleZ;
+						if( Block.blocksList[blockID].isLadder(
+								(World) tile.getLittleWorld(),
+								xx,
+								yy,
+								zz,
+								entity)) {
+							return true;
 						}
 					}
+				}
 				
 			}
 		}
