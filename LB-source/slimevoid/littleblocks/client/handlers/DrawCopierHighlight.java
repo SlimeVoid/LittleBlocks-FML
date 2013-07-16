@@ -1,6 +1,7 @@
 package slimevoid.littleblocks.client.handlers;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockFluid;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureObject;
@@ -49,7 +50,7 @@ public class DrawCopierHighlight {
         float zShift = 1F;
 
         World world = ModLoader.getMinecraftInstance().theWorld;
-        if (world.getBlockId(event.target.blockX, event.target.blockY, event.target.blockZ) == LBCore.littleChunkID || Block.blocksList[world.getBlockId(event.target.blockX, event.target.blockY, event.target.blockZ)].isBlockReplaceable(world,event.target.blockX, event.target.blockY, event.target.blockZ)) {
+        if (world.getBlockId(event.target.blockX, event.target.blockY, event.target.blockZ) == LBCore.littleChunkID || Block.blocksList[world.getBlockId(event.target.blockX, event.target.blockY, event.target.blockZ)] == null || (Block.blocksList[world.getBlockId(event.target.blockX, event.target.blockY, event.target.blockZ)].isBlockReplaceable(world,event.target.blockX, event.target.blockY, event.target.blockZ))) {
         	xShift = 0;
         	yShift = 0;
         	zShift = 0;
@@ -106,25 +107,27 @@ public class DrawCopierHighlight {
             default:
                 break;
         }
+        if (!(Block.blocksList[world.getBlockId((int)(event.target.blockX + xShift) , (int)(event.target.blockY + yShift), (int)(event.target.blockZ + zShift))] instanceof BlockFluid))
+        {
+        	GL11.glDepthMask(false);
+        	GL11.glDisable(GL11.GL_CULL_FACE);
 
-        GL11.glDepthMask(false);
-        GL11.glDisable(GL11.GL_CULL_FACE);
+        	for (int i = 0; i < 6; i++) {
+        		ForgeDirection forgeDir = ForgeDirection.getOrientation(i);
+        		int zCorrection = (i == 2) ? -1 : 1;
+        		GL11.glPushMatrix();
+        		GL11.glTranslated(-iPX + x + xShift, -iPY + y + yShift, -iPZ + z + zShift);
+        		GL11.glScalef(1F * xScale, 1F * yScale, 1F * zScale);
+        		GL11.glRotatef(90, forgeDir.offsetX, forgeDir.offsetY, forgeDir.offsetZ);
+        		GL11.glTranslated(0, 0, 0.5f * zCorrection);
+        		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
+        		renderPulsingQuad(event.context.renderEngine, TextureLib.COPIER_OVERLAY, 0.75F);
+        		GL11.glPopMatrix();
+        	}
 
-        for (int i = 0; i < 6; i++) {
-            ForgeDirection forgeDir = ForgeDirection.getOrientation(i);
-            int zCorrection = (i == 2) ? -1 : 1;
-            GL11.glPushMatrix();
-            GL11.glTranslated(-iPX + x + xShift, -iPY + y + yShift, -iPZ + z + zShift);
-            GL11.glScalef(1F * xScale, 1F * yScale, 1F * zScale);
-            GL11.glRotatef(90, forgeDir.offsetX, forgeDir.offsetY, forgeDir.offsetZ);
-            GL11.glTranslated(0, 0, 0.5f * zCorrection);
-            GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
-            renderPulsingQuad(event.context.renderEngine, TextureLib.COPIER_OVERLAY, 0.75F);
-            GL11.glPopMatrix();
+        	GL11.glEnable(GL11.GL_CULL_FACE);
+        	GL11.glDepthMask(true);
         }
-
-        GL11.glEnable(GL11.GL_CULL_FACE);
-        GL11.glDepthMask(true);
     }
 
     public static void renderPulsingQuad(TextureManager renderEngine, ResourceLocation overlay, float maxTransparency) {

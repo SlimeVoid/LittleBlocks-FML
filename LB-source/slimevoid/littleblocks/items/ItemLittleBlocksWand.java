@@ -3,6 +3,7 @@ package slimevoid.littleblocks.items;
 import java.util.HashMap;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockFluid;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -88,7 +89,7 @@ public class ItemLittleBlocksWand extends Item {
 	private boolean doPlaceLB(ItemStack itemstack, EntityPlayer entityplayer,
 			World world, int x, int y, int z, int l, float a, float b, float c) {
 		if (world.getBlockId(x, y, z) != LBCore.littleChunkID  ) {
-			if (!Block.blocksList[world.getBlockId(x, y, z)].isBlockReplaceable(world, x, y, z)){
+			if (!Block.blocksList[world.getBlockId(x, y, z)].isBlockReplaceable(world, x, y, z) || (Block.blocksList[world.getBlockId(x, y, z)] instanceof BlockFluid)){
 			if (l == 0) {
 				--y;
 			}
@@ -113,7 +114,7 @@ public class ItemLittleBlocksWand extends Item {
 				++x;
 			}
 			}
-			if (world.getBlockId(x, y, z) == 0 || Block.blocksList[world.getBlockId(x, y, z)]==null || Block.blocksList[world.getBlockId(x, y, z)].isBlockReplaceable(world, x, y, z)) {
+			if (world.getBlockId(x, y, z) == 0 || Block.blocksList[world.getBlockId(x, y, z)]==null || (Block.blocksList[world.getBlockId(x, y, z)].isBlockReplaceable(world, x, y, z) && !(Block.blocksList[world.getBlockId(x, y, z)] instanceof BlockFluid))) {
 				world.setBlock(x, y, z, LBCore.littleChunkID);
 				TileEntity newtile = world.getBlockTileEntity(
 						x,
