@@ -1,16 +1,29 @@
-package slimevoid.littleblocks.blocks.core;
+/*package slimevoid.littleblocks.blocks.core;
+
+import slimevoid.littleblocks.api.ILBCommonProxy;
+import slimevoid.littleblocks.world.LittleWorld;
+import net.minecraft.inventory.ContainerChest;
+import net.minecraft.inventory.ContainerDispenser;
+import net.minecraft.inventory.ContainerWorkbench;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.tileentity.TileEntityDispenser;
+import net.minecraft.world.World;
+import static net.minecraftforge.event.Event.Result.*;
+import net.minecraftforge.event.ForgeSubscribe;
+import net.minecraftforge.event.entity.player.ContainerInteractEvent;
 
 public class LittleContainerInteract {
 	
-/*	@ForgeSubscribe
+	@ForgeSubscribe
 	public void onInteractEvent(ContainerInteractEvent event) {
-		LittleWorld littleWorld = ((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(event.entityPlayer.worldObj, false);
+		World littleWorld = (World) ((ILBCommonProxy)LBInit.LBM.getProxy()).getLittleWorld(event.entityPlayer.worldObj, false);
 		if (event.container instanceof ContainerChest) {
 			IInventory chest = ((ContainerChest)event.container).getLowerChestInventory();
 			if (chest instanceof TileEntityChest) {
 				TileEntityChest chestentity = (TileEntityChest)chest;
 				if (LittleBlockDataHandler.isUseableByPlayer(chestentity, event.entityPlayer)) {
-					event.setResult(Result.ALLOW);
+					event.setResult(ALLOW);
 				}
 			}
 		}
@@ -18,7 +31,7 @@ public class LittleContainerInteract {
 			TileEntityDispenser dispenser = ((ContainerDispenser)event.container).getDispenser();
 			if (dispenser.getWorldObj() == littleWorld) {
 				if (LittleBlockDataHandler.isUseableByPlayer(dispenser, event.entityPlayer)) {
-					event.setResult(Result.ALLOW);
+					event.setResult(ALLOW);
 				}
 			}
 		}
@@ -40,6 +53,7 @@ public class LittleContainerInteract {
 				}
 			}
 		}
-	}*/
+	}
 	
 }
+*/
