@@ -1,5 +1,6 @@
 package slimevoid.littleblocks.client.handlers;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureObject;
@@ -48,7 +49,7 @@ public class DrawCopierHighlight {
         float zShift = 1F;
 
         World world = ModLoader.getMinecraftInstance().theWorld;
-        if (world.getBlockId(event.target.blockX, event.target.blockY, event.target.blockZ) == LBCore.littleChunkID) {
+        if (world.getBlockId(event.target.blockX, event.target.blockY, event.target.blockZ) == LBCore.littleChunkID || Block.blocksList[world.getBlockId(event.target.blockX, event.target.blockY, event.target.blockZ)].isBlockReplaceable(world,event.target.blockX, event.target.blockY, event.target.blockZ)) {
         	xShift = 0;
         	yShift = 0;
         	zShift = 0;

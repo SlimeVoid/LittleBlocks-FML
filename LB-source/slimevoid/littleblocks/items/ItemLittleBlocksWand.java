@@ -2,6 +2,7 @@ package slimevoid.littleblocks.items;
 
 import java.util.HashMap;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -50,7 +51,7 @@ public class ItemLittleBlocksWand extends Item {
 	}
 
 	@Override
-	public boolean onItemUseFirst(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int l, float a, float b, float c) {
+	public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int l, float a, float b, float c) {
 		if (!world.isRemote) {
 			EnumWandAction playerWandAction = EnumWandAction.getWandActionForPlayer(entityplayer);
 			if (playerWandAction != null) {
@@ -67,10 +68,10 @@ public class ItemLittleBlocksWand extends Item {
 		return false;
 	}
 
-	@Override
-	public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int l, float a, float b, float c) {
-		return true;
-	}
+	//@Override
+	//public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int l, float a, float b, float c) {
+		//return true;
+	//}
 
 	private boolean doRotateLB(ItemStack itemstack, EntityPlayer entityplayer,
 			World world, int x, int y, int z, int l, float a, float b, float c) {
@@ -86,7 +87,8 @@ public class ItemLittleBlocksWand extends Item {
 
 	private boolean doPlaceLB(ItemStack itemstack, EntityPlayer entityplayer,
 			World world, int x, int y, int z, int l, float a, float b, float c) {
-		if (world.getBlockId(x, y, z) != LBCore.littleChunkID) {
+		if (world.getBlockId(x, y, z) != LBCore.littleChunkID  ) {
+			if (!Block.blocksList[world.getBlockId(x, y, z)].isBlockReplaceable(world, x, y, z)){
 			if (l == 0) {
 				--y;
 			}
@@ -110,7 +112,8 @@ public class ItemLittleBlocksWand extends Item {
 			if (l == 5) {
 				++x;
 			}
-			if (world.getBlockId(x, y, z) == 0) {
+			}
+			if (world.getBlockId(x, y, z) == 0 || Block.blocksList[world.getBlockId(x, y, z)]==null || Block.blocksList[world.getBlockId(x, y, z)].isBlockReplaceable(world, x, y, z)) {
 				world.setBlock(x, y, z, LBCore.littleChunkID);
 				TileEntity newtile = world.getBlockTileEntity(
 						x,
