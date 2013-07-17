@@ -1,5 +1,7 @@
 package slimevoid.littleblocks.client.handlers;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockFluid;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureObject;
@@ -48,7 +50,7 @@ public class DrawCopierHighlight {
         float zShift = 1F;
 
         World world = ModLoader.getMinecraftInstance().theWorld;
-        if (world.getBlockId(event.target.blockX, event.target.blockY, event.target.blockZ) == LBCore.littleChunkID) {
+        if (this.shouldDoDraw(world, event.target.blockX, event.target.blockY, event.target.blockZ)) {
         	xShift = 0;
         	yShift = 0;
         	zShift = 0;
@@ -105,28 +107,36 @@ public class DrawCopierHighlight {
             default:
                 break;
         }
+        int blockID = world.getBlockId(event.target.blockX + (int) xShift, event.target.blockY + (int) yShift, event.target.blockZ + (int) zShift);
+        if (!(Block.blocksList[blockID] instanceof BlockFluid)) {
+	
+	        GL11.glDepthMask(false);
+	        GL11.glDisable(GL11.GL_CULL_FACE);
+	
+	        for (int i = 0; i < 6; i++) {
+	            ForgeDirection forgeDir = ForgeDirection.getOrientation(i);
+	            int zCorrection = (i == 2) ? -1 : 1;
+	            GL11.glPushMatrix();
+	            GL11.glTranslated(-iPX + x + xShift, -iPY + y + yShift, -iPZ + z + zShift);
+	            GL11.glScalef(1F * xScale, 1F * yScale, 1F * zScale);
+	            GL11.glRotatef(90, forgeDir.offsetX, forgeDir.offsetY, forgeDir.offsetZ);
+	            GL11.glTranslated(0, 0, 0.5f * zCorrection);
+	            GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
+	            renderPulsingQuad(event.context.renderEngine, TextureLib.COPIER_OVERLAY, 0.75F);
+	            GL11.glPopMatrix();
+	        }
 
-        GL11.glDepthMask(false);
-        GL11.glDisable(GL11.GL_CULL_FACE);
-
-        for (int i = 0; i < 6; i++) {
-            ForgeDirection forgeDir = ForgeDirection.getOrientation(i);
-            int zCorrection = (i == 2) ? -1 : 1;
-            GL11.glPushMatrix();
-            GL11.glTranslated(-iPX + x + xShift, -iPY + y + yShift, -iPZ + z + zShift);
-            GL11.glScalef(1F * xScale, 1F * yScale, 1F * zScale);
-            GL11.glRotatef(90, forgeDir.offsetX, forgeDir.offsetY, forgeDir.offsetZ);
-            GL11.glTranslated(0, 0, 0.5f * zCorrection);
-            GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
-            renderPulsingQuad(event.context.renderEngine, TextureLib.COPIER_OVERLAY, 0.75F);
-            GL11.glPopMatrix();
+	        GL11.glEnable(GL11.GL_CULL_FACE);
+	        GL11.glDepthMask(true);
         }
-
-        GL11.glEnable(GL11.GL_CULL_FACE);
-        GL11.glDepthMask(true);
     }
 
-    public static void renderPulsingQuad(TextureManager renderEngine, ResourceLocation overlay, float maxTransparency) {
+    private boolean shouldDoDraw(World world, int blockX, int blockY, int blockZ) {
+    	int blockID = world.getBlockId(blockX, blockY, blockZ); 
+		return blockID == LBCore.littleChunkID || Block.blocksList[blockID] == null || Block.blocksList[blockID].isBlockReplaceable(world, blockX, blockY, blockZ);
+	}
+
+	public static void renderPulsingQuad(TextureManager renderEngine, ResourceLocation overlay, float maxTransparency) {
 
         float pulseTransparency = (getPulseValue() * maxTransparency) / 3000f;
 

@@ -2,6 +2,8 @@ package slimevoid.littleblocks.items;
 
 import java.util.HashMap;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockFluid;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -50,7 +52,7 @@ public class ItemLittleBlocksWand extends Item {
 	}
 
 	@Override
-	public boolean onItemUseFirst(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int l, float a, float b, float c) {
+	public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int l, float a, float b, float c) {
 		if (!world.isRemote) {
 			EnumWandAction playerWandAction = EnumWandAction.getWandActionForPlayer(entityplayer);
 			if (playerWandAction != null) {
@@ -67,11 +69,6 @@ public class ItemLittleBlocksWand extends Item {
 		return false;
 	}
 
-	@Override
-	public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int l, float a, float b, float c) {
-		return true;
-	}
-
 	private boolean doRotateLB(ItemStack itemstack, EntityPlayer entityplayer,
 			World world, int x, int y, int z, int l, float a, float b, float c) {
 		TileEntity tileentity = world.getBlockTileEntity(x, y, z);
@@ -86,31 +83,35 @@ public class ItemLittleBlocksWand extends Item {
 
 	private boolean doPlaceLB(ItemStack itemstack, EntityPlayer entityplayer,
 			World world, int x, int y, int z, int l, float a, float b, float c) {
-		if (world.getBlockId(x, y, z) != LBCore.littleChunkID) {
-			if (l == 0) {
-				--y;
+		int blockID = world.getBlockId(x, y, z);
+		if (blockID != LBCore.littleChunkID) {
+			if (!Block.blocksList[blockID].isBlockReplaceable(world, x, y, z) ||  Block.blocksList[blockID] instanceof BlockFluid) {
+				if (l == 0) {
+					--y;
+				}
+		
+				if (l == 1) {
+					++y;
+				}
+		
+				if (l == 2) {
+					--z;
+				}
+		
+				if (l == 3) {
+					++z;
+				}
+		
+				if (l == 4) {
+					--x;
+				}
+		
+				if (l == 5) {
+					++x;
+				}
 			}
-	
-			if (l == 1) {
-				++y;
-			}
-	
-			if (l == 2) {
-				--z;
-			}
-	
-			if (l == 3) {
-				++z;
-			}
-	
-			if (l == 4) {
-				--x;
-			}
-	
-			if (l == 5) {
-				++x;
-			}
-			if (world.getBlockId(x, y, z) == 0) {
+			blockID = world.getBlockId(x, y, z);
+			if (blockID == 0 || Block.blocksList[blockID] == null || Block.blocksList[blockID].isBlockReplaceable(world, x, y, z) && !(Block.blocksList[world.getBlockId(x, y, z)] instanceof BlockFluid)) {
 				world.setBlock(x, y, z, LBCore.littleChunkID);
 				TileEntity newtile = world.getBlockTileEntity(
 						x,
