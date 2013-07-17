@@ -53,17 +53,19 @@ public class ItemLittleBlocksWand extends Item {
 
 	@Override
 	public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int l, float a, float b, float c) {
-		if (!world.isRemote) {
-			EnumWandAction playerWandAction = EnumWandAction.getWandActionForPlayer(entityplayer);
-			if (playerWandAction != null) {
-				if (playerWandAction.equals(EnumWandAction.COPY_LB)) {
-					return this.doCopyLB(itemstack, entityplayer, world, x, y, z, l, a, b, c);
+		if (entityplayer.canPlayerEdit(x, y, z, l, itemstack)) {
+			if (!world.isRemote) {
+				EnumWandAction playerWandAction = EnumWandAction.getWandActionForPlayer(entityplayer);
+				if (playerWandAction != null) {
+					if (playerWandAction.equals(EnumWandAction.COPY_LB)) {
+						return this.doCopyLB(itemstack, entityplayer, world, x, y, z, l, a, b, c);
+					}
+					if (playerWandAction.equals(EnumWandAction.ROTATE_LB)) {
+						return this.doRotateLB(itemstack, entityplayer, world, x, y, z, l, a, b, c);
+					}	
+				} else {
+					return this.doPlaceLB(itemstack, entityplayer, world, x, y, z, l, a, b, c);
 				}
-				if (playerWandAction.equals(EnumWandAction.ROTATE_LB)) {
-					return this.doRotateLB(itemstack, entityplayer, world, x, y, z, l, a, b, c);
-				}	
-			} else {
-				return this.doPlaceLB(itemstack, entityplayer, world, x, y, z, l, a, b, c);
 			}
 		}
 		return false;
