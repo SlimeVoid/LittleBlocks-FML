@@ -72,6 +72,7 @@ public class BlockLittleChunk extends BlockContainer {
 		if (selfNotify) {
 			// TODO :: setRequiresSelfNotify();
 		}
+		this.stepSound = Block.wood.stepSound;
 		this.setCreativeTab(CreativeTabs.tabDecorations);
 	}
 	
