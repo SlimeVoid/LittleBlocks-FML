@@ -3,6 +3,7 @@ package slimevoid.littleblocks.blocks.core;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockFluid;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
@@ -20,7 +21,7 @@ public class CollisionRayTrace {
 				for (int z = 0; z < content[x][y].length; z++) {
 					if (content[x][y][z] > 0) {
 						Block block = Block.blocksList[content[x][y][z]];
-						if (block != null) {
+						if (block != null && !(block instanceof BlockFluid)) {
 							MovingObjectPosition ret = block.collisionRayTrace(
 									(World) tile.getLittleWorld(),
 									(i << 3) + x,
