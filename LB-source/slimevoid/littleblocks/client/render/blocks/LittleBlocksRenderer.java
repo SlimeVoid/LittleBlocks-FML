@@ -3,6 +3,8 @@ package slimevoid.littleblocks.client.render.blocks;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.client.MinecraftForgeClient;
+import slimevoid.littleblocks.blocks.BlockLittleChunk;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
@@ -39,7 +41,9 @@ public class LittleBlocksRenderer implements ISimpleBlockRenderingHandler {
 											(x << 3) + x1,
 											(y << 3) + y1,
 											(z << 3) + z1 };
-									littleBlocks.addLittleBlockToRender(littleBlock, coords[0], coords[1], coords[2]);
+									if (littleBlock.canRenderInPass(BlockLittleChunk.currentPass)) {
+										littleBlocks.addLittleBlockToRender(littleBlock, coords[0], coords[1], coords[2]);
+									}
 								} else {
 									FMLCommonHandler.instance().getFMLLogger().warning("Attempted to render a block that was null!");
 								}
