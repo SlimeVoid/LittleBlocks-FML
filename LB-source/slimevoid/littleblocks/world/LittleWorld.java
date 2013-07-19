@@ -1,6 +1,7 @@
 package slimevoid.littleblocks.world;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -111,6 +112,9 @@ public class LittleWorld extends World implements ILittleWorld {
     public List<TileEntity> loadedTiles = new ArrayList<TileEntity>();
     private List<TileEntity> addedTiles = new ArrayList<TileEntity>();
     private boolean scanningTiles;
+    
+    /** Entities marked for removal. */
+    private List tileRemoval = new ArrayList();
 	
 	@Override
 	public void updateEntities() {
@@ -145,6 +149,16 @@ public class LittleWorld extends World implements ILittleWorld {
 				}
 			}
 		}
+		
+        if (!this.tileRemoval.isEmpty())
+        {
+            for (Object tile : tileRemoval)
+            {
+               ((TileEntity)tile).onChunkUnload();
+            }
+            this.loadedTiles.removeAll(this.tileRemoval);
+            this.tileRemoval.clear();
+        }
 
 		this.scanningTiles = false;
 
@@ -817,7 +831,7 @@ public class LittleWorld extends World implements ILittleWorld {
 				}
 
 				if (tileentity == null) {
-					TileEntityLittleChunk tile = (TileEntityLittleChunk) realWorld
+					TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getRealWorld()
 							.getBlockTileEntity(x >> 3, y >> 3, z >> 3);
 					tileentity = tile.getTileEntity(x & 7, y & 7, z & 7);
 				}
@@ -877,12 +891,27 @@ public class LittleWorld extends World implements ILittleWorld {
 	}
 
 	@Override
+	public void addTileEntity(Collection par1Collection) {
+		List dest = scanningTiles ? addedTiles : loadedTiles;
+		for (Object entity : par1Collection) {
+			if (((TileEntity) entity).canUpdate()) {
+				dest.add(entity);
+			}
+		}
+	}
+
+	@Override
 	public void addTileEntity(TileEntity tileentity) {
 		//System.out.println("Adding TileEntity: " + tileentity.toString());
 		List<TileEntity> dest = scanningTiles ? addedTiles : loadedTiles;
 		if (tileentity.canUpdate()) {
 			dest.add(tileentity);
 		}
+	}
+
+	@Override
+	public void markTileEntityForDespawn(TileEntity par1TileEntity) {
+		this.tileRemoval.add(par1TileEntity);
 	}
 
 	@Override

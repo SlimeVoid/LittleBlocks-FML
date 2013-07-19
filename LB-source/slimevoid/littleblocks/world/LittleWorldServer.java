@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEventData;
 import net.minecraft.crash.CrashReport;
@@ -281,6 +283,14 @@ public class LittleWorldServer extends LittleWorld {
 			while (blockEvent.hasNext()) {
 				BlockEventData eventData = (BlockEventData) blockEvent.next();
 				if (this.onBlockEventReceived(eventData)) {
+					PacketLib.sendBlockEvent(
+							eventData.getX(),
+							eventData.getY(),
+							eventData.getZ(),
+							eventData.getBlockID(),
+							eventData.getEventID(),
+							eventData.getEventParameter());
+				} else {
 					LoggerLittleBlocks.getInstance(
 							Logger.filterClassName(
 									this.getClass().toString()
@@ -312,14 +322,13 @@ public class LittleWorldServer extends LittleWorld {
 				blockEventData.getZ());
 
 		if (blockId == blockEventData.getBlockID()) {
-			Block.blocksList[blockId].onBlockEventReceived(
+			return Block.blocksList[blockId].onBlockEventReceived(
 					this,
 					blockEventData.getX(),
 					blockEventData.getY(),
 					blockEventData.getZ(),
 					blockEventData.getEventID(),
 					blockEventData.getEventParameter());
-			return true;
 		} else {
 			LoggerLittleBlocks.getInstance(
 					Logger.filterClassName(
