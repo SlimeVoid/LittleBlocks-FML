@@ -3,6 +3,7 @@ package slimevoid.littleblocks.blocks.core;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockFluid;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
@@ -20,7 +21,7 @@ public class CollisionRayTrace {
 				for (int z = 0; z < content[x][y].length; z++) {
 					if (content[x][y][z] > 0) {
 						Block block = Block.blocksList[content[x][y][z]];
-						if (block != null) {
+						if (block != null && !(block instanceof BlockFluid)) {
 							MovingObjectPosition ret = block.collisionRayTrace(
 									(World) tile.getLittleWorld(),
 									(i << 3) + x,
@@ -28,19 +29,6 @@ public class CollisionRayTrace {
 									(k << 3) + z,
 									player.myVec3LocalPool.getVecFromPool(player.xCoord * 8, player.yCoord * 8, player.zCoord * 8),
 									view.myVec3LocalPool.getVecFromPool(view.xCoord * 8, view.yCoord * 8, view.zCoord * 8));
-//							MovingObjectPosition ret = littleBlocks.rayTraceBound(
-//									AxisAlignedBB.getBoundingBox(
-//											(x + block.getBlockBoundsMinX()) / m,
-//											(y + block.getBlockBoundsMinY()) / m,
-//											(z + block.getBlockBoundsMinZ()) / m,
-//											(x + block.getBlockBoundsMaxX()) / m,
-//											(y + block.getBlockBoundsMaxY()) / m,
-//											(z + block.getBlockBoundsMaxZ()) / m),
-//									i,
-//									j,
-//									k,
-//									player,
-//									view);
 							if (ret != null) {
 								ret.blockX -= (i << 3);
 								ret.blockY -= (j << 3);
