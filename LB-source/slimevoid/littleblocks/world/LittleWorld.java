@@ -294,6 +294,13 @@ public class LittleWorld extends World implements ILittleWorld {
 	public void setSpawnLocation() {
 	}
 
+	/**
+	 * Checks if the LittleWorld needs to be updated based on the parent 'RealWorld'
+	 * 
+	 * @param world The world to check
+	 * 
+	 * @return outdated or not
+	 */
 	public boolean isOutdated(World world) {
 		boolean outdated = !this.getRealWorld().equals(world);
 		if (outdated) {
@@ -506,13 +513,7 @@ public class LittleWorld extends World implements ILittleWorld {
     public boolean setBlock(int x, int y, int z, int blockID, int newmeta, int update, boolean newTile) {
     	return this.setBlock(x, y, z, blockID, newmeta, update);
     }
-	
-    /**
-     * Sets the block ID and metadata at a given location. Args: X, Y, Z, new block ID, new metadata, flags. Flag 0x02
-     * will trigger a block update both on server and on client, flag 0x04, if used with 0x02, will prevent a block
-     * update on client worlds. Flag 0x01 will pass the original block ID when notifying adjacent blocks, otherwise it
-     * will pass 0.
-     */
+    
 	@Override
     public boolean setBlock(int x, int y, int z, int blockID, int newmeta, int update) {
 		if (x < 0xfe363c80 || z < 0xfe363c80 || x >= 0x1c9c380 || z >= 0x1c9c380) {
@@ -600,10 +601,8 @@ public class LittleWorld extends World implements ILittleWorld {
 			return flag;
 		}
     }
-    /**
-     * Sets the blocks metadata and if set will then notify blocks that this block changed, depending on the flag. Args:
-     * x, y, z, metadata, flag. See setBlock for flag description
-     */
+
+	@Override
     public boolean setBlockMetadataWithNotify(int x, int y, int z, int newmeta, int update) {
 		if (x < 0xfe363c80 || z < 0xfe363c80 || x >= 0x1c9c380 || z >= 0x1c9c380) {
 			LoggerLittleBlocks.getInstance(
@@ -685,306 +684,6 @@ public class LittleWorld extends World implements ILittleWorld {
 			}
 		}
     }
-
-/*	@Override
-	public boolean setBlockAndMetadata(int x, int y, int z, int id, int metadata) {
-		if (x < 0xfe363c80 || z < 0xfe363c80 || x >= 0x1c9c380 || z >= 0x1c9c380) {
-			LoggerLittleBlocks.getInstance(
-					Logger.filterClassName(
-							this.getClass().toString()
-					)
-			).write(
-					this.getRealWorld().isRemote,
-					"setBlockAndMetadata(" + x + ", " + y + ", " + z + ").[Out of bounds]",
-					LoggerLittleBlocks.LogLevel.DEBUG
-			);
-		}
-		if (y < 0) {
-			LoggerLittleBlocks.getInstance(
-					Logger.filterClassName(
-							this.getClass().toString()
-					)
-			).write(
-					this.getRealWorld().isRemote,
-					"setBlockAndMetadata(" + x + ", " + y + ", " + z + ").[y < 0]",
-					LoggerLittleBlocks.LogLevel.DEBUG
-			);
-			return false;
-		}
-		if (y >= this.getHeight()) {
-			LoggerLittleBlocks.getInstance(
-					Logger.filterClassName(
-							this.getClass().toString()
-					)
-			).write(
-					this.getRealWorld().isRemote,
-					"setBlockAndMetadata(" + x + ", " + y + ", " + z + ").[y >= " + this.getHeight() + "]",
-					LoggerLittleBlocks.LogLevel.DEBUG
-			);
-			return false;
-		} else {
-			boolean flag = false;
-			Chunk chunk = this.getRealWorld().getChunkFromChunkCoords(x >> 7, z >> 7);
-			if (chunk.getBlockID((x & 0x7f) >> 3, y >> 3, (z & 0x7f) >> 3) != LBCore.littleBlocksID) {
-				this.getRealWorld().setBlockWithNotify(
-						x >> 3,
-						y >> 3,
-						z >> 3,
-						LBCore.littleBlocksID);
-			}
-			TileEntityLittleBlocks tile = (TileEntityLittleBlocks) realWorld
-					.getBlockTileEntity(x >> 3, y >> 3, z >> 3);
-			int currentId = tile.getBlockID(x & 7, y & 7, z & 7);
-			int currentData = tile.getBlockMetadata(x & 7, y & 7, z & 7);
-			if (currentId != id || currentData != metadata) {
-				tile.setBlockIDWithMetadata(x & 7, y & 7, z & 7, id, metadata);
-				flag = true;
-			} else {
-				LoggerLittleBlocks.getInstance(
-						Logger.filterClassName(
-								this.getClass().toString()
-						)
-				).write(
-						this.getRealWorld().isRemote,
-						"setBlockAndMetadata(" + x + ", " + y + ", " + z + ").[" + id + ", "+ metadata + "]:No Change",
-						LoggerLittleBlocks.LogLevel.ERROR
-				);
-			}
-			this.getRealWorld().updateAllLightTypes(x >> 3, y >> 3, z >> 3);
-			this.markBlockForRenderUpdate(x, y, z);
-			return flag;
-		}
-	}*/
-
-/*	@Override
-	public boolean setBlockAndMetadataWithUpdate(int x, int y, int z, int blockId, int metadata, boolean needsUpdate) {
-		if (x < 0xfe363c80 || z < 0xfe363c80 || x >= 0x1c9c380 || z >= 0x1c9c380) {
-			LoggerLittleBlocks.getInstance(
-					Logger.filterClassName(
-							this.getClass().toString()
-					)
-			).write(
-					this.getRealWorld().isRemote,
-					"setBlockAndMetadataWithUpdate(" + x + ", " + y + ", " + z + ").[Out of bounds]",
-					LoggerLittleBlocks.LogLevel.DEBUG
-			);
-			return false;
-		}
-		if (y < 0) {
-			LoggerLittleBlocks.getInstance(
-					Logger.filterClassName(
-							this.getClass().toString()
-					)
-			).write(
-					this.getRealWorld().isRemote,
-					"setBlockAndMetadataWithUpdate(" + x + ", " + y + ", " + z + ").[y < 0]",
-					LoggerLittleBlocks.LogLevel.DEBUG
-			);
-			return false;
-		}
-		if (y >= this.getHeight()) {
-			LoggerLittleBlocks.getInstance(
-					Logger.filterClassName(
-							this.getClass().toString()
-					)
-			).write(
-					this.getRealWorld().isRemote,
-					"setBlockAndMetadataWithUpdate(" + x + ", " + y + ", " + z + ").[y >= " + this.getHeight() + "]",
-					LoggerLittleBlocks.LogLevel.DEBUG
-			);
-			return false;
-		} else {
-			Chunk chunk = this.getRealWorld().getChunkFromChunkCoords(x >> 7, z >> 7);
-			boolean flag = false;
-			if (chunk.getBlockID((x & 0x7f) >> 3, y >> 3, (z & 0x7f) >> 3) != LBCore.littleBlocksID) {
-				this.getRealWorld().setBlockWithNotify(
-						(x) >> 3,
-						y >> 3,
-						(z) >> 3,
-						LBCore.littleBlocksID);
-			}
-			TileEntity tileentity = this.getRealWorld().getBlockTileEntity(
-					x >> 3,
-					y >> 3,
-					z >> 3);
-			if (tileentity != null && tileentity instanceof TileEntityLittleBlocks) {
-				TileEntityLittleBlocks tileentitylb = (TileEntityLittleBlocks) tileentity;
-				int currentId = tileentitylb.getBlockID(x & 7, y & 7, z & 7);
-				int currentData = tileentitylb.getBlockMetadata(x & 7, y & 7, z & 7);
-				if (currentId != blockId || currentData != metadata) {
-					tileentitylb.setBlockIDWithMetadata(
-							x & 7,
-							y & 7,
-							z & 7,
-							blockId,
-							metadata);
-					flag = true;
-				} else {
-					LoggerLittleBlocks.getInstance(
-							Logger.filterClassName(
-									this.getClass().toString()
-							)
-					).write(
-							this.getRealWorld().isRemote,
-							"setBlockAndMetadataWithUpdate(" + x + ", " + y + ", " + z + ").[" + blockId + ", " + metadata + "]:No Change",
-							LoggerLittleBlocks.LogLevel.DEBUG
-					);
-				}
-				this.getRealWorld().updateAllLightTypes(x >> 3, y >> 3, z >> 3);
-				this.markBlockForRenderUpdate(x, y, z);
-			}
-			return flag;
-		}
-	}*/
-
-/*	@Override
-	public boolean setBlock(int x, int y, int z, int id) {
-		if (x < 0xfe363c80 || z < 0xfe363c80 || x >= 0x1c9c380 || z >= 0x1c9c380) {
-			LoggerLittleBlocks.getInstance(
-					Logger.filterClassName(
-							this.getClass().toString()
-					)
-			).write(
-					this.getRealWorld().isRemote,
-					"setBlock(" + x + ", " + y + ", " + z + ").[Out of bounds]",
-					LoggerLittleBlocks.LogLevel.DEBUG
-			);
-			return false;
-		}
-		if (y < 0) {
-			LoggerLittleBlocks.getInstance(
-					Logger.filterClassName(
-							this.getClass().toString()
-					)
-			).write(
-					this.getRealWorld().isRemote,
-					"setBlock(" + x + ", " + y + ", " + z + ").[y < 0]",
-					LoggerLittleBlocks.LogLevel.DEBUG
-			);
-			return false;
-		}
-		if (y >= this.getHeight()) {
-			LoggerLittleBlocks.getInstance(
-					Logger.filterClassName(
-							this.getClass().toString()
-					)
-			).write(
-					this.getRealWorld().isRemote,
-					"setBlock(" + x + ", " + y + ", " + z + ").[y >= " + this.getHeight() + "]",
-					LoggerLittleBlocks.LogLevel.DEBUG
-			);
-			return false;
-		} else {
-			boolean flag = false;
-			Chunk chunk = this.getRealWorld().getChunkFromChunkCoords(x >> 7, z >> 7);
-			if (chunk.getBlockID((x & 0x7f) >> 3, y >> 3, (z & 0x7f) >> 3) != LBCore.littleBlocksID) {
-				this.getRealWorld().setBlockWithNotify(
-						(x) >> 3,
-						y >> 3,
-						(z) >> 3,
-						LBCore.littleBlocksID);
-			}
-			TileEntityLittleBlocks tile = (TileEntityLittleBlocks) realWorld
-					.getBlockTileEntity(x >> 3, y >> 3, z >> 3);
-			int currentId = tile.getBlockID(x & 7, y & 7, z & 7);
-			if (currentId != id) {
-				tile.setBlockID(x & 7, y & 7, z & 7, id);
-				flag = true;
-			} else {
-				LoggerLittleBlocks.getInstance(
-						Logger.filterClassName(
-								this.getClass().toString()
-						)
-				).write(
-						this.getRealWorld().isRemote,
-						"setBlock(" + x + ", " + y + ", " + z + ").[" + id + "]:No Change",
-						LoggerLittleBlocks.LogLevel.DEBUG
-				);
-			}
-			this.getRealWorld().updateAllLightTypes(x >> 3, y >> 3, z >> 3);
-			this.markBlockForRenderUpdate(x, y, z);
-			return flag;
-		}
-	}*/
-
-/*	@Override
-	public boolean setBlockMetadata(int x, int y, int z, int metadata) {
-		if (x < 0xfe363c80 || z < 0xfe363c80 || x >= 0x1c9c380 || z >= 0x1c9c380) {
-			LoggerLittleBlocks.getInstance(
-					Logger.filterClassName(
-							this.getClass().toString()
-					)
-			).write(
-					this.getRealWorld().isRemote,
-					"setBlockMetadata(" + x + ", " + y + ", " + z + ").[Out of bounds]",
-					LoggerLittleBlocks.LogLevel.DEBUG
-			);
-			return false;
-		}
-		if (y < 0) {
-			LoggerLittleBlocks.getInstance(
-					Logger.filterClassName(
-							this.getClass().toString()
-					)
-			).write(
-					this.getRealWorld().isRemote,
-					"setBlockMetadata(" + x + ", " + y + ", " + z + ").[y < 0]",
-					LoggerLittleBlocks.LogLevel.DEBUG
-			);
-			return false;
-		}
-		if (y >= this.getHeight()) {
-			LoggerLittleBlocks.getInstance(
-					Logger.filterClassName(
-							this.getClass().toString()
-					)
-			).write(
-					this.getRealWorld().isRemote,
-					"setBlockMetadata(" + x + ", " + y + ", " + z + ").[y >= " + this.getHeight() + "]",
-					LoggerLittleBlocks.LogLevel.DEBUG
-			);
-			return false;
-		} else {
-			Chunk chunk = this.getRealWorld().getChunkFromChunkCoords(x >> 7, z >> 7);
-			if (chunk.getBlockID((x & 0x7f) >> 3, y >> 3, (z & 0x7f) >> 3) == LBCore.littleBlocksID) {
-				TileEntityLittleBlocks tile = (TileEntityLittleBlocks) realWorld
-						.getBlockTileEntity(x >> 3, y >> 3, z >> 3);
-				int id = tile.getBlockID(x & 7, y & 7, z & 7);
-				int currentData = tile.getBlockMetadata(x & 7, y & 7, z & 7);
-				if (currentData != metadata) {
-					tile.setBlockMetadata(x & 7, y & 7, z & 7, metadata);
-				} else {
-					LoggerLittleBlocks.getInstance(
-							Logger.filterClassName(
-									this.getClass().toString()
-							)
-					).write(
-							this.getRealWorld().isRemote,
-							"setBlockMetadata(" + x + ", " + y + ", " + z + ").[" + id + ", " + metadata + "]:No Change",
-							LoggerLittleBlocks.LogLevel.DEBUG
-					);
-				}
-			} else {
-				LoggerLittleBlocks.getInstance(
-						Logger.filterClassName(
-								this.getClass().toString()
-						)
-				).write(
-						this.getRealWorld().isRemote,
-						"setBlockMetadata(" + x + ", " + y + ", " + z + ").[chunkData]",
-						LoggerLittleBlocks.LogLevel.DEBUG
-				);
-				chunk.setBlockMetadata(
-						(x & 0x7f) >> 3,
-						y >> 3,
-						(z & 0x7f) >> 3,
-						metadata);
-			}
-			this.getRealWorld().updateAllLightTypes(x >> 3, y >> 3, z >> 3);
-			this.markBlockForRenderUpdate(x, y, z);
-			return true;
-		}
-	}*/
 
 	@Override
 	public boolean checkChunksExist(int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
@@ -1238,7 +937,11 @@ public class LittleWorld extends World implements ILittleWorld {
 
 	@Override
 	public void playRecord(String s, int x, int y, int z) {
-		this.getRealWorld().playRecord(s, x, y, z);
+		this.getRealWorld().playRecord(
+				s,
+				x >> 3,
+				y >> 3,
+				z >> 3);
 	}
 
 	@Override
@@ -1297,13 +1000,21 @@ public class LittleWorld extends World implements ILittleWorld {
 	}
 	
 	@Override
-    public EntityPlayer getClosestPlayer(double par1, double par3, double par5, double par7) {
-		return this.getRealWorld().getClosestPlayer(par1, par3, par5, par7);
+    public EntityPlayer getClosestPlayer(double x, double y, double z, double distance) {
+		return this.getRealWorld().getClosestPlayer(
+				x / LBCore.littleBlocksSize,
+				y / LBCore.littleBlocksSize,
+				z / LBCore.littleBlocksSize,
+				distance / LBCore.littleBlocksSize);
 	}
 	
 	@Override
-    public EntityPlayer getClosestVulnerablePlayer(double par1, double par3, double par5, double par7) {
-		return this.getRealWorld().getClosestPlayer(par1, par3, par5, par7);
+    public EntityPlayer getClosestVulnerablePlayer(double x, double y, double z, double distance) {
+		return this.getClosestPlayer(
+				x,
+				y,
+				z,
+				distance);
 	}
 
 	@Override
