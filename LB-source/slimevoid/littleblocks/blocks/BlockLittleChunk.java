@@ -472,7 +472,8 @@ public class BlockLittleChunk extends BlockContainer {
 			TileEntityLittleChunk tile = (TileEntityLittleChunk) world
 					.getBlockTileEntity(x, y, z);
 			int content = tile.getBlockID(this.xSelected, this.ySelected, this.zSelected);
-			if (content <= 0) {
+			//System.out.println("Content: " + content);
+			if (content == -1) {
 				setBlockBounds(
 						this.xSelected / m,
 						this.ySelected / m,
@@ -552,7 +553,6 @@ public class BlockLittleChunk extends BlockContainer {
 						aabb.maxZ / m);
 				list.add(aabb);
 			}
-			setBlockBoundsBasedOnSelection(world, x, y, z);
 		}
 	}
 
@@ -619,13 +619,13 @@ public class BlockLittleChunk extends BlockContainer {
 				if (littleBlockID > 0) {
 					Block littleBlock = Block.blocksList[littleBlockID];
 					if (littleBlock != null) {
-//						littleBlock.collisionRayTrace(
-//								(World) tile.getLittleWorld(),
-//								(x << 3) + this.xSelected,
-//								(y << 3) + this.ySelected,
-//								(z << 3) + this.zSelected,
-//								player,
-//								view);
+						littleBlock.collisionRayTrace(
+								(World) tile.getLittleWorld(),
+								(x << 3) + this.xSelected,
+								(y << 3) + this.ySelected,
+								(z << 3) + this.zSelected,
+								player,
+								view);
 					}
 				}
 				setBlockBoundsBasedOnSelection(world, x, y, z);
