@@ -33,6 +33,7 @@ import net.minecraft.world.World;
 import slimevoid.lib.util.SlimevoidHelper;
 import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.blocks.core.CollisionRayTrace;
+import slimevoid.littleblocks.client.render.entities.LittleBlockDiggingFX;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.LittleBlocks;
 import slimevoid.littleblocks.core.lib.BlockUtil;
@@ -887,97 +888,13 @@ public class BlockLittleChunk extends BlockContainer {
 	@Override
 	public boolean addBlockDestroyEffects(World world, int x, int y, int z,
 			int meta, EffectRenderer effectRenderer) {
-		int xx = (x << 3) + this.xSelected;
-		int yy = (y << 3) + this.ySelected;
-		int zz = (z << 3) + this.zSelected;
-		World littleWorld = (World) LittleBlocks.proxy.getLittleWorld(world,
-				false);
-		int blockID = littleWorld.getBlockId(xx, yy, zz);
-		Block block = Block.blocksList[blockID];
-		int littleMeta = littleWorld.getBlockMetadata(xx, yy, zz);
-		if (block != null) {
-			byte b0 = 4;
-
-			for (int j1 = 0; j1 < b0; ++j1) {
-				for (int k1 = 0; k1 < b0; ++k1) {
-					for (int l1 = 0; l1 < b0; ++l1) {
-						double d0 = (double) x + ((double) j1 + 0.5D)
-								/ (double) b0;
-						double d1 = (double) y + ((double) k1 + 0.5D)
-								/ (double) b0;
-						double d2 = (double) z + ((double) l1 + 0.5D)
-								/ (double) b0;
-						effectRenderer.addEffect((new EntityDiggingFX(world,
-								d0, d1, d2, d0 - (double) x - 0.5D, d1
-										- (double) y - 0.5D, d2 - (double) z
-										- 0.5D, block, littleMeta))
-								.applyColourMultiplier(x, y, z));
-					}
-				}
-			}
-		}
-		return true;
+		return LittleBlockDiggingFX.doBlockDestroyEffects(world, x, y, z, meta, effectRenderer, this);
 	}
 
 	@Override
 	public boolean addBlockHitEffects(World world, MovingObjectPosition target,
 			EffectRenderer effectRenderer) {
-		int x = target.blockX;
-		int y = target.blockY;
-		int z = target.blockZ;
-		int xx = (x << 3) + this.xSelected;
-		int yy = (y << 3) + this.ySelected;
-		int zz = (z << 3) + this.zSelected;
-		World littleWorld = (World) LittleBlocks.proxy.getLittleWorld(world,
-				false);
-		int blockID = littleWorld.getBlockId(xx, yy, zz);
-		Block block = Block.blocksList[blockID];
-		int littleMeta = littleWorld.getBlockMetadata(xx, yy, zz);
-		if (block != null) {
-			float f = 0.1F;
-			double d0 = (double) x
-					+ world.rand.nextDouble()
-					* (block.getBlockBoundsMaxX() - block.getBlockBoundsMinX() - (double) (f * 2.0F))
-					+ (double) f + block.getBlockBoundsMinX();
-			double d1 = (double) y
-					+ world.rand.nextDouble()
-					* (block.getBlockBoundsMaxY() - block.getBlockBoundsMinY() - (double) (f * 2.0F))
-					+ (double) f + block.getBlockBoundsMinY();
-			double d2 = (double) z
-					+ world.rand.nextDouble()
-					* (block.getBlockBoundsMaxZ() - block.getBlockBoundsMinZ() - (double) (f * 2.0F))
-					+ (double) f + block.getBlockBoundsMinZ();
-
-			if (this.side == 0) {
-				d1 = (double) y + block.getBlockBoundsMinY() - (double) f;
-			}
-
-			if (this.side == 1) {
-				d1 = (double) y + block.getBlockBoundsMaxY() + (double) f;
-			}
-
-			if (this.side == 2) {
-				d2 = (double) z + block.getBlockBoundsMinZ() - (double) f;
-			}
-
-			if (this.side == 3) {
-				d2 = (double) z + block.getBlockBoundsMaxZ() + (double) f;
-			}
-
-			if (this.side == 4) {
-				d0 = (double) x + block.getBlockBoundsMinX() - (double) f;
-			}
-
-			if (this.side == 5) {
-				d0 = (double) x + block.getBlockBoundsMaxX() + (double) f;
-			}
-
-			effectRenderer.addEffect((new EntityDiggingFX(world, d0, d1, d2,
-					0.0D, 0.0D, 0.0D, block, littleMeta))
-					.applyColourMultiplier(x, y, z).multiplyVelocity(0.2F)
-					.multipleParticleScaleBy(0.6F));
-		}
-		return true;
+		return LittleBlockDiggingFX.doBlockHitEffects(world, target, effectRenderer, this);
 	}
 
 	public int getLightValue(IBlockAccess world, int x, int y, int z) {
