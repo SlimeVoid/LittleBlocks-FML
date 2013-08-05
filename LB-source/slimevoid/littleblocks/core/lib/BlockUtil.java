@@ -46,6 +46,7 @@ public class BlockUtil {
 	}
 
 	private static Set<Integer> disallowedItemIDs = new HashSet<Integer>();
+	private static Set<Integer> disallowedBlockIDs = new HashSet<Integer>();
 	private static Set<Class<? extends Item>> disallowedItems = new HashSet<Class<? extends Item>>();
 	private static Set<Class<? extends Block>> disallowedBlocks = new HashSet<Class<? extends Block>>();
 	private static Set<Class<? extends TileEntity>> disallowedBlockTileEntities = new HashSet<Class<? extends TileEntity>>();
@@ -68,6 +69,12 @@ public class BlockUtil {
 		return true;
 	}
 
+	public static void registerDisallowedBlockID(Integer blockID) {
+		if (!disallowedBlocks.contains(blockID)) {
+			disallowedBlockIDs.add(blockID);
+		}
+	}
+
 	private static void registerDisallowedBlock(Class<? extends Block> blockClass) {
 		if (blockClass != null) {
 			if (!disallowedBlocks.contains(blockClass)) {
@@ -81,14 +88,14 @@ public class BlockUtil {
 			if (disallowedBlocks.contains(block.getClass())) {
 				return false;
 			}
+			if (disallowedBlockIDs.contains(block.blockID)) {
+				return false;
+			}
 		}
-		if (LBCore.illegalBlocks.get(block.blockID) != null)
-			return false;
-		
 		return true;
 	}
 
-	private static void registerDisallowedItemIDs(Integer itemID) {
+	public static void registerDisallowedItemID(Integer itemID) {
 		if (itemID > Block.blocksList.length) {
 			if (!disallowedItemIDs.contains(itemID)) {
 				disallowedItemIDs.add(itemID);
@@ -105,20 +112,18 @@ public class BlockUtil {
 	}
 
 	public static boolean isItemAllowed(Item item) {
-		boolean isAllowed = false;
 		if (item != null) {
-			isAllowed = true;
 			if (disallowedItems.contains(item.getClass())) {
-				isAllowed = false;
+				return false;
 			}
 			if (disallowedItemIDs.contains(item.itemID)) {
-				isAllowed = false;
+				return false;
 			}
 			if (item instanceof IItemPipe) {
-				isAllowed = false;
+				return false;
 			}
 		}
-		return isAllowed;
+		return true;
 	}
 
 	private static void registerDisallowedTile(Class<? extends TileEntity> tileclass) {

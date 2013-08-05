@@ -270,10 +270,10 @@ public class BlockLittleChunk extends BlockContainer {
 						placementMessage = MessageLib.DENY_PLACEMENT;
 					}
 				}
-				if (block.getRenderType() == 1) {
+				/**if (block.getRenderType() == 1) {
 					denyPlacement = true;
 					placementMessage = MessageLib.DENY_PLACEMENT;
-				}
+				}**/
 			}
 			if (item != null) {
 				if (item instanceof ItemBlock) {

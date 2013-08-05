@@ -20,13 +20,24 @@ public class ConfigurationLib {
 		
 		// Illegal blocks
 		// Parse the list of illegal blocks separated by ;
-		String illegalBlocks[] = LBCore.configuration.get(
+		String disallowedBlockIDs[] = LBCore.configuration.get(
 				Configuration.CATEGORY_BLOCK,
-				"illegalBlocks",
+				"disallowedBlockIDs",
 				"").getString().split("\\;", -1);
-		for (int i=0; i < illegalBlocks.length; i++)
-			if (!illegalBlocks[i].isEmpty())
-				LBCore.illegalBlocks.put(Integer.valueOf(illegalBlocks[i]), true);
+		for (int i=0; i < disallowedBlockIDs.length; i++) {
+			if (!disallowedBlockIDs[i].isEmpty()) {
+				BlockUtil.registerDisallowedBlockID(Integer.valueOf(disallowedBlockIDs[i]));
+			}
+		}
+		String disallowedItemIDs[] = LBCore.configuration.get(
+				Configuration.CATEGORY_ITEM,
+				"disallowedItemIDs",
+				"").getString().split("\\;", -1);
+		for (int i=0; i < disallowedItemIDs.length; i++) {
+			if (!disallowedItemIDs[i].isEmpty()) {
+				BlockUtil.registerDisallowedItemID(Integer.valueOf(disallowedItemIDs[i]));
+			}
+		}
 		
 		LBCore.littleChunkID = LBCore.configuration.get(
 				Configuration.CATEGORY_BLOCK,
