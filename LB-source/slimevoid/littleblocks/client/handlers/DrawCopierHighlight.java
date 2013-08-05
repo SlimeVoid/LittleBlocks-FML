@@ -122,7 +122,7 @@ public class DrawCopierHighlight {
 	            GL11.glRotatef(90, forgeDir.offsetX, forgeDir.offsetY, forgeDir.offsetZ);
 	            GL11.glTranslated(0, 0, 0.5f * zCorrection);
 	            GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
-	            renderPulsingQuad(event.context.renderEngine, TextureLib.COPIER_OVERLAY, 0.75F);
+	            renderPulsingQuad(event.context.renderEngine, TextureLib.WAND_OVERLAY, 0.75F);
 	            GL11.glPopMatrix();
 	        }
 

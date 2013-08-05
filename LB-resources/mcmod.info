@@ -1,13 +1,13 @@
 [
 {
-  "modid": "LittleBlocksMod",
+  "modid": "LittleBlocks",
   "name": "Little Blocks",
   "description": "The Little Blocks mod",
   "version": "2.2.0.0",
-  "mcversion": "1.6.1",
+  "mcversion": "1.6.2",
   "url": "https://github.com/SlimeVoid/LittleBlocks-FML",
   "updateUrl": "",
-  "credits": "Eurymachus, Vengeurk, ali4z",
+  "credits": "Eurymachus, Vengeurk, ali4z, Tarig",
   "authors": ["Slime Void Crew"],
   "logoFile": "/littleblocks/logo.png",
   "screenshots": [""],
