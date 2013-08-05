@@ -14,14 +14,14 @@ import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 
 public class CollisionRayTrace {
 
-	public static List<MovingObjectPosition> rayTraceLittleBlocks(BlockLittleChunk littleBlocks, Vec3 player, Vec3 view, int i, int j, int k, List<MovingObjectPosition> returns, int[][][] content, TileEntityLittleChunk tile) {
+	public static List<MovingObjectPosition> rayTraceLittleBlocks(BlockLittleChunk littleBlocks, Vec3 player, Vec3 view, int i, int j, int k, List<MovingObjectPosition> returns, int[][][] content, TileEntityLittleChunk tile, boolean isFluid) {
 		float m = LBCore.littleBlocksSize;
 		for (int x = 0; x < content.length; x++) {
 			for (int y = 0; y < content[x].length; y++) {
 				for (int z = 0; z < content[x][y].length; z++) {
 					if (content[x][y][z] > 0) {
 						Block block = Block.blocksList[content[x][y][z]];
-						if (block != null && !(block instanceof BlockFluid)) {
+						if (block != null && (!(block instanceof BlockFluid)|| isFluid)) {
 							MovingObjectPosition ret = block.collisionRayTrace(
 									(World) tile.getLittleWorld(),
 									(i << 3) + x,

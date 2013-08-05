@@ -15,6 +15,7 @@ import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
 import slimevoid.littleblocks.blocks.BlockLittleChunk;
 import slimevoid.littleblocks.blocks.core.BlockLittleChunkShiftRightClick;
+import slimevoid.littleblocks.blocks.core.BlockLittleChunkUseBucket;
 import slimevoid.littleblocks.core.lib.BlockLib;
 import slimevoid.littleblocks.core.lib.BlockUtil;
 import slimevoid.littleblocks.core.lib.ItemLib;
@@ -69,10 +70,6 @@ public class LBCore {
 					2F,
 					true).setUnlocalizedName(BlockLib.LITTLECHUNK);
 		littleBlocksWand = new ItemLittleBlocksWand(littleBlocksWandID).setUnlocalizedName(ItemLib.COPIER_TOOL);
-		MinecraftForge.EVENT_BUS.register(new LittleBlocksCollectionPickup());
-		MinecraftForge.EVENT_BUS.register(new BlockLittleChunkShiftRightClick());
-		// MinecraftForge.EVENT_BUS.register(new LittleContainerInteract());
-		// MinecraftForge.EVENT_BUS.register(new PistonOrientation());
 	}
 
 	public static void registerNames() {
@@ -100,6 +97,15 @@ public class LBCore {
 				TileEntityLittleChunk.class,
 				BlockLib.TILE_LITTLECHUNK);
 		BlockUtil.registerPlacementInfo();
+	}
+
+	public static void registerEvents() {
+		MinecraftForge.EVENT_BUS.register(new LittleBlocksCollectionPickup());
+		MinecraftForge.EVENT_BUS.register(new BlockLittleChunkShiftRightClick());
+		MinecraftForge.EVENT_BUS.register(new BlockLittleChunkUseBucket());
+		// MinecraftForge.EVENT_BUS.register(new LittleLadderHandler());
+		// MinecraftForge.EVENT_BUS.register(new LittleContainerInteract());
+		// MinecraftForge.EVENT_BUS.register(new PistonOrientation());
 	}
 
 	@SideOnly(Side.CLIENT)

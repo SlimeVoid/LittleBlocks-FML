@@ -9,6 +9,7 @@ import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockFluid;
 import net.minecraft.block.BlockPistonBase;
 import net.minecraft.block.BlockStairs;
+import net.minecraft.block.BlockStationary;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.client.particle.EntityDiggingFX;
@@ -60,6 +61,8 @@ public class BlockLittleChunk extends BlockContainer {
 	public int xSelected = -10, ySelected = -10, zSelected = -10, side = -1;
 
 	public boolean updateEveryone = true;
+	
+	private boolean isFluid = false;
 
 	private Class<? extends TileEntity> clazz;
 
@@ -316,7 +319,7 @@ public class BlockLittleChunk extends BlockContainer {
 					if (littleWorld != null) {
 						if (entityplayer instanceof EntityPlayerMP) {
 							EntityPlayerMP player = (EntityPlayerMP) entityplayer;
-							ItemInWorldManager itemManager = player.theItemInWorldManager;
+							ItemInWorldManager itemManager = BlockUtil.getLittleItemManager(player);//player.theItemInWorldManager;
 							if (itemManager.activateBlockOrUseItem(
 									entityplayer,
 									littleWorld,
@@ -504,6 +507,12 @@ public class BlockLittleChunk extends BlockContainer {
 			}
 		}
 	}
+	
+	@Override
+	public boolean canCollideCheck(int meta, boolean rightClicked) {
+		this.isFluid = rightClicked;
+		return super.canCollideCheck(meta, rightClicked);
+	}
 
 	@Override
 	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z) {
@@ -579,7 +588,8 @@ public class BlockLittleChunk extends BlockContainer {
 				z,
 				returns,
 				content,
-				tile);
+				tile,
+				this.isFluid);
 		player = player.addVector(-x, -y, -z);
 		view = view.addVector(-x, -y, -z);
 		returns = CollisionRayTrace.collisionRayTracer(
@@ -602,6 +612,9 @@ public class BlockLittleChunk extends BlockContainer {
 				if (retBlockID > 0) {
 					Block retBlock = Block.blocksList[retBlockID];//.isBlockSolid(tile.worldObj, ret.blockX, ret.blockY, ret.blockZ, ret.sideHit);
 					isLiquid = retBlock instanceof BlockFluid;
+					if (isLiquid && this.isFluid) {
+						isLiquid = !(retBlock instanceof BlockStationary && tile.getBlockMetadata(ret.blockX, ret.blockY, ret.blockZ) == 0);
+					}
 				}
 				
 				if ((min == null || dist < distMin) && !isLiquid) {
@@ -616,6 +629,9 @@ public class BlockLittleChunk extends BlockContainer {
 				this.xSelected = (int) min.blockX;
 				this.ySelected = (int) min.blockY;
 				this.zSelected = (int) min.blockZ;
+				if (this.isFluid) {
+					littleBlockID = tile.getBlockID(this.xSelected, this.ySelected, this.zSelected);
+				}
 				if (littleBlockID > 0) {
 					Block littleBlock = Block.blocksList[littleBlockID];
 					if (littleBlock != null) {

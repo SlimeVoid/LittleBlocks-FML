@@ -46,6 +46,9 @@ public class LBInit {
 		SlimevoidCore.console(CoreLib.MOD_ID, "Registering blocks...");
 		LBCore.registerBlocks();
 		
+		SlimevoidCore.console(CoreLib.MOD_ID, "Registering events...");
+		LBCore.registerEvents();
+		
 		LittleBlocks.proxy.registerRenderInformation();
 		
 		LittleBlocks.proxy.registerTickHandler();

@@ -10,7 +10,10 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemMonsterPlacer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.world.World;
 import slimevoid.lib.data.Logger;
+import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.LoggerLittleBlocks;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
@@ -152,5 +155,16 @@ public class BlockUtil {
 			}
 		}
 		return false;
+	}
+	
+	public static boolean isLittleBlock(World world, int x, int y, int z) {
+		if (world instanceof ILittleWorld) {
+			return ((ILittleWorld) world).getRealWorld().getBlockId(x >> 3, y >> 3, z >> 3) == LBCore.littleChunkID;
+		}
+		return false;
+	}
+
+	public static boolean isLittleBlock(World world, MovingObjectPosition target) {
+		return isLittleBlock(world, target.blockX, target.blockY, target.blockZ);
 	}
 }
