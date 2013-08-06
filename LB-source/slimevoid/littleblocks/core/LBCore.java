@@ -92,7 +92,7 @@ public class LBCore {
 				false);
 		GameRegistry.registerTileEntity(
 				TileEntityLittleChunk.class,
-				BlockLib.TILE_LITTLECHUNK);
+				BlockLib.LITTLEBLOCKS);
 		BlockUtil.registerPlacementInfo();
 	}
 
