@@ -3,10 +3,10 @@ package slimevoid.littleblocks.client.network.packets.executors;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import slimevoid.lib.IPacketExecutor;
-import slimevoid.lib.network.PacketUpdate;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocks;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
+import slimevoidlib.IPacketExecutor;
+import slimevoidlib.network.PacketUpdate;
 
 public class ClientLittleTileEntityUpdate implements IPacketExecutor {
 

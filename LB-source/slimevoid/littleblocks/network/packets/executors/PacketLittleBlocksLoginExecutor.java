@@ -5,12 +5,12 @@ import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import slimevoid.lib.IPacketExecutor;
-import slimevoid.lib.network.PacketUpdate;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.lib.CommandLib;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocksSettings;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
+import slimevoidlib.IPacketExecutor;
+import slimevoidlib.network.PacketUpdate;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
 

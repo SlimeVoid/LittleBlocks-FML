@@ -12,6 +12,6 @@
   "logoFile": "/littleblocks/logo.png",
   "screenshots": [""],
   "parent":"",
-  "dependencies": ["EurysCore"]
+  "dependencies": ["SlimevoidLib"]
 }
 ]

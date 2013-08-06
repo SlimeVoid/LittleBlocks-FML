@@ -2,10 +2,10 @@ package slimevoid.littleblocks.client.network.packets.executors;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-import slimevoid.lib.IPacketExecutor;
-import slimevoid.lib.network.PacketUpdate;
 import slimevoid.littleblocks.core.LittleBlocks;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocksEvents;
+import slimevoidlib.IPacketExecutor;
+import slimevoidlib.network.PacketUpdate;
 
 public class ClientBlockEventExecutor implements IPacketExecutor {
 

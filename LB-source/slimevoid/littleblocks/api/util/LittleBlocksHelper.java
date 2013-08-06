@@ -6,13 +6,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-import slimevoid.lib.ICommonProxy;
-import slimevoid.lib.ISlimevoidHelper;
-import slimevoid.lib.util.SlimevoidHelper;
 import slimevoid.littleblocks.api.ILBCommonProxy;
 import slimevoid.littleblocks.api.ILittleBlocks;
 import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
+import slimevoidlib.ICommonProxy;
+import slimevoidlib.ISlimevoidHelper;
+import slimevoidlib.util.SlimevoidHelper;
 
 public class LittleBlocksHelper implements ISlimevoidHelper {
 	

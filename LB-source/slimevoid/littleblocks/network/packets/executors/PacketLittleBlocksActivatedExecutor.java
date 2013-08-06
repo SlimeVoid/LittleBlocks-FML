@@ -2,12 +2,12 @@ package slimevoid.littleblocks.network.packets.executors;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-import slimevoid.lib.IPacketExecutor;
-import slimevoid.lib.network.PacketUpdate;
 import slimevoid.littleblocks.blocks.BlockLittleChunk;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.lib.CommandLib;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocks;
+import slimevoidlib.IPacketExecutor;
+import slimevoidlib.network.PacketUpdate;
 
 public class PacketLittleBlocksActivatedExecutor implements IPacketExecutor {
 

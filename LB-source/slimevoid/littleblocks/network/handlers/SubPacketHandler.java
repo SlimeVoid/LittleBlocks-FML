@@ -20,10 +20,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.world.World;
-import slimevoid.lib.IPacketExecutor;
-import slimevoid.lib.data.Logger;
-import slimevoid.lib.network.PacketUpdate;
 import slimevoid.littleblocks.core.LoggerLittleBlocks;
+import slimevoidlib.IPacketExecutor;
+import slimevoidlib.data.Logger;
+import slimevoidlib.network.PacketUpdate;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
 

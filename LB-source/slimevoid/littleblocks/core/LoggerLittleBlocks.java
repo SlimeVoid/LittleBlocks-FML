@@ -1,6 +1,6 @@
 package slimevoid.littleblocks.core;
 
-import slimevoid.lib.data.Logger;
+import slimevoidlib.data.Logger;
 
 public class LoggerLittleBlocks extends Logger {
 	

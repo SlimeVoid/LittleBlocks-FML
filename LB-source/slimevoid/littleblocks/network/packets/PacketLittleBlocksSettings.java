@@ -1,10 +1,10 @@
 package slimevoid.littleblocks.network.packets;
 
 import net.minecraft.world.World;
-import slimevoid.lib.network.PacketIds;
-import slimevoid.lib.network.PacketPayload;
-import slimevoid.lib.network.PacketUpdate;
 import slimevoid.littleblocks.core.lib.CoreLib;
+import slimevoidlib.network.PacketIds;
+import slimevoidlib.network.PacketPayload;
+import slimevoidlib.network.PacketUpdate;
 
 public class PacketLittleBlocksSettings extends PacketUpdate {
 

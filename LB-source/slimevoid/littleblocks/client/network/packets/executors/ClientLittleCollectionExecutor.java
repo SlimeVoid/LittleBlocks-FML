@@ -3,11 +3,11 @@ package slimevoid.littleblocks.client.network.packets.executors;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-import slimevoid.lib.IPacketExecutor;
-import slimevoid.lib.network.PacketUpdate;
 import slimevoid.littleblocks.core.lib.CommandLib;
 import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocksCollection;
+import slimevoidlib.IPacketExecutor;
+import slimevoidlib.network.PacketUpdate;
 
 public class ClientLittleCollectionExecutor implements IPacketExecutor {
 

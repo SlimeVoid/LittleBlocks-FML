@@ -14,10 +14,10 @@ package slimevoid.littleblocks.core;
 import java.io.File;
 
 import net.minecraftforge.common.Configuration;
-import slimevoid.lib.core.SlimevoidCore;
 import slimevoid.littleblocks.api.util.LittleBlocksHelper;
 import slimevoid.littleblocks.core.lib.EnumWandAction;
 import slimevoid.littleblocks.core.lib.CoreLib;
+import slimevoidlib.core.SlimevoidCore;
 
 public class LBInit {
 	private static boolean initialized = false;

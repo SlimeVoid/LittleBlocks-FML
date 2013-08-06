@@ -7,11 +7,11 @@ import java.util.HashMap;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import slimevoid.lib.nbt.NBTHelper;
-import slimevoid.lib.network.PacketEntity;
 import slimevoid.littleblocks.core.lib.CommandLib;
 import slimevoid.littleblocks.core.lib.CoreLib;
 import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
+import slimevoidlib.nbt.NBTHelper;
+import slimevoidlib.network.PacketEntity;
 
 public class PacketLittleBlocksCollection extends PacketEntity {
 	public HashMap<Integer, ItemStack> itemstackCollection = new HashMap<Integer, ItemStack>();

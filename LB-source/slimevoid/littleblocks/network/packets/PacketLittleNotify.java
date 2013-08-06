@@ -1,8 +1,8 @@
 package slimevoid.littleblocks.network.packets;
 
 import net.minecraft.world.World;
-import slimevoid.lib.network.PacketNotifyPlayer;
 import slimevoid.littleblocks.core.lib.CoreLib;
+import slimevoidlib.network.PacketNotifyPlayer;
 
 public class PacketLittleNotify extends PacketNotifyPlayer {
 	
