@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockPistonMoving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagInt;
@@ -21,7 +20,6 @@ import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.LittleBlocks;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocks;
 import slimevoid.littleblocks.world.LittleWorld;
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -450,7 +448,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 	
 	@Override
     public void onChunkUnload() {
-		Iterator tilelist = this.tiles.iterator();
+		Iterator<TileEntity> tilelist = this.tiles.iterator();
 		
 		while (tilelist.hasNext()) {
 		    TileEntity tileentity = (TileEntity) tilelist.next();
