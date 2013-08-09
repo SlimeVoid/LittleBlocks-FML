@@ -12,7 +12,6 @@ import net.minecraft.block.BlockStairs;
 import net.minecraft.block.BlockStationary;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.particle.EffectRenderer;
-import net.minecraft.client.particle.EntityDiggingFX;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -34,7 +33,6 @@ import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.blocks.core.CollisionRayTrace;
 import slimevoid.littleblocks.client.render.entities.LittleBlockDiggingFX;
 import slimevoid.littleblocks.core.LBCore;
-import slimevoid.littleblocks.core.LittleBlocks;
 import slimevoid.littleblocks.core.lib.BlockUtil;
 import slimevoid.littleblocks.core.lib.CommandLib;
 import slimevoid.littleblocks.core.lib.IconLib;
@@ -651,7 +649,11 @@ public class BlockLittleChunk extends BlockContainer {
 							y,
 							z,
 							(byte) min.sideHit,
-							((Vec3) min.hitVec).addVector(x, y, z));
+							/**((Vec3) min.hitVec).addVector(x, y, z)**/
+							min.hitVec.myVec3LocalPool.getVecFromPool(
+									(min.hitVec.xCoord * 8) % 1,
+									(min.hitVec.yCoord * 8) % 1,
+									(min.hitVec.zCoord * 8) % 1).addVector(x, y, z));
 			}
 		}
 		this.xSelected = -10;
