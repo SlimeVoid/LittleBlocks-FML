@@ -584,23 +584,22 @@ public class LittleWorld extends World implements ILittleWorld {
 				if ((update & 1) != 0) {
 					originalId = currentId;
 				}
-				tile.setBlockIDWithMetadata(x & 7, y & 7, z & 7, blockID, newmeta);
+				tile.setBlockIDWithMetadata(x & 7, y & 7, z & 7, blockID,
+						newmeta);
 				flag = true;
-				if ((update & 2) != 0 && (!this.getRealWorld().isRemote || (update & 4) == 0))
-                {
-                    this.markBlockForUpdate(x, y, z);
-                }
+				if ((update & 2) != 0
+						&& (!this.getRealWorld().isRemote || (update & 4) == 0)) {
+					this.markBlockForUpdate(x, y, z);
+				}
 
-                if (!this.getRealWorld().isRemote && (update & 1) != 0)
-                {
-                    this.notifyBlockChange(x, y, z, originalId);
-                    Block block = Block.blocksList[blockID];
+				if (!this.getRealWorld().isRemote && (update & 1) != 0) {
+					this.notifyBlockChange(x, y, z, originalId);
+					Block block = Block.blocksList[blockID];
 
-                    if (block != null && block.hasComparatorInputOverride())
-                    {
-                        this.func_96440_m(x, y, z, blockID);
-                    }
-                }
+					if (block != null && block.hasComparatorInputOverride()) {
+						this.func_96440_m(x, y, z, blockID);
+					}
+				}
 			} else {
 				LoggerLittleBlocks.getInstance(
 						Logger.filterClassName(

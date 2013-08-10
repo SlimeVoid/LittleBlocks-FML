@@ -388,9 +388,9 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 		int lastData = metadatas[x][y][z];
 		content[x][y][z] = id;
 		metadatas[x][y][z] = metadata;
-
-		if (lastData != metadata) {
-			this.getLittleWorld().metadataModified(
+		if (lastId != id) {
+			this.getLittleWorld().idModified(
+					lastId,
 					this.xCoord,
 					this.yCoord,
 					this.zCoord,
@@ -401,9 +401,9 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 					id,
 					metadata);
 		}
-		if (lastId != id) {
-			this.getLittleWorld().idModified(
-					lastId,
+
+		if (lastData != metadata) {
+			this.getLittleWorld().metadataModified(
 					this.xCoord,
 					this.yCoord,
 					this.zCoord,
@@ -671,7 +671,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 				x,
 				y,
 				z);
-		this.onInventoryChanged();
+		//this.onInventoryChanged();
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -689,7 +689,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 				packetLB.zPosition,
 				packetLB.side,
 				packetLB.getMetadata());*/
-		this.onInventoryChanged();
+		//this.onInventoryChanged();
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -706,8 +706,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 				y & 7,
 				z & 7,
 				meta);
-		Block.blocksList[id].onSetBlockIDWithMetaData((World) this.getLittleWorld(), x, y, z, meta);
-		this.onInventoryChanged();
+		//this.onInventoryChanged();
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -724,6 +723,6 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 				z & 7,
 				littleTile);
 		}
-		this.onInventoryChanged();
+		//this.onInventoryChanged();
 	}
 }

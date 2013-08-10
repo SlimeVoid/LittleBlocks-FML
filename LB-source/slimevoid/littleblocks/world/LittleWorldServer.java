@@ -505,11 +505,6 @@ public class LittleWorldServer extends LittleWorld {
 		int blockX = (x << 3) + littleX,
 			blockY = (y << 3) + littleY,
 			blockZ = (z << 3) + littleZ;
-/*		this.notifyBlockChange(
-				blockX,
-				blockY,
-				blockZ,
-				blockId);*/
 		Block block = Block.blocksList[blockId];
 		if (block != null) {
 			PacketLib.sendMetadata(
@@ -531,6 +526,12 @@ public class LittleWorldServer extends LittleWorld {
 		if (lastBlockId != 0) {
 			Block block = Block.blocksList[lastBlockId];
 			if (block != null) {
+			    block.onSetBlockIDWithMetaData(
+			            (World) this,
+			            blockX,
+			            blockY,
+			            blockZ,
+			            metadata);
 				block.breakBlock(
 						this,
 						blockX,
@@ -566,10 +567,5 @@ public class LittleWorldServer extends LittleWorld {
 						metadata);
 			}
 		}
-/*		this.notifyBlockChange(
-				blockX,
-				blockY,
-				blockZ,
-				blockId);*/
 	}
 }
