@@ -46,17 +46,22 @@ public class LittleBlocksLittleRenderer {
 			Tessellator tessellator = Tessellator.instance;
 	        int mode = tessellator.drawMode;
 	        tessellator.draw();
-	        GL11.glPushMatrix();			
+	        //if (!LBCore.optifine)	        
+	        	GL11.glPushMatrix();			
+	        	
 	        
 			double xS = -((x >> 4) << 4), yS = -((y >> 4) << 4), zS = -((z >> 4) << 4);
 	
+			//if (!LBCore.optifine){
 			GL11.glTranslated(xS, yS, zS);
 			GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+			//}
 			float scale = 1 / (float) LBCore.littleBlocksSize;
 			GL11.glScalef(scale, scale, scale);
+			//if (!LBCore.optifine)
 			GL11.glTranslated(-xS, -yS, -zS);
 			
-			tessellator.startDrawing(mode);
+			tessellator.startDrawingQuads();
 			for (LittleBlockToRender littleBlockToRender : this.littleBlocksToRender) {
 				this.renderBlocks.renderBlockByRenderType(
 						littleBlockToRender.block,
@@ -65,8 +70,10 @@ public class LittleBlocksLittleRenderer {
 						littleBlockToRender.z);
 			}
 			tessellator.draw();
+			//if (!LBCore.optifine){
 			GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 			GL11.glPopMatrix();
+			//}else GL11.glScalef(LBCore.littleBlocksSize, LBCore.littleBlocksSize, LBCore.littleBlocksSize);
 			tessellator.startDrawingQuads();
 		}
 	}
