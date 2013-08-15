@@ -2,10 +2,8 @@ package slimevoid.littleblocks.client.handlers;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFluid;
+import net.minecraft.client.renderer.RenderEngine;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.renderer.texture.TextureObject;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.src.ModLoader;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
@@ -136,12 +134,12 @@ public class DrawCopierHighlight {
 		return blockID == LBCore.littleChunkID || Block.blocksList[blockID] == null || Block.blocksList[blockID].isBlockReplaceable(world, blockX, blockY, blockZ);
 	}
 
-	public static void renderPulsingQuad(TextureManager renderEngine, ResourceLocation overlay, float maxTransparency) {
+	public static void renderPulsingQuad(RenderEngine renderEngine, String overlay, float maxTransparency) {
 
         float pulseTransparency = (getPulseValue() * maxTransparency) / 3000f;
 
-        renderEngine.func_110577_a(overlay);
-        //GL11.glBindTexture(GL11.GL_TEXTURE_2D, overlay);
+        //renderEngine..func_110577_a(overlay);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, renderEngine.getTexture(overlay));
         Tessellator tessellator = Tessellator.instance;
 
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);

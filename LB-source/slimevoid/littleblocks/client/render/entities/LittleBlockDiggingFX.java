@@ -1,5 +1,6 @@
 package slimevoid.littleblocks.client.render.entities;
 
+import cpw.mods.fml.client.FMLClientHandler;
 import slimevoid.littleblocks.blocks.BlockLittleChunk;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.LittleBlocks;
@@ -13,7 +14,7 @@ public class LittleBlockDiggingFX extends EntityDiggingFX {
 
 	public LittleBlockDiggingFX(World par1World, double par2, double par4, double par6, double par8, double par10, double par12, Block par14Block, int par15)
     {
-        super(par1World, par2, par4, par6, par8, par10, par12, par14Block, par15, par1World.rand.nextInt(6));
+        super(par1World, par2, par4, par6, par8, par10, par12, par14Block, par15, par1World.rand.nextInt(6), FMLClientHandler.instance().getClient().renderEngine);
         this.particleScale /= LBCore.littleBlocksSize;
 	}
 
@@ -43,7 +44,7 @@ public class LittleBlockDiggingFX extends EntityDiggingFX {
 								- (double) y - 0.5D, d2 - (double) z
 								- 0.5D, littleBlock, littleMeta);
 						effectRenderer.addEffect(particle
-								.applyColourMultiplier(x, y, z));
+								.func_70596_a(x, y, z));
 					}
 				}
 			}
@@ -104,7 +105,7 @@ public class LittleBlockDiggingFX extends EntityDiggingFX {
 			LittleBlockDiggingFX particle = new LittleBlockDiggingFX(world, d0, d1, d2,
 					0.0D, 0.0D, 0.0D, littleBlock, littleMeta);
 			effectRenderer.addEffect(particle
-					.applyColourMultiplier(x, y, z).multiplyVelocity(0.2F)
+					.func_70596_a(x, y, z).multiplyVelocity(0.2F)
 					.multipleParticleScaleBy(0.6F));
 		}
 		return true;

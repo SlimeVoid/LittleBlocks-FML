@@ -1,7 +1,7 @@
 package slimevoid.littleblocks.api.util;
 
 import net.minecraft.block.Block;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
@@ -110,7 +110,7 @@ public class LittleBlocksHelper implements ISlimevoidHelper {
 	 */
 	@Override
 	public boolean isLadder(World world, int x, int y, int z,
-			EntityLivingBase entity) {
+			EntityLiving entity) {
 	
 		
 		TileEntityLittleChunk tile = (TileEntityLittleChunk) world

@@ -413,14 +413,14 @@ public class LittleWorldServer extends LittleWorld {
 	 */
 	@Override
 	public void scheduleBlockUpdate(int x, int y, int z, int blockId, int tickRate) {
-		this.scheduleBlockUpdateWithPriority(x, y, z, blockId, tickRate, 0);
+		this.func_82740_a(x, y, z, blockId, tickRate, 0);
 	}
 
 	/**
 	 * Schedules a tick to a block with a delay (Most commonly the tick rate) with some Value
 	 */
 	@Override
-    public void scheduleBlockUpdateWithPriority(int x, int y, int z, int blockId, int tickRate, int someValue) {
+    public void func_82740_a(int x, int y, int z, int blockId, int tickRate, int someValue) {
 		NextTickListEntry nextTickEntry = new NextTickListEntry(x, y, z, blockId);
 		byte max = 8;
 
@@ -461,7 +461,7 @@ public class LittleWorldServer extends LittleWorld {
 			if (blockId > 0) {
 				nextTickEntry.setScheduledTime(tickRate + this.getRealWorld().getWorldInfo()
 						.getWorldTotalTime());
-				nextTickEntry.setPriority(someValue);
+				nextTickEntry.func_82753_a(someValue);
 			}
 
 			if (!this.scheduledTickSet.contains(nextTickEntry)) {
@@ -478,7 +478,7 @@ public class LittleWorldServer extends LittleWorld {
 	@Override
 	public void scheduleBlockUpdateFromLoad(int x, int y, int z, int blockId, int tickRate, int par6) {
 		NextTickListEntry nextTick = new NextTickListEntry(x, y, z, blockId);
-		nextTick.setPriority(par6);
+		nextTick.func_82753_a(par6);
 
 		if (blockId > 0) {
 			nextTick.setScheduledTime((long)tickRate + this.getRealWorld().getWorldInfo().getWorldTotalTime());
