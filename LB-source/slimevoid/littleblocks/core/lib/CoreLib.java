@@ -10,4 +10,5 @@ public class CoreLib {
 	public static final String MOD_CHANNEL = "LITTLEBLOCKS";
 	public static final String CLIENT_PROXY = "slimevoid.littleblocks.client.proxy.ClientProxy";
 	public static final String COMMON_PROXY = "slimevoid.littleblocks.proxy.CommonProxy";
+	public static boolean OPTIFINE_INSTALLED;
 }

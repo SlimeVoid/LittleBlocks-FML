@@ -23,6 +23,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import slimevoid.littleblocks.core.LBCore;
+import slimevoid.littleblocks.core.lib.CoreLib;
 
 
 public class LittleBlocksLittleRenderer {
@@ -50,11 +51,11 @@ public class LittleBlocksLittleRenderer {
 	        
 			double xS = -((x >> 4) << 4), yS = -((y >> 4) << 4), zS = -((z >> 4) << 4);
 	
-			GL11.glTranslated(xS, yS, zS);
+			if (!CoreLib.OPTIFINE_INSTALLED) GL11.glTranslated(xS, yS, zS);
 			GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 			float scale = 1 / (float) LBCore.littleBlocksSize;
 			GL11.glScalef(scale, scale, scale);
-			GL11.glTranslated(-xS, -yS, -zS);
+			if (!CoreLib.OPTIFINE_INSTALLED) GL11.glTranslated(-xS, -yS, -zS);
 			
 			tessellator.startDrawing(mode);
 			for (LittleBlockToRender littleBlockToRender : this.littleBlocksToRender) {
