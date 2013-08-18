@@ -53,6 +53,7 @@ public class LittleBlocks {
 	}
 
 	@PostInit
+	@SideOnly(Side.CLIENT)
 	public void LittleBlocksPostInit(FMLPostInitializationEvent event) {
 		CoreLib.OPTIFINE_INSTALLED = FMLClientHandler.instance().hasOptifine();
 	}
