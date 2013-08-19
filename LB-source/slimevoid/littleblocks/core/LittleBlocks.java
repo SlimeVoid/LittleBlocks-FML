@@ -5,7 +5,6 @@ import slimevoid.littleblocks.client.network.ClientPacketHandler;
 import slimevoid.littleblocks.core.lib.CoreLib;
 import slimevoid.littleblocks.network.CommonPacketHandler;
 import slimevoid.littleblocks.network.LBConnectionHandler;
-import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -51,6 +50,5 @@ public class LittleBlocks {
 
 	@EventHandler
 	public void LittleBlocksPostInit(FMLPostInitializationEvent event) {
-		CoreLib.OPTIFINE_INSTALLED = FMLClientHandler.instance().hasOptifine();
 	}
 }
