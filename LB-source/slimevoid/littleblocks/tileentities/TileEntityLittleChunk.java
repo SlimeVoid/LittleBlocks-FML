@@ -463,10 +463,10 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 		    //FMLCommonHandler.instance().getFMLLogger().severe("No Tile Entity Exists!");
 			int id = this.getBlockID(x, y, z);
 			int meta = this.getBlockMetadata(x, y, z);
-            Block littleBlock = Block.blocksList[id];
-			if (id <= 0 || !littleBlock.hasTileEntity(meta)) {
+			if (id <= 0 || !Block.blocksList[id].hasTileEntity(meta)) {
 				return null;
 			}
+            Block littleBlock = Block.blocksList[id];
 			tileentity = littleBlock.createTileEntity(this.worldObj,
 					meta);
 			((LittleWorld)this.getLittleWorld()).setBlockTileEntity(

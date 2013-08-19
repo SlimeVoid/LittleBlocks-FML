@@ -635,13 +635,17 @@ public class BlockLittleChunk extends BlockContainer {
 				if (littleBlockID > 0) {
 					Block littleBlock = Block.blocksList[littleBlockID];
 					if (littleBlock != null) {
-						littleBlock.collisionRayTrace(
-								(World) tile.getLittleWorld(),
-								(x << 3) + this.xSelected,
-								(y << 3) + this.ySelected,
-								(z << 3) + this.zSelected,
-								player,
-								view);
+						if (!(littleBlock.hasTileEntity(tile.getBlockMetadata(this.xSelected, this.ySelected, this.zSelected)) && tile.getTileEntity(this.xSelected, this.ySelected, this.zSelected) == null)) {
+							littleBlock.collisionRayTrace(
+									(World) tile.getLittleWorld(),
+									(x << 3) + this.xSelected,
+									(y << 3) + this.ySelected,
+									(z << 3) + this.zSelected,
+									player,
+									view);
+						} else {
+							FMLCommonHandler.instance().getFMLLogger().warning("Tried to trace through a tile entity at [" + this.xSelected + ", " + this.ySelected + ", " + this.zSelected + "]");
+						}
 					}
 				}
 				setBlockBoundsBasedOnSelection(world, x, y, z);
