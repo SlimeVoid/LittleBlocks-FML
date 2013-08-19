@@ -49,6 +49,7 @@ public class LittleBlocks {
 	}
 
 	@EventHandler
+	@SideOnly(Side.CLIENT)
 	public void LittleBlocksPostInit(FMLPostInitializationEvent event) {
 	}
 }
