@@ -73,11 +73,18 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 	}
 	
 	public int getLightlevel() {
+		int sumlightlevels =0;
+		int sumoflightsources=0;
 		for (int i = 15; i > 0; i--) {
-			if (lightcount[i] > 0)
-				return MathHelper.ceiling_double_int((double) i / (double)(size/2));
+			if (lightcount[i] > 0){
+				sumlightlevels+= lightcount[i]*i;
+				sumoflightsources+= lightcount[i];
+			}
+			
 		}
-		return 0;
+		int averageLBLight = sumoflightsources==0?0:MathHelper.ceiling_double_int(((double)sumlightlevels/(double)sumoflightsources)) > 15?15:MathHelper.ceiling_double_int((double)sumlightlevels/(double)sumoflightsources);
+			
+		return lightcount[averageLBLight]>=size?averageLBLight:MathHelper.ceiling_double_int(((double)averageLBLight/(double)size) * (double)lightcount[averageLBLight]);
 	}
 
 	public ILittleWorld getLittleWorld() {
@@ -402,7 +409,9 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 		int blockX = (xCoord << 3) + x, 
 				blockY = (yCoord << 3) + y, 
 				blockZ = (zCoord << 3) + z;
+		boolean lighthandled = false;
 		if (lastId != id) {
+			lighthandled = true;
 			lightcount[lastId == 0 ? 0 : Block.blocksList[lastId]
 					.getLightValue(
 							this.getLittleWorld(), 
@@ -429,7 +438,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 		}
 
 		if (lastData != metadata) {
-			lightcount[lastId == 0 ? 0 : Block.blocksList[lastId]
+			if (!lighthandled)lightcount[lastId == 0 ? 0 : Block.blocksList[lastId]
 					.getLightValue(
 							this.getLittleWorld(), 
 							blockX, 
@@ -445,7 +454,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 					z,
 					id,
 					metadata);
-			lightcount[id == 0 ? 0 : Block.blocksList[id]
+			if (!lighthandled)lightcount[id == 0 ? 0 : Block.blocksList[id]
 					.getLightValue(
 							this.getLittleWorld(), 
 							blockX, 
@@ -495,21 +504,23 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 	}
 
 	public TileEntity getTileEntity(int x, int y, int z) {
-		// System.out.println("TileEntities[" + this.worldObj.isRemote + ": " +
-		// this.tiles.size());
+		//System.out.println("TileEntities[" + this.worldObj.isRemote + ": " + this.tiles.size());
 		TileEntity tileentity = this.getTileEntityFromList(x, y, z);
 		if (tileentity == null) {
-			// FMLCommonHandler.instance().getFMLLogger().severe("No Tile Entity Exists!");
+		    //FMLCommonHandler.instance().getFMLLogger().severe("No Tile Entity Exists!");
 			int id = this.getBlockID(x, y, z);
 			int meta = this.getBlockMetadata(x, y, z);
-			if (id <= 0 || !Block.blocksList[id].hasTileEntity(meta)) {
+            Block littleBlock = Block.blocksList[id];
+			if (id <= 0 || !littleBlock.hasTileEntity(meta)) {
 				return null;
 			}
-			Block littleBlock = Block.blocksList[id];
-			tileentity = littleBlock.createTileEntity(this.worldObj, meta);
-			((LittleWorld) this.getLittleWorld()).setBlockTileEntity(
-					((this.xCoord << 3) + x), ((this.yCoord << 3) + y),
-					((this.zCoord << 3) + z), tileentity);
+			tileentity = littleBlock.createTileEntity(this.worldObj,
+					meta);
+			((LittleWorld)this.getLittleWorld()).setBlockTileEntity(
+					((this.xCoord << 3) + x),
+					((this.yCoord << 3) + y),
+					((this.zCoord << 3) + z),
+					tileentity);
 			tileentity = this.getTileEntityFromList(x, y, z);
 		}
 		return tileentity;
