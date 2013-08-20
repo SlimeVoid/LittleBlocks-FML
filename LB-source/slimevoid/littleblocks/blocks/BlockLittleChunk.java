@@ -902,7 +902,7 @@ public class BlockLittleChunk extends BlockContainer {
 	public int getLightValue(IBlockAccess world, int x, int y, int z) {
 		TileEntityLittleChunk tile = (TileEntityLittleChunk) world
 				.getBlockTileEntity(x, y, z);
-		if (tile != null) tile.getLightlevel();
+		if (tile != null) return tile.getLightlevel();
 		return super.getLightValue(world, x, y, z);
 	}
 }
