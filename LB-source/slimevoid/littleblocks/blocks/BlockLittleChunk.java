@@ -900,7 +900,9 @@ public class BlockLittleChunk extends BlockContainer {
 	}
 
 	public int getLightValue(IBlockAccess world, int x, int y, int z) {
-		// TODO :: Correct Light Values
+		TileEntityLittleChunk tile = (TileEntityLittleChunk) world
+				.getBlockTileEntity(x, y, z);
+		if (tile != null) tile.getLightlevel();
 		return super.getLightValue(world, x, y, z);
 	}
 }
