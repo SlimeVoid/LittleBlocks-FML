@@ -56,10 +56,10 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 	}
 
 	public boolean isEmpty() {
-		for (int x = 0; x < content.length; x++) {
-			for (int y = 0; y < content[x].length; y++) {
-				for (int z = 0; z < content[x][y].length; z++) {
-					if (content[x][y][z] > 0) {
+		for (int x = 0; x < this.content.length; x++) {
+			for (int y = 0; y < this.content[x].length; y++) {
+				for (int z = 0; z < this.content[x][y].length; z++) {
+					if (this.content[x][y][z] > 0) {
 						return false;
 					}
 				}
@@ -73,18 +73,17 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 	}
 	
 	public int getLightlevel() {
-		int sumlightlevels =0;
-		int sumoflightsources=0;
+		int calculatedLightLevel = 0;
 		for (int i = 15; i > 0; i--) {
-			if (lightcount[i] > 0){
-				sumlightlevels+= lightcount[i]*i;
-				sumoflightsources+= lightcount[i];
+			if (this.lightcount[i] > 0) {
+				int tempLightLevel = lightcount[i] >= size ? i :
+						MathHelper.ceiling_double_int((
+						(double) i / (double) size) * (double) this.lightcount[i]);
+				if (tempLightLevel > calculatedLightLevel) calculatedLightLevel = tempLightLevel; 
 			}
-			
-		}
-		int averageLBLight = sumoflightsources==0?0:MathHelper.ceiling_double_int(((double)sumlightlevels/(double)sumoflightsources)) > 15?15:MathHelper.ceiling_double_int((double)sumlightlevels/(double)sumoflightsources);
-			
-		return lightcount[averageLBLight]>=size?averageLBLight:MathHelper.ceiling_double_int(((double)averageLBLight/(double)size) * (double)lightcount[averageLBLight]);
+		}				
+
+		return calculatedLightLevel;
 	}
 
 	public ILittleWorld getLittleWorld() {
@@ -95,11 +94,11 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 
 	public int getBlockMetadata(int x, int y, int z) {
 		if (x >= size | y >= size | z >= size) {
-			if (worldObj.getBlockId(
+			if (this.worldObj.getBlockId(
 					xCoord + (x >= size ? 1 : 0),
 					yCoord + (y >= size ? 1 : 0),
 					zCoord + (z >= size ? 1 : 0)) == LBCore.littleChunkID) {
-				TileEntityLittleChunk tile = (TileEntityLittleChunk) worldObj
+				TileEntityLittleChunk tile = (TileEntityLittleChunk) this.worldObj
 						.getBlockTileEntity(
 								xCoord + (x >= size ? 1 : 0),
 								yCoord + (y >= size ? 1 : 0),
@@ -109,7 +108,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 						y >= size ? y - size : y,
 						z >= size ? z - size : z);
 			}
-			if (worldObj.getBlockId(
+			if (this.worldObj.getBlockId(
 					xCoord + (x >= size ? 1 : 0),
 					yCoord + (y >= size ? 1 : 0),
 					zCoord + (z >= size ? 1 : 0)) == 0) {
@@ -117,11 +116,11 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 			}
 			return -1;
 		} else if (x < 0 | z < 0 | y < 0) {
-			if (worldObj.getBlockId(
+			if (this.worldObj.getBlockId(
 					xCoord - (x < 0 ? 1 : 0),
 					yCoord - (y < 0 ? 1 : 0),
 					zCoord - (z < 0 ? 1 : 0)) == LBCore.littleChunkID) {
-				TileEntityLittleChunk tile = (TileEntityLittleChunk) worldObj
+				TileEntityLittleChunk tile = (TileEntityLittleChunk) this.worldObj
 						.getBlockTileEntity(
 								xCoord - (x < 0 ? 1 : 0),
 								yCoord - (y < 0 ? 1 : 0),
@@ -131,7 +130,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 						y < 0 ? y + size : y,
 						z < 0 ? z + size : z);
 			}
-			if (worldObj.getBlockId(
+			if (this.worldObj.getBlockId(
 					xCoord - (x < 0 ? 1 : 0),
 					yCoord - (y < 0 ? 1 : 0),
 					zCoord - (z < 0 ? 1 : 0)) == 0) {
@@ -145,11 +144,11 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 
 	public int getBlockID(int x, int y, int z) {
 		if (x >= size | y >= size | z >= size) {
-			if (worldObj.getBlockId(
+			if (this.worldObj.getBlockId(
 					xCoord + (x >= size ? 1 : 0),
 					yCoord + (y >= size ? 1 : 0),
 					zCoord + (z >= size ? 1 : 0)) == LBCore.littleChunkID) {
-				TileEntityLittleChunk tile = (TileEntityLittleChunk) worldObj
+				TileEntityLittleChunk tile = (TileEntityLittleChunk) this.worldObj
 						.getBlockTileEntity(
 								xCoord + (x >= size ? 1 : 0),
 								yCoord + (y >= size ? 1 : 0),
@@ -159,7 +158,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 						y >= size ? y - size : y,
 						z >= size ? z - size : z);
 			}
-			if (worldObj.getBlockId(
+			if (this.worldObj.getBlockId(
 					xCoord + (x >= size ? 1 : 0),
 					yCoord + (y >= size ? 1 : 0),
 					zCoord + (z >= size ? 1 : 0)) == 0) {
@@ -167,11 +166,11 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 			}
 			return -1;
 		} else if (x < 0 | z < 0 | y < 0) {
-			if (worldObj.getBlockId(
+			if (this.worldObj.getBlockId(
 					xCoord - (x < 0 ? 1 : 0),
 					yCoord - (y < 0 ? 1 : 0),
 					zCoord - (z < 0 ? 1 : 0)) == LBCore.littleChunkID) {
-				TileEntityLittleChunk tile = (TileEntityLittleChunk) worldObj
+				TileEntityLittleChunk tile = (TileEntityLittleChunk) this.worldObj
 						.getBlockTileEntity(
 								xCoord - (x < 0 ? 1 : 0),
 								yCoord - (y < 0 ? 1 : 0),
@@ -181,7 +180,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 						y < 0 ? y + size : y,
 						z < 0 ? z + size : z);
 			}
-			if (worldObj.getBlockId(
+			if (this.worldObj.getBlockId(
 					xCoord - (x < 0 ? 1 : 0),
 					yCoord - (y < 0 ? 1 : 0),
 					zCoord - (z < 0 ? 1 : 0)) == 0) {
@@ -189,23 +188,23 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 			}
 			return -1;
 		} else {
-			return content[x][y][z];
+			return this.content[x][y][z];
 		}
 	}
 
 	public void setBlockID(int x, int y, int z, int id) {
 /*		if (x >= size | y >= size | z >= size) {
-			if (worldObj.getBlockId(
+			if (this.worldObj.getBlockId(
 					xCoord + (x >= size ? 1 : 0),
 					yCoord + (y >= size ? 1 : 0),
 					zCoord + (z >= size ? 1 : 0)) == 0) {
-				worldObj.setBlockWithNotify(
+				this.worldObj.setBlockWithNotify(
 						xCoord + (x >= size ? 1 : 0),
 						yCoord + (y >= size ? 1 : 0),
 						zCoord + (z >= size ? 1 : 0),
 						LBCore.littleBlocksID);
 			}
-			if (worldObj.getBlockId(
+			if (this.worldObj.getBlockId(
 					xCoord + (x >= size ? 1 : 0),
 					yCoord + (y >= size ? 1 : 0),
 					zCoord + (z >= size ? 1 : 0)) == LBCore.littleBlocksID) {
@@ -222,17 +221,17 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 			}
 			return;
 		} else if (x < 0 | z < 0 | y < 0) {
-			if (worldObj.getBlockId(
+			if (this.worldObj.getBlockId(
 					xCoord - (x < 0 ? 1 : 0),
 					yCoord - (y < 0 ? 1 : 0),
 					zCoord - (z < 0 ? 1 : 0)) == 0) {
-				worldObj.setBlockWithNotify(
+				this.worldObj.setBlockWithNotify(
 						xCoord - (x < 0 ? 1 : 0),
 						yCoord - (y < 0 ? 1 : 0),
 						zCoord - (z < 0 ? 1 : 0),
 						LBCore.littleBlocksID);
 			}
-			if (worldObj.getBlockId(
+			if (this.worldObj.getBlockId(
 					xCoord - (x < 0 ? 1 : 0),
 					yCoord - (y < 0 ? 1 : 0),
 					zCoord - (z < 0 ? 1 : 0)) == LBCore.littleBlocksID) {
@@ -249,7 +248,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 			}
 			return;
 		}
-		int lastId = content[x][y][z];
+		int lastId = this.content[x][y][z];
 		content[x][y][z] = id;
 		setBlockMetadata(x, y, z, 0);
 		if (lastId != id) {
@@ -257,7 +256,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 					this.worldObj,
 					false).idModified(
 					lastId,
-					this.xCoord,
+					xCoord,
 					this.yCoord,
 					this.zCoord,
 					0,
@@ -272,21 +271,21 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 
 	public void setBlockMetadata(int x, int y, int z, int metadata) {
 		if (x >= size | y >= size | z >= size) {
-			if (worldObj.getBlockId(
+			if (this.worldObj.getBlockId(
 					xCoord + (x >= size ? 1 : 0),
 					yCoord + (y >= size ? 1 : 0),
 					zCoord + (z >= size ? 1 : 0)) == 0) {
-				worldObj.setBlock(
+				this.worldObj.setBlock(
 						xCoord + (x >= size ? 1 : 0),
 						yCoord + (y >= size ? 1 : 0),
 						zCoord + (z >= size ? 1 : 0),
 						LBCore.littleChunkID, 0, 0x02);
 			}
-			if (worldObj.getBlockId(
+			if (this.worldObj.getBlockId(
 					xCoord + (x >= size ? 1 : 0),
 					yCoord + (y >= size ? 1 : 0),
 					zCoord + (z >= size ? 1 : 0)) == LBCore.littleChunkID) {
-				TileEntityLittleChunk tile = (TileEntityLittleChunk) worldObj
+				TileEntityLittleChunk tile = (TileEntityLittleChunk) this.worldObj
 						.getBlockTileEntity(
 								xCoord + (x >= size ? 1 : 0),
 								yCoord + (y >= size ? 1 : 0),
@@ -299,21 +298,21 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 			}
 			return;
 		} else if (x < 0 | z < 0 | y < 0) {
-			if (worldObj.getBlockId(
+			if (this.worldObj.getBlockId(
 					xCoord - (x < 0 ? 1 : 0),
 					yCoord - (y < 0 ? 1 : 0),
 					zCoord - (z < 0 ? 1 : 0)) == 0) {
-				worldObj.setBlock(
+				this.worldObj.setBlock(
 						xCoord - (x < 0 ? 1 : 0),
 						yCoord - (y < 0 ? 1 : 0),
 						zCoord - (z < 0 ? 1 : 0),
 						LBCore.littleChunkID, 0, 0x02);
 			}
-			if (worldObj.getBlockId(
+			if (this.worldObj.getBlockId(
 					xCoord - (x < 0 ? 1 : 0),
 					yCoord - (y < 0 ? 1 : 0),
 					zCoord - (z < 0 ? 1 : 0)) == LBCore.littleChunkID) {
-				TileEntityLittleChunk tile = (TileEntityLittleChunk) worldObj
+				TileEntityLittleChunk tile = (TileEntityLittleChunk) this.worldObj
 						.getBlockTileEntity(
 								xCoord - (x < 0 ? 1 : 0),
 								yCoord - (y < 0 ? 1 : 0),
@@ -327,14 +326,14 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 			return;
 		}
 		int lastData = metadatas[x][y][z];
-		metadatas[x][y][z] = metadata;
-		int blockId = content[x][y][z];
+		this.metadatas[x][y][z] = metadata;
+		int blockId = this.content[x][y][z];
 
 		if (lastData != metadata) {
 			this.getLittleWorld().metadataModified(
-					this.xCoord,
-					this.yCoord,
-					this.zCoord,
+					xCoord,
+					yCoord,
+					zCoord,
 					0,
 					x,
 					y,
@@ -346,21 +345,21 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 
 	public void setBlockIDWithMetadata(int x, int y, int z, int id, int metadata) {
 		if (x >= size | y >= size | z >= size) {
-			if (worldObj.getBlockId(
+			if (this.worldObj.getBlockId(
 					xCoord + (x >= size ? 1 : 0),
 					yCoord + (y >= size ? 1 : 0),
 					zCoord + (z >= size ? 1 : 0)) == 0) {
-				worldObj.setBlock(
+				this.worldObj.setBlock(
 						xCoord + (x >= size ? 1 : 0),
 						yCoord + (y >= size ? 1 : 0),
 						zCoord + (z >= size ? 1 : 0),
 						LBCore.littleChunkID, 0 , 0x02);
 			}
-			if (worldObj.getBlockId(
+			if (this.worldObj.getBlockId(
 					xCoord + (x >= size ? 1 : 0),
 					yCoord + (y >= size ? 1 : 0),
 					zCoord + (z >= size ? 1 : 0)) == LBCore.littleChunkID) {
-				TileEntityLittleChunk tile = (TileEntityLittleChunk) worldObj
+				TileEntityLittleChunk tile = (TileEntityLittleChunk) this.worldObj
 						.getBlockTileEntity(
 								xCoord + (x >= size ? 1 : 0),
 								yCoord + (y >= size ? 1 : 0),
@@ -374,21 +373,21 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 			}
 			return;
 		} else if (x < 0 | z < 0 | y < 0) {
-			if (worldObj.getBlockId(
+			if (this.worldObj.getBlockId(
 					xCoord - (x < 0 ? 1 : 0),
 					yCoord - (y < 0 ? 1 : 0),
 					zCoord - (z < 0 ? 1 : 0)) == 0) {
-				worldObj.setBlock(
+				this.worldObj.setBlock(
 						xCoord - (x < 0 ? 1 : 0),
 						yCoord - (y < 0 ? 1 : 0),
 						zCoord - (z < 0 ? 1 : 0),
 						LBCore.littleChunkID, 0, 0x02);
 			}
-			if (worldObj.getBlockId(
+			if (this.worldObj.getBlockId(
 					xCoord - (x < 0 ? 1 : 0),
 					yCoord - (y < 0 ? 1 : 0),
 					zCoord - (z < 0 ? 1 : 0)) == LBCore.littleChunkID) {
-				TileEntityLittleChunk tile = (TileEntityLittleChunk) worldObj
+				TileEntityLittleChunk tile = (TileEntityLittleChunk) this.worldObj
 						.getBlockTileEntity(
 								xCoord - (x < 0 ? 1 : 0),
 								yCoord - (y < 0 ? 1 : 0),
@@ -402,17 +401,17 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 			}
 			return;
 		}
-		int lastId = content[x][y][z];
-		int lastData = metadatas[x][y][z];
-		content[x][y][z] = id;
-		metadatas[x][y][z] = metadata;
+		int lastId = this.content[x][y][z];
+		int lastData = this.metadatas[x][y][z];
+		this.content[x][y][z] = id;
+		this.metadatas[x][y][z] = metadata;
 		int blockX = (xCoord << 3) + x, 
 				blockY = (yCoord << 3) + y, 
 				blockZ = (zCoord << 3) + z;
 		boolean lighthandled = false;
 		if (lastId != id) {
 			lighthandled = true;
-			lightcount[lastId == 0 ? 0 : Block.blocksList[lastId]
+			this.lightcount[lastId == 0 ? 0 : Block.blocksList[lastId]
 					.getLightValue(
 							this.getLittleWorld(), 
 							blockX, 
@@ -420,16 +419,16 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 							blockZ)]--;
 			this.getLittleWorld().idModified(
 					lastId,
-					this.xCoord,
-					this.yCoord,
-					this.zCoord,
+					xCoord,
+					yCoord,
+					zCoord,
 					0,
 					x,
 					y,
 					z,
 					id,
 					metadata);
-			lightcount[id == 0 ? 0 : Block.blocksList[id]
+			this.lightcount[id == 0 ? 0 : Block.blocksList[id]
 					.getLightValue(
 							this.getLittleWorld(), 
 							blockX, 
@@ -438,23 +437,25 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 		}
 
 		if (lastData != metadata) {
-			if (!lighthandled)lightcount[lastId == 0 ? 0 : Block.blocksList[lastId]
+			if (!lighthandled)
+				this.lightcount[lastId == 0 ? 0 : Block.blocksList[lastId]
 					.getLightValue(
 							this.getLittleWorld(), 
 							blockX, 
 							blockY,
 							blockZ)]--;
 			this.getLittleWorld().metadataModified(
-					this.xCoord,
-					this.yCoord,
-					this.zCoord,
+					xCoord,
+					yCoord,
+					zCoord,
 					0,
 					x,
 					y,
 					z,
 					id,
 					metadata);
-			if (!lighthandled)lightcount[id == 0 ? 0 : Block.blocksList[id]
+			if (!lighthandled) this.
+				lightcount[id == 0 ? 0 : Block.blocksList[id]
 					.getLightValue(
 							this.getLittleWorld(), 
 							blockX, 
@@ -469,9 +470,9 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 
 	public void setTileEntity(int x, int y, int z, TileEntity tile) {
 		tile.setWorldObj((World) this.getLittleWorld());
-		tile.xCoord = (this.xCoord << 3) + x;
-		tile.yCoord = (this.yCoord << 3) + y;
-		tile.zCoord = (this.zCoord << 3) + z;
+		tile.xCoord = (xCoord << 3) + x;
+		tile.yCoord = (yCoord << 3) + y;
+		tile.zCoord = (zCoord << 3) + z;
 		Block block = Block.blocksList[this.getBlockID(x, y, z)];
 		if (block != null && block.hasTileEntity(this.getBlockMetadata(x, y, z))) {
 			removeTileEntity(x, y, z);
@@ -483,9 +484,9 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 	public TileEntity getTileEntityFromList(int x, int y, int z) {
 		for (TileEntity tile : this.tiles) {
 			if (
-					tile.xCoord == (this.xCoord << 3) + x && 
-					tile.yCoord == (this.yCoord << 3) + y &&
-					tile.zCoord == (this.zCoord << 3) + z	
+					tile.xCoord == (xCoord << 3) + x && 
+					tile.yCoord == (yCoord << 3) + y &&
+					tile.zCoord == (zCoord << 3) + z	
 				) {
 				return tile;
 			}
@@ -515,9 +516,9 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 			tileentity = littleBlock.createTileEntity(this.worldObj,
 					meta);
 			((LittleWorld)this.getLittleWorld()).setBlockTileEntity(
-					((this.xCoord << 3) + x),
-					((this.yCoord << 3) + y),
-					((this.zCoord << 3) + z),
+					(xCoord << 3) + x,
+					(yCoord << 3) + y,
+					(zCoord << 3) + z,
 					tileentity);
 			tileentity = this.getTileEntityFromList(x, y, z);
 		}
@@ -554,19 +555,13 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 
 	@Override
 	public void updateEntity() {
-		for (int i = 0; i < tiles.size(); i++) {
-			TileEntity tile = tiles.get(i);
-			if (tile.worldObj == null || tile.worldObj != getLittleWorld()) {
-				tile.worldObj = (World) getLittleWorld();
-			}
-			tiles.get(i).updateEntity();
-		}
 		if (LBCore.littleBlocksForceUpdate) {
-			for (int x = 0; x < content.length; x++) {
-				for (int y = 0; y < content[x].length; y++) {
-					for (int z = 0; z < content[x][y].length; z++) {
-						if (content[x][y][z] != 0 && Block.blocksList[content[x][y][z]] == null) {
-							content[x][y][z] = 0;
+			for (int x = 0; x < this.content.length; x++) {
+				for (int y = 0; y < this.content[x].length; y++) {
+					for (int z = 0; z < this.content[x][y].length; z++) {
+						if (this.content[x][y][z] != 0 && Block.blocksList[content[x][y][z]] == null) {
+							this.content[x][y][z] = 0;
+							this.removeTileEntity(x, y, z);
 						}
 					}
 				}
@@ -578,25 +573,25 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
 		NBTTagList list = nbttagcompound.getTagList("Content");
-		for (int x = 0; x < content.length; x++) {
-			for (int y = 0; y < content[x].length; y++) {
-				for (int z = 0; z < content[x][y].length; z++) {
-					content[x][y][z] = ((NBTTagInt) list
+		for (int x = 0; x < this.content.length; x++) {
+			for (int y = 0; y < this.content[x].length; y++) {
+				for (int z = 0; z < this.content[x][y].length; z++) {
+					this.content[x][y][z] = ((NBTTagInt) list
 							.tagAt((x << 6) + (y << 3) + z)).data;
 				}
 			}
 		}
 		NBTTagList list2 = nbttagcompound.getTagList("Metadatas");
-		for (int x = 0; x < metadatas.length; x++) {
-			for (int y = 0; y < metadatas[x].length; y++) {
-				for (int z = 0; z < metadatas[x][y].length; z++) {
-					metadatas[x][y][z] = ((NBTTagInt) list2
+		for (int x = 0; x < this.metadatas.length; x++) {
+			for (int y = 0; y < this.metadatas[x].length; y++) {
+				for (int z = 0; z < this.metadatas[x][y].length; z++) {
+					this.metadatas[x][y][z] = ((NBTTagInt) list2
 							.tagAt((x << 6) + (y << 3) + z)).data;
 				}
 			}
 		}
 
-		tiles.clear();
+		this.tiles.clear();
 		NBTTagList tilesTag = nbttagcompound.getTagList("Tiles");
 		for (int i = 0; i < tilesTag.tagCount(); i++) {
 			TileEntity tile = TileEntity
@@ -608,9 +603,9 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 					tile);
 		}
 		
-		NBTTagList LightsTag = nbttagcompound.getTagList("LightLevel");
-		for (int i = 0; i < LightsTag.tagCount(); i++) {
-			this.lightcount[i] = ((NBTTagInt) LightsTag.tagAt(i)).data;
+		NBTTagList lightsTag = nbttagcompound.getTagList("LightLevel");
+		for (int i = 0; i < lightsTag.tagCount(); i++) {
+			this.lightcount[i] = ((NBTTagInt) lightsTag.tagAt(i)).data;
 		}
 	}
 
@@ -618,27 +613,27 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 		NBTTagList list = new NBTTagList();
-		for (int x = 0; x < content.length; x++) {
-			for (int y = 0; y < content[x].length; y++) {
-				for (int z = 0; z < content[x][y].length; z++) {
-					list.appendTag(new NBTTagInt(null, content[x][y][z]));
+		for (int x = 0; x < this.content.length; x++) {
+			for (int y = 0; y < this.content[x].length; y++) {
+				for (int z = 0; z < this.content[x][y].length; z++) {
+					list.appendTag(new NBTTagInt(null, this.content[x][y][z]));
 				}
 			}
 		}
 		nbttagcompound.setTag("Content", list);
 
 		NBTTagList list2 = new NBTTagList();
-		for (int x = 0; x < metadatas.length; x++) {
-			for (int y = 0; y < metadatas[x].length; y++) {
-				for (int z = 0; z < metadatas[x][y].length; z++) {
-					list2.appendTag(new NBTTagInt(null, metadatas[x][y][z]));
+		for (int x = 0; x < this.metadatas.length; x++) {
+			for (int y = 0; y < this.metadatas[x].length; y++) {
+				for (int z = 0; z < this.metadatas[x][y].length; z++) {
+					list2.appendTag(new NBTTagInt(null, this.metadatas[x][y][z]));
 				}
 			}
 		}
 		nbttagcompound.setTag("Metadatas", list2);
 
 		NBTTagList tilesTag = new NBTTagList();
-		for (TileEntity tile : tiles) {
+		for (TileEntity tile : this.tiles) {
 			NBTTagCompound tileTag = new NBTTagCompound();
 			tile.writeToNBT(tileTag);
 			tilesTag.appendTag(tileTag);
@@ -646,8 +641,8 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 		nbttagcompound.setTag("Tiles", tilesTag);
 		
 		NBTTagList lightsTag = new NBTTagList();
-		for (int i = 0; i < lightcount.length; i++) {
-			lightsTag.appendTag(new NBTTagInt(null, lightcount[i]));
+		for (int i = 0; i < this.lightcount.length; i++) {
+			lightsTag.appendTag(new NBTTagInt(null, this.lightcount[i]));
 		}
 		nbttagcompound.setTag("LightLevel", lightsTag);
 	}
@@ -672,7 +667,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 	public Packet getDescriptionPacket() {
 		NBTTagCompound nbttagcompound = new NBTTagCompound();
 		this.writeToNBT(nbttagcompound);
-		Packet packet = new Packet132TileEntityData(this.xCoord, this.yCoord, this.zCoord, 0, nbttagcompound);
+		Packet packet = new Packet132TileEntityData(xCoord, yCoord, zCoord, 0, nbttagcompound);
 		return packet;
 	}
 
@@ -686,7 +681,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 	
 	public List<NBTTagCompound> getTiles() {
 		List<NBTTagCompound> tileList = new ArrayList<NBTTagCompound>();
-		for (TileEntity tile : tiles) {
+		for (TileEntity tile : this.tiles) {
 			NBTTagCompound tileTag = new NBTTagCompound();
 			tile.writeToNBT(tileTag);
 			tileList.add(tileTag);
