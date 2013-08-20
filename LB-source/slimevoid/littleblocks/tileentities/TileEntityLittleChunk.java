@@ -29,7 +29,6 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 	private int content[][][] = new int[size][size][size];
 	private int metadatas[][][] = new int[size][size][size];
 	private List<TileEntity> tiles = new ArrayList<TileEntity>();
-	private int lightcount[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 	@Override
 	public void setWorldObj(World par1World) {
@@ -52,7 +51,6 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 				}
 			}
 		}
-		lightcount[0] = size * size * size;
 	}
 
 	public boolean isEmpty() {
@@ -73,16 +71,30 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 	}
 	
 	public int getLightlevel() {
+		int blockX = (xCoord << 3), 
+				blockY = (yCoord << 3) , 
+				blockZ = (zCoord << 3) ;
+		int lightcount[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		for (int x=0;x<size;x++){
+			for (int y=0;y<size;y++){
+				for (int z=0;z<size;z++){
+					if(Block.blocksList[this.content[x][y][z]]==null){
+						lightcount[0]++;
+					}else{
+					lightcount[Block.blocksList[this.content[x][y][z]].getLightValue(this.getLittleWorld(), blockX+x, blockY+y, blockZ+z)]++;
+					}
+				}
+			}
+		}
+		
+		
 		int calculatedLightLevel = 0;
 		for (int i = 15; i > 0; i--) {
-			if (this.lightcount[i] > 0) {
-				int tempLightLevel = lightcount[i] >= size ? i :
-						MathHelper.ceiling_double_int((
-						(double) i / (double) size) * (double) this.lightcount[i]);
-				if (tempLightLevel > calculatedLightLevel) calculatedLightLevel = tempLightLevel; 
-			}
-		}				
-
+			if (lightcount[i] > 0){				
+				int templightlvl = lightcount[i]>=size?i:MathHelper.ceiling_double_int(((double)i/(double)size) * (double)lightcount[i]);
+				if (templightlvl>calculatedLightLevel)calculatedLightLevel=templightlvl;
+			}			
+		}			
 		return calculatedLightLevel;
 	}
 
@@ -405,18 +417,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 		int lastData = this.metadatas[x][y][z];
 		this.content[x][y][z] = id;
 		this.metadatas[x][y][z] = metadata;
-		int blockX = (xCoord << 3) + x, 
-				blockY = (yCoord << 3) + y, 
-				blockZ = (zCoord << 3) + z;
-		boolean lighthandled = false;
-		if (lastId != id) {
-			lighthandled = true;
-			this.lightcount[lastId == 0 ? 0 : Block.blocksList[lastId]
-					.getLightValue(
-							this.getLittleWorld(), 
-							blockX, 
-							blockY,
-							blockZ)]--;
+		if (lastId != id) {			
 			this.getLittleWorld().idModified(
 					lastId,
 					xCoord,
@@ -428,22 +429,9 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 					z,
 					id,
 					metadata);
-			this.lightcount[id == 0 ? 0 : Block.blocksList[id]
-					.getLightValue(
-							this.getLittleWorld(), 
-							blockX, 
-							blockY,
-							blockZ)]++;
 		}
 
 		if (lastData != metadata) {
-			if (!lighthandled)
-				this.lightcount[lastId == 0 ? 0 : Block.blocksList[lastId]
-					.getLightValue(
-							this.getLittleWorld(), 
-							blockX, 
-							blockY,
-							blockZ)]--;
 			this.getLittleWorld().metadataModified(
 					xCoord,
 					yCoord,
@@ -454,13 +442,6 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 					z,
 					id,
 					metadata);
-			if (!lighthandled) this.
-				lightcount[id == 0 ? 0 : Block.blocksList[id]
-					.getLightValue(
-							this.getLittleWorld(), 
-							blockX, 
-							blockY,
-							blockZ)]++;
 		}
 	}
 
@@ -602,11 +583,6 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 					tile.zCoord & 7,
 					tile);
 		}
-		
-		NBTTagList lightsTag = nbttagcompound.getTagList("LightLevel");
-		for (int i = 0; i < lightsTag.tagCount(); i++) {
-			this.lightcount[i] = ((NBTTagInt) lightsTag.tagAt(i)).data;
-		}
 	}
 
 	@Override
@@ -639,12 +615,6 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 			tilesTag.appendTag(tileTag);
 		}
 		nbttagcompound.setTag("Tiles", tilesTag);
-		
-		NBTTagList lightsTag = new NBTTagList();
-		for (int i = 0; i < this.lightcount.length; i++) {
-			lightsTag.appendTag(new NBTTagInt(null, this.lightcount[i]));
-		}
-		nbttagcompound.setTag("LightLevel", lightsTag);
 	}
 
 	public void clearContents() {
