@@ -73,18 +73,14 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 	}
 	
 	public int getLightlevel() {
-		int sumlightlevels =0;
-		int sumoflightsources=0;
+		int calculatedLightLevel = 0;
 		for (int i = 15; i > 0; i--) {
-			if (lightcount[i] > 0){
-				sumlightlevels+= lightcount[i]*i;
-				sumoflightsources+= lightcount[i];
-			}
-			
-		}
-		int averageLBLight = sumoflightsources==0?0:MathHelper.ceiling_double_int(((double)sumlightlevels/(double)sumoflightsources)) > 15?15:MathHelper.ceiling_double_int((double)sumlightlevels/(double)sumoflightsources);
-			
-		return lightcount[averageLBLight]>=size?averageLBLight:MathHelper.ceiling_double_int(((double)averageLBLight/(double)size) * (double)lightcount[averageLBLight]);
+			if (lightcount[i] > 0){				
+				int templightlvl = lightcount[i]>=size?i:MathHelper.ceiling_double_int(((double)i/(double)size) * (double)lightcount[i]);
+				if (templightlvl>calculatedLightLevel)calculatedLightLevel=templightlvl;
+			}			
+		}			
+		return calculatedLightLevel;
 	}
 
 	public ILittleWorld getLittleWorld() {
