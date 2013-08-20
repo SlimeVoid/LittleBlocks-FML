@@ -82,7 +82,9 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 			}
 			
 		}
-		return sumoflightsources==0?0:MathHelper.ceiling_double_int((double)sumlightlevels/(double)sumoflightsources) > 15?15:MathHelper.ceiling_double_int((double)sumlightlevels/(double)sumoflightsources);
+		int averageLBLight = sumoflightsources==0?0:MathHelper.ceiling_double_int(((double)sumlightlevels/(double)sumoflightsources)) > 15?15:MathHelper.ceiling_double_int((double)sumlightlevels/(double)sumoflightsources);
+			
+		return lightcount[averageLBLight]>=size?averageLBLight:averageLBLight/size * lightcount[averageLBLight];
 	}
 
 	public ILittleWorld getLittleWorld() {
