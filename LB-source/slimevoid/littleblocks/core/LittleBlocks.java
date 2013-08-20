@@ -51,6 +51,6 @@ public class LittleBlocks {
 
 	@EventHandler
 	public void LittleBlocksPostInit(FMLPostInitializationEvent event) {
-		CoreLib.OPTIFINE_INSTALLED = FMLClientHandler.instance().hasOptifine();
+		//CoreLib.OPTIFINE_INSTALLED = FMLClientHandler.instance().hasOptifine();
 	}
 }

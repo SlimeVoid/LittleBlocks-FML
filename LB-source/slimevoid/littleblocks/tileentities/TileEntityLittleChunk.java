@@ -73,11 +73,16 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 	}
 	
 	public int getLightlevel() {
+		int sumlightlevels =0;
+		int sumoflightsources=0;
 		for (int i = 15; i > 0; i--) {
-			if (lightcount[i] > 0)
-				return MathHelper.ceiling_double_int((double) i / (double)(size/2));
+			if (lightcount[i] > 0){
+				sumlightlevels+= lightcount[i]*i;
+				sumoflightsources+= lightcount[i];
+			}
+			
 		}
-		return 0;
+		return MathHelper.ceiling_double_int((double)sumlightlevels/(double)sumoflightsources) > 15?15:MathHelper.ceiling_double_int((double)sumlightlevels/(double)sumoflightsources);
 	}
 
 	public ILittleWorld getLittleWorld() {
@@ -402,7 +407,9 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 		int blockX = (xCoord << 3) + x, 
 				blockY = (yCoord << 3) + y, 
 				blockZ = (zCoord << 3) + z;
+		boolean lighthandled = false;
 		if (lastId != id) {
+			lighthandled = true;
 			lightcount[lastId == 0 ? 0 : Block.blocksList[lastId]
 					.getLightValue(
 							this.getLittleWorld(), 
@@ -429,7 +436,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 		}
 
 		if (lastData != metadata) {
-			lightcount[lastId == 0 ? 0 : Block.blocksList[lastId]
+			if (!lighthandled)lightcount[lastId == 0 ? 0 : Block.blocksList[lastId]
 					.getLightValue(
 							this.getLittleWorld(), 
 							blockX, 
@@ -445,7 +452,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 					z,
 					id,
 					metadata);
-			lightcount[id == 0 ? 0 : Block.blocksList[id]
+			if (!lighthandled)lightcount[id == 0 ? 0 : Block.blocksList[id]
 					.getLightValue(
 							this.getLittleWorld(), 
 							blockX, 
