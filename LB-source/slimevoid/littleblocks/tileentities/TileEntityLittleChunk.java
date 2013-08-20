@@ -13,6 +13,7 @@ import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import slimevoid.littleblocks.api.ILittleBlocks;
 import slimevoid.littleblocks.api.ILittleWorld;
@@ -28,6 +29,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 	private int content[][][] = new int[size][size][size];
 	private int metadatas[][][] = new int[size][size][size];
 	private List<TileEntity> tiles = new ArrayList<TileEntity>();
+	private int lightcount[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 	@Override
 	public void setWorldObj(World par1World) {
@@ -50,6 +52,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 				}
 			}
 		}
+		lightcount[0] = size * size * size;
 	}
 
 	public boolean isEmpty() {
@@ -67,6 +70,14 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 
 	public int[][][] getContents() {
 		return this.content;
+	}
+	
+	public int getLightlevel() {
+		for (int i = 15; i > 0; i--) {
+			if (lightcount[i] > 0)
+				return MathHelper.ceiling_double_int((double) i / (double)(size/2));
+		}
+		return 0;
 	}
 
 	public ILittleWorld getLittleWorld() {
@@ -388,7 +399,16 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 		int lastData = metadatas[x][y][z];
 		content[x][y][z] = id;
 		metadatas[x][y][z] = metadata;
+		int blockX = (xCoord << 3) + x, 
+				blockY = (yCoord << 3) + y, 
+				blockZ = (zCoord << 3) + z;
 		if (lastId != id) {
+			lightcount[lastId == 0 ? 0 : Block.blocksList[lastId]
+					.getLightValue(
+							this.getLittleWorld(), 
+							blockX, 
+							blockY,
+							blockZ)]--;
 			this.getLittleWorld().idModified(
 					lastId,
 					this.xCoord,
@@ -400,9 +420,21 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 					z,
 					id,
 					metadata);
+			lightcount[id == 0 ? 0 : Block.blocksList[id]
+					.getLightValue(
+							this.getLittleWorld(), 
+							blockX, 
+							blockY,
+							blockZ)]++;
 		}
 
 		if (lastData != metadata) {
+			lightcount[lastId == 0 ? 0 : Block.blocksList[lastId]
+					.getLightValue(
+							this.getLittleWorld(), 
+							blockX, 
+							blockY,
+							blockZ)]--;
 			this.getLittleWorld().metadataModified(
 					this.xCoord,
 					this.yCoord,
@@ -413,6 +445,12 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 					z,
 					id,
 					metadata);
+			lightcount[id == 0 ? 0 : Block.blocksList[id]
+					.getLightValue(
+							this.getLittleWorld(), 
+							blockX, 
+							blockY,
+							blockZ)]++;
 		}
 	}
 
@@ -560,6 +598,11 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 					tile.zCoord & 7,
 					tile);
 		}
+		
+		NBTTagList LightsTag = nbttagcompound.getTagList("LightLevel");
+		for (int i = 0; i < LightsTag.tagCount(); i++) {
+			this.lightcount[i] = ((NBTTagInt) LightsTag.tagAt(i)).data;
+		}
 	}
 
 	@Override
@@ -592,6 +635,12 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 			tilesTag.appendTag(tileTag);
 		}
 		nbttagcompound.setTag("Tiles", tilesTag);
+		
+		NBTTagList lightsTag = new NBTTagList();
+		for (int i = 0; i < lightcount.length; i++) {
+			lightsTag.appendTag(new NBTTagInt(null, lightcount[i]));
+		}
+		nbttagcompound.setTag("LightLevel", lightsTag);
 	}
 
 	public void clearContents() {
