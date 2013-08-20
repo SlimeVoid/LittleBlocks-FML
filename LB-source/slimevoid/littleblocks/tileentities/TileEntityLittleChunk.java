@@ -52,6 +52,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 				}
 			}
 		}
+		lightcount[0] = size * size * size;
 	}
 
 	public boolean isEmpty() {
