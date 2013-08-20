@@ -1096,4 +1096,9 @@ public class LittleWorld extends World implements ILittleWorld {
 			this.getRealWorld().markBlockForRenderUpdate(x, y, z);
 		}
 	}
+
+	@Override
+	public void updateLightByType(EnumSkyBlock enumSkyBlock, int x, int y, int z) {
+		this.getRealWorld().updateLightByType(enumSkyBlock, x >> 3, y >> 3, z >> 3);
+	}
 }
