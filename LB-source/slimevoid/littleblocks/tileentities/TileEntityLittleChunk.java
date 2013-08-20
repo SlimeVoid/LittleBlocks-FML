@@ -74,7 +74,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 	public int getLightlevel() {
 		for (int i = 15; i > 0; i--) {
 			if (lightcount[i] > 0)
-				return MathHelper.ceiling_double_int((double) i / 2D);
+				return MathHelper.ceiling_double_int((double) i / (double)(size/2));
 		}
 		return 0;
 	}
