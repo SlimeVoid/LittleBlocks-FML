@@ -599,6 +599,11 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 					tile.zCoord & 7,
 					tile);
 		}
+		
+		NBTTagList LightsTag = nbttagcompound.getTagList("LightLevel");
+		for (int i = 0; i < LightsTag.tagCount(); i++) {
+			this.lightcount[i] = ((NBTTagInt) LightsTag.tagAt(i)).data;
+		}
 	}
 
 	@Override
@@ -631,6 +636,12 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 			tilesTag.appendTag(tileTag);
 		}
 		nbttagcompound.setTag("Tiles", tilesTag);
+		
+		NBTTagList lightsTag = new NBTTagList();
+		for (int i = 0; i < lightcount.length; i++) {
+			lightsTag.appendTag(new NBTTagInt(null, lightcount[i]));
+		}
+		nbttagcompound.setTag("LightLevel", lightsTag);
 	}
 
 	public void clearContents() {
