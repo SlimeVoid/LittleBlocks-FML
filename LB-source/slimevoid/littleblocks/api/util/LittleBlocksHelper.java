@@ -5,6 +5,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import slimevoid.littleblocks.api.ILBCommonProxy;
 import slimevoid.littleblocks.api.ILittleBlocks;
@@ -50,28 +51,30 @@ public class LittleBlocksHelper implements ISlimevoidHelper {
 		return 0;
 	}
 
-	public TileEntity getBlockTileEntity(World world, int x, int y, int z) {
+	@Override
+	public TileEntity getBlockTileEntity(IBlockAccess world, int x, int y, int z) {
 		if (world != null) {
 			return getWorld(world, x, y, z).getBlockTileEntity(x, y, z);	
 		}
 		return null; 
 	}
 	
+	@Override
 	public boolean targetExists(World world, int x, int y, int z) {
 		if (world != null) {
-			return getWorld(world, x, y, z).blockExists(x, y, z);
+			return ((World) getWorld(world, x, y, z)).blockExists(x, y, z);
 		}
 		return false;
 	}
 
-	private World getWorld(World world, int x, int y, int z) {
+	private IBlockAccess getWorld(IBlockAccess world, int x, int y, int z) {
 		if (isLittleBlock(world, x, y, z)) {
 			return (World)((ILBCommonProxy)proxy).getLittleWorld(world, false);
 		}
 		return world;
 	}
 
-	private boolean isLittleBlock(World world, int x, int y, int z) {
+	private boolean isLittleBlock(IBlockAccess world, int x, int y, int z) {
 		if (world instanceof ILittleWorld) {
 			return true;
 		}

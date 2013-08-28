@@ -8,6 +8,7 @@ import net.minecraft.network.packet.NetHandler;
 import net.minecraft.network.packet.Packet1Login;
 import net.minecraft.src.ModLoader;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.DimensionManager;
@@ -95,7 +96,8 @@ public class ClientProxy extends CommonProxy {
 	}
 
 	@Override
-	public ILittleWorld getLittleWorld(World world, boolean needsRefresh) {
+	public ILittleWorld getLittleWorld(IBlockAccess iblockaccess, boolean needsRefresh) {
+		World world = (World) iblockaccess;
 		if (world != null) {
 			if (world.isRemote) {
 				if (LBCore.littleWorldClient == null || LBCore.littleWorldClient
