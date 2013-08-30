@@ -3,7 +3,6 @@ package slimevoid.littleblocks.client.render.blocks;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.client.MinecraftForgeClient;
 import slimevoid.littleblocks.blocks.BlockLittleChunk;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;

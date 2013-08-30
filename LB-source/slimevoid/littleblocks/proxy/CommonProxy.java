@@ -23,6 +23,7 @@ import slimevoid.littleblocks.handlers.CommonTickHandler;
 import slimevoid.littleblocks.network.CommonPacketHandler;
 import slimevoid.littleblocks.world.LittleWorldServer;
 import slimevoidlib.IPacketHandling;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
@@ -73,7 +74,7 @@ public class CommonProxy implements ILBCommonProxy {
 	public IPacketHandling getPacketHandler() {
 		return null;
 	}
-
+	
 	@Override
 	public ILittleWorld getLittleWorld(IBlockAccess iblockaccess, boolean needsRefresh) {
 		World world = (World) iblockaccess;
@@ -81,7 +82,6 @@ public class CommonProxy implements ILBCommonProxy {
 			if (LBCore.littleDimensionServer == -1) {
 				this.setLittleDimension(
 						world,
-						LBCore.configuration,
 						DimensionManager.getNextFreeDimId());
 				LBCore.littleProviderTypeServer = DimensionManager
 						.getProviderType(world.provider.dimensionId);
@@ -93,7 +93,6 @@ public class CommonProxy implements ILBCommonProxy {
 			} else if (LBCore.littleDimensionServer == -2) {
 				this.setLittleDimension(
 						world,
-						LBCore.configuration,
 						DimensionManager.getNextFreeDimId());
 				LBCore.littleProviderTypeServer = DimensionManager
 						.getProviderType(world.provider.dimensionId);
@@ -111,13 +110,13 @@ public class CommonProxy implements ILBCommonProxy {
 	}
 
 	@Override
-	public void setLittleDimension(World world, Configuration configuration, int nextFreeDimId) {
-		configuration.load();
-		LBCore.littleDimensionServer = configuration.get(
+	public void setLittleDimension(World world, int nextFreeDimId) {
+		ConfigurationLib.getConfiguration().load();
+		LBCore.littleDimensionServer = ConfigurationLib.getConfiguration().get(
 				Configuration.CATEGORY_GENERAL,
 				"littleDimension",
 				nextFreeDimId).getInt();
-		configuration.save();
+		ConfigurationLib.getConfiguration().save();
 	}
 
 	@Override
@@ -135,55 +134,37 @@ public class CommonProxy implements ILBCommonProxy {
 	}
 
 	@Override
-	public void registerConfigurationProperties() {
-		ConfigurationLib.CommonConfig();
-	}
-
-	@Override
 	public void registerConfigurationProperties(File configFile) {
-		// TODO :: Auto-generated method stub
-		
-	}
-
-	@Override
-	public boolean isClient(World world) {
-		// TODO :: Auto-generated method stub
-		return false;
+		ConfigurationLib.CommonConfig(configFile);
 	}
 
 	@Override
 	public void playerLoggedIn(Player player, NetHandler netHandler, INetworkManager manager) {
-		// TODO :: Auto-generated method stub
-		
 	}
 
 	@Override
 	public String connectionReceived(NetLoginHandler netHandler, INetworkManager manager) {
-		// TODO :: Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void connectionOpened(NetHandler netClientHandler, String server, int port, INetworkManager manager) {
-		// TODO :: Auto-generated method stub
-		
 	}
 
 	@Override
 	public void connectionOpened(NetHandler netClientHandler, MinecraftServer server, INetworkManager manager) {
-		// TODO :: Auto-generated method stub
-		
 	}
 
 	@Override
 	public void connectionClosed(INetworkManager manager) {
-		// TODO :: Auto-generated method stub
-		
 	}
 
 	@Override
 	public void clientLoggedIn(NetHandler clientHandler, INetworkManager manager, Packet1Login login) {
-		// TODO :: Auto-generated method stub
-		
+	}
+
+	@Override
+	public boolean isClient(World world) {
+		return FMLCommonHandler.instance().getSide() == Side.CLIENT || (world != null && world.isRemote);
 	}
 }

@@ -43,11 +43,13 @@ public class LittleBlocks {
 
 	@PreInit
 	public void LittleBlocksPreInit(FMLPreInitializationEvent event) {
-		LBInit.initialize();
+		proxy.registerConfigurationProperties(event.getSuggestedConfigurationFile());
+		proxy.preInit();
 	}
 
 	@Init
 	public void LittleBlocksInit(FMLInitializationEvent event) {
+		LBInit.initialize();
 	}
 
 	@PostInit

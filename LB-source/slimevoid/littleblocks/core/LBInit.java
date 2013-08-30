@@ -11,9 +11,6 @@
  */
 package slimevoid.littleblocks.core;
 
-import java.io.File;
-
-import net.minecraftforge.common.Configuration;
 import slimevoid.littleblocks.api.util.LittleBlocksHelper;
 import slimevoid.littleblocks.core.lib.EnumWandAction;
 import slimevoid.littleblocks.core.lib.CoreLib;
@@ -23,20 +20,14 @@ public class LBInit {
 	private static boolean initialized = false;
 
 	public static void initialize() {
-		if (initialized)
+		if (initialized) {
 			return;
+		}
 		initialized = true;
-		LittleBlocks.proxy.preInit();
-		LBCore.configFile = new File(
-				LittleBlocks.proxy.getMinecraftDir(),
-					"config/LittleBlocks.cfg");
-		LBCore.configuration = new Configuration(LBCore.configFile);
 		load();
 	}
 
-	public static void load() {
-		LittleBlocks.proxy.registerConfigurationProperties();
-		
+	public static void load() {		
 		SlimevoidCore.console(CoreLib.MOD_ID, "Registering names...");
 		LBCore.registerNames();
 		

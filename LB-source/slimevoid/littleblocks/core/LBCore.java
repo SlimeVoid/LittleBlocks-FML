@@ -1,7 +1,5 @@
 package slimevoid.littleblocks.core;
 
-import java.io.File;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -9,7 +7,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
-import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
 import slimevoid.littleblocks.blocks.BlockLittleChunk;
 import slimevoid.littleblocks.blocks.core.BlockLittleChunkBucketEvent;
@@ -29,8 +26,6 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class LBCore {
-	public static File configFile;
-	public static Configuration configuration;
 	public static boolean littleBlocksForceUpdate;
 	public static String loggerLevel = "INFO";
 	public static Block littleChunk;

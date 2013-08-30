@@ -1,8 +1,9 @@
 package slimevoid.littleblocks.client.proxy;
 
+import java.io.File;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.NetClientHandler;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.NetHandler;
 import net.minecraft.network.packet.Packet1Login;
@@ -88,17 +89,6 @@ public class ClientProxy extends CommonProxy {
 		return null;
 	}
 
-	@Override
-	public void clientLoggedIn(NetHandler handler, INetworkManager manager, Packet1Login login) {
-		World world = getWorld(handler);
-		if (world != null) {
-			PacketLittleBlocksSettings packet = new PacketLittleBlocksSettings();
-			packet.setCommand(CommandLib.FETCH);
-			PacketDispatcher.sendPacketToServer(packet.getPacket());
-		}
-	}
-
-	@Override
 	public ILittleWorld getLittleWorld(IBlockAccess iblockaccess, boolean needsRefresh) {
 		World world = (World) iblockaccess;
 		if (world != null) {
@@ -108,7 +98,6 @@ public class ClientProxy extends CommonProxy {
 					if (LBCore.littleDimensionClient < 0) {
 						this.setLittleDimension(
 								world,
-								LBCore.configuration,
 								DimensionManager.getNextFreeDimId());
 						LBCore.littleProviderTypeClient = DimensionManager
 								.getProviderType(world.provider.dimensionId);
@@ -135,15 +124,15 @@ public class ClientProxy extends CommonProxy {
 	}
 
 	@Override
-	public void setLittleDimension(World world, Configuration configuration, int nextFreeDimId) {
-		configuration.load();
-		LBCore.littleDimensionClient = configuration.get(
+	public void setLittleDimension(World world, int nextFreeDimId) {
+		ConfigurationLib.getConfiguration().load();
+		LBCore.littleDimensionClient = ConfigurationLib.getConfiguration().get(
 				Configuration.CATEGORY_GENERAL,
 				"littleDimensionClient",
 				nextFreeDimId).getInt();
-		configuration.save();
+		ConfigurationLib.getConfiguration().save();
 		if (!world.isRemote) {
-			super.setLittleDimension(world, configuration, nextFreeDimId);
+			super.setLittleDimension(world, nextFreeDimId);
 		}
 	}
 
@@ -166,8 +155,18 @@ public class ClientProxy extends CommonProxy {
 	}
 
 	@Override
-	public void registerConfigurationProperties() {
-		super.registerConfigurationProperties();
-		ConfigurationLib.ClientConfig();
+	public void registerConfigurationProperties(File configFile) {
+		super.registerConfigurationProperties(configFile);
+		ConfigurationLib.ClientConfig(configFile);
+	}
+
+	@Override
+	public void clientLoggedIn(NetHandler clientHandler, INetworkManager manager, Packet1Login login) {
+		World world = ((NetClientHandler) clientHandler).getPlayer().worldObj;
+		if (world != null) {
+			PacketLittleBlocksSettings packet = new PacketLittleBlocksSettings();
+			packet.setCommand(CommandLib.FETCH);
+			PacketDispatcher.sendPacketToServer(packet.getPacket());
+		}
 	}
 }

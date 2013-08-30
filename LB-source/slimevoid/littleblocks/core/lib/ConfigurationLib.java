@@ -1,5 +1,7 @@
 package slimevoid.littleblocks.core.lib;
 
+import java.io.File;
+
 import net.minecraftforge.common.Configuration;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.LoggerLittleBlocks;
@@ -10,17 +12,32 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class ConfigurationLib {
 	
-	@SideOnly(Side.CLIENT)
-	public static void ClientConfig() {
-		
+	private static File configurationFile;
+	private static Configuration configuration;
+	
+	public static Configuration getConfiguration() {
+		return configuration;
 	}
 	
-	public static void CommonConfig() {
-		LBCore.configuration.load();
+	@SideOnly(Side.CLIENT)
+	public static void ClientConfig(File configFile) {
+		if (configurationFile == null) {
+			configurationFile = configFile;
+			configuration = new Configuration(configFile);
+		}
+	}
+	
+	public static void CommonConfig(File configFile) {
+		if (configurationFile == null) {
+			configurationFile = configFile;
+			configuration = new Configuration(configFile);
+		}
+		
+		configuration.load();
 		
 		// Illegal blocks
 		// Parse the list of illegal blocks separated by ;
-		String disallowedBlockIDs[] = LBCore.configuration.get(
+		String disallowedBlockIDs[] = configuration.get(
 				Configuration.CATEGORY_BLOCK,
 				"disallowedBlockIDs",
 				"").getString().split("\\;", -1);
@@ -29,7 +46,7 @@ public class ConfigurationLib {
 				BlockUtil.registerDisallowedBlockID(Integer.valueOf(disallowedBlockIDs[i]));
 			}
 		}
-		String disallowedItemIDs[] = LBCore.configuration.get(
+		String disallowedItemIDs[] = configuration.get(
 				Configuration.CATEGORY_ITEM,
 				"disallowedItemIDs",
 				"").getString().split("\\;", -1);
@@ -39,36 +56,37 @@ public class ConfigurationLib {
 			}
 		}
 		
-		LBCore.littleChunkID = LBCore.configuration.get(
+		LBCore.littleChunkID = configuration.get(
 				Configuration.CATEGORY_BLOCK,
 				"littleChunkID",
 				1150).getInt();
-		LBCore.littleBlocksWandID = LBCore.configuration.get(
+		LBCore.littleBlocksWandID = configuration.get(
 				Configuration.CATEGORY_ITEM,
 				"littleBlocksWandID",
 				29999).getInt();
-		LBCore.littleBlocksCollectionID = LBCore.configuration.get(
+		LBCore.littleBlocksCollectionID = configuration.get(
 				Configuration.CATEGORY_GENERAL,
 				"littleBlocksCollectionID",
 				EntityRegistry.findGlobalUniqueEntityId()).getInt();
-		LBCore.littleBlocksClip = LBCore.configuration.get(
+		LBCore.littleBlocksClip = configuration.get(
 				Configuration.CATEGORY_GENERAL,
 				"littleBlocksClip",
 				true).getBoolean(true);
-		LBCore.littleBlocksForceUpdate = LBCore.configuration.get(
+		LBCore.littleBlocksForceUpdate = configuration.get(
 				Configuration.CATEGORY_GENERAL,
 				"littleBlocksForceUpdate",
 				false).getBoolean(false);
-		LBCore.renderingMethod = LBCore.configuration.get(
+		LBCore.renderingMethod = configuration.get(
 				Configuration.CATEGORY_GENERAL,
 				"renderingMethod",
 				0).getInt();
 		LBCore.renderType = RenderingRegistry.getNextAvailableRenderId();
-		LBCore.loggerLevel = LBCore.configuration.get(
+		LBCore.loggerLevel = configuration.get(
 				Configuration.CATEGORY_GENERAL,
 				"loggerLevel",
 				"INFO").getString();
-		LBCore.configuration.save();
+		configuration.save();
+		
 		LoggerLittleBlocks.getInstance("LittleBlocksConfig").setFilterLevel(LBCore.loggerLevel);
 	}
 
