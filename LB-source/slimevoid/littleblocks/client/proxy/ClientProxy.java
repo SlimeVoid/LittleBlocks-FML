@@ -69,10 +69,6 @@ public class ClientProxy extends CommonProxy {
 	}
 
 	@Override
-	public void displayTileEntityGui(EntityPlayer entityplayer, TileEntity tileentity) {
-	}
-
-	@Override
 	public void registerTickHandler() {
 		LBCore.littleDimensionClient = -1;
 		LBCore.littleProviderTypeClient = -1;
@@ -85,8 +81,15 @@ public class ClientProxy extends CommonProxy {
 		TickRegistry.registerTickHandler(new ClientTickHandler(), Side.CLIENT);
 	}
 
+	public World getWorld(NetHandler handler) {
+		if (handler instanceof NetClientHandler) {
+			return ((NetClientHandler) handler).getPlayer().worldObj;
+		}
+		return null;
+	}
+
 	@Override
-	public void login(NetHandler handler, INetworkManager manager, Packet1Login login) {
+	public void clientLoggedIn(NetHandler handler, INetworkManager manager, Packet1Login login) {
 		World world = getWorld(handler);
 		if (world != null) {
 			PacketLittleBlocksSettings packet = new PacketLittleBlocksSettings();
@@ -127,24 +130,6 @@ public class ClientProxy extends CommonProxy {
 			} else {
 				return super.getLittleWorld(world, needsRefresh);
 			}
-		}
-		return null;
-	}
-
-	@Override
-	public World getWorld() {
-		return ModLoader.getMinecraftInstance().theWorld;
-	}
-
-	@Override
-	public EntityPlayer getPlayer() {
-		return ModLoader.getMinecraftInstance().thePlayer;
-	}
-
-	@Override
-	public World getWorld(NetHandler handler) {
-		if (handler instanceof NetClientHandler) {
-			return ((NetClientHandler) handler).getPlayer().worldObj;
 		}
 		return null;
 	}

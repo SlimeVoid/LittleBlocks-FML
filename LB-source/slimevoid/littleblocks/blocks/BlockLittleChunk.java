@@ -42,7 +42,7 @@ import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
 import slimevoid.littleblocks.items.ItemLittleBlocksWand;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocksCollection;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
-import slimevoidlib.util.SlimevoidHelper;
+import slimevoidlib.util.helpers.SlimevoidHelper;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.registry.LanguageRegistry;

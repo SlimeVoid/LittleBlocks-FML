@@ -13,7 +13,7 @@ import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 import slimevoidlib.ICommonProxy;
 import slimevoidlib.ISlimevoidHelper;
-import slimevoidlib.util.SlimevoidHelper;
+import slimevoidlib.util.helpers.SlimevoidHelper;
 
 public class LittleBlocksHelper implements ISlimevoidHelper {
 	
