@@ -22,7 +22,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemInWorldManager;
 import net.minecraft.item.ItemStack;
-import net.minecraft.src.ModLoader;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MovingObjectPosition;
@@ -43,6 +42,7 @@ import slimevoid.littleblocks.items.ItemLittleBlocksWand;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocksCollection;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 import slimevoidlib.util.helpers.SlimevoidHelper;
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.registry.LanguageRegistry;
@@ -144,9 +144,8 @@ public class BlockLittleChunk extends BlockContainer {
 					.getBlockTileEntity(x, y, z);
 			EntityItemLittleBlocksCollection collection = new EntityItemLittleBlocksCollection(world, x, y, z, new ItemStack(LBCore.littleChunk));
 			if (!tile.isEmpty()) {
-				if (FMLCommonHandler.instance().getSide() == Side.CLIENT && ModLoader
-						.getMinecraftInstance().playerController
-						.isInCreativeMode()) {
+				if (FMLCommonHandler.instance().getSide() == Side.CLIENT &&
+					FMLClientHandler.instance().getClient().playerController.isInCreativeMode()) {
 					this.onBlockClicked(world, x, y, z, entityplayer);
 					return false;
 				} else if (entityplayer.capabilities.isCreativeMode) {

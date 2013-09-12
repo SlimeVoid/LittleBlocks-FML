@@ -4,8 +4,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockFluid;
 import net.minecraft.client.renderer.RenderEngine;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.src.ModLoader;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.common.ForgeDirection;
@@ -13,6 +11,8 @@ import net.minecraftforge.event.ForgeSubscribe;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+
+import cpw.mods.fml.client.FMLClientHandler;
 
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.lib.TextureLib;
@@ -48,7 +48,7 @@ public class DrawCopierHighlight {
         float yShift = 1F;
         float zShift = 1F;
 
-        World world = ModLoader.getMinecraftInstance().theWorld;
+        World world = FMLClientHandler.instance().getClient().theWorld;
         if (this.shouldDoDraw(world, event.target.blockX, event.target.blockY, event.target.blockZ)) {
         	xShift = 0;
         	yShift = 0;
