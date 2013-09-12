@@ -15,7 +15,6 @@ import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import slimevoid.littleblocks.api.ILittleWorld;
-import slimevoid.littleblocks.client.handlers.ClientTickHandler;
 import slimevoid.littleblocks.client.handlers.DrawCopierHighlight;
 import slimevoid.littleblocks.client.network.ClientPacketHandler;
 import slimevoid.littleblocks.client.render.blocks.LittleBlocksRenderer;
@@ -28,6 +27,7 @@ import slimevoid.littleblocks.core.lib.PacketLib;
 import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocksSettings;
 import slimevoid.littleblocks.proxy.CommonProxy;
+import slimevoid.littleblocks.tickhandlers.LittleWorldTickHandler;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 import slimevoid.littleblocks.world.LittleWorld;
 import cpw.mods.fml.client.registry.ClientRegistry;
@@ -46,6 +46,8 @@ public class ClientProxy extends CommonProxy {
 		super.preInit();
 		ClientPacketHandler.init();
 		PacketLib.registerClientPacketHandlers();
+		LBCore.littleDimensionClient = -1;
+		LBCore.littleProviderTypeClient = -1;
 	}
 
 	@Override
@@ -71,15 +73,7 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void registerTickHandler() {
-		LBCore.littleDimensionClient = -1;
-		LBCore.littleProviderTypeClient = -1;
-		if (FMLCommonHandler.instance().getSide().isClient() && ModLoader
-				.getMinecraftInstance()
-					.isSingleplayer()) {
-			LBCore.littleDimensionServer = -1;
-			LBCore.littleProviderTypeServer = -1;
-		}
-		TickRegistry.registerTickHandler(new ClientTickHandler(), Side.CLIENT);
+		TickRegistry.registerTickHandler(new LittleWorldTickHandler(), Side.CLIENT);
 	}
 
 	public World getWorld(NetHandler handler) {
@@ -134,11 +128,6 @@ public class ClientProxy extends CommonProxy {
 		if (!world.isRemote) {
 			super.setLittleDimension(world, nextFreeDimId);
 		}
-	}
-
-	@Override
-	public int getLittleDimension() {
-		return LBCore.littleDimensionClient;
 	}
 
 	@Override

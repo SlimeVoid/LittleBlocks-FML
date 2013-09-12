@@ -1,5 +1,7 @@
 package slimevoid.littleblocks.core;
 
+import java.util.HashMap;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -32,7 +34,7 @@ public class LBCore {
 	public static Item littleBlocksWand;
 	@SideOnly(Side.CLIENT)
 	public static LittleWorld littleWorldClient;
-	public static LittleWorld littleWorldServer;
+	public static HashMap<Integer, LittleWorld> littleWorldServer = new HashMap<Integer, LittleWorld>();
 	public static int littleChunkID;
 	public static int littleBlocksWandID;
 	public static int littleBlocksCollectionID;
@@ -50,9 +52,10 @@ public class LBCore {
 	@SideOnly(Side.CLIENT)
 	public static WorldProvider littleProviderClient;
 
-	public static int littleDimensionServer;
-	public static int littleProviderTypeServer;
-	public static WorldProvider littleProviderServer;
+	// First Integer value is the 'RealWorld' Dimension ID
+	public static HashMap<Integer, Integer> littleDimensionServer = new HashMap<Integer, Integer>();
+	public static HashMap<Integer, Integer> littleProviderTypeServer = new HashMap<Integer, Integer>();
+	public static HashMap<Integer, WorldProvider> littleProviderServer = new HashMap<Integer, WorldProvider>();
 
 	public static void registerItems() {
 		littleChunk = new BlockLittleChunk(

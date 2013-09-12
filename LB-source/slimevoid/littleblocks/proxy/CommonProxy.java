@@ -1,6 +1,7 @@
 package slimevoid.littleblocks.proxy;
 
 import java.io.File;
+import java.util.Iterator;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetworkManager;
@@ -19,8 +20,8 @@ import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
 import slimevoid.littleblocks.core.lib.PacketLib;
-import slimevoid.littleblocks.handlers.CommonTickHandler;
 import slimevoid.littleblocks.network.CommonPacketHandler;
+import slimevoid.littleblocks.tickhandlers.LittleWorldTickHandler;
 import slimevoid.littleblocks.world.LittleWorldServer;
 import slimevoidlib.IPacketHandling;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -65,9 +66,7 @@ public class CommonProxy implements ILBCommonProxy {
 
 	@Override
 	public void registerTickHandler() {
-		LBCore.littleDimensionServer = -1;
-		LBCore.littleProviderTypeServer = -1;
-		TickRegistry.registerTickHandler(new CommonTickHandler(), Side.SERVER);
+		TickRegistry.registerTickHandler(new LittleWorldTickHandler(), Side.SERVER);
 	}
 
 	@Override
@@ -77,59 +76,69 @@ public class CommonProxy implements ILBCommonProxy {
 	
 	@Override
 	public ILittleWorld getLittleWorld(IBlockAccess iblockaccess, boolean needsRefresh) {
-		World world = (World) iblockaccess;
-		if (world != null) {
-			if (LBCore.littleDimensionServer == -1) {
-				this.setLittleDimension(
-						world,
-						DimensionManager.getNextFreeDimId());
-				LBCore.littleProviderTypeServer = DimensionManager
-						.getProviderType(world.provider.dimensionId);
-				DimensionManager.registerDimension(
-						LBCore.littleDimensionServer,
-						LBCore.littleProviderTypeServer);
-				LBCore.littleProviderServer = DimensionManager
-						.createProviderFor(LBCore.littleDimensionServer);
-			} else if (LBCore.littleDimensionServer == -2) {
-				this.setLittleDimension(
-						world,
-						DimensionManager.getNextFreeDimId());
-				LBCore.littleProviderTypeServer = DimensionManager
-						.getProviderType(world.provider.dimensionId);
-				LBCore.littleProviderServer = DimensionManager
-						.getProvider(LBCore.littleDimensionServer);
-			}
-			if (LBCore.littleWorldServer == null || LBCore.littleWorldServer
-					.isOutdated(world) || needsRefresh) {
-				LBCore.littleWorldServer = new LittleWorldServer(
-						world,
-							LBCore.littleProviderServer);
+		if (LBCore.littleWorldServer.isEmpty()) {
+			World[] worlds = DimensionManager.getWorlds();
+			for (World world : worlds) {
+				LBCore.littleDimensionServer.put(world.provider.dimensionId, -1);
+				LBCore.littleProviderTypeServer.put(world.provider.dimensionId, -1);
 			}
 		}
-		return LBCore.littleWorldServer;
+		World world = (World) iblockaccess;
+		if (world != null) {
+			int dimension = world.provider.dimensionId;
+			if (LBCore.littleDimensionServer.containsKey(dimension)) {
+				if (LBCore.littleDimensionServer.get(dimension) == -1) {
+					this.setLittleDimension(
+							world,
+							DimensionManager.getNextFreeDimId());
+					LBCore.littleProviderTypeServer.put(dimension, DimensionManager
+							.getProviderType(dimension));
+					DimensionManager.registerDimension(
+							LBCore.littleDimensionServer.get(dimension),
+							LBCore.littleProviderTypeServer.get(dimension));
+					LBCore.littleProviderServer.put(dimension, DimensionManager
+							.createProviderFor(LBCore.littleDimensionServer.get(dimension)));
+				} else if (LBCore.littleDimensionServer.get(dimension) == -2) {
+					this.setLittleDimension(
+							world,
+							DimensionManager.getNextFreeDimId());
+					LBCore.littleProviderTypeServer.put(dimension, DimensionManager
+							.getProviderType(world.provider.dimensionId));
+					LBCore.littleProviderServer.put(dimension, DimensionManager
+							.getProvider(LBCore.littleDimensionServer.get(dimension)));
+				}
+				if (!LBCore.littleWorldServer.containsKey(dimension) || LBCore.littleWorldServer.get(dimension)
+						.isOutdated(world) || needsRefresh) {
+					LBCore.littleWorldServer.put(dimension, new LittleWorldServer(
+							world,
+							LBCore.littleProviderServer.get(dimension)));
+				}
+				return LBCore.littleWorldServer.get(dimension);
+			}
+		}
+		return null;
 	}
 
 	@Override
 	public void setLittleDimension(World world, int nextFreeDimId) {
 		ConfigurationLib.getConfiguration().load();
-		LBCore.littleDimensionServer = ConfigurationLib.getConfiguration().get(
+		LBCore.littleDimensionServer.put(world.provider.dimensionId, ConfigurationLib.getConfiguration().get(
 				Configuration.CATEGORY_GENERAL,
-				"littleDimension",
-				nextFreeDimId).getInt();
+				"littleDimension[" + world.provider.dimensionId + "]",
+				nextFreeDimId).getInt());
 		ConfigurationLib.getConfiguration().save();
 	}
 
 	@Override
-	public int getLittleDimension() {
-		return LBCore.littleDimensionServer;
-	}
-
-	@Override
 	public void resetLittleBlocks() {
-		if (LBCore.littleProviderServer != null) {
-			DimensionManager.unregisterDimension(LBCore.littleDimensionServer);
+		if (LBCore.littleProviderServer != null) {;
+			Iterator littleDimensions = LBCore.littleDimensionServer.entrySet().iterator();
+			while (littleDimensions.hasNext()) {
+				int littleDimension = (Integer) littleDimensions.next();
+				DimensionManager.unregisterDimension(littleDimension);
+			}
 			LBCore.littleProviderServer = null;
-			LBCore.littleDimensionServer = -2;
+			LBCore.littleDimensionServer = null;
 		}
 	}
 

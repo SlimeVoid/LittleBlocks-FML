@@ -10,7 +10,5 @@ public interface ILBCommonProxy extends ICommonProxy {
 
 	void setLittleDimension(World world, int nextFreeDimId);
 
-	int getLittleDimension();
-
 	void resetLittleBlocks();
 }
