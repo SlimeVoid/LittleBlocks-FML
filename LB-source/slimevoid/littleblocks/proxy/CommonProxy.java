@@ -1,6 +1,7 @@
 package slimevoid.littleblocks.proxy;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,6 +14,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldProvider;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.DimensionManager;
 import slimevoid.littleblocks.api.ILBCommonProxy;
@@ -22,6 +24,7 @@ import slimevoid.littleblocks.core.lib.ConfigurationLib;
 import slimevoid.littleblocks.core.lib.PacketLib;
 import slimevoid.littleblocks.network.CommonPacketHandler;
 import slimevoid.littleblocks.tickhandlers.LittleWorldTickHandler;
+import slimevoid.littleblocks.world.LittleWorld;
 import slimevoid.littleblocks.world.LittleWorldServer;
 import slimevoidlib.IPacketHandling;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -76,7 +79,11 @@ public class CommonProxy implements ILBCommonProxy {
 	
 	@Override
 	public ILittleWorld getLittleWorld(IBlockAccess iblockaccess, boolean needsRefresh) {
-		if (LBCore.littleWorldServer.isEmpty()) {
+		if (LBCore.littleWorldServer == null) {
+			LBCore.littleWorldServer = new HashMap<Integer, LittleWorld>();
+			LBCore.littleDimensionServer = new HashMap<Integer, Integer>();
+			LBCore.littleProviderTypeServer = new HashMap<Integer, Integer>();
+			LBCore.littleProviderServer = new HashMap<Integer, WorldProvider>();
 			World[] worlds = DimensionManager.getWorlds();
 			for (World world : worlds) {
 				LBCore.littleDimensionServer.put(world.provider.dimensionId, -1);
@@ -86,7 +93,7 @@ public class CommonProxy implements ILBCommonProxy {
 		World world = (World) iblockaccess;
 		if (world != null) {
 			int dimension = world.provider.dimensionId;
-			if (LBCore.littleDimensionServer.containsKey(dimension)) {
+			if (LBCore.littleDimensionServer != null && LBCore.littleDimensionServer.containsKey(dimension)) {
 				if (LBCore.littleDimensionServer.get(dimension) == -1) {
 					this.setLittleDimension(
 							world,
@@ -131,11 +138,9 @@ public class CommonProxy implements ILBCommonProxy {
 
 	@Override
 	public void resetLittleBlocks() {
-		if (LBCore.littleProviderServer != null) {;
-			Iterator littleDimensions = LBCore.littleDimensionServer.entrySet().iterator();
-			while (littleDimensions.hasNext()) {
-				int littleDimension = (Integer) littleDimensions.next();
-				DimensionManager.unregisterDimension(littleDimension);
+		if (LBCore.littleProviderServer != null) {
+			for (Integer id : LBCore.littleDimensionServer.values()) {
+				DimensionManager.unregisterDimension(id);
 			}
 			LBCore.littleProviderServer = null;
 			LBCore.littleDimensionServer = null;

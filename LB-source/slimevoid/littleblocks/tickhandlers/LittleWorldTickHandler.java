@@ -28,8 +28,6 @@ public class LittleWorldTickHandler implements ITickHandler {
 				littleWorld.updateEntities();
 				littleWorld.tick();
 			}
-		} else {
-			LittleBlocks.proxy.resetLittleBlocks();
 		}
 	}
 	
@@ -47,8 +45,6 @@ public class LittleWorldTickHandler implements ITickHandler {
 					}
 				}
 			}
-		} else {
-			LittleBlocks.proxy.resetLittleBlocks();
 		}
 	}
 

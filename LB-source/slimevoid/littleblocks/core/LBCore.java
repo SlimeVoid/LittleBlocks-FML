@@ -13,6 +13,7 @@ import net.minecraftforge.common.MinecraftForge;
 import slimevoid.littleblocks.blocks.BlockLittleChunk;
 import slimevoid.littleblocks.blocks.core.BlockLittleChunkBucketEvent;
 import slimevoid.littleblocks.blocks.core.BlockLittleChunkShiftRightClick;
+import slimevoid.littleblocks.blocks.core.LittleContainerInteract;
 import slimevoid.littleblocks.core.lib.BlockLib;
 import slimevoid.littleblocks.core.lib.BlockUtil;
 import slimevoid.littleblocks.core.lib.ItemLib;
@@ -34,7 +35,7 @@ public class LBCore {
 	public static Item littleBlocksWand;
 	@SideOnly(Side.CLIENT)
 	public static LittleWorld littleWorldClient;
-	public static HashMap<Integer, LittleWorld> littleWorldServer = new HashMap<Integer, LittleWorld>();
+	public static HashMap<Integer, LittleWorld> littleWorldServer;
 	public static int littleChunkID;
 	public static int littleBlocksWandID;
 	public static int littleBlocksCollectionID;
@@ -53,9 +54,9 @@ public class LBCore {
 	public static WorldProvider littleProviderClient;
 
 	// First Integer value is the 'RealWorld' Dimension ID
-	public static HashMap<Integer, Integer> littleDimensionServer = new HashMap<Integer, Integer>();
-	public static HashMap<Integer, Integer> littleProviderTypeServer = new HashMap<Integer, Integer>();
-	public static HashMap<Integer, WorldProvider> littleProviderServer = new HashMap<Integer, WorldProvider>();
+	public static HashMap<Integer, Integer> littleDimensionServer;
+	public static HashMap<Integer, Integer> littleProviderTypeServer;
+	public static HashMap<Integer, WorldProvider> littleProviderServer;
 
 	public static void registerItems() {
 		littleChunk = new BlockLittleChunk(
@@ -99,17 +100,15 @@ public class LBCore {
 		MinecraftForge.EVENT_BUS.register(new BlockLittleChunkShiftRightClick());
 		MinecraftForge.EVENT_BUS.register(new BlockLittleChunkBucketEvent());
 		// MinecraftForge.EVENT_BUS.register(new LittleLadderHandler());
-		// MinecraftForge.EVENT_BUS.register(new LittleContainerInteract());
+		MinecraftForge.EVENT_BUS.register(new LittleContainerInteract());
 		// MinecraftForge.EVENT_BUS.register(new PistonOrientation());
 	}
 
 	@SideOnly(Side.CLIENT)
 	public static RenderBlocks getLittleRenderer(World world) {
-		if (littleRenderer != null && LittleBlocks.proxy
-				.getLittleWorld(world, false)
-					.getRealWorld() == world) {
+		/*if (littleRenderer != null && !LBCore.littleWorldClient.isOutdated(world)) {
 			return littleRenderer;
-		}
+		}*/
 		return setLittleRenderer(world);
 	}
 

@@ -41,6 +41,7 @@ public class LittleWorld extends World implements ILittleWorld {
 		super(
 				world.getSaveHandler(),
 					"LittleBlocksWorld",
+					//LBCore.littleProviderClient,
 					LBCore.littleProviderClient,
 					new WorldSettings(world.getWorldInfo().getSeed(), world
 							.getWorldInfo()

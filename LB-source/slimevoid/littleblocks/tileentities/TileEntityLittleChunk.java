@@ -32,6 +32,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 	@Override
 	public void setWorldObj(World par1World) {
 		this.worldObj = par1World;
+		this.setTileEntityWorldObjs();
 	}
 
 	public TileEntityLittleChunk() {
@@ -419,6 +420,12 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 	public void setBlockIDs(int[][][] content) {
 		this.content = content;
 	}
+	
+	private void setTileEntityWorldObjs() {
+		for (TileEntity tile : this.tiles) {
+			tile.setWorldObj((World) this.getLittleWorld());
+		}
+	}
 
 	public void setTileEntity(int x, int y, int z, TileEntity tile) {
 		tile.setWorldObj((World) this.getLittleWorld());
@@ -448,12 +455,12 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 	
 	@Override
     public void onChunkUnload() {
-		Iterator<TileEntity> tilelist = this.tiles.iterator();
+/*		Iterator<TileEntity> tilelist = this.tiles.iterator();
 		
 		while (tilelist.hasNext()) {
 		    TileEntity tileentity = (TileEntity) tilelist.next();
 		    ((World) this.getLittleWorld()).markTileEntityForDespawn(tileentity);
-		}
+		}*/
 	}
 
 	public TileEntity getTileEntity(int x, int y, int z) {

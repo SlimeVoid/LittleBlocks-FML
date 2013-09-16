@@ -72,6 +72,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void registerTickHandler() {
 		TickRegistry.registerTickHandler(new LittleWorldTickHandler(), Side.CLIENT);
+		super.registerTickHandler();
 	}
 
 	public World getWorld(NetHandler handler) {
@@ -87,6 +88,7 @@ public class ClientProxy extends CommonProxy {
 			if (world.isRemote) {
 				if (LBCore.littleWorldClient == null || LBCore.littleWorldClient
 						.isOutdated(world) || needsRefresh) {
+					System.out.println("LittleWorldBefore: " + LBCore.littleWorldClient);
 					if (LBCore.littleDimensionClient < 0) {
 						this.setLittleDimension(
 								world,
@@ -106,9 +108,11 @@ public class ClientProxy extends CommonProxy {
 					LBCore.littleWorldClient = new LittleWorld(
 							world,
 								LBCore.littleProviderClient);
+					System.out.println("LittleWorldAfter: " + LBCore.littleWorldClient);
 				}
 				return LBCore.littleWorldClient;
 			} else {
+				//System.out.println("New Super LittleWorld");
 				return super.getLittleWorld(world, needsRefresh);
 			}
 		}

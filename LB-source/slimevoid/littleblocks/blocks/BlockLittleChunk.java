@@ -417,8 +417,7 @@ public class BlockLittleChunk extends BlockContainer {
 		if (!entityplayer.canPlayerEdit(x, y, z, side, entityplayer.getHeldItem())) {
 			return;
 		}
-		TileEntityLittleChunk tile = (TileEntityLittleChunk) world
-				.getBlockTileEntity(x, y, z);
+		TileEntityLittleChunk tile = (TileEntityLittleChunk) world.getBlockTileEntity(x, y, z);
 		int content = tile.getBlockID(
 				xSelected,
 				ySelected,

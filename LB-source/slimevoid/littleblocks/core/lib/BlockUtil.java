@@ -25,7 +25,7 @@ public class BlockUtil {
 	private static HashMap<EntityPlayerMP, ItemInLittleWorldManager> itemInLittleWorldManagers;
 	
 	public static ItemInLittleWorldManager getLittleItemManager(EntityPlayerMP entityplayer) {
-		if (itemInLittleWorldManagers.containsKey(entityplayer)) {
+		if (itemInLittleWorldManagers.containsKey(entityplayer) && itemInLittleWorldManagers.get(entityplayer).theWorld.equals(entityplayer.worldObj)) {
 			return itemInLittleWorldManagers.get(entityplayer);
 		}
 		return setLittleItemManagerForPlayer(entityplayer);
