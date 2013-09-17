@@ -54,7 +54,11 @@ public class LittleBlocksHelper implements ISlimevoidHelper {
 	@Override
 	public TileEntity getBlockTileEntity(IBlockAccess world, int x, int y, int z) {
 		if (world != null) {
-			return getWorld(world, x, y, z).getBlockTileEntity(x, y, z);	
+			IBlockAccess newWorld = this.getWorld(world, x, y, z);
+			if (newWorld != null) {
+				TileEntity tileentity = newWorld.getBlockTileEntity(x, y, z);
+				return tileentity;
+			}
 		}
 		return null; 
 	}
