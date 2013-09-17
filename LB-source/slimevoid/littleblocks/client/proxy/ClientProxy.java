@@ -88,7 +88,7 @@ public class ClientProxy extends CommonProxy {
 			if (world.isRemote) {
 				if (LBCore.littleWorldClient == null || LBCore.littleWorldClient
 						.isOutdated(world) || needsRefresh) {
-					System.out.println("LittleWorldBefore: " + LBCore.littleWorldClient);
+					//System.out.println("LittleWorldBefore: " + LBCore.littleWorldClient);
 					if (LBCore.littleDimensionClient < 0) {
 						this.setLittleDimension(
 								world,
@@ -108,7 +108,7 @@ public class ClientProxy extends CommonProxy {
 					LBCore.littleWorldClient = new LittleWorld(
 							world,
 								LBCore.littleProviderClient);
-					System.out.println("LittleWorldAfter: " + LBCore.littleWorldClient);
+					//System.out.println("LittleWorldAfter: " + LBCore.littleWorldClient);
 				}
 				return LBCore.littleWorldClient;
 			} else {

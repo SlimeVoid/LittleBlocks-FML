@@ -22,6 +22,7 @@ import net.minecraft.world.NextTickListEntry;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldSettings;
+import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.core.LoggerLittleBlocks;
 import slimevoid.littleblocks.core.lib.BlockUtil;
 import slimevoid.littleblocks.core.lib.PacketLib;
@@ -29,7 +30,7 @@ import slimevoid.littleblocks.world.events.LittleBlockEvent;
 import slimevoid.littleblocks.world.events.LittleBlockEventList;
 import slimevoidlib.data.Logger;
 
-public class LittleWorldServer extends LittleWorld {
+public class LittleWorldServer extends LittleWorld implements ILittleWorld {
 
 	/**
 	 * TreeSet of scheduled ticks which is used as a priority queue for the
@@ -96,6 +97,11 @@ public class LittleWorldServer extends LittleWorld {
         this.worldInfo.setWorldTime(this.worldInfo.getWorldTime() + 1L);
 		this.tickUpdates(false);
 		this.sendAndApplyBlockEvents();
+	}
+	
+	@Override
+	public void updateEntities() {
+		super.updateEntities();
 	}
 
 	/**

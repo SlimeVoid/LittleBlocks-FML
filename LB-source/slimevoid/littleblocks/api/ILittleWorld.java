@@ -16,8 +16,4 @@ public interface ILittleWorld extends IBlockAccess {
 
 	void setBlockTileEntity(int x, int y, int z,
 			TileEntity tileentity);
-
-	void updateEntities();
-
-	void tick();
 }

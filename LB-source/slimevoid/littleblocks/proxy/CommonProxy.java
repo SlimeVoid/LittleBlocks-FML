@@ -23,7 +23,7 @@ import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
 import slimevoid.littleblocks.core.lib.PacketLib;
 import slimevoid.littleblocks.network.CommonPacketHandler;
-import slimevoid.littleblocks.tickhandlers.LittleWorldTickHandler;
+import slimevoid.littleblocks.tickhandlers.LittleWorldServerTickHandler;
 import slimevoid.littleblocks.world.LittleWorld;
 import slimevoid.littleblocks.world.LittleWorldServer;
 import slimevoidlib.IPacketHandling;
@@ -69,7 +69,7 @@ public class CommonProxy implements ILBCommonProxy {
 
 	@Override
 	public void registerTickHandler() {
-		TickRegistry.registerTickHandler(new LittleWorldTickHandler(), Side.SERVER);
+		TickRegistry.registerTickHandler(new LittleWorldServerTickHandler(), Side.SERVER);
 	}
 
 	@Override
