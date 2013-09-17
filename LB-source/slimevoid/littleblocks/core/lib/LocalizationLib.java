@@ -15,7 +15,7 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 
 public class LocalizationLib {
 
-	private static final String LANGUAGE_PATH = "/assets/littleblocks/locale/";
+	private static final String LANGUAGE_PATH = "/mods/littleblocks/locale/";
 
 	public static String[] localeFiles = {
 		LANGUAGE_PATH + "en_US.xml",
