@@ -1,8 +1,6 @@
 package slimevoid.littleblocks.proxy;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Iterator;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetworkManager;
@@ -14,9 +12,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldProvider;
-import net.minecraft.world.WorldProviderSurface;
-import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.DimensionManager;
 import slimevoid.littleblocks.api.ILBCommonProxy;
 import slimevoid.littleblocks.api.ILittleWorld;
@@ -25,8 +20,6 @@ import slimevoid.littleblocks.core.lib.ConfigurationLib;
 import slimevoid.littleblocks.core.lib.PacketLib;
 import slimevoid.littleblocks.network.CommonPacketHandler;
 import slimevoid.littleblocks.tickhandlers.LittleWorldServerTickHandler;
-import slimevoid.littleblocks.world.LittleWorld;
-import slimevoid.littleblocks.world.LittleWorldServer;
 import slimevoidlib.IPacketHandling;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.Player;

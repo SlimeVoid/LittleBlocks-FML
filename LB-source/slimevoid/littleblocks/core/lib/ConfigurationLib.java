@@ -23,47 +23,11 @@ public class ConfigurationLib {
 	}
 	
 	@SideOnly(Side.CLIENT)
-	public static void loadClientLittleDimensions() {
-		String littleDimensionsMap = configuration.get(
-				Configuration.CATEGORY_GENERAL,
-				"littleDimensionsClient", "").getString();
-		String littleDimensionList[] = littleDimensionsMap.split(",");
-		for (String dimensionMap : littleDimensionList) {
-			if (LBCore.littleDimensionClient == null) {
-				LBCore.littleDimensionClient = new HashMap<Integer, Integer>();
-			}
-			String dimensionSplit[] = dimensionMap.split("-");
-			String realWorldDimension = dimensionSplit[0];
-			String littleWorldDimension = dimensionSplit[1];
-			LBCore.littleDimensionClient.put(Integer.valueOf(realWorldDimension), Integer.valueOf(littleWorldDimension));
-		}
-	}
-	
-	@SideOnly(Side.CLIENT)
-	public static void saveClientLittleDimensions() {
-		configuration.get(Configuration.CATEGORY_GENERAL, "littleDimensionsClient", "");
-		String littleDimension = "";
-		World worlds[] = DimensionManager.getWorlds();
-		for (World world : worlds) {
-			if (littleDimension != "") {
-				littleDimension += ",";
-			}
-			int dimension = world.provider.dimensionId;
-			if (LBCore.littleDimensionClient.containsKey(dimension)) {
-				littleDimension += dimension + "-" + LBCore.littleDimensionClient.get(dimension);
-			}
-		}
-	}
-	
-	@SideOnly(Side.CLIENT)
 	public static void ClientConfig(File configFile) {
 		if (configurationFile == null) {
 			configurationFile = configFile;
 			configuration = new Configuration(configFile);
 		}
-		configuration.load();
-		loadClientLittleDimensions();
-		configuration.save();
 	}
 	
 	public static void CommonConfig(File configFile) {

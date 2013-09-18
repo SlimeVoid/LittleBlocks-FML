@@ -6,14 +6,14 @@ import net.minecraft.world.World;
 
 public interface ILittleWorld extends IBlockAccess {
 
-	World getRealWorld();
+	public World getRealWorld();
 
-	void idModified(int lastId, int xCoord, int yCoord, int zCoord, int i,
+	public void idModified(int lastId, int xCoord, int yCoord, int zCoord, int i,
 			int x, int y, int z, int id, int j);
 
-	void metadataModified(int xCoord, int yCoord, int zCoord, int i, int x,
+	public void metadataModified(int xCoord, int yCoord, int zCoord, int i, int x,
 			int y, int z, int blockId, int metadata);
 
-	void setBlockTileEntity(int x, int y, int z,
+	public void setBlockTileEntity(int x, int y, int z,
 			TileEntity tileentity);
 }

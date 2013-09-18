@@ -1,19 +1,14 @@
 package slimevoid.littleblocks.tickhandlers;
 
 import java.util.EnumSet;
-import java.util.HashMap;
 
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.LittleBlocks;
-import slimevoid.littleblocks.world.LittleWorld;
 
 import net.minecraft.world.World;
-import net.minecraft.world.WorldProvider;
-import net.minecraft.world.WorldProviderSurface;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
 
