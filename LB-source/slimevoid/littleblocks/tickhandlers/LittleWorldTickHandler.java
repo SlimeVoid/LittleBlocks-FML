@@ -2,6 +2,7 @@ package slimevoid.littleblocks.tickhandlers;
 
 import java.util.EnumSet;
 
+import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.LittleBlocks;
 
 import net.minecraft.world.World;
@@ -18,6 +19,7 @@ public class LittleWorldTickHandler implements ITickHandler {
 	public void doLittleWorldClientTickStart(Object... tickData) {
 		World world = FMLClientHandler.instance().getClient().theWorld;
 		if (world != null) {
+			LBCore.registerLittleWorldClient(world);
 			World littleWorld = (World) LittleBlocks.proxy.getLittleWorld(
 					world,
 					false);
@@ -29,6 +31,9 @@ public class LittleWorldTickHandler implements ITickHandler {
 	}
 	@Override
 	public void tickStart(EnumSet<TickType> type, Object... tickData) {
+		if (type.equals(EnumSet.of(TickType.CLIENT))) {
+			LBCore.registerLittleWorldClients();
+		}
 	}
 
 	@Override

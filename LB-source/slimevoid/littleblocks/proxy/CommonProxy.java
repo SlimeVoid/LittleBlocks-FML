@@ -15,6 +15,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
+import net.minecraft.world.WorldProviderSurface;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.DimensionManager;
 import slimevoid.littleblocks.api.ILBCommonProxy;
@@ -79,48 +80,37 @@ public class CommonProxy implements ILBCommonProxy {
 	
 	@Override
 	public ILittleWorld getLittleWorld(IBlockAccess iblockaccess, boolean needsRefresh) {
-		if (LBCore.littleWorldServer == null) {
-			LBCore.littleWorldServer = new HashMap<Integer, LittleWorld>();
-			LBCore.littleDimensionServer = new HashMap<Integer, Integer>();
-			LBCore.littleProviderTypeServer = new HashMap<Integer, Integer>();
-			LBCore.littleProviderServer = new HashMap<Integer, WorldProvider>();
-			World[] worlds = DimensionManager.getWorlds();
-			for (World world : worlds) {
-				LBCore.littleDimensionServer.put(world.provider.dimensionId, -1);
-				LBCore.littleProviderTypeServer.put(world.provider.dimensionId, -1);
-			}
-		}
 		World world = (World) iblockaccess;
 		if (world != null) {
 			int dimension = world.provider.dimensionId;
-			if (LBCore.littleDimensionServer != null && LBCore.littleDimensionServer.containsKey(dimension)) {
-				if (LBCore.littleDimensionServer.get(dimension) == -1) {
-					this.setLittleDimension(
-							world,
-							DimensionManager.getNextFreeDimId());
-					LBCore.littleProviderTypeServer.put(dimension, DimensionManager
-							.getProviderType(dimension));
-					DimensionManager.registerDimension(
-							LBCore.littleDimensionServer.get(dimension),
-							LBCore.littleProviderTypeServer.get(dimension));
-					LBCore.littleProviderServer.put(dimension, DimensionManager
-							.createProviderFor(LBCore.littleDimensionServer.get(dimension)));
-				} else if (LBCore.littleDimensionServer.get(dimension) == -2) {
-					this.setLittleDimension(
-							world,
-							DimensionManager.getNextFreeDimId());
-					LBCore.littleProviderTypeServer.put(dimension, DimensionManager
-							.getProviderType(world.provider.dimensionId));
-					LBCore.littleProviderServer.put(dimension, DimensionManager
-							.getProvider(LBCore.littleDimensionServer.get(dimension)));
+			try {
+				if (LBCore.littleDimensionServer != null && LBCore.littleDimensionServer.containsKey(dimension)) {
+					/*if (LBCore.littleDimensionServer.get(dimension) == -1) {
+						this.setLittleDimension(
+								world,
+								DimensionManager.getNextFreeDimId());
+						LBCore.littleProviderTypeServer.put(dimension, DimensionManager
+								.getProviderType(dimension));
+						DimensionManager.registerDimension(
+								LBCore.littleDimensionServer.get(dimension),
+								LBCore.littleProviderTypeServer.get(dimension));
+						LBCore.littleProviderServer.put(dimension, DimensionManager
+								.createProviderFor(LBCore.littleDimensionServer.get(dimension)));
+					} else if (LBCore.littleDimensionServer.get(dimension) == -2) {
+						this.setLittleDimension(
+								world,
+								DimensionManager.getNextFreeDimId());
+						LBCore.littleProviderTypeServer.put(dimension, DimensionManager
+								.getProviderType(world.provider.dimensionId));
+						LBCore.littleProviderServer.put(dimension, DimensionManager
+								.getProvider(LBCore.littleDimensionServer.get(dimension)));
+					}*/
+					return LBCore.littleWorldServer.get(dimension);
+				} else {
+					//throw new NoSuchFieldException("Could not get Corresponding Littleworld for Dimension " + dimension);
 				}
-				if (!LBCore.littleWorldServer.containsKey(dimension) || LBCore.littleWorldServer.get(dimension)
-						.isOutdated(world) || needsRefresh) {
-					LBCore.littleWorldServer.put(dimension, new LittleWorldServer(
-							world,
-							LBCore.littleProviderServer.get(dimension)));
-				}
-				return LBCore.littleWorldServer.get(dimension);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 		return null;
@@ -128,12 +118,12 @@ public class CommonProxy implements ILBCommonProxy {
 
 	@Override
 	public void setLittleDimension(World world, int nextFreeDimId) {
-		ConfigurationLib.getConfiguration().load();
-		LBCore.littleDimensionServer.put(world.provider.dimensionId, ConfigurationLib.getConfiguration().get(
-				Configuration.CATEGORY_GENERAL,
-				"littleDimension[" + world.provider.dimensionId + "]",
-				nextFreeDimId).getInt());
-		ConfigurationLib.getConfiguration().save();
+		//ConfigurationLib.getConfiguration().load();
+		LBCore.littleDimensionServer.put(world.provider.dimensionId, //ConfigurationLib.getConfiguration().get(
+				//Configuration.CATEGORY_GENERAL,
+				//"littleDimension[" + world.provider.dimensionId + "]",
+				nextFreeDimId);//.getInt());
+		//ConfigurationLib.getConfiguration().save();
 	}
 
 	@Override
@@ -144,6 +134,8 @@ public class CommonProxy implements ILBCommonProxy {
 			}
 			LBCore.littleProviderServer = null;
 			LBCore.littleDimensionServer = null;
+			LBCore.littleProviderTypeServer = null;
+			LBCore.littleWorldServer = null;
 		}
 	}
 

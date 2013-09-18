@@ -1,11 +1,17 @@
 package slimevoid.littleblocks.tickhandlers;
 
 import java.util.EnumSet;
+import java.util.HashMap;
 
+import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.LittleBlocks;
+import slimevoid.littleblocks.world.LittleWorld;
 
 import net.minecraft.world.World;
+import net.minecraft.world.WorldProvider;
+import net.minecraft.world.WorldProviderSurface;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.DimensionManager;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.ITickHandler;
@@ -14,7 +20,7 @@ import cpw.mods.fml.common.TickType;
 public class LittleWorldServerTickHandler implements ITickHandler {
 	
 	public void doLittleWorldServerTickStart(Object... tickData) {
-		WorldServer[] worlds = FMLCommonHandler.instance().getMinecraftServerInstance().worldServers;
+		WorldServer[] worlds = DimensionManager.getWorlds();
 		if (worlds != null && worlds.length > 0) {
 			for (World world : worlds) {
 				if (world != null && !world.isRemote) {
@@ -32,6 +38,9 @@ public class LittleWorldServerTickHandler implements ITickHandler {
 
 	@Override
 	public void tickStart(EnumSet<TickType> type, Object... tickData) {
+		if (type.equals(EnumSet.of(TickType.SERVER))) {
+			LBCore.registerLittleWorldServers();
+		}
 	}
 
 	@Override

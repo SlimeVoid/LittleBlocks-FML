@@ -44,8 +44,6 @@ public class ClientProxy extends CommonProxy {
 		super.preInit();
 		ClientPacketHandler.init();
 		PacketLib.registerClientPacketHandlers();
-		LBCore.littleDimensionClient = -1;
-		LBCore.littleProviderTypeClient = -1;
 	}
 
 	@Override
@@ -86,33 +84,11 @@ public class ClientProxy extends CommonProxy {
 		World world = (World) iblockaccess;
 		if (world != null) {
 			if (world.isRemote) {
-				if (LBCore.littleWorldClient == null || LBCore.littleWorldClient
-						.isOutdated(world) || needsRefresh) {
-					//System.out.println("LittleWorldBefore: " + LBCore.littleWorldClient);
-					if (LBCore.littleDimensionClient < 0) {
-						this.setLittleDimension(
-								world,
-								DimensionManager.getNextFreeDimId());
-						LBCore.littleProviderTypeClient = DimensionManager
-								.getProviderType(world.provider.dimensionId);
-						if (LBCore.littleProviderClient == null) {
-							//System.out
-							//		.println("Registering Dimension: " + LBCore.littleDimensionClient);
-							DimensionManager.registerDimension(
-									LBCore.littleDimensionClient,
-									LBCore.littleProviderTypeClient);
-							LBCore.littleProviderClient = DimensionManager
-									.createProviderFor(LBCore.littleDimensionClient);
-						}
-					}
-					LBCore.littleWorldClient = new LittleWorld(
-							world,
-								LBCore.littleProviderClient);
-					//System.out.println("LittleWorldAfter: " + LBCore.littleWorldClient);
+				int dimension = world.provider.dimensionId;
+				if (LBCore.littleWorldClient != null && LBCore.littleWorldClient.containsKey(dimension)) {
+					return LBCore.littleWorldClient.get(dimension);
 				}
-				return LBCore.littleWorldClient;
 			} else {
-				//System.out.println("New Super LittleWorld");
 				return super.getLittleWorld(world, needsRefresh);
 			}
 		}
@@ -121,12 +97,12 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void setLittleDimension(World world, int nextFreeDimId) {
-		ConfigurationLib.getConfiguration().load();
-		LBCore.littleDimensionClient = ConfigurationLib.getConfiguration().get(
-				Configuration.CATEGORY_GENERAL,
-				"littleDimensionClient",
-				nextFreeDimId).getInt();
-		ConfigurationLib.getConfiguration().save();
+		//ConfigurationLib.getConfiguration().load();
+		LBCore.littleDimensionClient.put(world.provider.dimensionId,// value) = //ConfigurationLib.getConfiguration().get(
+		//		Configuration.CATEGORY_GENERAL,
+		//		"littleDimensionClient",
+				nextFreeDimId);//.getInt();
+		//ConfigurationLib.getConfiguration().save();
 		if (!world.isRemote) {
 			super.setLittleDimension(world, nextFreeDimId);
 		}
@@ -135,9 +111,13 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void resetLittleBlocks() {
 		if (LBCore.littleProviderClient != null) {
-			DimensionManager.unregisterDimension(LBCore.littleDimensionClient);
+			for (Integer id : LBCore.littleDimensionClient.values()) {
+				DimensionManager.unregisterDimension(id);	
+			}
+			LBCore.littleWorldClient = null;
 			LBCore.littleProviderClient = null;
-			LBCore.littleDimensionClient = -2;
+			LBCore.littleDimensionClient = null;
+			LBCore.littleProviderTypeClient = null;
 			if (LBCore.littleProviderServer != null) {
 				super.resetLittleBlocks();
 			}
