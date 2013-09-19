@@ -12,12 +12,13 @@
 package slimevoid.littleblocks.core;
 
 import slimevoid.littleblocks.api.util.LittleBlocksHelper;
+import slimevoid.littleblocks.core.lib.ConfigurationLib;
 import slimevoid.littleblocks.core.lib.EnumWandAction;
 import slimevoid.littleblocks.core.lib.CoreLib;
 import slimevoidlib.core.SlimevoidCore;
 
 public class LBInit {
-	private static boolean initialized = false;
+	private static boolean	initialized	= false;
 
 	public static void initialize() {
 		if (initialized) {
@@ -27,27 +28,33 @@ public class LBInit {
 		load();
 	}
 
-	public static void load() {		
-		SlimevoidCore.console(CoreLib.MOD_ID, "Registering names...");
+	public static void load() {
+		SlimevoidCore.console(	CoreLib.MOD_ID,
+								"Registering names...");
 		LBCore.registerNames();
-		
-		SlimevoidCore.console(CoreLib.MOD_ID, "Registering items...");
+
+		SlimevoidCore.console(	CoreLib.MOD_ID,
+								"Registering items...");
 		LBCore.registerItems();
-		
-		SlimevoidCore.console(CoreLib.MOD_ID, "Registering blocks...");
+
+		SlimevoidCore.console(	CoreLib.MOD_ID,
+								"Registering blocks...");
 		LBCore.registerBlocks();
-		
-		SlimevoidCore.console(CoreLib.MOD_ID, "Registering events...");
+
+		SlimevoidCore.console(	CoreLib.MOD_ID,
+								"Registering events...");
 		LBCore.registerEvents();
-		
+
 		LittleBlocks.proxy.registerRenderInformation();
-		
+
 		LittleBlocks.proxy.registerTickHandler();
-		
-		SlimevoidCore.console(CoreLib.MOD_ID, "Registering recipes...");
+
+		SlimevoidCore.console(	CoreLib.MOD_ID,
+								"Registering recipes...");
 		LBCore.registerRecipes();
 
-		LittleBlocksHelper.init(LittleBlocks.proxy, LBCore.littleBlocksSize);
+		LittleBlocksHelper.init(LittleBlocks.proxy,
+								ConfigurationLib.littleBlocksSize);
 		EnumWandAction.registerWandActions();
 	}
 }

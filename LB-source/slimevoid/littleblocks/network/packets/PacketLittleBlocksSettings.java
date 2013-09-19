@@ -20,7 +20,8 @@ public class PacketLittleBlocksSettings extends PacketUpdate {
 	}
 
 	public void setClipMode(boolean littleBlocksClip) {
-		this.payload.setBoolPayload(0, littleBlocksClip);
+		this.payload.setBoolPayload(0,
+									littleBlocksClip);
 	}
 
 	public boolean getClipMode() {

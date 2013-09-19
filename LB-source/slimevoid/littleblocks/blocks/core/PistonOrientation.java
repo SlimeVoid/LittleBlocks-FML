@@ -1,6 +1,5 @@
 package slimevoid.littleblocks.blocks.core;
 
-
 import net.minecraft.world.World;
 
 // import net.minecraftforge.event.entity.block.BlockOrientationEvent;
@@ -17,7 +16,8 @@ public class PistonOrientation {
 		World world;
 		world = null;/* event.world; */
 		if (LittleBlockDataHandler.isLittleWorld(world)) {
-			LittleBlockDataHandler.shiftCoordsRight(coords, 3);
+			LittleBlockDataHandler.shiftCoordsRight(coords,
+													3);
 			x = coords.x;
 			y = coords.y;
 			z = coords.z;

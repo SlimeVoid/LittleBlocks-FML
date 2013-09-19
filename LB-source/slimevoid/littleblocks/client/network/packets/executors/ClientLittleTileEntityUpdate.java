@@ -11,18 +11,18 @@ import slimevoidlib.network.PacketUpdate;
 public class ClientLittleTileEntityUpdate implements IPacketExecutor {
 
 	@Override
-	public void execute(PacketUpdate packet, World world,
-			EntityPlayer entityplayer) {
+	public void execute(PacketUpdate packet, World world, EntityPlayer entityplayer) {
 		if (packet instanceof PacketLittleBlocks) {
 			PacketLittleBlocks packetLB = (PacketLittleBlocks) packet;
 			if (packetLB.hasTileEntity()) {
-				TileEntity tileentity = world.getBlockTileEntity(
-						packet.xPosition >> 3,
-						packet.yPosition >> 3,
-						packet.zPosition >> 3);
-				if (tileentity != null && tileentity instanceof TileEntityLittleChunk) {
+				TileEntity tileentity = world.getBlockTileEntity(	packet.xPosition >> 3,
+																	packet.yPosition >> 3,
+																	packet.zPosition >> 3);
+				if (tileentity != null
+					&& tileentity instanceof TileEntityLittleChunk) {
 					TileEntityLittleChunk tileentitylb = (TileEntityLittleChunk) tileentity;
-					tileentitylb.handleLittleTilePacket(world, packetLB);
+					tileentitylb.handleLittleTilePacket(world,
+														packetLB);
 				}
 			}
 		}

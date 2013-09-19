@@ -31,29 +31,23 @@ public class LittleBlockDataHandler {
 		coordinates.z = coordinates.z & valueAND;
 		return coordinates;
 	}
-	
+
 	public static boolean isUseableByPlayer(TileEntity tileentity, EntityPlayer entityplayer) {
 		if (tileentity != null && entityplayer != null) {
-			return tileentity.worldObj.getBlockTileEntity(
-					tileentity.xCoord,
-					tileentity.yCoord,
-					tileentity.zCoord) != tileentity ? false : 
-				entityplayer.getDistanceSq(
-						tileentity.xCoord / 8D + 0.5D,
-						tileentity.yCoord / 8D + 0.5D,
-						tileentity.zCoord / 8D + 0.5D) <= 64.0D;
+			return tileentity.worldObj.getBlockTileEntity(	tileentity.xCoord,
+															tileentity.yCoord,
+															tileentity.zCoord) != tileentity ? false : entityplayer.getDistanceSq(	tileentity.xCoord / 8D + 0.5D,
+																																	tileentity.yCoord / 8D + 0.5D,
+																																	tileentity.zCoord / 8D + 0.5D) <= 64.0D;
 		}
 		return false;
 	}
-	
+
 	public static boolean isUseableByPlayer(EntityPlayer entityplayer, World world, int blockId, int x, int y, int z) {
-		return world.getBlockId(
-				x,
-				y,
-				z) != blockId ? false :
-					entityplayer.getDistanceSq(
-							x / 8D + 0.5D,
-							y / 8D + 0.5D,
-							z / 8D + 0.5D) <= 64.0D;
+		return world.getBlockId(x,
+								y,
+								z) != blockId ? false : entityplayer.getDistanceSq(	x / 8D + 0.5D,
+																					y / 8D + 0.5D,
+																					z / 8D + 0.5D) <= 64.0D;
 	}
 }

@@ -10,8 +10,6 @@ import net.minecraft.network.packet.Packet1Login;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.client.handlers.DrawCopierHighlight;
@@ -23,6 +21,7 @@ import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.lib.CommandLib;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
 import slimevoid.littleblocks.core.lib.PacketLib;
+import slimevoid.littleblocks.events.WorldLoadEvent;
 import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocksSettings;
 import slimevoid.littleblocks.proxy.CommonProxy;
@@ -37,12 +36,13 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class ClientProxy extends CommonProxy {
-	
+
 	@Override
-	public void preInit() {		
+	public void preInit() {
 		super.preInit();
 		ClientPacketHandler.init();
 		PacketLib.registerClientPacketHandlers();
+		MinecraftForge.EVENT_BUS.register(new WorldLoadEvent());
 	}
 
 	@Override
@@ -54,21 +54,21 @@ public class ClientProxy extends CommonProxy {
 	public void registerRenderInformation() {
 		MinecraftForge.EVENT_BUS.register(new DrawCopierHighlight());
 		RenderingRegistry.registerBlockHandler(new LittleBlocksRenderer());
-		RenderingRegistry.registerEntityRenderingHandler(EntityItemLittleBlocksCollection.class, new LittleBlocksCollectionRenderer());
-		this.registerTileEntitySpecialRenderer(
-				TileEntityLittleChunk.class);
+		RenderingRegistry.registerEntityRenderingHandler(	EntityItemLittleBlocksCollection.class,
+															new LittleBlocksCollectionRenderer());
+		this.registerTileEntitySpecialRenderer(TileEntityLittleChunk.class);
 	}
 
 	@Override
 	public void registerTileEntitySpecialRenderer(Class<? extends TileEntity> clazz) {
-		ClientRegistry.bindTileEntitySpecialRenderer(
-				clazz,
-				new TileEntityLittleBlocksRenderer());
+		ClientRegistry.bindTileEntitySpecialRenderer(	clazz,
+														new TileEntityLittleBlocksRenderer());
 	}
 
 	@Override
 	public void registerTickHandler() {
-		TickRegistry.registerTickHandler(new LittleWorldTickHandler(), Side.CLIENT);
+		TickRegistry.registerTickHandler(	new LittleWorldTickHandler(),
+											Side.CLIENT);
 		super.registerTickHandler();
 	}
 
@@ -84,44 +84,13 @@ public class ClientProxy extends CommonProxy {
 		if (world != null) {
 			if (world.isRemote) {
 				int dimension = world.provider.dimensionId;
-				if (LBCore.littleWorldClient != null && LBCore.littleWorldClient.containsKey(dimension)) {
-					return LBCore.littleWorldClient.get(dimension);
-				}
+				return LBCore.littleWorldClient;
 			} else {
-				return super.getLittleWorld(world, needsRefresh);
+				return super.getLittleWorld(world,
+											needsRefresh);
 			}
 		}
 		return null;
-	}
-
-	@Override
-	public void setLittleDimension(World world, int nextFreeDimId) {
-		//ConfigurationLib.getConfiguration().load();
-		LBCore.littleDimensionClient.put(world.provider.dimensionId,// value) = //ConfigurationLib.getConfiguration().get(
-		//		Configuration.CATEGORY_GENERAL,
-		//		"littleDimensionClient",
-				nextFreeDimId);//.getInt();
-		//ConfigurationLib.getConfiguration().save();
-		if (!world.isRemote) {
-			super.setLittleDimension(world, nextFreeDimId);
-		}
-	}
-
-	@Override
-	public void resetLittleBlocks() {
-		if (LBCore.littleProviderClient != null) {
-			for (Integer id : LBCore.littleDimensionClient.values()) {
-				DimensionManager.unregisterDimension(id);	
-			}
-			LBCore.littleWorldClient = null;
-			LBCore.littleProviderClient = null;
-			LBCore.littleDimensionClient = null;
-			LBCore.littleProviderTypeClient = null;
-			if (LBCore.littleProviderServer != null) {
-				super.resetLittleBlocks();
-			}
-		}
-		LBCore.setLittleRenderer(null);
 	}
 
 	@Override

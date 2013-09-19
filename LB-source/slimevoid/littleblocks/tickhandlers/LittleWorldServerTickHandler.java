@@ -13,15 +13,14 @@ import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
 
 public class LittleWorldServerTickHandler implements ITickHandler {
-	
-	public void doLittleWorldServerTickStart(Object... tickData) {
+
+	public void doLittleWorldServerTick(Object... tickData) {
 		WorldServer[] worlds = DimensionManager.getWorlds();
 		if (worlds != null && worlds.length > 0) {
 			for (World world : worlds) {
 				if (world != null && !world.isRemote) {
-					World littleWorld = (World) LittleBlocks.proxy.getLittleWorld(
-							world,
-							false);
+					World littleWorld = (World) LittleBlocks.proxy.getLittleWorld(	world,
+																					false);
 					if (littleWorld != null) {
 						littleWorld.updateEntities();
 						littleWorld.tick();
@@ -34,14 +33,13 @@ public class LittleWorldServerTickHandler implements ITickHandler {
 	@Override
 	public void tickStart(EnumSet<TickType> type, Object... tickData) {
 		if (type.equals(EnumSet.of(TickType.SERVER))) {
-			LBCore.registerLittleWorldServers();
 		}
 	}
 
 	@Override
 	public void tickEnd(EnumSet<TickType> type, Object... tickData) {
 		if (type.equals(EnumSet.of(TickType.SERVER))) {
-			this.doLittleWorldServerTickStart(tickData);
+			this.doLittleWorldServerTick(tickData);
 		}
 	}
 

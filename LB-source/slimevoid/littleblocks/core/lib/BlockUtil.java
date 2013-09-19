@@ -21,36 +21,38 @@ import slimevoidlib.data.Logger;
 import buildcraft.core.IItemPipe;
 
 public class BlockUtil {
-	
-	private static HashMap<EntityPlayerMP, ItemInLittleWorldManager> itemInLittleWorldManagers;
-	
+
+	private static HashMap<EntityPlayerMP, ItemInLittleWorldManager>	itemInLittleWorldManagers;
+
 	public static ItemInLittleWorldManager getLittleItemManager(EntityPlayerMP entityplayer) {
-		if (itemInLittleWorldManagers.containsKey(entityplayer) && itemInLittleWorldManagers.get(entityplayer).theWorld.equals(entityplayer.worldObj)) {
+		if (itemInLittleWorldManagers.containsKey(entityplayer)
+			&& itemInLittleWorldManagers.get(entityplayer).theWorld.equals(entityplayer.worldObj)) {
 			return itemInLittleWorldManagers.get(entityplayer);
 		}
 		return setLittleItemManagerForPlayer(entityplayer);
 	}
-	
+
 	private static ItemInLittleWorldManager setLittleItemManagerForPlayer(EntityPlayerMP entityplayer) {
-		itemInLittleWorldManagers.put(entityplayer, new ItemInLittleWorldManager(entityplayer.worldObj, entityplayer));
+		itemInLittleWorldManagers.put(	entityplayer,
+										new ItemInLittleWorldManager(entityplayer.worldObj, entityplayer));
 		return itemInLittleWorldManagers.get(entityplayer);
 	}
 
 	public static void registerPlacementInfo() {
 		itemInLittleWorldManagers = new HashMap<EntityPlayerMP, ItemInLittleWorldManager>();
-		//registerDisallowedBlockTick(BlockFluid.class);
-		//registerDisallowedBlockTick(BlockFlowing.class);
+		// registerDisallowedBlockTick(BlockFluid.class);
+		// registerDisallowedBlockTick(BlockFlowing.class);
 		registerDisallowedTile(TileEntityLittleChunk.class);
 		registerDisallowedItem(ItemHoe.class);
 		registerDisallowedItem(ItemMonsterPlacer.class);
 	}
 
-	private static Set<Integer> disallowedItemIDs = new HashSet<Integer>();
-	private static Set<Integer> disallowedBlockIDs = new HashSet<Integer>();
-	private static Set<Class<? extends Item>> disallowedItems = new HashSet<Class<? extends Item>>();
-	private static Set<Class<? extends Block>> disallowedBlocks = new HashSet<Class<? extends Block>>();
-	private static Set<Class<? extends TileEntity>> disallowedBlockTileEntities = new HashSet<Class<? extends TileEntity>>();
-	private static Set<Class<? extends Block>> disallowedBlocksToTick = new HashSet<Class<? extends Block>>();
+	private static Set<Integer>						disallowedItemIDs			= new HashSet<Integer>();
+	private static Set<Integer>						disallowedBlockIDs			= new HashSet<Integer>();
+	private static Set<Class<? extends Item>>		disallowedItems				= new HashSet<Class<? extends Item>>();
+	private static Set<Class<? extends Block>>		disallowedBlocks			= new HashSet<Class<? extends Block>>();
+	private static Set<Class<? extends TileEntity>>	disallowedBlockTileEntities	= new HashSet<Class<? extends TileEntity>>();
+	private static Set<Class<? extends Block>>		disallowedBlocksToTick		= new HashSet<Class<? extends Block>>();
 
 	private static void registerDisallowedBlockTick(Class<? extends Block> blockClass) {
 		if (blockClass != null) {
@@ -131,13 +133,9 @@ public class BlockUtil {
 			if (!disallowedBlockTileEntities.contains(tileclass)) {
 				disallowedBlockTileEntities.add(tileclass);
 			} else {
-				LoggerLittleBlocks.getInstance(
-						Logger.filterClassName(LBCore.class.toString())
-				).write(
-						true,
-						"Tried to add a tileentity to the disallowed list that already exists",
-						Logger.LogLevel.DEBUG
-				);
+				LoggerLittleBlocks.getInstance(Logger.filterClassName(LBCore.class.toString())).write(	true,
+																										"Tried to add a tileentity to the disallowed list that already exists",
+																										Logger.LogLevel.DEBUG);
 			}
 		}
 	}
@@ -161,15 +159,20 @@ public class BlockUtil {
 		}
 		return false;
 	}
-	
+
 	public static boolean isLittleBlock(World world, int x, int y, int z) {
 		if (world instanceof ILittleWorld) {
-			return ((ILittleWorld) world).getRealWorld().getBlockId(x >> 3, y >> 3, z >> 3) == LBCore.littleChunkID;
+			return ((ILittleWorld) world).getRealWorld().getBlockId(x >> 3,
+																	y >> 3,
+																	z >> 3) == ConfigurationLib.littleChunkID;
 		}
 		return false;
 	}
 
 	public static boolean isLittleBlock(World world, MovingObjectPosition target) {
-		return isLittleBlock(world, target.blockX, target.blockY, target.blockZ);
+		return isLittleBlock(	world,
+								target.blockX,
+								target.blockY,
+								target.blockZ);
 	}
 }

@@ -14,24 +14,23 @@ import org.lwjgl.opengl.GL12;
 
 import cpw.mods.fml.client.FMLClientHandler;
 
-import slimevoid.littleblocks.core.LBCore;
+import slimevoid.littleblocks.core.lib.ConfigurationLib;
 import slimevoid.littleblocks.core.lib.TextureLib;
 import slimevoid.littleblocks.items.ItemLittleBlocksWand;
 
 public class DrawCopierHighlight {
 
-    private static int pulse = 0;
-    private static boolean doInc = true;
-    
+	private static int		pulse	= 0;
+	private static boolean	doInc	= true;
+
 	@ForgeSubscribe
 	public void onDrawBlockHighlightEvent(DrawBlockHighlightEvent event) {
 		if (event.currentItem != null) {
 			if (event.currentItem.getItem() instanceof ItemLittleBlocksWand) {
-                drawInWorldCopierOverlay(event);
+				drawInWorldCopierOverlay(event);
 			}
 		}
 	}
-
     public void drawInWorldCopierOverlay(DrawBlockHighlightEvent event) {
 
         double x = event.target.blockX + 0.5F;
@@ -129,55 +128,84 @@ public class DrawCopierHighlight {
 	        GL11.glDepthMask(true);
         }
     }
-
-    private boolean shouldDoDraw(World world, int blockX, int blockY, int blockZ) {
-    	int blockID = world.getBlockId(blockX, blockY, blockZ); 
-		return blockID == LBCore.littleChunkID || Block.blocksList[blockID] == null || Block.blocksList[blockID].isBlockReplaceable(world, blockX, blockY, blockZ);
+    
+	private boolean shouldDoDraw(World world, int blockX, int blockY, int blockZ) {
+		int blockID = world.getBlockId(	blockX,
+										blockY,
+										blockZ);
+		return blockID == ConfigurationLib.littleChunkID
+				|| Block.blocksList[blockID] == null
+				|| Block.blocksList[blockID].isBlockReplaceable(world,
+																blockX,
+																blockY,
+																blockZ);
 	}
 
 	public static void renderPulsingQuad(RenderEngine renderEngine, String overlay, float maxTransparency) {
 
-        float pulseTransparency = (getPulseValue() * maxTransparency) / 3000f;
+		float pulseTransparency = (getPulseValue() * maxTransparency) / 3000f;
 
-        //renderEngine..func_110577_a(overlay);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, renderEngine.getTexture(overlay));
-        Tessellator tessellator = Tessellator.instance;
+		renderEngine.bindTexture(overlay);
+		// GL11.glBindTexture(GL11.GL_TEXTURE_2D, overlay);
+		Tessellator tessellator = Tessellator.instance;
 
-        GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glColor4f(1, 1, 1, pulseTransparency);
+		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(	GL11.GL_SRC_ALPHA,
+							GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GL11.glColor4f(	1,
+						1,
+						1,
+						pulseTransparency);
 
-        tessellator.startDrawingQuads();
-        tessellator.setColorRGBA_F(1, 1, 1, pulseTransparency);
+		tessellator.startDrawingQuads();
+		tessellator.setColorRGBA_F(	1,
+									1,
+									1,
+									pulseTransparency);
 
-        tessellator.addVertexWithUV(-0.5D, 0.5D, 0F, 0, 0.5);
-        tessellator.addVertexWithUV(0.5D, 0.5D, 0F, 0.5, 0.5);
-        tessellator.addVertexWithUV(0.5D, -0.5D, 0F, 0.5, 0);
-        tessellator.addVertexWithUV(-0.5D, -0.5D, 0F, 0, 0);
+		tessellator.addVertexWithUV(-0.5D,
+									0.5D,
+									0F,
+									0,
+									0.5);
+		tessellator.addVertexWithUV(0.5D,
+									0.5D,
+									0F,
+									0.5,
+									0.5);
+		tessellator.addVertexWithUV(0.5D,
+									-0.5D,
+									0F,
+									0.5,
+									0);
+		tessellator.addVertexWithUV(-0.5D,
+									-0.5D,
+									0F,
+									0,
+									0);
 
-        tessellator.draw();
-        GL11.glDisable(GL11.GL_BLEND);
-        GL11.glDisable(GL12.GL_RESCALE_NORMAL);
-    }
+		tessellator.draw();
+		GL11.glDisable(GL11.GL_BLEND);
+		GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+	}
 
-    private static int getPulseValue() {
+	private static int getPulseValue() {
 
-        if (doInc) {
-            pulse += 8;
-        }
-        else {
-            pulse -= 8;
-        }
+		if (doInc) {
+			pulse += 8;
+		} else {
+			pulse -= 8;
+		}
 
-        if (pulse == 3000) {
-            doInc = false;
-        }
+		if (pulse == 3000) {
+			doInc = false;
+		}
 
-        if (pulse == 0) {
-            doInc = true;
-        }
+		if (pulse == 0) {
+			doInc = true;
+		}
 
-        return pulse;
-    }
+		return pulse;
+	}
 }

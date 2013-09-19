@@ -3,10 +3,10 @@ package slimevoid.littleblocks.blocks;
 import slimevoid.littleblocks.blocks.core.LittleBlockCoordinates;
 
 public class BlockLittleChunkExtendedBlock {
-	private int blockId;
-	private int metadata;
-	private LittleBlockCoordinates parentBlock;
-	private LittleBlockCoordinates littleBlock;
+	private int						blockId;
+	private int						metadata;
+	private LittleBlockCoordinates	parentBlock;
+	private LittleBlockCoordinates	littleBlock;
 
 	public BlockLittleChunkExtendedBlock(int x, int y, int z) {
 		this.littleBlock = new LittleBlockCoordinates(x, y, z);

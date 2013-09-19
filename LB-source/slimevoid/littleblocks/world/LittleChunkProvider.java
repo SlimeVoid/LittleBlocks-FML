@@ -2,8 +2,6 @@ package slimevoid.littleblocks.world;
 
 import java.util.List;
 
-
-
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.IProgressUpdate;
 import net.minecraft.world.ChunkPosition;
@@ -12,8 +10,8 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 
 public class LittleChunkProvider implements IChunkProvider {
-	private World realWorld;
-	private World littleWorld;
+	private World	realWorld;
+	private World	littleWorld;
 
 	public LittleChunkProvider(LittleWorld littleWorld) {
 		this.realWorld = littleWorld.getRealWorld();
@@ -25,7 +23,8 @@ public class LittleChunkProvider implements IChunkProvider {
 	 */
 	@Override
 	public Chunk loadChunk(int x, int y) {
-		return this.provideChunk(x, y);
+		return this.provideChunk(	x,
+									y);
 	}
 
 	/**
@@ -117,6 +116,6 @@ public class LittleChunkProvider implements IChunkProvider {
 	@Override
 	public void func_104112_b() {
 		// TODO :: Auto-generated method stub
-		
+
 	}
 }

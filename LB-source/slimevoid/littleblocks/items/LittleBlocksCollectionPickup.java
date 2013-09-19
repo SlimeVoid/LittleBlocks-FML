@@ -13,7 +13,7 @@ public class LittleBlocksCollectionPickup {
 		EntityItem item = event.item;
 		EntityPlayer entityplayer = event.entityPlayer;
 		if (item instanceof EntityItemLittleBlocksCollection) {
-			((EntityItemLittleBlocksCollection)item).dropItems(entityplayer);
+			((EntityItemLittleBlocksCollection) item).dropItems(entityplayer);
 			event.setResult(Result.ALLOW);
 			event.item.setDead();
 		}

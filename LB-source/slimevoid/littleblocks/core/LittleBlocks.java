@@ -36,10 +36,10 @@ public class LittleBlocks {
 	@SidedProxy(
 			clientSide = CoreLib.CLIENT_PROXY,
 			serverSide = CoreLib.COMMON_PROXY)
-	public static ILBCommonProxy proxy;
-	
+	public static ILBCommonProxy	proxy;
+
 	@Instance(CoreLib.MOD_ID)
-	public static LittleBlocks instance;
+	public static LittleBlocks		instance;
 
 	@PreInit
 	public void LittleBlocksPreInit(FMLPreInitializationEvent event) {

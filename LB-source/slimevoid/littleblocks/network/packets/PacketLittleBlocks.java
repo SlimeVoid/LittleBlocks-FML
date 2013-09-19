@@ -14,24 +14,25 @@ import slimevoidlib.network.PacketUpdate;
 
 public class PacketLittleBlocks extends PacketUpdate {
 
-	//private int sender;
-	private NBTTagCompound tileEntityData;
+	// private int sender;
+	private NBTTagCompound	tileEntityData;
 
 	@Override
 	public void writeData(DataOutputStream data) throws IOException {
 		super.writeData(data);
-		//data.writeInt(sender);
+		// data.writeInt(sender);
 		writeTileEntityData(data);
 	}
 
 	private void writeTileEntityData(DataOutputStream data) throws IOException {
-		writeNBTTagCompound(this.tileEntityData, data);
+		writeNBTTagCompound(this.tileEntityData,
+							data);
 	}
 
 	@Override
 	public void readData(DataInputStream data) throws IOException {
 		super.readData(data);
-		//sender = data.readInt();
+		// sender = data.readInt();
 		readTileEntityData(data);
 	}
 
@@ -46,45 +47,63 @@ public class PacketLittleBlocks extends PacketUpdate {
 
 	public PacketLittleBlocks(String command, int x, int y, int z, int side, float vecX, float vecY, float vecZ, int selectedX, int selectedY, int selectedZ, int blockId, int metadata) {
 		this();
-		this.setPosition(x, y, z, side);
-		this.setHitVectors(vecX, vecY, vecZ);
+		this.setPosition(	x,
+							y,
+							z,
+							side);
+		this.setHitVectors(	vecX,
+							vecY,
+							vecZ);
 		this.payload = new PacketPayload(5, 0, 0, 0);
 		this.setCommand(command);
 		this.setBlockId(blockId);
 		this.setMetadata(metadata);
-		this.setSelectedXYZ(selectedX, selectedY, selectedZ);
+		this.setSelectedXYZ(selectedX,
+							selectedY,
+							selectedZ);
 	}
 
 	public PacketLittleBlocks(String command, int x, int y, int z, int side, int blockId, int metadata) {
 		this();
-		this.setPosition(x, y, z, side);
+		this.setPosition(	x,
+							y,
+							z,
+							side);
 		this.payload = new PacketPayload(2, 0, 0, 1);
 		this.setCommand(command);
 		this.setBlockId(blockId);
 		this.setMetadata(metadata);
-		this.payload.setBoolPayload(0, false);
+		this.payload.setBoolPayload(0,
+									false);
 	}
 
 	public void setSelectedXYZ(int selectedX, int selectedY, int selectedZ) {
-		this.payload.setIntPayload(2, selectedX);
-		this.payload.setIntPayload(3, selectedY);
-		this.payload.setIntPayload(4, selectedZ);
+		this.payload.setIntPayload(	2,
+									selectedX);
+		this.payload.setIntPayload(	3,
+									selectedY);
+		this.payload.setIntPayload(	4,
+									selectedZ);
 	}
 
 	@Override
 	public boolean targetExists(World world) {
-		if (world.blockExists(this.xPosition, this.yPosition, this.zPosition)) {
+		if (world.blockExists(	this.xPosition,
+								this.yPosition,
+								this.zPosition)) {
 			return true;
 		}
 		return false;
 	}
 
 	public void setBlockId(int blockId) {
-		this.payload.setIntPayload(0, blockId);
+		this.payload.setIntPayload(	0,
+									blockId);
 	}
 
 	public void setMetadata(int metadata) {
-		this.payload.setIntPayload(1, metadata);
+		this.payload.setIntPayload(	1,
+									metadata);
 	}
 
 	public int getBlockID() {
@@ -107,25 +126,23 @@ public class PacketLittleBlocks extends PacketUpdate {
 		return this.payload.getIntPayload(4);
 	}
 
-/*	public int getSender() {
-		return this.sender;
-	}
+	/*
+	 * public int getSender() { return this.sender; } public void setSender(int
+	 * sender) { this.sender = sender; }
+	 */
 
-	public void setSender(int sender) {
-		this.sender = sender;
-	}*/
-	
 	public void setTileEntityData(TileEntity tileData) {
 		NBTTagCompound tileTag = new NBTTagCompound();
 		tileData.writeToNBT(tileTag);
 		this.tileEntityData = tileTag;
-		this.payload.setBoolPayload(0, true);
+		this.payload.setBoolPayload(0,
+									true);
 	}
-	
+
 	public NBTTagCompound getTileEntityData() {
 		return this.tileEntityData;
 	}
-	
+
 	public boolean hasTileEntity() {
 		return this.payload.getBoolPayload(0);
 	}

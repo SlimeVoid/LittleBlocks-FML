@@ -14,7 +14,7 @@ import slimevoidlib.nbt.NBTHelper;
 import slimevoidlib.network.PacketEntity;
 
 public class PacketLittleBlocksCollection extends PacketEntity {
-	public HashMap<Integer, ItemStack> itemstackCollection = new HashMap<Integer, ItemStack>();
+	public HashMap<Integer, ItemStack>	itemstackCollection	= new HashMap<Integer, ItemStack>();
 
 	public PacketLittleBlocksCollection() {
 		super();
@@ -23,11 +23,10 @@ public class PacketLittleBlocksCollection extends PacketEntity {
 
 	public PacketLittleBlocksCollection(EntityItemLittleBlocksCollection entitylb) {
 		this();
-		this.setPosition(
-				(int)entitylb.posX,
-				(int)entitylb.posY,
-				(int)entitylb.posZ,
-				0);
+		this.setPosition(	(int) entitylb.posX,
+							(int) entitylb.posY,
+							(int) entitylb.posZ,
+							0);
 		this.setEntityId(entitylb.entityId);
 		this.setCommand(CommandLib.ENTITY_COLLECTION);
 		this.itemstackCollection = entitylb.getCollection();
@@ -48,15 +47,17 @@ public class PacketLittleBlocksCollection extends PacketEntity {
 		data.writeInt(itemstackCollection.size());
 		for (ItemStack itemstack : itemstackCollection.values()) {
 			NBTTagCompound nbttagcompound = new NBTTagCompound();
-			NBTHelper.writeNBTTagCompound(itemstack.writeToNBT(nbttagcompound), data);
+			NBTHelper.writeNBTTagCompound(	itemstack.writeToNBT(nbttagcompound),
+											data);
 		}
 	}
-	
+
 	public void addItemToDrop(ItemStack itemstack) {
 		if (itemstackCollection.containsKey(itemstack.getItem().itemID)) {
-			itemstackCollection.get(itemstack.getItem().itemID).stackSize ++;
+			itemstackCollection.get(itemstack.getItem().itemID).stackSize++;
 		} else {
-			itemstackCollection.put(itemstack.getItem().itemID, itemstack);
+			itemstackCollection.put(itemstack.getItem().itemID,
+									itemstack);
 		}
 	}
 }

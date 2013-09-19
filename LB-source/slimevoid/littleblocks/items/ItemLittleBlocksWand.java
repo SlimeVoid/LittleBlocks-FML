@@ -12,9 +12,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
-import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.LoggerLittleBlocks;
 import slimevoid.littleblocks.core.lib.CommandLib;
+import slimevoid.littleblocks.core.lib.ConfigurationLib;
 import slimevoid.littleblocks.core.lib.EnumWandAction;
 import slimevoid.littleblocks.core.lib.IconLib;
 import slimevoid.littleblocks.handlers.LittleBlocksRotationHandler;
@@ -27,23 +27,23 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemLittleBlocksWand extends Item {
-	
-	protected Icon[] iconList;
-	
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void registerIcons(IconRegister iconRegister) {
+
+	protected Icon[]	iconList;
+
+	@SideOnly(Side.CLIENT)
+	@Override
+	public void registerIcons(IconRegister iconRegister) {
 		iconList = new Icon[1];
 		iconList[0] = iconRegister.registerIcon(IconLib.LB_WAND);
-    }
+	}
 
 	@Override
 	public Icon getIconFromDamage(int i) {
 		return iconList[0];
 	}
 
-	public static HashMap<EntityPlayer, TileEntityLittleChunk> selectedLittleTiles = new HashMap<EntityPlayer, TileEntityLittleChunk>();
-	public static ReadWriteLock tileLock = new ReadWriteLock();
+	public static HashMap<EntityPlayer, TileEntityLittleChunk>	selectedLittleTiles	= new HashMap<EntityPlayer, TileEntityLittleChunk>();
+	public static ReadWriteLock									tileLock			= new ReadWriteLock();
 
 	public ItemLittleBlocksWand(int id) {
 		super(id);
@@ -53,29 +53,61 @@ public class ItemLittleBlocksWand extends Item {
 
 	@Override
 	public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int l, float a, float b, float c) {
-		if (entityplayer.canPlayerEdit(x, y, z, l, itemstack)) {
+		if (entityplayer.canPlayerEdit(	x,
+										y,
+										z,
+										l,
+										itemstack)) {
 			if (!world.isRemote) {
 				EnumWandAction playerWandAction = EnumWandAction.getWandActionForPlayer(entityplayer);
 				if (playerWandAction != null) {
 					if (playerWandAction.equals(EnumWandAction.COPY_LB)) {
-						return this.doCopyLB(itemstack, entityplayer, world, x, y, z, l, a, b, c);
+						return this.doCopyLB(	itemstack,
+												entityplayer,
+												world,
+												x,
+												y,
+												z,
+												l,
+												a,
+												b,
+												c);
 					}
 					if (playerWandAction.equals(EnumWandAction.ROTATE_LB)) {
-						return this.doRotateLB(itemstack, entityplayer, world, x, y, z, l, a, b, c);
-					}	
+						return this.doRotateLB(	itemstack,
+												entityplayer,
+												world,
+												x,
+												y,
+												z,
+												l,
+												a,
+												b,
+												c);
+					}
 				} else {
-					return this.doPlaceLB(itemstack, entityplayer, world, x, y, z, l, a, b, c);
+					return this.doPlaceLB(	itemstack,
+											entityplayer,
+											world,
+											x,
+											y,
+											z,
+											l,
+											a,
+											b,
+											c);
 				}
 			}
 		}
 		return false;
 	}
 
-	private boolean doRotateLB(ItemStack itemstack, EntityPlayer entityplayer,
-			World world, int x, int y, int z, int l, float a, float b, float c) {
-		TileEntity tileentity = world.getBlockTileEntity(x, y, z);
+	private boolean doRotateLB(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int l, float a, float b, float c) {
+		TileEntity tileentity = world.getBlockTileEntity(	x,
+															y,
+															z);
 		if (tileentity != null && tileentity instanceof TileEntityLittleChunk) {
-			TileEntityLittleChunk tilelb = (TileEntityLittleChunk)tileentity;
+			TileEntityLittleChunk tilelb = (TileEntityLittleChunk) tileentity;
 			LittleBlocksRotationHandler tileToRotate = new LittleBlocksRotationHandler(world, entityplayer, tilelb, x, y, z, l);
 			tileToRotate.rotateTile();
 			return true;
@@ -83,65 +115,81 @@ public class ItemLittleBlocksWand extends Item {
 		return false;
 	}
 
-	private boolean doPlaceLB(ItemStack itemstack, EntityPlayer entityplayer,
-			World world, int x, int y, int z, int l, float a, float b, float c) {
-		int blockID = world.getBlockId(x, y, z);
-		if (blockID != LBCore.littleChunkID) {
-			if (!Block.blocksList[blockID].isBlockReplaceable(world, x, y, z) ||  Block.blocksList[blockID] instanceof BlockFluid) {
+	private boolean doPlaceLB(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int l, float a, float b, float c) {
+		int blockID = world.getBlockId(	x,
+										y,
+										z);
+		if (blockID != ConfigurationLib.littleChunkID) {
+			if (!Block.blocksList[blockID].isBlockReplaceable(	world,
+																x,
+																y,
+																z)
+				|| Block.blocksList[blockID] instanceof BlockFluid) {
 				if (l == 0) {
 					--y;
 				}
-		
+
 				if (l == 1) {
 					++y;
 				}
-		
+
 				if (l == 2) {
 					--z;
 				}
-		
+
 				if (l == 3) {
 					++z;
 				}
-		
+
 				if (l == 4) {
 					--x;
 				}
-		
+
 				if (l == 5) {
 					++x;
 				}
 			}
-			blockID = world.getBlockId(x, y, z);
-			if (blockID == 0 || Block.blocksList[blockID] == null || Block.blocksList[blockID].isBlockReplaceable(world, x, y, z) && !(Block.blocksList[world.getBlockId(x, y, z)] instanceof BlockFluid)) {
-				world.setBlock(x, y, z, LBCore.littleChunkID);
-				TileEntity newtile = world.getBlockTileEntity(
-						x,
-						y,
-						z);
+			blockID = world.getBlockId(	x,
+										y,
+										z);
+			if (blockID == 0
+				|| Block.blocksList[blockID] == null
+				|| Block.blocksList[blockID].isBlockReplaceable(world,
+																x,
+																y,
+																z)
+				&& !(Block.blocksList[world.getBlockId(	x,
+														y,
+														z)] instanceof BlockFluid)) {
+				world.setBlock(	x,
+								y,
+								z,
+								ConfigurationLib.littleChunkID);
+				TileEntity newtile = world.getBlockTileEntity(	x,
+																y,
+																z);
 				newtile.onInventoryChanged();
-				world.markBlockForUpdate(x, y, z);
+				world.markBlockForUpdate(	x,
+											y,
+											z);
 			}
 			return true;
 		}
 		return false;
 	}
 
-	private boolean doCopyLB(ItemStack itemstack,
-			EntityPlayer entityplayer, World world, int x, int y, int z, int l,
-			float a, float b, float c) {
-		TileEntity tileentity = world.getBlockTileEntity(x, y, z);
+	private boolean doCopyLB(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int l, float a, float b, float c) {
+		TileEntity tileentity = world.getBlockTileEntity(	x,
+															y,
+															z);
 		if (tileentity != null && tileentity instanceof TileEntityLittleChunk) {
 			try {
 				tileLock.writeLock(world);
-				selectedLittleTiles.put(
-						entityplayer,
-						(TileEntityLittleChunk) tileentity);
+				selectedLittleTiles.put(entityplayer,
+										(TileEntityLittleChunk) tileentity);
 				tileLock.writeUnlock();
 			} catch (InterruptedException e) {
-				LoggerLittleBlocks
-						.getInstance("ItemLittleBlocksCopier")
-							.writeStackTrace(e);
+				LoggerLittleBlocks.getInstance("ItemLittleBlocksCopier").writeStackTrace(e);
 			}
 			return true;
 		} else if (tileentity == null) {
@@ -151,8 +199,7 @@ public class ItemLittleBlocksWand extends Item {
 					tileLock.readUnlock();
 					return false;
 				}
-				TileEntityLittleChunk selectedLittleTile = selectedLittleTiles
-						.get(entityplayer);
+				TileEntityLittleChunk selectedLittleTile = selectedLittleTiles.get(entityplayer);
 				tileLock.readUnlock();
 				int xx = x, yy = y, zz = z;
 				if (selectedLittleTile != null) {
@@ -179,52 +226,51 @@ public class ItemLittleBlocksWand extends Item {
 					if (l == 5) {
 						++xx;
 					}
-					world.setBlock(xx, yy, zz, LBCore.littleChunkID);
-					TileEntity newtile = world.getBlockTileEntity(
-							xx,
-							yy,
-							zz);
-					if (newtile != null && newtile instanceof TileEntityLittleChunk) {
+					world.setBlock(	xx,
+									yy,
+									zz,
+									ConfigurationLib.littleChunkID);
+					TileEntity newtile = world.getBlockTileEntity(	xx,
+																	yy,
+																	zz);
+					if (newtile != null
+						&& newtile instanceof TileEntityLittleChunk) {
 						TileEntityLittleChunk newtilelb = (TileEntityLittleChunk) newtile;
 						tileLock.readLock(world);
-						TileEntityLittleChunk oldtile = selectedLittleTiles
-								.get(entityplayer);
+						TileEntityLittleChunk oldtile = selectedLittleTiles.get(entityplayer);
 						tileLock.readUnlock();
-						for (int x1 = 0; x1 < LBCore.littleBlocksSize; x1++) {
-							for (int y1 = 0; y1 < LBCore.littleBlocksSize; y1++) {
-								for (int z1 = 0; z1 < LBCore.littleBlocksSize; z1++) {
-									if (oldtile.getBlockID(x1, y1, z1) > 0) {
-										newtilelb.setBlockIDWithMetadata(
-												x1,
-												y1,
-												z1,
-												oldtile.getBlockID(
-														x1,
-														y1,
-														z1),
-												oldtile.getBlockMetadata(
-														x1,
-														y1,
-														z1));
+						for (int x1 = 0; x1 < ConfigurationLib.littleBlocksSize; x1++) {
+							for (int y1 = 0; y1 < ConfigurationLib.littleBlocksSize; y1++) {
+								for (int z1 = 0; z1 < ConfigurationLib.littleBlocksSize; z1++) {
+									if (oldtile.getBlockID(	x1,
+															y1,
+															z1) > 0) {
+										newtilelb.setBlockIDWithMetadata(	x1,
+																			y1,
+																			z1,
+																			oldtile.getBlockID(	x1,
+																								y1,
+																								z1),
+																			oldtile.getBlockMetadata(	x1,
+																										y1,
+																										z1));
 									}
 								}
 							}
 						}
 						newtilelb.onInventoryChanged();
-						world.markBlockForUpdate(xx, yy, zz);
+						world.markBlockForUpdate(	xx,
+													yy,
+													zz);
 					}
 				}
 				return true;
 			} catch (InterruptedException e) {
-				LoggerLittleBlocks
-						.getInstance("ItemLittleBlocksCopier")
-							.writeStackTrace(e);
+				LoggerLittleBlocks.getInstance("ItemLittleBlocksCopier").writeStackTrace(e);
 			}
 		}
-		PacketDispatcher.sendPacketToPlayer(
-				new PacketLittleNotify(
-						CommandLib.COPIER_MESSAGE).getPacket(),
-						(Player) entityplayer);
+		PacketDispatcher.sendPacketToPlayer(new PacketLittleNotify(CommandLib.COPIER_MESSAGE).getPacket(),
+											(Player) entityplayer);
 		return false;
 	}
 }

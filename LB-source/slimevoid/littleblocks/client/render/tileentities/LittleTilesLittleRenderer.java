@@ -26,21 +26,21 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import slimevoid.littleblocks.core.LBCore;
+import slimevoid.littleblocks.core.lib.ConfigurationLib;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 
-
 public class LittleTilesLittleRenderer {
-	private TileEntityRenderer tileEntityRenderer;
-	private Set<String> textures = new HashSet<String>();
-	private HashMap<String, HashMap<Integer, LittleTileToRender>> texturedTilesToRender;
-	private List<LittleTileToRender> tilesToRender;
-	
+	private TileEntityRenderer										tileEntityRenderer;
+	private Set<String>												textures	= new HashSet<String>();
+	private HashMap<String, HashMap<Integer, LittleTileToRender>>	texturedTilesToRender;
+	private List<LittleTileToRender>								tilesToRender;
+
 	public LittleTilesLittleRenderer(TileEntityRenderer tileEntityRenderer) {
 		this.tileEntityRenderer = tileEntityRenderer;
 		this.texturedTilesToRender = new HashMap<String, HashMap<Integer, LittleTileToRender>>();
 		this.tilesToRender = new ArrayList<LittleTileToRender>();
 	}
-	
+
 	public void addLittleTileToRender(TileEntity tileentity) {
 		LittleTileToRender render = new LittleTileToRender(tileentity);
 		if (!tilesToRender.contains(render)) {
@@ -53,26 +53,36 @@ public class LittleTilesLittleRenderer {
 		if (this.texturedTilesToRender.containsKey(textureFile)) {
 			HashMap<Integer, LittleTileToRender> littleTilesToRender = this.texturedTilesToRender.get(textureFile);
 			int nextInt = littleTilesToRender.size();
-			littleTilesToRender.put(nextInt, render);
+			littleTilesToRender.put(nextInt,
+									render);
 		} else {
 			this.textures.add(textureFile);
 			HashMap<Integer, LittleTileToRender> littleTilesToRender = new HashMap<Integer, LittleTileToRender>();
-			littleTilesToRender.put(0, render);
-			this.texturedTilesToRender.put(textureFile, littleTilesToRender);
+			littleTilesToRender.put(0,
+									render);
+			this.texturedTilesToRender.put(	textureFile,
+											littleTilesToRender);
 		}
 	}
 
 	public void renderLittleTiles(TileEntityLittleChunk tileentity, double x, double y, double z, float f) {
 		GL11.glPushMatrix();
-		
-		GL11.glTranslated(x, y, z);
-		GL11.glTranslated(-tileentity.xCoord, -tileentity.yCoord, -tileentity.zCoord);
+
+		GL11.glTranslated(	x,
+							y,
+							z);
+		GL11.glTranslated(	-tileentity.xCoord,
+							-tileentity.yCoord,
+							-tileentity.zCoord);
 		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-		float scale = 1F / LBCore.littleBlocksSize;
-		GL11.glScaled(scale, scale, scale);
+		float scale = 1F / ConfigurationLib.littleBlocksSize;
+		GL11.glScaled(	scale,
+						scale,
+						scale);
 
 		RenderHelper.disableStandardItemLighting();
-		GL11.glBlendFunc(770, 771);
+		GL11.glBlendFunc(	770,
+							771);
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_CULL_FACE);
 		if (Minecraft.isAmbientOcclusionEnabled()) {
@@ -80,11 +90,15 @@ public class LittleTilesLittleRenderer {
 		} else {
 			GL11.glShadeModel(GL11.GL_FLAT);
 		}
-		
+
 		for (LittleTileToRender tileToRender : this.tilesToRender) {
-			this.tileEntityRenderer.renderTileEntityAt(tileToRender.tileentity, tileToRender.x, tileToRender.y, tileToRender.z, f);
+			this.tileEntityRenderer.renderTileEntityAt(	tileToRender.tileentity,
+														tileToRender.x,
+														tileToRender.y,
+														tileToRender.z,
+														f);
 		}
-		
+
 		GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 		GL11.glPopMatrix();
 	}

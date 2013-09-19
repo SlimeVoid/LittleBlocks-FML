@@ -3,7 +3,11 @@
 set programdir="C:\Programming"
 set packagedir="%programdir%\Packages"
 set repodir="%programdir%\Repositories"
+<<<<<<< HEAD
 set forgedir="%repodir%\MinecraftForge-1.5.2"
+=======
+set forgedir="%repodir%\MinecraftForge-1.6.2"
+>>>>>>> Compilable - Tickable - LittleWorldClient
 set fmldir="%forgedir%\fml"
 set mcpdir="%forgedir%\mcp"
 set littleblocks="%repodir%\LittleBlocks-FML"

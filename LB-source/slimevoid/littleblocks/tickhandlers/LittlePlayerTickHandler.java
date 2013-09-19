@@ -10,13 +10,13 @@ public class LittlePlayerTickHandler implements ITickHandler {
 	@Override
 	public void tickStart(EnumSet<TickType> type, Object... tickData) {
 		// TODO :: Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void tickEnd(EnumSet<TickType> type, Object... tickData) {
 		// TODO :: Auto-generated method stub
-		
+
 	}
 
 	@Override
