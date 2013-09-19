@@ -28,7 +28,6 @@ import slimevoid.littleblocks.network.packets.PacketLittleBlocksSettings;
 import slimevoid.littleblocks.proxy.CommonProxy;
 import slimevoid.littleblocks.tickhandlers.LittleWorldTickHandler;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
-import slimevoid.littleblocks.world.LittleWorld;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.network.PacketDispatcher;

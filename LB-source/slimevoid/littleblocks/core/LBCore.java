@@ -24,8 +24,6 @@ import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
 import slimevoid.littleblocks.items.ItemLittleBlocksWand;
 import slimevoid.littleblocks.items.LittleBlocksCollectionPickup;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
-import slimevoid.littleblocks.world.LittleWorld;
-import slimevoid.littleblocks.world.old.LittleWorldServer;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;

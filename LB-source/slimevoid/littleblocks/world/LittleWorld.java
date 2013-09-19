@@ -93,6 +93,10 @@ public class LittleWorld extends World implements ILittleWorld {
 		);
 	}
 
+	public void initializeLittleWorld(WorldSettings worldSettings) {
+		this.initialize(worldSettings);
+	}
+
 	@Override
 	public void tick() {
 		super.tick();
@@ -1069,7 +1073,7 @@ public class LittleWorld extends World implements ILittleWorld {
 	}
 
 	@Override
-	public void idModified(int lastBlockId, int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
+	public void idModified(int lastId, int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
 		/*int blockX = (x << 3) + littleX,
 			blockY = (y << 3) + littleY,
 			blockZ = (z << 3) + littleZ;
