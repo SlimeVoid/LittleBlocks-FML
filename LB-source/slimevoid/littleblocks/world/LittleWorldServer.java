@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -39,6 +40,7 @@ import net.minecraft.world.NextTickListEntry;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraftforge.common.ForgeDirection;
@@ -180,9 +182,10 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 		this.getLittleWorld().addBlockEvent(x, y, z, blockID, eventID, eventParam);
 	}
 
-	/*
-	 * @Override public List<NextTickListEntry> getPendingBlockUpdates(Chunk
-	 * chunk, boolean forceRemove) { ArrayList<NextTickListEntry> pendingUpdates
+	 @Override public List<NextTickListEntry> getPendingBlockUpdates(Chunk chunk, boolean forceRemove) {
+		 return this.getLittleWorld().getPendingBlockUpdates(chunk, forceRemove);
+	 }
+		/*ArrayList<NextTickListEntry> pendingUpdates
 	 * = null; ChunkCoordIntPair chunkPair = chunk.getChunkCoordIntPair(); int x
 	 * = (chunkPair.chunkXPos << 4) + 2; int maxX = x + 16 + 2; int z =
 	 * (chunkPair.chunkZPos << 4) + 2; int maxZ = z + 16 + 2;
@@ -233,11 +236,11 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 			if (this.blockExists(	x,
 									y,
 									z)) {
-				PacketLib.sendTileEntity(	this.getLittleWorld(),
-											tileentity,
-											x,
-											y,
-											z);
+				//PacketLib.sendTileEntity(	this.getLittleWorld(),
+				//							tileentity,
+				//							x,
+				//							y,
+				//							z);
 			}
 		}
 	}

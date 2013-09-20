@@ -3,6 +3,7 @@ package slimevoid.littleblocks.world;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -23,11 +24,13 @@ import net.minecraft.network.packet.Packet60Explosion;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.Vec3;
+import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.NextTickListEntry;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldSettings;
+import net.minecraft.world.chunk.Chunk;
 
 public class LittleServerWorld extends LittleWorld {
 
@@ -380,21 +383,35 @@ public class LittleServerWorld extends LittleWorld {
 		} while (!newBlockEvent.equals(eventData));
 	}
 
-	/*
-	 * @Override public List<NextTickListEntry> getPendingBlockUpdates(Chunk
-	 * chunk, boolean forceRemove) { ArrayList<NextTickListEntry> pendingUpdates
-	 * = null; ChunkCoordIntPair chunkPair = chunk.getChunkCoordIntPair(); int x
-	 * = (chunkPair.chunkXPos << 4) + 2; int maxX = x + 16 + 2; int z =
-	 * (chunkPair.chunkZPos << 4) + 2; int maxZ = z + 16 + 2;
-	 * Iterator<NextTickListEntry> pendingTicks =
-	 * this.pendingTickListEntries.iterator(); while (pendingTicks.hasNext()) {
-	 * NextTickListEntry nextTick = pendingTicks .next(); if (nextTick.xCoord >=
-	 * x && nextTick.xCoord < maxX && nextTick.zCoord >= z && nextTick.zCoord <
-	 * maxZ) { if (forceRemove) { this.scheduledTickSet.remove(nextTick);
-	 * pendingTicks.remove(); } if (pendingUpdates == null) { pendingUpdates =
-	 * new ArrayList<NextTickListEntry>(); } pendingUpdates.add(nextTick); } }
-	 * return pendingUpdates; }
-	 */
+	
+	@Override
+	public List<NextTickListEntry> getPendingBlockUpdates(Chunk chunk,
+			boolean forceRemove) {
+		ArrayList<NextTickListEntry> pendingUpdates = null;
+		ChunkCoordIntPair chunkPair = chunk.getChunkCoordIntPair();
+		int x = (chunkPair.chunkXPos << 4) + 2;
+		int maxX = x + 16 + 2;
+		int z = (chunkPair.chunkZPos << 4) + 2;
+		int maxZ = z + 16 + 2;
+		Iterator<NextTickListEntry> pendingTicks = this.pendingTickListEntries
+				.iterator();
+		while (pendingTicks.hasNext()) {
+			NextTickListEntry nextTick = pendingTicks.next();
+			if (nextTick.xCoord >= x && nextTick.xCoord < maxX
+					&& nextTick.zCoord >= z && nextTick.zCoord < maxZ) {
+				if (forceRemove) {
+					this.scheduledTickSet.remove(nextTick);
+					pendingTicks.remove();
+				}
+				if (pendingUpdates == null) {
+					pendingUpdates = new ArrayList<NextTickListEntry>();
+				}
+				pendingUpdates.add(nextTick);
+			}
+		}
+		return pendingUpdates;
+	}
+	 
 
 	/**
 	 * Schedules a tick to a block with a delay (Most commonly the tick rate)
