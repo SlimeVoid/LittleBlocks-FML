@@ -12,12 +12,15 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import slimevoid.littleblocks.api.ILBCommonProxy;
 import slimevoid.littleblocks.api.ILittleWorld;
+import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
 import slimevoid.littleblocks.core.lib.PacketLib;
 import slimevoid.littleblocks.events.WorldServerLoadEvent;
+import slimevoid.littleblocks.events.WorldServerUnloadEvent;
 import slimevoid.littleblocks.network.CommonPacketHandler;
 import slimevoid.littleblocks.tickhandlers.LittleWorldServerTickHandler;
 import slimevoidlib.IPacketHandling;
@@ -33,6 +36,7 @@ public class CommonProxy implements ILBCommonProxy {
 		CommonPacketHandler.init();
 		PacketLib.registerPacketHandlers();
 		MinecraftForge.EVENT_BUS.register(new WorldServerLoadEvent());
+		MinecraftForge.EVENT_BUS.register(new WorldServerUnloadEvent());
 	}
 
 	@Override
@@ -78,6 +82,12 @@ public class CommonProxy implements ILBCommonProxy {
 		World world = (World) iblockaccess;
 		if (world != null) {
 			int dimension = world.provider.dimensionId;
+			if (LBCore.littleWorldServer.containsKey(dimension)) {
+				World littleWorld = DimensionManager.getWorld(LBCore.littleWorldServer.get(dimension));
+				if (littleWorld instanceof ILittleWorld) {
+					return (ILittleWorld) littleWorld;
+				}
+			}
 		}
 		return null;
 	}

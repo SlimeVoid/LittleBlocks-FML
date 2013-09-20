@@ -2,6 +2,8 @@ package slimevoid.littleblocks.world;
 
 import java.util.List;
 
+import slimevoid.littleblocks.api.ILittleWorld;
+
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.IProgressUpdate;
 import net.minecraft.world.ChunkPosition;
@@ -13,9 +15,9 @@ public class LittleChunkProvider implements IChunkProvider {
 	private World	realWorld;
 	private World	littleWorld;
 
-	public LittleChunkProvider(LittleWorld littleWorld) {
+	public LittleChunkProvider(ILittleWorld littleWorld) {
 		this.realWorld = littleWorld.getRealWorld();
-		this.littleWorld = littleWorld;
+		this.littleWorld = (World) littleWorld;
 	}
 
 	/**

@@ -127,11 +127,23 @@ public class ConfigurationLib {
 																					false));
 	}
 
+	@SideOnly(Side.CLIENT)
 	public static int getLittleDimension(int dimension) {
 		configuration.load();
 		int littleDimension = configuration.get(Configuration.CATEGORY_GENERAL, "littleDimension[" + dimension + "]", DimensionManager.getNextFreeDimId()).getInt();
 		configuration.save();
 		return littleDimension;
+	}
+
+	public static int getLittleServerDimension(int dimension) {
+		configuration.load();
+		int littleDimension = configuration.get(Configuration.CATEGORY_GENERAL, "littleServerDimension[" + dimension + "]", DimensionManager.getNextFreeDimId()).getInt();
+		configuration.save();
+		return littleDimension;
+	}
+
+	public static boolean isLittleDimension(int dimension) {
+		return configuration.hasKey(Configuration.CATEGORY_GENERAL, "littleServerDimension[" + dimension + "]");
 	}
 
 }

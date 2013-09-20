@@ -22,7 +22,6 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.common.ForgeDirection;
 import slimevoid.littleblocks.api.ILittleWorld;
-import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.LoggerLittleBlocks;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
@@ -84,10 +83,6 @@ public class LittleWorld extends World implements ILittleWorld {
 																											+ this.getRealWorld().toString()
 																											+ "]",
 																									LoggerLittleBlocks.LogLevel.DEBUG);
-	}
-
-	public void initializeLittleWorld(WorldSettings worldSettings) {
-		this.initialize(worldSettings);
 	}
 
 	@Override

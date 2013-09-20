@@ -1,5 +1,6 @@
 package slimevoid.littleblocks.world;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -26,11 +27,13 @@ import net.minecraft.network.packet.Packet60Explosion;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.IProgressUpdate;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.Explosion;
+import net.minecraft.world.MinecraftException;
 import net.minecraft.world.NextTickListEntry;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -161,7 +164,6 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 		if (this.pendingTickListEntries == null) {
 			this.pendingTickListEntries = new TreeSet<NextTickListEntry>();
 		}
-		this.getLittleWorld().initializeLittleWorld(worldSettings);
 	}
 
 	@Override
@@ -786,10 +788,10 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 															flag1);
 	}
 
-	@Override
+/*	@Override
 	protected IChunkProvider createChunkProvider() {
-		return this.getLittleWorld().createChunkProvider();
-	}
+        return new LittleChunkProvider(this);
+	}*/
 
 	@Override
 	public Entity getEntityByID(int entityId) {
@@ -843,4 +845,27 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 												y,
 												z);
 	}
+	
+    protected IChunkProvider createChunkProvider() {
+    	return new LittleChunkProvider(this);
+    }
+	
+	@Override
+    public void saveAllChunks(boolean par1, IProgressUpdate par2IProgressUpdate) throws MinecraftException {
+	    
+	}
+	
+	@Override
+    public void saveChunkData() {
+		
+	}
+	
+	@Override
+    protected void saveLevel() throws MinecraftException {
+		
+	}
+	
+    public File getChunkSaveLocation() {
+    	return null;
+    }
 }

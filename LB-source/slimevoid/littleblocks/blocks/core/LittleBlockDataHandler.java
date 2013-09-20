@@ -3,7 +3,7 @@ package slimevoid.littleblocks.blocks.core;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import slimevoid.littleblocks.world.LittleWorld;
+import slimevoid.littleblocks.api.ILittleWorld;
 
 public class LittleBlockDataHandler {
 
@@ -22,7 +22,7 @@ public class LittleBlockDataHandler {
 	}
 
 	public static boolean isLittleWorld(World world) {
-		return world instanceof LittleWorld ? true : false;
+		return world instanceof ILittleWorld ? true : false;
 	}
 
 	public static LittleBlockCoordinates AND(LittleBlockCoordinates coordinates, int valueAND) {
