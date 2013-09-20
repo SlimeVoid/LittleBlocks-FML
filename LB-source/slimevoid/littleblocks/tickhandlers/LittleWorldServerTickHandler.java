@@ -5,6 +5,7 @@ import java.util.EnumSet;
 import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.LittleBlocks;
+import slimevoid.littleblocks.world.LittleWorldServer;
 
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -19,9 +20,17 @@ public class LittleWorldServerTickHandler implements ITickHandler {
 		WorldServer[] worlds = DimensionManager.getWorlds();
 		if (worlds != null && worlds.length > 0) {
 			for (World world : worlds) {
-				if (world != null && !world.isRemote && world instanceof ILittleWorld) {
-					//world.updateEntities();
-					//world.tick();
+				if (world != null && !world.isRemote && !(world instanceof ILittleWorld)) {
+					int dimension = world.provider.dimensionId;
+					if (!LBCore.littleWorldServer.containsKey(dimension)) {
+						System.out.println("WARNING! No LittleWorld loaded for Dimension " + dimension);
+					} else {
+						/*LittleWorldServer worldServer = (LittleWorldServer) DimensionManager.getWorld(LBCore.littleWorldServer.get(dimension));
+						if (worldServer != null) {
+							worldServer.littleTick();
+							worldServer.updateLittleEntities();
+						}*/
+					}
 				}
 			}
 		}

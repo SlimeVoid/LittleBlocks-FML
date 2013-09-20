@@ -104,6 +104,10 @@ public class LittleWorld extends World implements ILittleWorld {
 		return false;
 	}
 
+	@Override
+    protected void tickBlocksAndAmbiance() {
+    	
+    }
 	public List<TileEntity>		loadedTiles	= new ArrayList<TileEntity>();
 	private List<TileEntity>	addedTiles	= new ArrayList<TileEntity>();
 	private boolean				scanningTiles;

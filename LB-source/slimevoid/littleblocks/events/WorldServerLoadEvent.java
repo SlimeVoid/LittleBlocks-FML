@@ -24,19 +24,22 @@ public class WorldServerLoadEvent {
 			
 			int littleDimension = ConfigurationLib.getLittleServerDimension(dimension);
 			
-			if (!DimensionManager.isDimensionRegistered(littleDimension)) {
-				DimensionManager.registerDimension(littleDimension, dimension);
-				
-				LBCore.littleWorldServer.put(dimension, littleDimension);
-				
-				String worldName = world.getWorldInfo().getWorldName() + ".littleWorld";
-				
-				WorldSettings worldSettings = new WorldSettings(world.getWorldInfo().getSeed(), world.getWorldInfo().getGameType(), world.getWorldInfo().isMapFeaturesEnabled(), world.getWorldInfo().isHardcoreModeEnabled(), world.getWorldInfo().getTerrainType());
-				
-				new LittleWorldServer(world, FMLCommonHandler.instance().getMinecraftServerInstance(), world.getSaveHandler(), worldName, littleDimension, worldSettings, null, null);
-				System.out.println("WorldServer Loaded: " + world.getWorldInfo().getWorldName() + " | Dimension: " + dimension + " | LittleDimension: " + littleDimension);
-				// TODO :: Load LittleWorldServer
-			}
+			registerLittleWorldServer(world, dimension, littleDimension);
+		}
+	}
+
+	public void registerLittleWorldServer(WorldServer world, int dimension, int littleDimension) {
+		if (!DimensionManager.isDimensionRegistered(littleDimension)) {
+			DimensionManager.registerDimension(littleDimension, dimension);
+			
+			LBCore.littleWorldServer.put(dimension, littleDimension);
+			
+			String worldName = world.getWorldInfo().getWorldName() + ".littleWorld";
+			
+			WorldSettings worldSettings = new WorldSettings(world.getWorldInfo().getSeed(), world.getWorldInfo().getGameType(), world.getWorldInfo().isMapFeaturesEnabled(), world.getWorldInfo().isHardcoreModeEnabled(), world.getWorldInfo().getTerrainType());
+			
+			new LittleWorldServer(world, FMLCommonHandler.instance().getMinecraftServerInstance(), world.getSaveHandler(), worldName, littleDimension, worldSettings, null, null);
+			System.out.println("WorldServer Loaded: " + world.getWorldInfo().getWorldName() + " | Dimension: " + dimension + " | LittleDimension: " + littleDimension);
 		}
 	}
 

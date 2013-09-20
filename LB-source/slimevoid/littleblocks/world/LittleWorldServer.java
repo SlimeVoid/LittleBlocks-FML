@@ -11,6 +11,7 @@ import java.util.TreeSet;
 import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.core.LoggerLittleBlocks;
 import slimevoid.littleblocks.core.lib.BlockUtil;
+import slimevoid.littleblocks.core.lib.ConfigurationLib;
 import slimevoid.littleblocks.core.lib.PacketLib;
 import slimevoid.littleblocks.world.events.LittleBlockEvent;
 import slimevoid.littleblocks.world.events.LittleBlockEventList;
@@ -44,46 +45,13 @@ import net.minecraftforge.common.ForgeDirection;
 
 public class LittleWorldServer extends WorldServer implements ILittleWorld {
 
-	/**
-	 * TreeSet of scheduled ticks which is used as a priority queue for the
-	 * ticks
-	 */
-	private TreeSet<NextTickListEntry>		pendingTickListEntries;
-
-	/** Set of scheduled ticks (used for checking if a tick already exists) */
-	private Set<NextTickListEntry>			scheduledTickSet;
-
-	private ArrayList<NextTickListEntry>	tickedEntries			= new ArrayList<NextTickListEntry>();
-
-	/**
-	 * Double buffer of ServerBlockEventList[] for holding pending
-	 * BlockEventData's
-	 */
-	private LittleBlockEventList[]			blockEventCache			= new LittleBlockEventList[] {
-			new LittleBlockEventList((LittleBlockEvent) null),
-			new LittleBlockEventList((LittleBlockEvent) null)		};
-
-	/**
-	 * The index into the blockEventCache; either 0, or 1, toggled in
-	 * sendBlockEventPackets where all BlockEvent are applied locally and send
-	 * to clients.
-	 */
-	private int								blockEventCacheIndex	= 0;
-
-	private final World						realWorld;
-	private final LittleWorld				littleWorld;
+	private final World							realWorld;
+	private final LittleServerWorld				littleWorld;
 
 	public LittleWorldServer(World referenceWorld, MinecraftServer minecraftServer, ISaveHandler iSaveHandler, String par3Str, int par4, WorldSettings par5WorldSettings, Profiler par6Profiler, ILogAgent par7iLogAgent) {
 		super(minecraftServer, iSaveHandler, par3Str, par4, par5WorldSettings, par6Profiler, par7iLogAgent);
 		this.realWorld = referenceWorld;
-		this.littleWorld = new LittleWorld(referenceWorld, this.provider);
-		if (this.scheduledTickSet == null) {
-			this.scheduledTickSet = new HashSet<NextTickListEntry>();
-		}
-
-		if (this.pendingTickListEntries == null) {
-			this.pendingTickListEntries = new TreeSet<NextTickListEntry>();
-		}
+		this.littleWorld = new LittleServerWorld(referenceWorld, this.provider);
 	}
 
 	@Override
@@ -91,7 +59,7 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 		return this.realWorld;
 	}
 
-	public LittleWorld getLittleWorld() {
+	public LittleServerWorld getLittleWorld() {
 		return this.littleWorld;
 	}
 
@@ -156,149 +124,25 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 		return this.getLittleWorld().isOutdated(world);
 	}
 
-	@Override
-	protected void initialize(WorldSettings worldSettings) {
-		if (this.scheduledTickSet == null) {
-			this.scheduledTickSet = new HashSet<NextTickListEntry>();
-		}
-		if (this.pendingTickListEntries == null) {
-			this.pendingTickListEntries = new TreeSet<NextTickListEntry>();
-		}
+	public void littleTick() {
 	}
-
+	
 	@Override
 	public void tick() {
-		this.worldInfo.incrementTotalWorldTime(this.worldInfo.getWorldTotalTime() + 1L);
-		this.worldInfo.setWorldTime(this.worldInfo.getWorldTime() + 1L);
-		this.tickUpdates(false);
-		this.sendAndApplyBlockEvents();
+		this.getLittleWorld().tick();
 	}
 
 	@Override
 	public boolean tickUpdates(boolean tick) {
-		int numberOfUpdates = this.pendingTickListEntries.size();
-
-		if (numberOfUpdates != this.scheduledTickSet.size()) {
-			throw new IllegalStateException("TickNextTick list out of synch");
-		} else {
-			if (numberOfUpdates > 1000) {
-				numberOfUpdates = 1000;
-			}
-			NextTickListEntry nextTick;
-			for (int update = 0; update < numberOfUpdates; ++update) {
-				nextTick = (NextTickListEntry) this.pendingTickListEntries.first();
-
-				if (!tick
-					&& nextTick.scheduledTime > this.getRealWorld().getWorldInfo().getWorldTotalTime()) {
-					break;
-				}
-
-				this.pendingTickListEntries.remove(nextTick);
-				this.scheduledTickSet.remove(nextTick);
-				this.tickedEntries.add(nextTick);
-			}
-			Iterator tickedEntryList = this.tickedEntries.iterator();
-
-			while (tickedEntryList.hasNext()) {
-				nextTick = (NextTickListEntry) tickedEntryList.next();
-				tickedEntryList.remove();
-				byte max = 0;
-				if (this.checkChunksExist(	nextTick.xCoord - max,
-											nextTick.yCoord - max,
-											nextTick.zCoord - max,
-											nextTick.xCoord + max,
-											nextTick.yCoord + max,
-											nextTick.zCoord + max)) {
-					// System.out.println("Existing Chunk");
-					int blockId = this.getBlockId(	nextTick.xCoord,
-													nextTick.yCoord,
-													nextTick.zCoord);
-
-					if (blockId > 0
-						&& Block.isAssociatedBlockID(	blockId,
-														nextTick.blockID)) {
-						// System.out.println("Associated Ticking Block");
-						try {
-							Block littleBlock = Block.blocksList[blockId];
-							if (BlockUtil.isBlockAllowedToTick(littleBlock)) {
-								// System.out.println("Allowed to Tick");
-								littleBlock.updateTick(	this,
-														nextTick.xCoord,
-														nextTick.yCoord,
-														nextTick.zCoord,
-														this.rand);
-							} else {
-								LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(	this.isRemote,
-																															"BlockUpdateTick Prohibited["
-																																	+ Block.blocksList[littleBlock.blockID].getLocalizedName()
-																																	+ "].("
-																																	+ nextTick.xCoord
-																																	+ ", "
-																																	+ nextTick.yCoord
-																																	+ ", "
-																																	+ nextTick.zCoord
-																																	+ ")",
-																															LoggerLittleBlocks.LogLevel.DEBUG);
-							}
-						} catch (Throwable thrown) {
-							LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(	this.isRemote,
-																														"BlockUpdateTick FAILED["
-																																+ Block.blocksList[blockId].getLocalizedName()
-																																+ "].("
-																																+ nextTick.xCoord
-																																+ ", "
-																																+ nextTick.yCoord
-																																+ ", "
-																																+ nextTick.zCoord
-																																+ ")",
-																														LoggerLittleBlocks.LogLevel.DEBUG);
-							CrashReport crashReport = CrashReport.makeCrashReport(	thrown,
-																					"Exception while ticking a block");
-							CrashReportCategory var9 = crashReport.makeCategory("Block being ticked");
-							int metadata;
-
-							try {
-								metadata = this.getBlockMetadata(	nextTick.xCoord,
-																	nextTick.yCoord,
-																	nextTick.zCoord);
-							} catch (Throwable thrown2) {
-								metadata = -1;
-							}
-
-							CrashReportCategory.addBlockCrashInfo(	var9,
-																	nextTick.xCoord,
-																	nextTick.yCoord,
-																	nextTick.zCoord,
-																	blockId,
-																	metadata);
-							throw new ReportedException(crashReport);
-						}
-						/*
-						 * TileEntity tileentity = this .getRealWorld()
-						 * .getBlockTileEntity( nextTick.xCoord >> 3,
-						 * nextTick.yCoord >> 3, nextTick.zCoord >> 3); if
-						 * (tileentity != null && tileentity instanceof
-						 * TileEntityLittleBlocks) { if
-						 * (!littleBlockTiles.contains(tileentity)) {
-						 * littleBlockTiles.add(tileentity); } }
-						 */
-					}
-				} else {
-					// System.out.println("Scheduling Update....");
-					this.scheduleBlockUpdate(	nextTick.xCoord,
-												nextTick.yCoord,
-												nextTick.zCoord,
-												nextTick.blockID,
-												0);
-				}
-			}
-			/*
-			 * if (this.ticksInWorld >= MAX_TICKS_IN_WORLD) { for (TileEntity
-			 * tile : littleBlockTiles) { } }
-			 */
-			this.tickedEntries.clear();
-			return !this.pendingTickListEntries.isEmpty();
-		}
+		return this.getLittleWorld().tickUpdates(tick);
+	}
+	
+	@Override
+	protected void tickBlocksAndAmbiance() {
+		this.getLittleWorld().tickBlocksAndAmbiance();
+	}
+	
+	public void updateLittleEntities() {
 	}
 
 	@Override
@@ -312,9 +156,7 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 	 */
 	@Override
 	public boolean isBlockTickScheduledThisTick(int x, int y, int z, int blockId) {
-		// System.out.println("isBlockTickScheduled");
-		NextTickListEntry nextticklistentry = new NextTickListEntry(x, y, z, blockId);
-		return this.tickedEntries.contains(nextticklistentry);
+		return this.getLittleWorld().isBlockTickScheduledThisTick(x, y, z, blockId);
 	}
 
 	/**
@@ -324,109 +166,7 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Explosion newExplosion(Entity entity, double x, double y, double z, float strength, boolean isFlaming, boolean isSmoking) {
-		Explosion explosion = new Explosion(this, entity, x, y, z, strength / 8);
-		explosion.isFlaming = isFlaming;
-		explosion.isSmoking = isSmoking;
-		explosion.doExplosionA();
-		explosion.doExplosionB(false);
-
-		if (!isSmoking) {
-			explosion.affectedBlockPositions.clear();
-		}
-
-		double xCoord = (int) x >> 3;
-		double yCoord = (int) y >> 3;
-		double zCoord = (int) z >> 3;
-
-		Iterator players = this.getRealWorld().playerEntities.iterator();
-
-		while (players.hasNext()) {
-			EntityPlayer player = (EntityPlayer) players.next();
-
-			if (player.getDistanceSq(	xCoord,
-										yCoord,
-										zCoord) < 4096.0D) {
-				((EntityPlayerMP) player).playerNetServerHandler.sendPacketToPlayer(new Packet60Explosion(xCoord, yCoord, zCoord, strength / 8, explosion.affectedBlockPositions, (Vec3) explosion.func_77277_b().get(player)));
-			}
-		}
-
-		return explosion;
-	}
-
-	/**
-	 * Send and apply locally all pending BlockEvents to each player with 64m
-	 * radius of the event.
-	 */
-	private void sendAndApplyBlockEvents() {
-		// Set<TileEntityLittleBlocks> tileentities = new HashSet();
-		while (!this.blockEventCache[this.blockEventCacheIndex].isEmpty()) {
-			int index = this.blockEventCacheIndex;
-			this.blockEventCacheIndex ^= 1;
-			Iterator blockEvent = this.blockEventCache[index].iterator();
-
-			while (blockEvent.hasNext()) {
-				BlockEventData eventData = (BlockEventData) blockEvent.next();
-				if (this.onBlockEventReceived(eventData)) {
-					PacketLib.sendBlockEvent(	eventData.getX(),
-												eventData.getY(),
-												eventData.getZ(),
-												eventData.getBlockID(),
-												eventData.getEventID(),
-												eventData.getEventParameter());
-				} else {
-					LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(	this.isRemote,
-																												"onBlockEvenReceived("
-																														+ eventData.getBlockID()
-																														+ ").[Event: "
-																														+ eventData.getEventID()
-																														+ "("
-																														+ eventData.getX()
-																														+ ", "
-																														+ eventData.getY()
-																														+ ", "
-																														+ eventData.getZ()
-																														+ "), "
-																														+ eventData.getEventParameter(),
-																												LoggerLittleBlocks.LogLevel.DEBUG);
-				}
-			}
-
-			this.blockEventCache[index].clear();
-		}
-	}
-
-	/**
-	 * Called to apply a pending BlockEvent to apply to the current world.
-	 */
-	private boolean onBlockEventReceived(BlockEventData blockEventData) {
-		int blockId = this.getBlockId(	blockEventData.getX(),
-										blockEventData.getY(),
-										blockEventData.getZ());
-
-		if (blockId == blockEventData.getBlockID()) {
-			return Block.blocksList[blockId].onBlockEventReceived(	this,
-																	blockEventData.getX(),
-																	blockEventData.getY(),
-																	blockEventData.getZ(),
-																	blockEventData.getEventID(),
-																	blockEventData.getEventParameter());
-		} else {
-			LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(	this.isRemote,
-																										"FAILED:onBlockEvenReceived("
-																												+ blockEventData.getBlockID()
-																												+ ").[Event: "
-																												+ blockEventData.getEventID()
-																												+ "("
-																												+ blockEventData.getX()
-																												+ ", "
-																												+ blockEventData.getY()
-																												+ ", "
-																												+ blockEventData.getZ()
-																												+ "), "
-																												+ blockEventData.getEventParameter(),
-																										LoggerLittleBlocks.LogLevel.DEBUG);
-			return false;
-		}
+		return this.getLittleWorld().newExplosion(entity, x, y, z, strength, isFlaming, isSmoking);
 	}
 
 	/**
@@ -437,18 +177,7 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 	 */
 	@Override
 	public void addBlockEvent(int x, int y, int z, int blockID, int eventID, int eventParam) {
-		BlockEventData eventData = new BlockEventData(x, y, z, blockID, eventID, eventParam);
-		Iterator nextEvent = this.blockEventCache[this.blockEventCacheIndex].iterator();
-		BlockEventData newBlockEvent;
-
-		do {
-			if (!nextEvent.hasNext()) {
-				this.blockEventCache[this.blockEventCacheIndex].add(eventData);
-				return;
-			}
-
-			newBlockEvent = (BlockEventData) nextEvent.next();
-		} while (!newBlockEvent.equals(eventData));
+		this.getLittleWorld().addBlockEvent(x, y, z, blockID, eventID, eventParam);
 	}
 
 	/*
@@ -486,50 +215,7 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 	 */
 	@Override
 	public void scheduleBlockUpdateWithPriority(int x, int y, int z, int blockId, int tickRate, int someValue) {
-		NextTickListEntry nextTickEntry = new NextTickListEntry(x, y, z, blockId);
-		byte max = 8;
-
-		if (this.scheduledUpdatesAreImmediate && blockId > 0) {
-			if (Block.blocksList[blockId].func_82506_l()) {
-				if (this.checkChunksExist(	nextTickEntry.xCoord - max,
-											nextTickEntry.yCoord - max,
-											nextTickEntry.zCoord - max,
-											nextTickEntry.xCoord + max,
-											nextTickEntry.yCoord + max,
-											nextTickEntry.zCoord + max)) {
-					int nextTickId = this.getBlockId(	nextTickEntry.xCoord,
-														nextTickEntry.yCoord,
-														nextTickEntry.zCoord);
-
-					if (nextTickId == nextTickEntry.blockID && nextTickId > 0) {
-						Block.blocksList[nextTickId].updateTick(this,
-																nextTickEntry.xCoord,
-																nextTickEntry.yCoord,
-																nextTickEntry.zCoord,
-																this.rand);
-					}
-				}
-				return;
-			}
-			tickRate = 1;
-		}
-		if (this.checkChunksExist(	x - max,
-									y - max,
-									z - max,
-									x + max,
-									y + max,
-									z + max)) {
-			if (blockId > 0) {
-				nextTickEntry.setScheduledTime(tickRate
-												+ this.getRealWorld().getWorldInfo().getWorldTotalTime());
-				nextTickEntry.setPriority(someValue);
-			}
-
-			if (!this.scheduledTickSet.contains(nextTickEntry)) {
-				this.scheduledTickSet.add(nextTickEntry);
-				this.pendingTickListEntries.add(nextTickEntry);
-			}
-		}
+		this.getLittleWorld().scheduleBlockUpdateWithPriority(x, y, z, blockId, tickRate, someValue);
 	}
 
 	/**
@@ -538,18 +224,7 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 	 */
 	@Override
 	public void scheduleBlockUpdateFromLoad(int x, int y, int z, int blockId, int tickRate, int par6) {
-		NextTickListEntry nextTick = new NextTickListEntry(x, y, z, blockId);
-		nextTick.setPriority(par6);
-
-		if (blockId > 0) {
-			nextTick.setScheduledTime((long) tickRate
-										+ this.getRealWorld().getWorldInfo().getWorldTotalTime());
-		}
-
-		if (!this.scheduledTickSet.contains(nextTick)) {
-			this.scheduledTickSet.add(nextTick);
-			this.pendingTickListEntries.add(nextTick);
-		}
+		this.scheduleBlockUpdateFromLoad(x, y, z, blockId, tickRate, par6);
 	}
 
 	@Override
@@ -558,7 +233,7 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 			if (this.blockExists(	x,
 									y,
 									z)) {
-				PacketLib.sendTileEntity(	this.littleWorld,
+				PacketLib.sendTileEntity(	this.getLittleWorld(),
 											tileentity,
 											x,
 											y,
