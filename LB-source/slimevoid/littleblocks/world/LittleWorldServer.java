@@ -130,6 +130,11 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 	}
 	
 	@Override
+    protected void initialize(WorldSettings worldSettings) {
+		this.getLittleWorld().initialize(worldSettings);
+	}
+	
+	@Override
 	public void tick() {
 		this.getLittleWorld().tick();
 	}
