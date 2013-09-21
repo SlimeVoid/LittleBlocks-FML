@@ -35,11 +35,11 @@ public class LittleWorldClient extends World implements ILittleWorld {
 		this.finishSetup();
 		this.littleWorld = new LittleWorld(referenceWorld, provider, name);
 	}
-	
+
 	@Override
 	public void finishSetup() {
-        this.provider.registerWorld(this);
-        this.provider.dimensionId = this.provider.dimensionId;
+		this.provider.registerWorld(this);
+		this.provider.dimensionId = this.provider.dimensionId;
 	}
 
 	@Override

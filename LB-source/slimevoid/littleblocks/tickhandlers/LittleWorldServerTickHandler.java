@@ -20,16 +20,20 @@ public class LittleWorldServerTickHandler implements ITickHandler {
 		WorldServer[] worlds = DimensionManager.getWorlds();
 		if (worlds != null && worlds.length > 0) {
 			for (World world : worlds) {
-				if (world != null && !world.isRemote && !(world instanceof ILittleWorld)) {
+				if (world != null && !world.isRemote
+					&& !(world instanceof ILittleWorld)) {
 					int dimension = world.provider.dimensionId;
 					if (!LBCore.littleWorldServer.containsKey(dimension)) {
-						System.out.println("WARNING! No LittleWorld loaded for Dimension " + dimension);
+						System.out.println("WARNING! No LittleWorld loaded for Dimension "
+											+ dimension);
 					} else {
-						/*LittleWorldServer worldServer = (LittleWorldServer) DimensionManager.getWorld(LBCore.littleWorldServer.get(dimension));
-						if (worldServer != null) {
-							worldServer.littleTick();
-							worldServer.updateLittleEntities();
-						}*/
+						/*
+						 * LittleWorldServer worldServer = (LittleWorldServer)
+						 * DimensionManager
+						 * .getWorld(LBCore.littleWorldServer.get(dimension));
+						 * if (worldServer != null) { worldServer.littleTick();
+						 * worldServer.updateLittleEntities(); }
+						 */
 					}
 				}
 			}

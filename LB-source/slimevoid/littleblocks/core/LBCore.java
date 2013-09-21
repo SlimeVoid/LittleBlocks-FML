@@ -9,7 +9,7 @@ import net.minecraftforge.common.MinecraftForge;
 import slimevoid.littleblocks.blocks.BlockLittleChunk;
 import slimevoid.littleblocks.blocks.core.BlockLittleChunkBucketEvent;
 import slimevoid.littleblocks.blocks.core.BlockLittleChunkShiftRightClick;
-//import slimevoid.littleblocks.blocks.core.LittleContainerInteract;
+// import slimevoid.littleblocks.blocks.core.LittleContainerInteract;
 import slimevoid.littleblocks.core.lib.BlockLib;
 import slimevoid.littleblocks.core.lib.BlockUtil;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
@@ -25,8 +25,8 @@ import cpw.mods.fml.common.registry.GameRegistry;
 
 public class LBCore {
 
-	public static LittleWorldClient	littleWorldClient;
-	public static HashMap<Integer, Integer> littleWorldServer = new HashMap<Integer, Integer>(); 
+	public static LittleWorldClient			littleWorldClient;
+	public static HashMap<Integer, Integer>	littleWorldServer	= new HashMap<Integer, Integer>();
 
 	public static void registerItems() {
 		ConfigurationLib.littleChunk = new BlockLittleChunk(ConfigurationLib.littleChunkID, TileEntityLittleChunk.class, Material.wood, 2F, true).setUnlocalizedName(BlockLib.LITTLECHUNK);

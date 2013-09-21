@@ -29,44 +29,49 @@ import cpw.mods.fml.common.network.Player;
 
 public abstract class SubPacketHandler implements IPacketHandler {
 
-	private Map<String, IPacketExecutor> executors = new HashMap<String, IPacketExecutor>();	
+	private Map<String, IPacketExecutor>	executors	= new HashMap<String, IPacketExecutor>();
+
 	/**
 	 * Register an executor with the server-side packet sub-handler.
 	 * 
-	 * @param commandID Command ID for the executor to handle.
-	 * @param executor The executor
+	 * @param commandID
+	 *            Command ID for the executor to handle.
+	 * @param executor
+	 *            The executor
 	 */
 	public void registerPacketHandler(String commandString, IPacketExecutor executor) {
 		if (executors.containsKey(commandString)) {
-			LoggerLittleBlocks.getInstance(
-					Logger.filterClassName(this.toString())
-			).write(
-					false,
-					"Command String [" + commandString + "] already registered.",
-					Logger.LogLevel.ERROR
-			);
-			throw new RuntimeException("Command String [" + commandString + "] already registered.");
+			LoggerLittleBlocks.getInstance(Logger.filterClassName(this.toString())).write(	false,
+																							"Command String ["
+																									+ commandString
+																									+ "] already registered.",
+																							Logger.LogLevel.ERROR);
+			throw new RuntimeException("Command String [" + commandString
+										+ "] already registered.");
 		}
-		executors.put(commandString, executor);
+		executors.put(	commandString,
+						executor);
 	}
-	
+
 	/**
 	 * Receive a packet from the handler.<br>
-	 * Assembles the packet into an wireless packet and routes to handlePacket().
+	 * Assembles the packet into an wireless packet and routes to
+	 * handlePacket().
 	 */
 	@Override
 	public void onPacketData(INetworkManager manager, Packet250CustomPayload packet, Player player) {
 		EntityPlayer entityplayer = (EntityPlayer) player;
 		World world = entityplayer.worldObj;
-		DataInputStream data = new DataInputStream(new ByteArrayInputStream(
-				packet.data));
+		DataInputStream data = new DataInputStream(new ByteArrayInputStream(packet.data));
 		try {
 			// Assemble packet
 			int packetID = data.read();
 			PacketUpdate pU = this.createNewPacket();
 			pU.readData(data);
 			// Route to handlePacket()
-			handlePacket(pU, world, entityplayer);
+			handlePacket(	pU,
+							world,
+							entityplayer);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -82,33 +87,40 @@ public abstract class SubPacketHandler implements IPacketHandler {
 	/**
 	 * Handles a received packet.
 	 * 
-	 * @param packet The received packet
-	 * @param world The world object
-	 * @param entityplayer The sending player.
+	 * @param packet
+	 *            The received packet
+	 * @param world
+	 *            The world object
+	 * @param entityplayer
+	 *            The sending player.
 	 */
 	protected void handlePacket(PacketUpdate packet, World world, EntityPlayer entityplayer) {
-		LoggerLittleBlocks.getInstance(
-				Logger.filterClassName(this.getClass().toString())
-		).write(
-				world.isRemote,
-				"handlePacket(" + packet.toString()+ ", world," + entityplayer.username + ")",
-				Logger.LogLevel.DEBUG
-		);
+		LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(	world.isRemote,
+																									"handlePacket("
+																											+ packet.toString()
+																											+ ", world,"
+																											+ entityplayer.username
+																											+ ")",
+																									Logger.LogLevel.DEBUG);
 		// Fetch the command.
 		String command = packet.getCommand();
-		
+
 		// Execute the command.
-		if ( executors.containsKey(command)) {
-			executors.get(command).execute(packet, world, entityplayer);
+		if (executors.containsKey(command)) {
+			executors.get(command).execute(	packet,
+											world,
+											entityplayer);
 		} else {
-			LoggerLittleBlocks.getInstance(
-					Logger.filterClassName(this.getClass().toString())
-			).write(
-					world.isRemote,
-					"handlePacket(" + packet.toString()+ ", world," + entityplayer.username + ") - UNKNOWN COMMAND",
-					LoggerLittleBlocks.LogLevel.WARNING
-			);
-			throw new RuntimeException("Tried to get a Packet Executor for command: " + command + " that has not been registered.");
+			LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(	world.isRemote,
+																										"handlePacket("
+																												+ packet.toString()
+																												+ ", world,"
+																												+ entityplayer.username
+																												+ ") - UNKNOWN COMMAND",
+																										LoggerLittleBlocks.LogLevel.WARNING);
+			throw new RuntimeException("Tried to get a Packet Executor for command: "
+										+ command
+										+ " that has not been registered.");
 		}
 	}
 }

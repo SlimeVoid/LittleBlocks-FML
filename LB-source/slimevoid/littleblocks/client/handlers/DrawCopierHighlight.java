@@ -31,104 +31,127 @@ public class DrawCopierHighlight {
 			}
 		}
 	}
-    public void drawInWorldCopierOverlay(DrawBlockHighlightEvent event) {
 
-        double x = event.target.blockX + 0.5F;
-        double y = event.target.blockY + 0.5F;
-        double z = event.target.blockZ + 0.5F;
-        double iPX = event.player.prevPosX + (event.player.posX - event.player.prevPosX) * event.partialTicks;
-        double iPY = event.player.prevPosY + (event.player.posY - event.player.prevPosY) * event.partialTicks;
-        double iPZ = event.player.prevPosZ + (event.player.posZ - event.player.prevPosZ) * event.partialTicks;
+	public void drawInWorldCopierOverlay(DrawBlockHighlightEvent event) {
 
-        float xScale = 1;
-        float yScale = 1;
-        float zScale = 1;
-        float xShift = 1F;
-        float yShift = 1F;
-        float zShift = 1F;
+		double x = event.target.blockX + 0.5F;
+		double y = event.target.blockY + 0.5F;
+		double z = event.target.blockZ + 0.5F;
+		double iPX = event.player.prevPosX
+						+ (event.player.posX - event.player.prevPosX)
+						* event.partialTicks;
+		double iPY = event.player.prevPosY
+						+ (event.player.posY - event.player.prevPosY)
+						* event.partialTicks;
+		double iPZ = event.player.prevPosZ
+						+ (event.player.posZ - event.player.prevPosZ)
+						* event.partialTicks;
 
-        World world = FMLClientHandler.instance().getClient().theWorld;
-        if (this.shouldDoDraw(world, event.target.blockX, event.target.blockY, event.target.blockZ)) {
-        	xShift = 0;
-        	yShift = 0;
-        	zShift = 0;
-        }
-        
-        ForgeDirection sideHit = ForgeDirection.getOrientation(event.target.sideHit);
+		float xScale = 1;
+		float yScale = 1;
+		float zScale = 1;
+		float xShift = 1F;
+		float yShift = 1F;
+		float zShift = 1F;
 
-        switch (sideHit) {
-            case UP: {
-                xScale = 1 + 0.1F;
-                zScale = 1 + 0.1F;
-                xShift = 0;
-                zShift = 0;
-                break;
-            }
-            case DOWN: {
-                xScale = 1 + 0.1F;
-                zScale = 1 + 0.1F;
-                xShift = 0;
-                yShift = -yShift;
-                zShift = 0;
-                break;
-            }
-            case NORTH: {
-                xScale = 1 + 0.1F;
-                yScale = 1 + 0.1F;
-                xShift = 0;
-                yShift = 0;
-                zShift = -zShift;
-                break;
-            }
-            case SOUTH: {
-                xScale = 1 + 0.1F;
-                yScale = 1 + 0.1F;
-                xShift = 0;
-                yShift = 0;
-                break;
-            }
-            case EAST: {
-                yScale = 1 + 0.1F;
-                zScale = 1 + 0.1F;
-                yShift = 0;
-                zShift = 0;
-                break;
-            }
-            case WEST: {
-                yScale = 1 + 0.1F;
-                zScale = 1 + 0.1F;
-                xShift = -xShift;
-                yShift = 0;
-                zShift = 0;
-                break;
-            }
-            default:
-                break;
-        }
-        int blockID = world.getBlockId(event.target.blockX + (int) xShift, event.target.blockY + (int) yShift, event.target.blockZ + (int) zShift);
-        if (!(Block.blocksList[blockID] instanceof BlockFluid)) {
-	
-	        GL11.glDepthMask(false);
-	        GL11.glDisable(GL11.GL_CULL_FACE);
-	
-	        for (int i = 0; i < 6; i++) {
-	            ForgeDirection forgeDir = ForgeDirection.getOrientation(i);
-	            int zCorrection = (i == 2) ? -1 : 1;
-	            GL11.glPushMatrix();
-	            GL11.glTranslated(-iPX + x + xShift, -iPY + y + yShift, -iPZ + z + zShift);
-	            GL11.glScalef(1F * xScale, 1F * yScale, 1F * zScale);
-	            GL11.glRotatef(90, forgeDir.offsetX, forgeDir.offsetY, forgeDir.offsetZ);
-	            GL11.glTranslated(0, 0, 0.5f * zCorrection);
-	            GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
-	            renderPulsingQuad(event.context.renderEngine, TextureLib.WAND_OVERLAY, 0.75F);
-	            GL11.glPopMatrix();
-	        }
+		World world = FMLClientHandler.instance().getClient().theWorld;
+		if (this.shouldDoDraw(	world,
+								event.target.blockX,
+								event.target.blockY,
+								event.target.blockZ)) {
+			xShift = 0;
+			yShift = 0;
+			zShift = 0;
+		}
 
-	        GL11.glEnable(GL11.GL_CULL_FACE);
-	        GL11.glDepthMask(true);
-        }
-    }
-    
+		ForgeDirection sideHit = ForgeDirection.getOrientation(event.target.sideHit);
+
+		switch (sideHit) {
+		case UP: {
+			xScale = 1 + 0.1F;
+			zScale = 1 + 0.1F;
+			xShift = 0;
+			zShift = 0;
+			break;
+		}
+		case DOWN: {
+			xScale = 1 + 0.1F;
+			zScale = 1 + 0.1F;
+			xShift = 0;
+			yShift = -yShift;
+			zShift = 0;
+			break;
+		}
+		case NORTH: {
+			xScale = 1 + 0.1F;
+			yScale = 1 + 0.1F;
+			xShift = 0;
+			yShift = 0;
+			zShift = -zShift;
+			break;
+		}
+		case SOUTH: {
+			xScale = 1 + 0.1F;
+			yScale = 1 + 0.1F;
+			xShift = 0;
+			yShift = 0;
+			break;
+		}
+		case EAST: {
+			yScale = 1 + 0.1F;
+			zScale = 1 + 0.1F;
+			yShift = 0;
+			zShift = 0;
+			break;
+		}
+		case WEST: {
+			yScale = 1 + 0.1F;
+			zScale = 1 + 0.1F;
+			xShift = -xShift;
+			yShift = 0;
+			zShift = 0;
+			break;
+		}
+		default:
+			break;
+		}
+		int blockID = world.getBlockId(	event.target.blockX + (int) xShift,
+										event.target.blockY + (int) yShift,
+										event.target.blockZ + (int) zShift);
+		if (!(Block.blocksList[blockID] instanceof BlockFluid)) {
+
+			GL11.glDepthMask(false);
+			GL11.glDisable(GL11.GL_CULL_FACE);
+
+			for (int i = 0; i < 6; i++) {
+				ForgeDirection forgeDir = ForgeDirection.getOrientation(i);
+				int zCorrection = (i == 2) ? -1 : 1;
+				GL11.glPushMatrix();
+				GL11.glTranslated(	-iPX + x + xShift,
+									-iPY + y + yShift,
+									-iPZ + z + zShift);
+				GL11.glScalef(	1F * xScale,
+								1F * yScale,
+								1F * zScale);
+				GL11.glRotatef(	90,
+								forgeDir.offsetX,
+								forgeDir.offsetY,
+								forgeDir.offsetZ);
+				GL11.glTranslated(	0,
+									0,
+									0.5f * zCorrection);
+				GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
+				renderPulsingQuad(	event.context.renderEngine,
+									TextureLib.WAND_OVERLAY,
+									0.75F);
+				GL11.glPopMatrix();
+			}
+
+			GL11.glEnable(GL11.GL_CULL_FACE);
+			GL11.glDepthMask(true);
+		}
+	}
+
 	private boolean shouldDoDraw(World world, int blockX, int blockY, int blockZ) {
 		int blockID = world.getBlockId(	blockX,
 										blockY,

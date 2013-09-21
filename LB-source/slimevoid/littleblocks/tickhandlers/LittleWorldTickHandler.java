@@ -18,12 +18,13 @@ public class LittleWorldTickHandler implements ITickHandler {
 	public void doLittleWorldClientTick(Object... tickData) {
 		World world = FMLClientHandler.instance().getClient().theWorld;
 		if (world != null) {
-			//World littleWorld = (World) LittleBlocks.proxy.getLittleWorld(	world,
-			//																false);
-			//if (littleWorld != null) {
-				//littleWorld.updateEntities();
-				//littleWorld.tick();
-			//}
+			// World littleWorld = (World) LittleBlocks.proxy.getLittleWorld(
+			// world,
+			// false);
+			// if (littleWorld != null) {
+			// littleWorld.updateEntities();
+			// littleWorld.tick();
+			// }
 		}
 	}
 

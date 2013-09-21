@@ -48,6 +48,7 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 									// + tileentity + "]");
 									littleTiles.addLittleTileToRender(tileentity/**
 									 * 
+									 * 
 									 * , littleBlock.getTextureFile()
 									 **/
 									);

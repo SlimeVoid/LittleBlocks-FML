@@ -40,6 +40,7 @@ public class LittleWorld extends World implements ILittleWorld {
 	public LittleWorld(World world, WorldProvider worldprovider, String worldName) {
 		super(world.getSaveHandler(), worldName, worldprovider, new WorldSettings(world.getWorldInfo().getSeed(), world.getWorldInfo().getGameType(), world.getWorldInfo().isMapFeaturesEnabled(), world.getWorldInfo().isHardcoreModeEnabled(), world.getWorldInfo().getTerrainType()), null, null/**
 		 * 
+		 * 
 		 * field_98181_L
 		 **/
 		);
@@ -105,9 +106,10 @@ public class LittleWorld extends World implements ILittleWorld {
 	}
 
 	@Override
-    protected void tickBlocksAndAmbiance() {
-    	
-    }
+	protected void tickBlocksAndAmbiance() {
+
+	}
+
 	public List<TileEntity>		loadedTiles	= new ArrayList<TileEntity>();
 	private List<TileEntity>	addedTiles	= new ArrayList<TileEntity>();
 	private boolean				scanningTiles;
@@ -1283,4 +1285,3 @@ public class LittleWorld extends World implements ILittleWorld {
 												z >> 3);
 	}
 }
-
