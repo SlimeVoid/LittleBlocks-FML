@@ -536,14 +536,16 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 												z);
 	}
 
+	// @Override
 	// protected IChunkProvider createChunkProvider() {
 	// return new LittleChunkProvider(this);
 	// }
-	//
+
 	@Override
 	public void saveAllChunks(boolean par1, IProgressUpdate par2IProgressUpdate) throws MinecraftException {
 
 	}
+
 	//
 	// @Override
 	// public void func_104140_m() {
@@ -555,7 +557,4 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 	//
 	// }
 	//
-	// public File getChunkSaveLocation() {
-	// return null;
-	// }
 }

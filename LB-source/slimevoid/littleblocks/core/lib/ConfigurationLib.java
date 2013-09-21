@@ -1,7 +1,9 @@
 package slimevoid.littleblocks.core.lib;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -13,6 +15,7 @@ import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.core.LittleBlocks;
 import slimevoid.littleblocks.core.LoggerLittleBlocks;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -23,7 +26,7 @@ public class ConfigurationLib {
 	private static Configuration					configuration;
 
 	public static boolean							littleBlocksForceUpdate;
-	public static String							loggerLevel			= "INFO";
+	public static String							loggerLevel				= "INFO";
 	public static Block								littleChunk;
 	public static Item								littleBlocksWand;
 	@SideOnly(Side.CLIENT)
@@ -35,7 +38,9 @@ public class ConfigurationLib {
 	public static boolean							littleBlocksClip;
 	public static int								renderingMethod;
 	public static int								renderType;
-	public static int								littleBlocksSize	= 8;
+	public static int								littleBlocksSize		= 8;
+
+	private static List<Integer>					disallowedDimensionIds	= new ArrayList<Integer>();
 
 	@SideOnly(Side.CLIENT)
 	public static RenderBlocks						littleRenderer;
@@ -103,6 +108,15 @@ public class ConfigurationLib {
 		loggerLevel = configuration.get(Configuration.CATEGORY_GENERAL,
 										"loggerLevel",
 										"INFO").getString();
+
+		int[] disallowedIds = configuration.get(Configuration.CATEGORY_GENERAL,
+												"disallowedLittleDimensionIds",
+												new int[] { 7, 20 }).getIntList();
+
+		for (int disallowedId : disallowedIds) {
+			disallowedDimensionIds.add(disallowedId);
+		}
+
 		configuration.save();
 
 		LoggerLittleBlocks.getInstance("LittleBlocksConfig").setFilterLevel(loggerLevel);
@@ -130,20 +144,33 @@ public class ConfigurationLib {
 	@SideOnly(Side.CLIENT)
 	public static int getLittleDimension(int dimension) {
 		configuration.load();
-		int littleDimension = configuration.get(Configuration.CATEGORY_GENERAL, "littleDimension[" + dimension + "]", DimensionManager.getNextFreeDimId()).getInt();
+		int littleDimension = configuration.get(Configuration.CATEGORY_GENERAL,
+												"littleDimension[" + dimension
+														+ "]",
+												DimensionManager.getNextFreeDimId()).getInt();
 		configuration.save();
 		return littleDimension;
 	}
 
 	public static int getLittleServerDimension(int dimension) {
 		configuration.load();
-		int littleDimension = configuration.get(Configuration.CATEGORY_GENERAL, "littleServerDimension[" + dimension + "]", DimensionManager.getNextFreeDimId()).getInt();
+		int candidateDimensionId = DimensionManager.getNextFreeDimId();
+		while (disallowedDimensionIds.contains(candidateDimensionId)
+				|| DimensionManager.isDimensionRegistered(candidateDimensionId)) {
+			candidateDimensionId++;
+		}
+		int littleDimension = configuration.get(Configuration.CATEGORY_GENERAL,
+												FMLCommonHandler.instance().getMinecraftServerInstance().getFolderName()
+														+ "-littleServerDimension["
+														+ dimension + "]",
+												candidateDimensionId).getInt();
 		configuration.save();
 		return littleDimension;
 	}
 
 	public static boolean isLittleDimension(int dimension) {
-		return configuration.hasKey(Configuration.CATEGORY_GENERAL, "littleServerDimension[" + dimension + "]");
+		return configuration.hasKey(Configuration.CATEGORY_GENERAL,
+									"littleServerDimension[" + dimension + "]");
 	}
 
 }
