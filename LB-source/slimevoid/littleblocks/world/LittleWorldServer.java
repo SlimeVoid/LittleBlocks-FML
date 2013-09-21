@@ -1,6 +1,5 @@
 package slimevoid.littleblocks.world;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
@@ -22,7 +21,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraftforge.common.ForgeDirection;
 import slimevoid.littleblocks.api.ILittleWorld;
@@ -114,7 +112,6 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 
 	@Override
 	protected void initialize(WorldSettings worldSettings) {
-		this.getLittleWorld().initialize(worldSettings);
 	}
 
 	@Override
@@ -539,26 +536,26 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 												z);
 	}
 
-	protected IChunkProvider createChunkProvider() {
-		return new LittleChunkProvider(this);
-	}
-
+	// protected IChunkProvider createChunkProvider() {
+	// return new LittleChunkProvider(this);
+	// }
+	//
 	@Override
 	public void saveAllChunks(boolean par1, IProgressUpdate par2IProgressUpdate) throws MinecraftException {
 
 	}
-
-	@Override
-	public void func_104140_m() {
-
-	}
-
-	@Override
-	protected void saveLevel() throws MinecraftException {
-
-	}
-
-	public File getChunkSaveLocation() {
-		return null;
-	}
+	//
+	// @Override
+	// public void func_104140_m() {
+	//
+	// }
+	//
+	// @Override
+	// protected void saveLevel() throws MinecraftException {
+	//
+	// }
+	//
+	// public File getChunkSaveLocation() {
+	// return null;
+	// }
 }
