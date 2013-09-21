@@ -1,20 +1,16 @@
 @echo off
 
-set programdir="C:\Programming"
-set packagedir="%programdir%\Packages"
-set repodir="%programdir%\Repositories"
-<<<<<<< HEAD
-set forgedir="%repodir%\MinecraftForge-1.5.2"
-=======
-set forgedir="%repodir%\MinecraftForge-1.6.2"
->>>>>>> Compilable - Tickable - LittleWorldClient
-set fmldir="%forgedir%\fml"
-set mcpdir="%forgedir%\mcp"
-set littleblocks="%repodir%\LittleBlocks-FML"
-set euryscore="%repodir%\EurysCore-FML"
+set programdir=C:\Programming\Minecraft\1.5.2
+set repodir=%programdir%\Git
+set packagedir=%programdir%\Packages
+set forgedir=%programdir%\Forge
+set fmldir=%forgedir%\fml
+set mcpdir=%forgedir%\mcp
+set littleblocks=%repodir%\LittleBlocks-FML
+set slimelib=%repodir%\SlimevoidLibrary
 cd %mcpdir%
 
-if not exist %euryscore% GOTO :LBFAIL
+if not exist %slimelib% GOTO :LBFAIL
 if exist %littleblocks% GOTO :LITTLEBLOCKS
 GOTO :LBFAIL
 
@@ -33,7 +29,7 @@ if exist "%mcpdir%\src-work" GOTO :COPYLB
 GOTO :LBFAIL
 
 :COPYLB
-xcopy "%euryscore%\SV-common\*.*" "%mcpdir%\src\minecraft\" /S
+xcopy "%slimelib%\SV-common\*.*" "%mcpdir%\src\minecraft\" /S
 xcopy "%littleblocks%\LB-source\*.*" "%mcpdir%\src\minecraft\" /S
 pause
 call %mcpdir%\recompile.bat
