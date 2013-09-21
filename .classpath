@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-<<<<<<< HEAD
 	<classpathentry combineaccessrules="false" kind="src" path="/Forge-MC1.5.2"/>
 	<classpathentry kind="lib" path="/Forge-MC1.5.2/jars/bin/lwjgl.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SlimevoidLibrary"/>

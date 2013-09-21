@@ -1,37 +1,18 @@
 package slimevoid.littleblocks.world;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
-import slimevoid.littleblocks.api.ILittleWorld;
-import slimevoid.littleblocks.core.LoggerLittleBlocks;
-import slimevoid.littleblocks.core.lib.BlockUtil;
-import slimevoid.littleblocks.core.lib.ConfigurationLib;
-import slimevoid.littleblocks.core.lib.PacketLib;
-import slimevoid.littleblocks.world.events.LittleBlockEvent;
-import slimevoid.littleblocks.world.events.LittleBlockEventList;
-import slimevoidlib.data.Logger;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockEventData;
-import net.minecraft.crash.CrashReport;
-import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.logging.ILogAgent;
-import net.minecraft.network.packet.Packet60Explosion;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IProgressUpdate;
 import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.ReportedException;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.Explosion;
@@ -44,11 +25,13 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraftforge.common.ForgeDirection;
+import slimevoid.littleblocks.api.ILittleWorld;
+import slimevoid.littleblocks.core.lib.PacketLib;
 
 public class LittleWorldServer extends WorldServer implements ILittleWorld {
 
-	private final World							realWorld;
-	private final LittleServerWorld				littleWorld;
+	private final World				realWorld;
+	private final LittleServerWorld	littleWorld;
 
 	public LittleWorldServer(World referenceWorld, MinecraftServer minecraftServer, ISaveHandler iSaveHandler, String par3Str, int par4, WorldSettings par5WorldSettings, Profiler par6Profiler, ILogAgent par7iLogAgent) {
 		super(minecraftServer, iSaveHandler, par3Str, par4, par5WorldSettings, par6Profiler, par7iLogAgent);
@@ -128,12 +111,12 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 
 	public void littleTick() {
 	}
-	
+
 	@Override
-    protected void initialize(WorldSettings worldSettings) {
+	protected void initialize(WorldSettings worldSettings) {
 		this.getLittleWorld().initialize(worldSettings);
 	}
-	
+
 	@Override
 	public void tick() {
 		this.getLittleWorld().tick();
@@ -143,12 +126,12 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 	public boolean tickUpdates(boolean tick) {
 		return this.getLittleWorld().tickUpdates(tick);
 	}
-	
+
 	@Override
 	protected void tickBlocksAndAmbiance() {
 		this.getLittleWorld().tickBlocksAndAmbiance();
 	}
-	
+
 	public void updateLittleEntities() {
 	}
 
@@ -162,8 +145,11 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 	 * future. Args: X, Y, Z, blockID
 	 */
 	@Override
-	public boolean isBlockTickScheduledThisTick(int x, int y, int z, int blockId) {
-		return this.getLittleWorld().isBlockTickScheduledThisTick(x, y, z, blockId);
+	public boolean isBlockTickScheduled(int x, int y, int z, int blockId) {
+		return this.getLittleWorld().isBlockTickScheduled(	x,
+															y,
+															z,
+															blockId);
 	}
 
 	/**
@@ -173,7 +159,13 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Explosion newExplosion(Entity entity, double x, double y, double z, float strength, boolean isFlaming, boolean isSmoking) {
-		return this.getLittleWorld().newExplosion(entity, x, y, z, strength, isFlaming, isSmoking);
+		return this.getLittleWorld().newExplosion(	entity,
+													x,
+													y,
+													z,
+													strength,
+													isFlaming,
+													isSmoking);
 	}
 
 	/**
@@ -184,17 +176,25 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 	 */
 	@Override
 	public void addBlockEvent(int x, int y, int z, int blockID, int eventID, int eventParam) {
-		this.getLittleWorld().addBlockEvent(x, y, z, blockID, eventID, eventParam);
+		this.getLittleWorld().addBlockEvent(x,
+											y,
+											z,
+											blockID,
+											eventID,
+											eventParam);
 	}
 
-	 @Override public List<NextTickListEntry> getPendingBlockUpdates(Chunk chunk, boolean forceRemove) {
-		 return this.getLittleWorld().getPendingBlockUpdates(chunk, forceRemove);
-	 }
-		/*ArrayList<NextTickListEntry> pendingUpdates
-	 * = null; ChunkCoordIntPair chunkPair = chunk.getChunkCoordIntPair(); int x
-	 * = (chunkPair.chunkXPos << 4) + 2; int maxX = x + 16 + 2; int z =
-	 * (chunkPair.chunkZPos << 4) + 2; int maxZ = z + 16 + 2;
-	 * Iterator<NextTickListEntry> pendingTicks =
+	@Override
+	public List<NextTickListEntry> getPendingBlockUpdates(Chunk chunk, boolean forceRemove) {
+		return this.getLittleWorld().getPendingBlockUpdates(chunk,
+															forceRemove);
+	}
+
+	/*
+	 * ArrayList<NextTickListEntry> pendingUpdates = null; ChunkCoordIntPair
+	 * chunkPair = chunk.getChunkCoordIntPair(); int x = (chunkPair.chunkXPos <<
+	 * 4) + 2; int maxX = x + 16 + 2; int z = (chunkPair.chunkZPos << 4) + 2;
+	 * int maxZ = z + 16 + 2; Iterator<NextTickListEntry> pendingTicks =
 	 * this.pendingTickListEntries.iterator(); while (pendingTicks.hasNext()) {
 	 * NextTickListEntry nextTick = pendingTicks .next(); if (nextTick.xCoord >=
 	 * x && nextTick.xCoord < maxX && nextTick.zCoord >= z && nextTick.zCoord <
@@ -209,12 +209,12 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 	 */
 	@Override
 	public void scheduleBlockUpdate(int x, int y, int z, int blockId, int tickRate) {
-		this.scheduleBlockUpdateWithPriority(	x,
-												y,
-												z,
-												blockId,
-												tickRate,
-												0);
+		this.func_82740_a(	x,
+							y,
+							z,
+							blockId,
+							tickRate,
+							0);
 	}
 
 	/**
@@ -222,8 +222,13 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 	 * with some Value
 	 */
 	@Override
-	public void scheduleBlockUpdateWithPriority(int x, int y, int z, int blockId, int tickRate, int someValue) {
-		this.getLittleWorld().scheduleBlockUpdateWithPriority(x, y, z, blockId, tickRate, someValue);
+	public void func_82740_a(int x, int y, int z, int blockId, int tickRate, int someValue) {
+		this.getLittleWorld().func_82740_a(	x,
+											y,
+											z,
+											blockId,
+											tickRate,
+											someValue);
 	}
 
 	/**
@@ -232,20 +237,25 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 	 */
 	@Override
 	public void scheduleBlockUpdateFromLoad(int x, int y, int z, int blockId, int tickRate, int par6) {
-		this.scheduleBlockUpdateFromLoad(x, y, z, blockId, tickRate, par6);
+		this.scheduleBlockUpdateFromLoad(	x,
+											y,
+											z,
+											blockId,
+											tickRate,
+											par6);
 	}
 
 	@Override
-	public void markTileEntityChunkModified(int x, int y, int z, TileEntity tileentity) {
+	public void updateTileEntityChunkAndDoNothing(int x, int y, int z, TileEntity tileentity) {
 		if (!this.isRemote) {
 			if (this.blockExists(	x,
 									y,
 									z)) {
-				//PacketLib.sendTileEntity(	this.getLittleWorld(),
-				//							tileentity,
-				//							x,
-				//							y,
-				//							z);
+				// PacketLib.sendTileEntity( this.getLittleWorld(),
+				// tileentity,
+				// x,
+				// y,
+				// z);
 			}
 		}
 	}
@@ -471,10 +481,10 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 															flag1);
 	}
 
-/*	@Override
-	protected IChunkProvider createChunkProvider() {
-        return new LittleChunkProvider(this);
-	}*/
+	/*
+	 * @Override protected IChunkProvider createChunkProvider() { return new
+	 * LittleChunkProvider(this); }
+	 */
 
 	@Override
 	public Entity getEntityByID(int entityId) {
@@ -528,27 +538,27 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 												y,
 												z);
 	}
-	
-    protected IChunkProvider createChunkProvider() {
-    	return new LittleChunkProvider(this);
-    }
-	
-	@Override
-    public void saveAllChunks(boolean par1, IProgressUpdate par2IProgressUpdate) throws MinecraftException {
-	    
+
+	protected IChunkProvider createChunkProvider() {
+		return new LittleChunkProvider(this);
 	}
-	
+
 	@Override
-    public void saveChunkData() {
-		
+	public void saveAllChunks(boolean par1, IProgressUpdate par2IProgressUpdate) throws MinecraftException {
+
 	}
-	
+
 	@Override
-    protected void saveLevel() throws MinecraftException {
-		
+	public void func_104140_m() {
+
 	}
-	
-    public File getChunkSaveLocation() {
-    	return null;
-    }
+
+	@Override
+	protected void saveLevel() throws MinecraftException {
+
+	}
+
+	public File getChunkSaveLocation() {
+		return null;
+	}
 }

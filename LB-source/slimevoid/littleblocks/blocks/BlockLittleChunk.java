@@ -15,7 +15,7 @@ import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
@@ -94,7 +94,7 @@ public class BlockLittleChunk extends BlockContainer {
 	}
 
 	@Override
-	public boolean isLadder(World world, int x, int y, int z, EntityLivingBase entity) {
+	public boolean isLadder(World world, int x, int y, int z, EntityLiving entity) {
 		if (entity != null) {
 			return SlimevoidHelper.isLadder(world,
 											x,
