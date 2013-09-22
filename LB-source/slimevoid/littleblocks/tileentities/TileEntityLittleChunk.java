@@ -479,10 +479,13 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 			Block littleBlock = Block.blocksList[id];
 			tileentity = littleBlock.createTileEntity(	this.worldObj,
 														meta);
-			this.getLittleWorld().setBlockTileEntity(	(xCoord << 3) + x,
-														(yCoord << 3) + y,
-														(zCoord << 3) + z,
-														tileentity);
+			((World) this.getLittleWorld()).setBlockTileEntity(	(xCoord << 3)
+																		+ x,
+																(yCoord << 3)
+																		+ y,
+																(zCoord << 3)
+																		+ z,
+																tileentity);
 			tileentity = this.getTileEntityFromList(x,
 													y,
 													z);
@@ -494,7 +497,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 		this.tiles.add(tile);
 		ILittleWorld littleWorld = this.getLittleWorld();
 		if (littleWorld != null) {
-			littleWorld.addTileEntity(tile);
+			((World) littleWorld).addTileEntity(tile);
 		}
 	}
 
