@@ -32,7 +32,6 @@ import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.blocks.core.CollisionRayTrace;
 import slimevoid.littleblocks.client.render.entities.LittleBlockDiggingFX;
 import slimevoid.littleblocks.core.lib.BlockUtil;
-import slimevoid.littleblocks.core.lib.CommandLib;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
 import slimevoid.littleblocks.core.lib.IconLib;
 import slimevoid.littleblocks.core.lib.MessageLib;
@@ -251,17 +250,16 @@ public class BlockLittleChunk extends BlockContainer {
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int q, float a, float b, float c) {
 		// System.out.println("Activated");
 		if (world.isRemote) {
-			PacketLib.blockUpdate(	world,
-									entityplayer,
-									x,
-									y,
-									z,
-									q,
-									a,
-									b,
-									c,
-									this,
-									CommandLib.BLOCK_ACTIVATED);
+			PacketLib.blockActivated(	world,
+										entityplayer,
+										x,
+										y,
+										z,
+										q,
+										a,
+										b,
+										c,
+										this);
 		}
 		return true;
 	}
@@ -434,17 +432,12 @@ public class BlockLittleChunk extends BlockContainer {
 	@Override
 	public void onBlockClicked(World world, int x, int y, int z, EntityPlayer entityplayer) {
 		if (world.isRemote) {
-			PacketLib.blockUpdate(	world,
+			PacketLib.blockClicked(	world,
 									entityplayer,
 									x,
 									y,
 									z,
-									0,
-									0,
-									0,
-									0,
-									this,
-									CommandLib.BLOCK_CLICKED);
+									this);
 		}
 	}
 

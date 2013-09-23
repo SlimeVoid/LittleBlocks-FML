@@ -9,8 +9,8 @@ import slimevoid.littleblocks.client.network.ClientPacketHandler;
 import slimevoid.littleblocks.client.network.packets.executors.ClientBlockAddedExecutor;
 import slimevoid.littleblocks.client.network.packets.executors.ClientBlockEventExecutor;
 import slimevoid.littleblocks.client.network.packets.executors.ClientBreakBlockExecutor;
-import slimevoid.littleblocks.client.network.packets.executors.ClientLittleCollectionExecutor;
 import slimevoid.littleblocks.client.network.packets.executors.ClientCopierNotifyExecutor;
+import slimevoid.littleblocks.client.network.packets.executors.ClientLittleCollectionExecutor;
 import slimevoid.littleblocks.client.network.packets.executors.ClientLittleTileEntityUpdate;
 import slimevoid.littleblocks.client.network.packets.executors.ClientMetadataUpdateExecutor;
 import slimevoid.littleblocks.client.network.packets.executors.ClientPacketLittleBlocksLoginExecutor;
@@ -78,12 +78,6 @@ public class PacketLib {
 													clientLittleBlockEventHandler);
 	}
 
-	@SideOnly(Side.CLIENT)
-	public static void blockUpdate(World world, EntityPlayer entityplayer, int x, int y, int z, int q, float a, float b, float c, BlockLittleChunk block, String command) {
-		PacketLittleBlocks packetLB = new PacketLittleBlocks(command, x, y, z, q, a, b, c, block.xSelected, block.ySelected, block.zSelected, block.blockID, block.side);
-		PacketDispatcher.sendPacketToServer(packetLB.getPacket());
-	}
-
 	public static void registerPacketHandlers() {
 		PacketLoginHandler loginHandler = new PacketLoginHandler();
 		loginHandler.registerPacketHandler(	CommandLib.FETCH,
@@ -100,6 +94,18 @@ public class PacketLib {
 
 		CommonPacketHandler.registerPacketHandler(	PacketIds.UPDATE,
 													littleBlocksHandler);
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static void blockActivated(World world, EntityPlayer entityplayer, int x, int y, int z, int q, float a, float b, float c, BlockLittleChunk block) {
+		PacketLittleBlocks packetLB = new PacketLittleBlocks(CommandLib.BLOCK_ACTIVATED, x, y, z, q, a, b, c, block.xSelected, block.ySelected, block.zSelected, block.blockID, block.side);
+		PacketDispatcher.sendPacketToServer(packetLB.getPacket());
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static void blockClicked(World world, EntityPlayer entityplayer, int x, int y, int z, BlockLittleChunk block) {
+		PacketLittleBlocks packetLB = new PacketLittleBlocks(CommandLib.BLOCK_CLICKED, x, y, z, 0, 0, 0, 0, block.xSelected, block.ySelected, block.zSelected, block.blockID, block.side);
+		PacketDispatcher.sendPacketToServer(packetLB.getPacket());
 	}
 
 	public static void sendBreakBlock(ILittleWorld littleWorld, int blockX, int blockY, int blockZ, int side, int lastBlockId, int metadata) {
