@@ -48,10 +48,11 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 
 	@Override
 	public void metadataModified(int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
-		int blockX = (x << 3) + littleX, blockY = (y << 3) + littleY, blockZ = (z << 3)
-																				+ littleZ;
-		Block block = Block.blocksList[blockId];
-		if (block != null) {
+		int blockX = (x << 3) + littleX;
+		int	blockY = (y << 3) + littleY;
+		int blockZ = (z << 3) + littleZ;
+													
+		if (this.blockExists(blockX, blockY, blockZ)) {
 			PacketLib.sendMetadata(	this,
 									blockX,
 									blockY,
@@ -64,8 +65,10 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 
 	@Override
 	public void idModified(int lastBlockId, int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
-		int blockX = (x << 3) + littleX, blockY = (y << 3) + littleY, blockZ = (z << 3)
-																				+ littleZ;
+		int blockX = (x << 3) + littleX;
+		int blockY = (y << 3) + littleY;
+		int blockZ = (z << 3) + littleZ;
+		
 		if (lastBlockId != 0) {
 			Block block = Block.blocksList[lastBlockId];
 			if (block != null) {
@@ -244,16 +247,14 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 
 	@Override
 	public void updateTileEntityChunkAndDoNothing(int x, int y, int z, TileEntity tileentity) {
-		if (!this.isRemote) {
-			if (this.blockExists(	x,
-									y,
-									z)) {
-				// PacketLib.sendTileEntity( this.getLittleWorld(),
-				// tileentity,
-				// x,
-				// y,
-				// z);
-			}
+		if (this.blockExists(	x,
+				y,
+				z)) {
+			 PacketLib.sendTileEntity( this.getLittleWorld(),
+				 tileentity,
+				 x,
+				 y,
+				 z);
 		}
 	}
 
@@ -477,11 +478,6 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 															flag,
 															flag1);
 	}
-
-	/*
-	 * @Override protected IChunkProvider createChunkProvider() { return new
-	 * LittleChunkProvider(this); }
-	 */
 
 	@Override
 	public Entity getEntityByID(int entityId) {

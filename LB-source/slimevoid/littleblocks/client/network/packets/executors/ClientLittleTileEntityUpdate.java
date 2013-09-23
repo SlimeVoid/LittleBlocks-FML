@@ -24,6 +24,9 @@ public class ClientLittleTileEntityUpdate implements IPacketExecutor {
 					tileentitylb.handleLittleTilePacket(world,
 														packetLB);
 				}
+				world.markBlockForUpdate(	packet.xPosition >> 3,
+											packet.yPosition >> 3,
+											packet.zPosition >> 3);
 			}
 		}
 	}
