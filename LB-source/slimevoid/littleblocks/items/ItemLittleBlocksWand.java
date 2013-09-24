@@ -87,7 +87,7 @@ public class ItemLittleBlocksWand extends Item {
 												c);
 					}
 				} else {
-					return this.doPlaceLB(	itemstack,
+					return this.doRotateLB(	itemstack,
 											entityplayer,
 											world,
 											x,

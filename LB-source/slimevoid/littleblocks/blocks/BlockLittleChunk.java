@@ -480,6 +480,8 @@ public class BlockLittleChunk extends BlockContainer {
     	TileEntity tileentity = world.getBlockTileEntity(x, y, z);
     	if (tileentity != null && tileentity instanceof TileEntityLittleChunk) {
     		((TileEntityLittleChunk) tileentity).rotateContents(axis);
+    		tileentity.onInventoryChanged();
+    		world.markBlockForUpdate(x, y, z);
     	}
     	return false;
     }
