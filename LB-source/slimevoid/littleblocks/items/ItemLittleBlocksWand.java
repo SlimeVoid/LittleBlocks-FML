@@ -1,5 +1,7 @@
 package slimevoid.littleblocks.items;
 
+import static net.minecraftforge.common.ForgeDirection.UP;
+
 import java.util.HashMap;
 
 import net.minecraft.block.Block;
@@ -15,9 +17,8 @@ import net.minecraft.world.World;
 import slimevoid.littleblocks.core.LoggerLittleBlocks;
 import slimevoid.littleblocks.core.lib.CommandLib;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
-import slimevoid.littleblocks.core.lib.EnumWandAction;
 import slimevoid.littleblocks.core.lib.IconLib;
-import slimevoid.littleblocks.handlers.LittleBlocksRotationHandler;
+import slimevoid.littleblocks.items.wand.EnumWandAction;
 import slimevoid.littleblocks.network.packets.PacketLittleNotify;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 import slimevoidlib.data.ReadWriteLock;
@@ -52,7 +53,7 @@ public class ItemLittleBlocksWand extends Item {
 	}
 
 	@Override
-	public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int l, float a, float b, float c) {
+	public boolean onItemUseFirst(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int l, float a, float b, float c) {
 		if (entityplayer.canPlayerEdit(	x,
 										y,
 										z,
@@ -103,13 +104,14 @@ public class ItemLittleBlocksWand extends Item {
 	}
 
 	private boolean doRotateLB(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int l, float a, float b, float c) {
-		TileEntity tileentity = world.getBlockTileEntity(	x,
-															y,
-															z);
-		if (tileentity != null && tileentity instanceof TileEntityLittleChunk) {
-			TileEntityLittleChunk tilelb = (TileEntityLittleChunk) tileentity;
-			LittleBlocksRotationHandler tileToRotate = new LittleBlocksRotationHandler(world, entityplayer, tilelb, x, y, z, l);
-			tileToRotate.rotateTile();
+		if (world.getBlockId(	x,
+								y,
+								z) == ConfigurationLib.littleChunkID) {
+			Block.blocksList[ConfigurationLib.littleChunkID].rotateBlock(	world,
+																			x,
+																			y,
+																			z,
+																			UP);
 			return true;
 		}
 		return false;

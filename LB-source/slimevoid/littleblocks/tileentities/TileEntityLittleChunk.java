@@ -15,6 +15,7 @@ import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
 import slimevoid.littleblocks.api.ILittleBlocks;
 import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.core.LittleBlocks;
@@ -721,5 +722,52 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 								littleTile);
 		}
 		// this.onInventoryChanged();
+	}
+
+	public void rotateContents(ForgeDirection axis) {
+		for (int y = 0; y < ConfigurationLib.littleBlocksSize; y++) {
+			for (int x = 0; x < ConfigurationLib.littleBlocksSize; x++) {
+				for (int z = 0; z < ConfigurationLib.littleBlocksSize; z++) {
+					int littleBlockID = this.getBlockID(x,
+														y,
+														z);
+					if (littleBlockID > 0) {
+						Block littleBlock = Block.blocksList[littleBlockID];
+						if (littleBlock != null) {
+							if (littleBlock.rotateBlock((World) this.getLittleWorld(),
+														(this.xCoord << 3) + x,
+														(this.yCoord << 3) + y,
+														(this.zCoord << 3) + z,
+														axis)) {
+							}
+						}
+					}
+				}
+			}
+		}
+
+		int max = ConfigurationLib.littleBlocksSize - 1;
+		int[][][] newContent = new int[ConfigurationLib.littleBlocksSize][ConfigurationLib.littleBlocksSize][ConfigurationLib.littleBlocksSize];
+		int[][][] newMetadata = new int[ConfigurationLib.littleBlocksSize][ConfigurationLib.littleBlocksSize][ConfigurationLib.littleBlocksSize];
+
+		for (int y = 0; y < ConfigurationLib.littleBlocksSize; y++) {
+			for (int x = 0; x < ConfigurationLib.littleBlocksSize; x++) {
+				for (int z = 0; z < ConfigurationLib.littleBlocksSize; z++) {
+					newContent[max - z][y][x] = content[x][y][z];
+					newMetadata[max - z][y][x] = metadatas[x][y][z];
+				}
+			}
+		}
+		for (int x = 0; x < ConfigurationLib.littleBlocksSize; x++) {
+			for (int y = 0; y < ConfigurationLib.littleBlocksSize; y++) {
+				for (int z = 0; z < ConfigurationLib.littleBlocksSize; z++) {
+					this.setBlockIDWithMetadata(x,
+												y,
+												z,
+												newContent[x][y][z],
+												newMetadata[x][y][z]);
+				}
+			}
+		}
 	}
 }

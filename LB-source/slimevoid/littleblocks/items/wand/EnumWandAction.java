@@ -1,4 +1,4 @@
-package slimevoid.littleblocks.core.lib;
+package slimevoid.littleblocks.items.wand;
 
 import java.util.HashMap;
 
@@ -16,11 +16,11 @@ public enum EnumWandAction {
 		PLACE_LB.actionID = 0;
 		PLACE_LB.actionName = "placeLB";
 
-		COPY_LB.actionID = 1;
-		COPY_LB.actionName = "copyLB";
-
-		ROTATE_LB.actionID = 2;
+		ROTATE_LB.actionID = 1;
 		ROTATE_LB.actionName = "rotateLB";
+
+		COPY_LB.actionID = 2;
+		COPY_LB.actionName = "copyLB";
 
 		playerWandActions = new HashMap<EntityPlayer, EnumWandAction>();
 	}
@@ -34,5 +34,9 @@ public enum EnumWandAction {
 
 	public static EnumWandAction getWandActionForPlayer(EntityPlayer entityplayer) {
 		return playerWandActions.containsValue(entityplayer) ? playerWandActions.get(entityplayer) : null;
+	}
+	
+	public static void setWandActionForPlayer(EntityPlayer entityplayer, EnumWandAction action) {
+		playerWandActions.put(entityplayer, action);
 	}
 }

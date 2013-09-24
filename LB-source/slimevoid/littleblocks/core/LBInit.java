@@ -13,8 +13,8 @@ package slimevoid.littleblocks.core;
 
 import slimevoid.littleblocks.api.util.LittleBlocksHelper;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
-import slimevoid.littleblocks.core.lib.EnumWandAction;
 import slimevoid.littleblocks.core.lib.CoreLib;
+import slimevoid.littleblocks.items.wand.EnumWandAction;
 import slimevoidlib.core.SlimevoidCore;
 
 public class LBInit {

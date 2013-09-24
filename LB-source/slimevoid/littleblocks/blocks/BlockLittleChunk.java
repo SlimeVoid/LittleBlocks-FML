@@ -28,6 +28,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
 import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.blocks.core.CollisionRayTrace;
 import slimevoid.littleblocks.client.render.entities.LittleBlockDiggingFX;
@@ -473,6 +474,15 @@ public class BlockLittleChunk extends BlockContainer {
 			}
 		}
 	}
+	
+	@Override
+    public boolean rotateBlock(World world, int x, int y, int z, ForgeDirection axis) {
+    	TileEntity tileentity = world.getBlockTileEntity(x, y, z);
+    	if (tileentity != null && tileentity instanceof TileEntityLittleChunk) {
+    		((TileEntityLittleChunk) tileentity).rotateContents(axis);
+    	}
+    	return false;
+    }
 
 	public void dropLittleBlockAsItem_do(World world, int x, int y, int z, ItemStack itemStack) {
 		this.dropBlockAsItem_do(world,
