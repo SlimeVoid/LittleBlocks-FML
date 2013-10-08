@@ -230,7 +230,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 		}
 	}
 
-	public void setBlockID(int x, int y, int z, int id) {
+	//public void setBlockID(int x, int y, int z, int id) {
 		/*
 		 * if (x >= size | y >= size | z >= size) { if
 		 * (this.worldObj.getBlockId( xCoord + (x >= size ? 1 : 0), yCoord + (y
@@ -259,14 +259,14 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 		 * LittleBlocks.proxy.getLittleWorld( this.worldObj, false).idModified(
 		 * lastId, xCoord, this.yCoord, this.zCoord, 0, x, y, z, id, 0); }
 		 */
-		this.setBlockIDWithMetadata(x,
-									y,
-									z,
-									id,
-									0);
-	}
+		//this.setBlockIDWithMetadata(x,
+		//							y,
+		//							z,
+		//							id,
+		//							0);
+	//}
 
-	public void setBlockMetadata(int x, int y, int z, int metadata) {
+	public boolean setBlockMetadata(int x, int y, int z, int metadata) {
 		if (x >= size | y >= size | z >= size) {
 			if (this.worldObj.getBlockId(	xCoord + (x >= size ? 1 : 0),
 											yCoord + (y >= size ? 1 : 0),
@@ -292,7 +292,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 										z >= size ? z - size : z,
 										metadata);
 			}
-			return;
+			return true;
 		} else if (x < 0 | z < 0 | y < 0) {
 			if (this.worldObj.getBlockId(	xCoord - (x < 0 ? 1 : 0),
 											yCoord - (y < 0 ? 1 : 0),
@@ -318,14 +318,40 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 										z < 0 ? z + size : z,
 										metadata);
 			}
-			return;
+			return true;
 		}
-		int lastData = metadatas[x][y][z];
-		this.metadatas[x][y][z] = metadata;
-		int blockId = this.content[x][y][z];
+		int lastData = this.metadatas[x][y][z];
+		if (lastData == metadata) {
+			return false;
+		} else {
+			this.metadatas[x][y][z] = metadata;
+			int blockId = this.content[x][y][z];
+			PacketLib.sendMetadata(	this.getLittleWorld(),
+									(this.xCoord << 3) + x,
+									(this.yCoord << 3) + y,
+									(this.zCoord << 3) + z,
+									blockId,
+									0,
+									metadata);
 
-		if (lastData != metadata) {
-			this.getLittleWorld().metadataModified(	xCoord,
+			if (blockId > 0 && Block.blocksList[blockId] != null
+				&& Block.blocksList[blockId].hasTileEntity(metadata)) {
+				TileEntity tileentity = this.getChunkBlockTileEntity(	x,
+																		y,
+																		z);
+
+				if (tileentity != null) {
+					tileentity.updateContainingBlockInfo();
+					tileentity.blockMetadata = metadata;
+					PacketLib.sendTileEntity(	this.getLittleWorld(),
+												tileentity,
+												(this.xCoord << 3) + x,
+												(this.yCoord << 3) + y,
+												(this.zCoord << 3) + z);
+				}
+			}
+			return true;
+			/*this.getLittleWorld().metadataModified(	xCoord,
 													yCoord,
 													zCoord,
 													0,
@@ -333,7 +359,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 													y,
 													z,
 													blockId,
-													metadata);
+													metadata);*/
 		}
 	}
 
@@ -782,24 +808,29 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 		int id = packetLB.getBlockID(), meta = packetLB.getMetadata(), x = packetLB.xPosition, y = packetLB.yPosition, z = packetLB.zPosition;
 		// System.out.println("X| " + x + " Y| " + y + " Z| " + z + " ID| " + id
 		// + " META| " + meta);
-		this.setBlockIDWithMetadata(x & 7,
-									y & 7,
-									z & 7,
-									id,
-									meta);
-		Block.blocksList[id].onBlockAdded(	(World) this.getLittleWorld(),
+		//this.setBlockIDWithMetadata(x & 7,
+		//							y & 7,
+		//							z & 7,
+		//							id,
+		//							meta);
+		this.content[x & 7][y & 7][z & 7] = id;
+		this.metadatas[x & 7][y & 7][z & 7] = meta;
+		/*Block.blocksList[id].onBlockAdded(	(World) this.getLittleWorld(),
 											x,
 											y,
-											z);
+											z);*/
 		// this.onInventoryChanged();
 	}
 
 	@SideOnly(Side.CLIENT)
 	public void handleBreakBlock(World world, EntityPlayer entityplayer, PacketLittleBlocks packetLB) {
-		this.setBlockID(packetLB.xPosition & 7,
-						packetLB.yPosition & 7,
-						packetLB.zPosition & 7,
-						0);
+		//this.setBlockID(packetLB.xPosition & 7,
+		//				packetLB.yPosition & 7,
+		//				packetLB.zPosition & 7,
+		//				0);
+		this.content[packetLB.xPosition & 7]
+		     		[packetLB.yPosition & 7]
+		     		[packetLB.zPosition & 7] = 0;
 		/*
 		 * Block.blocksList[packetLB.getBlockID()].breakBlock( (World)
 		 * this.getLittleWorld(), packetLB.xPosition, packetLB.yPosition,
@@ -810,13 +841,20 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 
 	@SideOnly(Side.CLIENT)
 	public void handleUpdateMetadata(World world, EntityPlayer entityplayer, PacketLittleBlocks packetLB) {
-		int id = packetLB.getBlockID(), meta = packetLB.getMetadata(), x = packetLB.xPosition, y = packetLB.yPosition, z = packetLB.zPosition;
+		int id = packetLB.getBlockID(),
+			meta = packetLB.getMetadata(),
+			x = packetLB.xPosition,
+			y = packetLB.yPosition,
+			z = packetLB.zPosition;
 		// System.out.println("X| " + x + " Y| " + y + " Z| " + z + " ID| " + id
 		// + " META| " + meta);
-		this.setBlockMetadata(	x & 7,
-								y & 7,
-								z & 7,
-								meta);
+		//this.setBlockMetadata(	x & 7,
+		//						y & 7,
+		//						z & 7,
+		//						meta);
+		this.metadatas[x & 7]
+		     		[y & 7]
+		     		[z & 7] = meta;
 		// this.onInventoryChanged();
 	}
 
@@ -825,11 +863,12 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 		int x = packetLB.xPosition, y = packetLB.yPosition, z = packetLB.zPosition;
 		TileEntity littleTile = TileEntity.createAndLoadEntity(packetLB.getTileEntityData());
 		if (littleTile != null) {
-			this.setChunkBlockTileEntity(	x & 7,
-								y & 7,
-								z & 7,
-								littleTile);
-		}
+			//this.setChunkBlockTileEntity(	x & 7,
+			//					y & 7,
+			//					z & 7,
+			//					littleTile);
+			this.chunkTileEntityMap.put(new ChunkPosition(x & 7, y & 7, z & 7), littleTile)
+;		}
 		// this.onInventoryChanged();
 	}
 

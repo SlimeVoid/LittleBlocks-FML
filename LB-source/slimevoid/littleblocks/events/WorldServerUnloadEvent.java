@@ -17,12 +17,11 @@ public class WorldServerUnloadEvent {
 			int dimension = world.provider.dimensionId;
 
 			if (LBCore.littleWorldServer.containsKey(dimension)) {
-				int littleDimension = LBCore.littleWorldServer.get(dimension);
+				int littleDimension = LBCore.littleWorldServer.remove(dimension);
 				if (DimensionManager.isDimensionRegistered(littleDimension)) {
 					DimensionManager.setWorld(	littleDimension,
 												null);
 					DimensionManager.unregisterDimension(littleDimension);
-					LBCore.littleWorldServer.remove(dimension);
 				}
 			}
 		}

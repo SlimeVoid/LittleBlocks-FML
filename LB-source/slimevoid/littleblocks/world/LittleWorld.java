@@ -653,105 +653,9 @@ public class LittleWorld extends World implements ILittleWorld {
 	}
 
 	@Override
-	public boolean setBlockMetadataWithNotify(int x, int y, int z, int newmeta, int update) {
-		if (x < 0xfe363c80 || z < 0xfe363c80 || x >= 0x1c9c380
-			|| z >= 0x1c9c380) {
-			LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(	this.getRealWorld().isRemote,
-																										"setBlock("
-																												+ x
-																												+ ", "
-																												+ y
-																												+ ", "
-																												+ z
-																												+ ", "
-																												+ newmeta
-																												+ ", "
-																												+ update
-																												+ ").[Out of bounds]",
-																										LoggerLittleBlocks.LogLevel.DEBUG);
-			return false;
-		}
-		if (y < 0) {
-			LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(	this.getRealWorld().isRemote,
-																										"setBlock("
-																												+ x
-																												+ ", "
-																												+ y
-																												+ ", "
-																												+ z
-																												+ ", "
-																												+ newmeta
-																												+ ", "
-																												+ update
-																												+ ").[y < 0]",
-																										LoggerLittleBlocks.LogLevel.DEBUG);
-			return false;
-		}
-		if (y >= this.getHeight()) {
-			LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(	this.getRealWorld().isRemote,
-																										"setBlock("
-																												+ x
-																												+ ", "
-																												+ y
-																												+ ", "
-																												+ z
-																												+ ", "
-																												+ newmeta
-																												+ ", "
-																												+ update
-																												+ ").[y >= "
-																												+ this.getHeight()
-																												+ "]",
-																										LoggerLittleBlocks.LogLevel.DEBUG);
-			return false;
-		} else {
-			Chunk chunk = this.getRealWorld().getChunkFromChunkCoords(	x >> 7,
-																		z >> 7);
-			if (chunk.getBlockID(	(x & 0x7f) >> 3,
-									y >> 3,
-									(z & 0x7f) >> 3) != ConfigurationLib.littleChunkID) {
-				this.getRealWorld().setBlock(	x >> 3,
-												y >> 3,
-												z >> 3,
-												ConfigurationLib.littleChunkID);
-			}
-			TileEntityLittleChunk tile = (TileEntityLittleChunk) realWorld.getBlockTileEntity(	x >> 3,
-																								y >> 3,
-																								z >> 3);
-			int currentData = tile.getBlockMetadata(x & 7,
-													y & 7,
-													z & 7);
-			if (currentData != newmeta) {
-				int currentId = tile.getBlockID(x & 7,
-												y & 7,
-												z & 7);
-				tile.setBlockMetadata(	x & 7,
-										y & 7,
-										z & 7,
-										newmeta);
-				if ((update & 2) != 0
-					&& (!this.getRealWorld().isRemote || (update & 4) == 0)) {
-					this.markBlockForUpdate(x,
-											y,
-											z);
-				}
-
-				if (!this.getRealWorld().isRemote && (update & 1) != 0) {
-					this.notifyBlockChange(	x,
-											y,
-											z,
-											currentId);
-					Block block = Block.blocksList[currentId];
-
-					if (block != null && block.hasComparatorInputOverride()) {
-						this.func_96440_m(	x,
-											y,
-											z,
-											currentId);
-					}
-				}
-				return true;
-			} else {
+	public boolean setBlockMetadataWithNotify(int x, int y, int z, int metadata, int update) {
+		if (x >= 0xfe363c80 && z >= 0xfe363c80 && x < 0x1c9c380 && z < 0x1c9c380) {
+			if (y < 0) {
 				LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(	this.getRealWorld().isRemote,
 																											"setBlock("
 																													+ x
@@ -760,15 +664,76 @@ public class LittleWorld extends World implements ILittleWorld {
 																													+ ", "
 																													+ z
 																													+ ", "
-																													+ newmeta
+																													+ metadata
 																													+ ", "
 																													+ update
-																													+ ").["
-																													+ newmeta
-																													+ "]:No Change",
-																											LoggerLittleBlocks.LogLevel.ERROR);
+																													+ ").[y < 0]",
+																											LoggerLittleBlocks.LogLevel.DEBUG);
 				return false;
+			} else if (y >= this.getHeight()) {
+				LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(	this.getRealWorld().isRemote,
+																											"setBlock("
+																													+ x
+																													+ ", "
+																													+ y
+																													+ ", "
+																													+ z
+																													+ ", "
+																													+ metadata
+																													+ ", "
+																													+ update
+																													+ ").[y >= "
+																													+ this.getHeight()
+																													+ "]",
+																											LoggerLittleBlocks.LogLevel.DEBUG);
+				return false;
+			} else {
+				Chunk chunk = this.getRealWorld().getChunkFromChunkCoords(	x >> 7,
+																			z >> 7);
+				if (chunk.getBlockID(	(x & 0x7f) >> 3,
+										y >> 3,
+										(z & 0x7f) >> 3) != ConfigurationLib.littleChunkID) {
+					this.getRealWorld().setBlock(	x >> 3,
+													y >> 3,
+													z >> 3,
+													ConfigurationLib.littleChunkID);
+				}
+				TileEntityLittleChunk tile = (TileEntityLittleChunk) realWorld.getBlockTileEntity(	x >> 3,
+																									y >> 3,
+																									z >> 3);
+				boolean flag = tile.setBlockMetadata(x & 7, y & 7, z & 7, metadata);
+
+				if (flag) {
+					int blockId = tile.getBlockID(x & 7,
+													y & 7,
+													z & 7);
+					
+					if ((update & 2) != 0
+						&& (!this.getRealWorld().isRemote || (update & 4) == 0)) {
+						this.markBlockForUpdate(x,
+												y,
+												z);
+					}
+	
+					if (!this.getRealWorld().isRemote && (update & 1) != 0) {
+						this.notifyBlockChange(	x,
+												y,
+												z,
+												blockId);
+						Block block = Block.blocksList[blockId];
+	
+						if (block != null && block.hasComparatorInputOverride()) {
+							this.func_96440_m(	x,
+												y,
+												z,
+												blockId);
+						}
+					}
+				}
+				return flag;
 			}
+		} else {
+			return false;
 		}
 	}
 
