@@ -190,20 +190,6 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 															forceRemove);
 	}
 
-	/*
-	 * ArrayList<NextTickListEntry> pendingUpdates = null; ChunkCoordIntPair
-	 * chunkPair = chunk.getChunkCoordIntPair(); int x = (chunkPair.chunkXPos <<
-	 * 4) + 2; int maxX = x + 16 + 2; int z = (chunkPair.chunkZPos << 4) + 2;
-	 * int maxZ = z + 16 + 2; Iterator<NextTickListEntry> pendingTicks =
-	 * this.pendingTickListEntries.iterator(); while (pendingTicks.hasNext()) {
-	 * NextTickListEntry nextTick = pendingTicks .next(); if (nextTick.xCoord >=
-	 * x && nextTick.xCoord < maxX && nextTick.zCoord >= z && nextTick.zCoord <
-	 * maxZ) { if (forceRemove) { this.scheduledTickSet.remove(nextTick);
-	 * pendingTicks.remove(); } if (pendingUpdates == null) { pendingUpdates =
-	 * new ArrayList<NextTickListEntry>(); } pendingUpdates.add(nextTick); } }
-	 * return pendingUpdates; }
-	 */
-
 	/**
 	 * Schedules a tick to a block with a delay (Most commonly the tick rate)
 	 */

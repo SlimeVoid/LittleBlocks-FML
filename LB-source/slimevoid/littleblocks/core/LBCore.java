@@ -9,7 +9,7 @@ import net.minecraftforge.common.MinecraftForge;
 import slimevoid.littleblocks.blocks.BlockLittleChunk;
 import slimevoid.littleblocks.blocks.core.BlockLittleChunkBucketEvent;
 import slimevoid.littleblocks.blocks.core.BlockLittleChunkShiftRightClick;
-// import slimevoid.littleblocks.blocks.core.LittleContainerInteract;
+import slimevoid.littleblocks.blocks.core.LittleContainerInteract;
 import slimevoid.littleblocks.core.lib.BlockLib;
 import slimevoid.littleblocks.core.lib.BlockUtil;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
@@ -65,7 +65,7 @@ public class LBCore {
 		MinecraftForge.EVENT_BUS.register(new BlockLittleChunkShiftRightClick());
 		MinecraftForge.EVENT_BUS.register(new BlockLittleChunkBucketEvent());
 		// MinecraftForge.EVENT_BUS.register(new LittleLadderHandler());
-		// MinecraftForge.EVENT_BUS.register(new LittleContainerInteract());
+		MinecraftForge.EVENT_BUS.register(new LittleContainerInteract());
 		// MinecraftForge.EVENT_BUS.register(new PistonOrientation());
 	}
 }

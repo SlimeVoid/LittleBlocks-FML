@@ -738,7 +738,7 @@ public class BlockLittleChunk extends BlockContainer {
 					if (littleBlock != null) {
 						if (!(littleBlock.hasTileEntity(tile.getBlockMetadata(	this.xSelected,
 																				this.ySelected,
-																				this.zSelected)) && tile.getTileEntity(	this.xSelected,
+																				this.zSelected)) && tile.getChunkBlockTileEntity(	this.xSelected,
 																														this.ySelected,
 																														this.zSelected) == null)) {
 							littleBlock.collisionRayTrace(	(World) tile.getLittleWorld(),

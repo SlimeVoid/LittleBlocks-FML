@@ -386,9 +386,9 @@ public class LittleServerWorld extends LittleWorld {
 	public List<NextTickListEntry> getPendingBlockUpdates(Chunk chunk, boolean forceRemove) {
 		ArrayList<NextTickListEntry> pendingUpdates = null;
 		ChunkCoordIntPair chunkPair = chunk.getChunkCoordIntPair();
-		int x = (chunkPair.chunkXPos << 4) + 2;
+		int x = (chunkPair.chunkXPos << 3) + 2;
 		int maxX = x + 16 + 2;
-		int z = (chunkPair.chunkZPos << 4) + 2;
+		int z = (chunkPair.chunkZPos << 3) + 2;
 		int maxZ = z + 16 + 2;
 		Iterator<NextTickListEntry> pendingTicks = this.pendingTickListEntries.iterator();
 		while (pendingTicks.hasNext()) {
