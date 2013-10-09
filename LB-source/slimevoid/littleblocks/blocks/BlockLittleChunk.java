@@ -57,8 +57,10 @@ public class BlockLittleChunk extends BlockContainer {
 		this.blockIcon = iconRegister.registerIcon(IconLib.LB_CHUNK);
 	}
 
-	public int							xSelected		= -10, ySelected = -10,
-			zSelected = -10, side = -1;
+	public int							xSelected		= -10;
+	public int							ySelected		= -10;
+	public int							zSelected		= -10;
+	public int							side			= -1;
 
 	public boolean						updateEveryone	= true;
 
@@ -474,17 +476,21 @@ public class BlockLittleChunk extends BlockContainer {
 			}
 		}
 	}
-	
+
 	@Override
-    public boolean rotateBlock(World world, int x, int y, int z, ForgeDirection axis) {
-    	TileEntity tileentity = world.getBlockTileEntity(x, y, z);
-    	if (tileentity != null && tileentity instanceof TileEntityLittleChunk) {
-    		((TileEntityLittleChunk) tileentity).rotateContents(axis);
-    		tileentity.onInventoryChanged();
-    		world.markBlockForUpdate(x, y, z);
-    	}
-    	return false;
-    }
+	public boolean rotateBlock(World world, int x, int y, int z, ForgeDirection axis) {
+		TileEntity tileentity = world.getBlockTileEntity(	x,
+															y,
+															z);
+		if (tileentity != null && tileentity instanceof TileEntityLittleChunk) {
+			((TileEntityLittleChunk) tileentity).rotateContents(axis);
+			tileentity.onInventoryChanged();
+			world.markBlockForUpdate(	x,
+										y,
+										z);
+		}
+		return false;
+	}
 
 	public void dropLittleBlockAsItem_do(World world, int x, int y, int z, ItemStack itemStack) {
 		this.dropBlockAsItem_do(world,
@@ -739,8 +745,8 @@ public class BlockLittleChunk extends BlockContainer {
 						if (!(littleBlock.hasTileEntity(tile.getBlockMetadata(	this.xSelected,
 																				this.ySelected,
 																				this.zSelected)) && tile.getChunkBlockTileEntity(	this.xSelected,
-																														this.ySelected,
-																														this.zSelected) == null)) {
+																																	this.ySelected,
+																																	this.zSelected) == null)) {
 							littleBlock.collisionRayTrace(	(World) tile.getLittleWorld(),
 															(x << 3)
 																	+ this.xSelected,
