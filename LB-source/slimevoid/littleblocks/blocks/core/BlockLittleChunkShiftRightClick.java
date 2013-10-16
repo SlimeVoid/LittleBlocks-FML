@@ -1,13 +1,14 @@
 package slimevoid.littleblocks.blocks.core;
 
-import slimevoid.littleblocks.core.lib.ConfigurationLib;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import slimevoid.littleblocks.blocks.BlockLittleChunk;
+import slimevoid.littleblocks.core.lib.ConfigurationLib;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
 
 public class BlockLittleChunkShiftRightClick {
 
@@ -27,9 +28,9 @@ public class BlockLittleChunkShiftRightClick {
 																						z,
 																						entityplayer,
 																						event.face,
-																						0,
-																						0,
-																						0);
+																						(float) BlockLittleChunk.hitVec.xCoord,
+																						(float) BlockLittleChunk.hitVec.yCoord,
+																						(float) BlockLittleChunk.hitVec.zCoord);
 				}
 				event.setCanceled(true);
 			}

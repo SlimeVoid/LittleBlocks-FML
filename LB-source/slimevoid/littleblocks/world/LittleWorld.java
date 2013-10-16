@@ -586,11 +586,15 @@ public class LittleWorld extends World implements ILittleWorld {
 																			z >> 7);
 				if (chunk.getBlockID(	(x & 0x7f) >> 3,
 										y >> 3,
-										(z & 0x7f) >> 3) != ConfigurationLib.littleChunkID) {
+										(z & 0x7f) >> 3) != ConfigurationLib.littleChunkID && this.isAirBlock(x, y, z)) {
 					this.getRealWorld().setBlock(	x >> 3,
 													y >> 3,
 													z >> 3,
 													ConfigurationLib.littleChunkID);
+				} else if (chunk.getBlockID(	(x & 0x7f) >> 3,
+													y >> 3,
+													(z & 0x7f) >> 3) != ConfigurationLib.littleChunkID){
+					return false;
 				}
 				TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getRealWorld().getBlockTileEntity(x >> 3,
 																										y >> 3,
@@ -698,11 +702,15 @@ public class LittleWorld extends World implements ILittleWorld {
 																			z >> 7);
 				if (chunk.getBlockID(	(x & 0x7f) >> 3,
 										y >> 3,
-										(z & 0x7f) >> 3) != ConfigurationLib.littleChunkID) {
+										(z & 0x7f) >> 3) != ConfigurationLib.littleChunkID && this.isAirBlock(x, y, z)) {
 					this.getRealWorld().setBlock(	x >> 3,
 													y >> 3,
 													z >> 3,
 													ConfigurationLib.littleChunkID);
+				} else if (chunk.getBlockID(	(x & 0x7f) >> 3,
+													y >> 3,
+													(z & 0x7f) >> 3) != ConfigurationLib.littleChunkID){
+					return false;
 				}
 				TileEntityLittleChunk tile = (TileEntityLittleChunk) realWorld.getBlockTileEntity(	x >> 3,
 																									y >> 3,
