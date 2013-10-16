@@ -26,7 +26,6 @@ import slimevoid.littleblocks.api.ILittleBlocks;
 import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.core.LittleBlocks;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
-import slimevoid.littleblocks.core.lib.PacketLib;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocks;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;

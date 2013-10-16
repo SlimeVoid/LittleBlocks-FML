@@ -16,7 +16,6 @@ public class PacketLittleBlockActivatedExecutor implements IPacketExecutor {
 	public void execute(PacketUpdate packet, World world, EntityPlayer entityplayer) {
 		if (packet instanceof PacketLittleBlock
 			&& packet.getCommand().equals(CommandLib.BLOCK_ACTIVATED)) {
-			PacketLittleBlock littlePacket = (PacketLittleBlock) packet;
 			((BlockLittleChunk) ConfigurationLib.littleChunk).onServerBlockActivated(	(World) LittleBlocks.proxy.getLittleWorld(world, false),
 																						entityplayer,
 																						//littlePacket.getItemStack(),
@@ -27,24 +26,6 @@ public class PacketLittleBlockActivatedExecutor implements IPacketExecutor {
 																						packet.hitX,
 																						packet.hitY,
 																						packet.hitZ);
-/*			if (world.getBlockId(	packet.xPosition,
-									packet.yPosition,
-									packet.zPosition) == ConfigurationLib.littleChunkID) {
-				((BlockLittleChunk) ConfigurationLib.littleChunk).onServerBlockActivated(	world,
-																							packet.xPosition,
-																							packet.yPosition,
-																							packet.zPosition,
-																							entityplayer,
-																							packet.side,
-																							packet.hitX,
-																							packet.hitY,
-																							packet.hitZ,
-																							((PacketLittleBlocks) packet).getSelectedX(),
-																							((PacketLittleBlocks) packet).getSelectedY(),
-																							((PacketLittleBlocks) packet).getSelectedZ(),
-																							((PacketLittleBlocks) packet).getMetadata());
-			}*/
 		}
 	}
-
 }
