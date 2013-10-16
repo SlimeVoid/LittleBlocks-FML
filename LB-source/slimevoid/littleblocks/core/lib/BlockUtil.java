@@ -11,22 +11,40 @@ import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemMonsterPlacer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.world.EnumGameType;
 import net.minecraft.world.World;
 import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.LoggerLittleBlocks;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 import slimevoid.littleblocks.world.ItemInLittleWorldManager;
+import slimevoid.littleblocks.world.LittlePlayerController;
 import slimevoidlib.data.Logger;
 import buildcraft.core.IItemPipe;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockUtil {
+	
+	@SideOnly(Side.CLIENT)
+	private static LittlePlayerController littlePlayerController;
 
 	private static HashMap<EntityPlayerMP, ItemInLittleWorldManager>	itemInLittleWorldManagers;
 
-	public static ItemInLittleWorldManager getLittleItemManager(EntityPlayerMP entityplayer) {
+	@SideOnly(Side.CLIENT)
+	public static void setLittleController(LittlePlayerController controller, EnumGameType gameType) {
+		littlePlayerController = controller;
+		littlePlayerController.setGameType(gameType);
+	}
+	
+	@SideOnly(Side.CLIENT)
+	public static LittlePlayerController getLittleController() {
+		return littlePlayerController;
+	}
+	
+	public static ItemInLittleWorldManager getLittleItemManager(EntityPlayerMP entityplayer, World world) {
 		if (itemInLittleWorldManagers.containsKey(entityplayer)
-			&& itemInLittleWorldManagers.get(entityplayer).theWorld.equals(entityplayer.worldObj)) {
+			&& itemInLittleWorldManagers.get(entityplayer).theWorld.equals(world)) {
 			return itemInLittleWorldManagers.get(entityplayer);
 		}
 		return setLittleItemManagerForPlayer(entityplayer);
@@ -160,7 +178,7 @@ public class BlockUtil {
 		return false;
 	}
 
-	public static boolean isLittleBlock(World world, int x, int y, int z) {
+	public static boolean isLittleChunk(World world, int x, int y, int z) {
 		if (world instanceof ILittleWorld) {
 			return ((ILittleWorld) world).getRealWorld().getBlockId(x >> 3,
 																	y >> 3,
@@ -169,10 +187,11 @@ public class BlockUtil {
 		return false;
 	}
 
-	public static boolean isLittleBlock(World world, MovingObjectPosition target) {
-		return isLittleBlock(	world,
+	public static boolean isLittleChunk(World world, MovingObjectPosition target) {
+		return isLittleChunk(	world,
 								target.blockX,
 								target.blockY,
 								target.blockZ);
 	}
+
 }

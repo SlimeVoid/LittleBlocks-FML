@@ -6,9 +6,14 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.EnumSkyBlock;
@@ -1185,6 +1190,14 @@ public class LittleWorld extends World implements ILittleWorld {
 															y2 >> 3,
 															z2 >> 3);
 	}
+	
+	@Override
+    public void updateTileEntityChunkAndDoNothing(int x, int y, int z, TileEntity tileentity) {
+		TileEntity tile = this.getRealWorld().getBlockTileEntity(x >> 3, y >> 3, z >> 3);
+		if (tile != null && tile instanceof TileEntityLittleChunk) {
+			tile.onInventoryChanged();
+		}
+	}
 
 	@Override
 	public void idModified(int lastId, int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
@@ -1220,10 +1233,131 @@ public class LittleWorld extends World implements ILittleWorld {
 		}
 	}
 
+	@Override
 	public void updateLightByType(EnumSkyBlock enumSkyBlock, int x, int y, int z) {
 		this.getRealWorld().updateLightByType(	enumSkyBlock,
 												x >> 3,
 												y >> 3,
 												z >> 3);
+	}
+
+	@Override
+	public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb, IEntitySelector entitySelector) {
+		ArrayList arraylist = new ArrayList();
+		int minX = MathHelper.floor_double((axisalignedbb.minX - MAX_ENTITY_RADIUS) / 16.0D);
+		int maxX = MathHelper.floor_double((axisalignedbb.maxX + MAX_ENTITY_RADIUS) / 16.0D);
+		int minZ = MathHelper.floor_double((axisalignedbb.minZ - MAX_ENTITY_RADIUS) / 16.0D);
+		int maxZ = MathHelper.floor_double((axisalignedbb.maxZ + MAX_ENTITY_RADIUS) / 16.0D);
+
+		for (int x = minX; x <= maxX; ++x) {
+			for (int z = minZ; z <= maxZ; ++z) {
+				//if (this.chunkExists(	x,
+				//						z)) {
+				//	this.getChunkFromChunkCoords(	x,
+				//									z).getEntitiesWithinAABBForEntity(	entity,
+				//																		axisalignedbb,
+				//																		arraylist,
+				//																		entitySelector);
+				//}
+			}
+		}
+
+		return arraylist;
+	}
+	
+	@Override
+    public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb) {
+		return this.getEntitiesWithinAABBExcludingEntity(entity, axisalignedbb, (IEntitySelector) null);
+	}
+	
+	@Override
+	public List selectEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisalignedbb, IEntitySelector entitySelector) {
+		ArrayList arraylist = new ArrayList();
+		int minX = MathHelper.floor_double((axisalignedbb.minX - MAX_ENTITY_RADIUS) / 16.0D);
+		int maxX = MathHelper.floor_double((axisalignedbb.maxX + MAX_ENTITY_RADIUS) / 16.0D);
+		int minZ = MathHelper.floor_double((axisalignedbb.minZ - MAX_ENTITY_RADIUS) / 16.0D);
+		int maxZ = MathHelper.floor_double((axisalignedbb.maxZ + MAX_ENTITY_RADIUS) / 16.0D);
+
+		for (int x = minX; x <= maxX; ++x) {
+			for (int z = minZ; z <= maxZ; ++z) {
+				//if (this.chunkExists(	x,
+				//						z)) {
+				//	this.getChunkFromChunkCoords(	x,
+				//									z).getEntitiesOfTypeWithinAAAB(entityClass,
+				//																	axisalignedbb,
+				//																	arraylist,
+				//																	entitySelector);
+				//}
+			}
+		}
+
+		return arraylist;
+	}
+	
+	@Override
+    public List getEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisAlignedBB) {
+		return this.selectEntitiesWithinAABB(entityClass, axisAlignedBB, (IEntitySelector)null);
+	}
+
+	@Override
+	public boolean checkNoEntityCollision(AxisAlignedBB axisalignedbb, Entity entity) {
+		List list = this.getEntitiesWithinAABBExcludingEntity(	(Entity) null,
+		                                                      	axisalignedbb);
+
+		for (int i = 0; i < list.size(); ++i) {
+			Entity entity1 = (Entity) list.get(i);
+
+			if (!entity1.isDead && entity1.preventEntitySpawning
+				&& entity1 != entity) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	@Override
+	public boolean canPlaceEntityOnSide(int blockId, int x, int y, int z, boolean flag, int side, Entity entityPlacing, ItemStack itemstack) {
+		int blockIdAt = this.getBlockId(	x,
+									y,
+									z);
+		Block blockAt = Block.blocksList[blockIdAt];
+		Block block = Block.blocksList[blockId];
+		AxisAlignedBB axisalignedbb = block.getCollisionBoundingBoxFromPool(	this,
+																				x,
+																				y,
+																				z);
+
+		if (flag) {
+			axisalignedbb = null;
+		}
+
+		if (axisalignedbb != null && !this.checkNoEntityCollision(axisalignedbb, entityPlacing)) {
+			return false;
+		} else {
+			if (blockAt != null
+				&& (blockAt == Block.waterMoving || blockAt == Block.waterStill
+					|| blockAt == Block.lavaMoving || blockAt == Block.lavaStill
+					|| blockAt == Block.fire || blockAt.blockMaterial.isReplaceable())) {
+				blockAt = null;
+			}
+
+			if (blockAt != null && blockAt.isBlockReplaceable(	this,
+															x,
+															y,
+															z)) {
+				blockAt = null;
+			}
+
+			return blockAt != null && blockAt.blockMaterial == Material.circuits
+					&& block == Block.anvil ? true : blockId > 0
+					&& blockAt == null
+					&& block.canPlaceBlockOnSide(	this,
+													x,
+													y,
+													z,
+													side,
+													itemstack);
+		}
 	}
 }

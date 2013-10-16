@@ -12,8 +12,8 @@ import net.minecraftforge.event.Event.Result;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 import slimevoid.littleblocks.api.ILittleWorld;
+import slimevoid.littleblocks.core.LittleBlocks;
 import slimevoid.littleblocks.core.lib.CoreLib;
-import slimevoid.littleblocks.proxy.CommonProxy;
 
 public class LittleContainerInteract {
 
@@ -47,7 +47,7 @@ public class LittleContainerInteract {
 			zPosF.setAccessible(true);
 			IBlockAccess holdWorld = (IBlockAccess) worldObjF.get(event.entityPlayer.openContainer);
 			int xPos = xPosF.getInt(event.entityPlayer.openContainer), yPos = yPosF.getInt(event.entityPlayer.openContainer), zPos = zPosF.getInt(event.entityPlayer.openContainer);
-			ILittleWorld littleWorld = new CommonProxy().getLittleWorld((IBlockAccess) worldObjF.get(event.entityPlayer.openContainer),
+			ILittleWorld littleWorld = LittleBlocks.proxy.getLittleWorld((IBlockAccess) worldObjF.get(event.entityPlayer.openContainer),
 																		false);
 			if (!(worldObjF.get(event.entityPlayer.openContainer) instanceof ILittleWorld)
 				&& littleWorld.getBlockId(	xPos,
@@ -102,7 +102,7 @@ public class LittleContainerInteract {
 			zPosF.setAccessible(true);
 			IBlockAccess holdWorld = (IBlockAccess) worldObjF.get(event.entityPlayer.openContainer);
 			int xPos = xPosF.getInt(event.entityPlayer.openContainer), yPos = yPosF.getInt(event.entityPlayer.openContainer), zPos = zPosF.getInt(event.entityPlayer.openContainer);
-			ILittleWorld littleWorld = new CommonProxy().getLittleWorld((IBlockAccess) worldObjF.get(event.entityPlayer.openContainer),
+			ILittleWorld littleWorld = LittleBlocks.proxy.getLittleWorld((IBlockAccess) worldObjF.get(event.entityPlayer.openContainer),
 																		false);
 			if (!(worldObjF.get(event.entityPlayer.openContainer) instanceof ILittleWorld)
 				&& littleWorld.getBlockId(	xPos,
@@ -197,7 +197,7 @@ public class LittleContainerInteract {
 	private void WorldCanInteract(PlayerOpenContainerEvent event, Field worldField, IBlockAccess world) {
 		try {
 			worldField.set(	event.entityPlayer.openContainer,
-							new CommonProxy().getLittleWorld(	world,
+							LittleBlocks.proxy.getLittleWorld(	world,
 																false));
 			FakePlayer fakePlayer = new FakePlayer(event.entityPlayer.worldObj, CoreLib.MOD_CHANNEL);
 			fakePlayer.posX = event.entityPlayer.posX * 8;

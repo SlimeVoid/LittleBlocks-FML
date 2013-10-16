@@ -4,12 +4,15 @@ import java.util.Collection;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.logging.ILogAgent;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.IProgressUpdate;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
@@ -48,7 +51,7 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 
 	@Override
 	public void metadataModified(int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
-		int blockX = (x << 3) + littleX;
+/*		int blockX = (x << 3) + littleX;
 		int	blockY = (y << 3) + littleY;
 		int blockZ = (z << 3) + littleZ;
 													
@@ -60,12 +63,12 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 									blockId,
 									side,
 									metadata);
-		}
+		}*/
 	}
 
 	@Override
 	public void idModified(int lastBlockId, int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
-		int blockX = (x << 3) + littleX;
+/*		int blockX = (x << 3) + littleX;
 		int blockY = (y << 3) + littleY;
 		int blockZ = (z << 3) + littleZ;
 		
@@ -102,7 +105,7 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 											blockId,
 											metadata);
 			}
-		}
+		}*/
 	}
 
 	@Override
@@ -231,20 +234,6 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 											par6);
 	}
 
-	@Override
-	public void updateTileEntityChunkAndDoNothing(int x, int y, int z, TileEntity tileentity) {
-		if (this.blockExists(	x,
-				y,
-				z)) {
-			 PacketLib.sendTileEntity( this.getLittleWorld(),
-				 tileentity,
-				 x,
-				 y,
-				 z);
-		}
-	}
-
-	@Override
 	public int getSkyBlockTypeBrightness(EnumSkyBlock enumskyblock, int x, int y, int z) {
 		return this.getLittleWorld().getSkyBlockTypeBrightness(	enumskyblock,
 																x,
@@ -509,6 +498,11 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 															y2,
 															z2);
 	}
+	
+	@Override
+    public void updateTileEntityChunkAndDoNothing(int x, int y, int z, TileEntity tileentity) {
+		this.getLittleWorld().updateTileEntityChunkAndDoNothing(x, y, z, tileentity);
+	}
 
 	@Override
 	public void updateLightByType(EnumSkyBlock enumSkyBlock, int x, int y, int z) {
@@ -526,6 +520,36 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 	@Override
 	public void saveAllChunks(boolean par1, IProgressUpdate par2IProgressUpdate) throws MinecraftException {
 
+	}
+
+	@Override
+	public boolean canPlaceEntityOnSide(int blockId, int x, int y, int z, boolean flag, int side, Entity entityPlacing, ItemStack itemstack) {
+		return this.getLittleWorld().canPlaceEntityOnSide(blockId, x, y, z, flag, side, entityPlacing, itemstack);
+	}
+	
+	@Override
+	public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb, IEntitySelector entitySelector) {
+		return this.getLittleWorld().getEntitiesWithinAABBExcludingEntity(entity, axisalignedbb, entitySelector);
+	}
+
+	@Override
+    public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb) {
+		return this.getLittleWorld().getEntitiesWithinAABBExcludingEntity(entity, axisalignedbb);
+	}
+
+	@Override
+	public List selectEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisalignedbb, IEntitySelector entitySelector) {
+		return this.getLittleWorld().selectEntitiesWithinAABB(entityClass, axisalignedbb, entitySelector);
+	}
+	
+	@Override
+    public List getEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisAlignedBB) {
+		return this.getLittleWorld().getEntitiesWithinAABB(entityClass, axisAlignedBB);
+	}
+	
+	@Override
+	public boolean checkNoEntityCollision(AxisAlignedBB axisalignedbb, Entity entity) {
+		return this.getLittleWorld().checkNoEntityCollision(axisalignedbb, entity);
 	}
 
 	//

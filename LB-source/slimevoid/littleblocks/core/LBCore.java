@@ -10,6 +10,7 @@ import slimevoid.littleblocks.blocks.BlockLittleChunk;
 import slimevoid.littleblocks.blocks.core.BlockLittleChunkBucketEvent;
 import slimevoid.littleblocks.blocks.core.BlockLittleChunkShiftRightClick;
 import slimevoid.littleblocks.blocks.core.LittleContainerInteract;
+import slimevoid.littleblocks.blocks.core.PlayerInteractInterrupt;
 import slimevoid.littleblocks.core.lib.BlockLib;
 import slimevoid.littleblocks.core.lib.BlockUtil;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
@@ -62,7 +63,8 @@ public class LBCore {
 
 	public static void registerEvents() {
 		MinecraftForge.EVENT_BUS.register(new LittleBlocksCollectionPickup());
-		MinecraftForge.EVENT_BUS.register(new BlockLittleChunkShiftRightClick());
+		//MinecraftForge.EVENT_BUS.register(new BlockLittleChunkShiftRightClick());
+		MinecraftForge.EVENT_BUS.register(new PlayerInteractInterrupt());
 		MinecraftForge.EVENT_BUS.register(new BlockLittleChunkBucketEvent());
 		// MinecraftForge.EVENT_BUS.register(new LittleLadderHandler());
 		MinecraftForge.EVENT_BUS.register(new LittleContainerInteract());
