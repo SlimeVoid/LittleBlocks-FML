@@ -325,6 +325,9 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 													metadata);*/
 		}
 	}
+	
+	public void checkForLittleBlock(int x, int y, int z) {
+	}
 
 	public boolean setBlockIDWithMetadata(int x, int y, int z, int id, int metadata) {
 		if (x >= size | y >= size | z >= size) {
@@ -347,13 +350,12 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 																												+ (y >= size ? 1 : 0),
 																										zCoord
 																												+ (z >= size ? 1 : 0));
-				tile.setBlockIDWithMetadata(x >= size ? x - size : x,
+				return tile.setBlockIDWithMetadata(x >= size ? x - size : x,
 											y >= size ? y - size : y,
 											z >= size ? z - size : z,
 											id,
 											metadata);
 			}
-			return true;
 		} else if (x < 0 | z < 0 | y < 0) {
 			if (this.worldObj.getBlockId(	xCoord - (x < 0 ? 1 : 0),
 											yCoord - (y < 0 ? 1 : 0),
@@ -374,13 +376,12 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 																												- (y < 0 ? 1 : 0),
 																										zCoord
 																												- (z < 0 ? 1 : 0));
-				tile.setBlockIDWithMetadata(x < 0 ? x + size : x,
+				return tile.setBlockIDWithMetadata(x < 0 ? x + size : x,
 											y < 0 ? y + size : y,
 											z < 0 ? z + size : z,
 											id,
 											metadata);
 			}
-			return true;
 		}
 		int lastId = this.getBlockID(x, y, z);//this.content[x][y][z];
 		int lastData = this.getBlockMetadata(x, y, z);//this.metadatas[x][y][z];
@@ -388,7 +389,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 		if (lastId == id && lastData == metadata) {
 			return false;
 		} else {
-			boolean flag = false;
+			//boolean flag = false;
 			if (lastId != 0 && !this.worldObj.isRemote) {
 				Block.blocksList[lastId].onBlockPreDestroy(this.getWorldObj(), (this.xCoord << 3) + x, (this.yCoord << 3) + y, (this.zCoord << 3) + z, lastData);
 			}
@@ -398,13 +399,6 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 			if (lastId != 0) {
 				if (!this.worldObj.isRemote) {
 					Block.blocksList[lastId].breakBlock((World) this.getLittleWorld(), (this.xCoord << 3) + x, (this.yCoord << 3) + y, (this.zCoord << 3) + z, lastId, lastData);
-					//PacketLib.sendBreakBlock(	this.getLittleWorld(),
-					//							(this.xCoord << 3) + x,
-					//							(this.yCoord << 3) + y,
-					//							(this.zCoord << 3) + z,
-					//							0,
-					//							lastId,
-					//							lastData);
 				} else if (Block.blocksList[lastId] != null && Block.blocksList[lastId].hasTileEntity(lastData)) {
 					TileEntity te = this.getLittleWorld().getBlockTileEntity((this.xCoord << 3) + x, (this.yCoord << 3) + y, (this.zCoord << 3) + z);
 					if (te != null && te.shouldRefresh(lastId, id, lastData, metadata, (World) this.getLittleWorld(), (this.xCoord << 3) + x, (this.yCoord << 3) + y, (this.zCoord << 3) + z)) {
@@ -420,16 +414,8 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 				TileEntity tileentity;
 				
 				if (id != 0) {
-					//if (!this.worldObj.isRemote) {
-						Block.blocksList[id].onBlockAdded((World) this.getLittleWorld(), (this.xCoord << 3) + x, (this.yCoord << 3) + y, (this.zCoord << 3) + z);
-						//PacketLib.sendBlockAdded(	this.getLittleWorld(),
-						//							(this.xCoord << 3) + x,
-						//							(this.yCoord << 3) + y,
-						//							(this.zCoord << 3) + z,
-						//							0,
-						//							id,
-						//							metadata);
-					//}
+					Block.blocksList[id].onBlockAdded((World) this.getLittleWorld(), (this.xCoord << 3) + x, (this.yCoord << 3) + y, (this.zCoord << 3) + z);
+
 					if (Block.blocksList[id] != null && Block.blocksList[id].hasTileEntity(metadata)) {
 						tileentity = this.getChunkBlockTileEntity(x, y, z);
 						
@@ -459,7 +445,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 					//						metadata);
 				//}
 				this.onInventoryChanged();
-				return flag;
+				return true;
 			}
 		}
 	}

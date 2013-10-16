@@ -601,6 +601,7 @@ public class LittleWorld extends World implements ILittleWorld {
 					originalId = tile.getBlockID(x & 7, y & 7, z & 7);
 				}
 				
+				tile.checkForLittleBlock(x & 7, y & 7, z & 7);
 				boolean flag = tile.setBlockIDWithMetadata(x & 7,
 											y & 7,
 											z & 7,
