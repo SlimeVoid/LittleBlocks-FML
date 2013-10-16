@@ -220,13 +220,9 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 											someValue);
 	}
 
-	/**
-	 * Schedules a block update from the saved information in a chunk. Called
-	 * when the chunk is loaded.
-	 */
 	@Override
 	public void scheduleBlockUpdateFromLoad(int x, int y, int z, int blockId, int tickRate, int par6) {
-		this.scheduleBlockUpdateFromLoad(	x,
+		this.getLittleWorld().scheduleBlockUpdateFromLoad(	x,
 											y,
 											z,
 											blockId,

@@ -437,7 +437,10 @@ public class LittleWorld extends World implements ILittleWorld {
 													z & 7);
 				return littleBlockId;
 			} else {
+				/** POSSIBLE FIX FOR PISTON BLOCK DUPE BUG **/
+				if (id != 0) return Block.bedrock.blockID;
 				return id;
+				/********************************************/
 			}
 		}
 	}

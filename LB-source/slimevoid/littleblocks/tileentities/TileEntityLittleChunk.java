@@ -1,5 +1,6 @@
 package slimevoid.littleblocks.tileentities;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -35,7 +36,6 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 	public int								size				= ConfigurationLib.littleBlocksSize;
 	private int								content[][][]		= new int[size][size][size];
 	private int								metadatas[][][]		= new int[size][size][size];
-	// private List<TileEntity> tiles = new ArrayList<TileEntity>();
 	private Map<ChunkPosition, TileEntity>	chunkTileEntityMap	= new HashMap<ChunkPosition, TileEntity>();
 
 	@Override
@@ -288,13 +288,6 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 		} else {
 			this.metadatas[x][y][z] = metadata;
 			int blockId = this.content[x][y][z];
-			// PacketLib.sendMetadata( this.getLittleWorld(),
-			// (this.xCoord << 3) + x,
-			// (this.yCoord << 3) + y,
-			// (this.zCoord << 3) + z,
-			// blockId,
-			// 0,
-			// metadata);
 
 			if (blockId > 0 && Block.blocksList[blockId] != null
 				&& Block.blocksList[blockId].hasTileEntity(metadata)) {
@@ -305,19 +298,10 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 				if (tileentity != null) {
 					tileentity.updateContainingBlockInfo();
 					tileentity.blockMetadata = metadata;
-					/*
-					 * PacketLib.sendTileEntity( this.getLittleWorld(),
-					 * tileentity, (this.xCoord << 3) + x, (this.yCoord << 3) +
-					 * y, (this.zCoord << 3) + z);
-					 */
 				}
 			}
 			this.onInventoryChanged();
 			return true;
-			/*
-			 * this.getLittleWorld().metadataModified( xCoord, yCoord, zCoord,
-			 * 0, x, y, z, blockId, metadata);
-			 */
 		}
 	}
 
@@ -480,10 +464,26 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 	}
 
 	private void setTileEntityWorldObjs() {
+		ILittleWorld littleWorld = this.getLittleWorld();
 		Iterator tiles = this.chunkTileEntityMap.values().iterator();
 		while (tiles.hasNext()) {
 			TileEntity tile = (TileEntity) tiles.next();
-			tile.setWorldObj((World) this.getLittleWorld());
+			tile.setWorldObj((World) littleWorld);
+			if (littleWorld != null) {
+				((World) littleWorld).addTileEntity(tile);
+			}
+		}
+		
+		Iterator ticks = this.pendingBlockUpdates.iterator();
+		while (ticks.hasNext()) {
+			NBTTagCompound pendingTick = (NBTTagCompound) ticks.next();
+	
+			((World) this.getLittleWorld()).scheduleBlockUpdateFromLoad(pendingTick.getInteger("x"),
+																		pendingTick.getInteger("y"),
+																		pendingTick.getInteger("z"),
+																		pendingTick.getInteger("i"),
+																		pendingTick.getInteger("t"),
+																		pendingTick.getInteger("p"));
 		}
 	}
 
@@ -585,10 +585,6 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 										y,
 										z,
 										tile);
-		ILittleWorld littleWorld = this.getLittleWorld();
-		if (littleWorld != null) {
-			((World) littleWorld).addTileEntity(tile);
-		}
 	}
 
 	@Override
@@ -608,6 +604,8 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 			}
 		}
 	}
+	
+	List<NBTTagCompound> pendingBlockUpdates = new ArrayList<NBTTagCompound>();
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
@@ -653,12 +651,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 			if (tickList != null) {
 				for (int i = 0; i < tickList.tagCount(); i++) {
 					NBTTagCompound pendingTick = (NBTTagCompound) tickList.tagAt(i);
-					((World) this.getLittleWorld()).scheduleBlockUpdateFromLoad(pendingTick.getInteger("x"),
-																				pendingTick.getInteger("y"),
-																				pendingTick.getInteger("z"),
-																				pendingTick.getInteger("i"),
-																				pendingTick.getInteger("t"),
-																				pendingTick.getInteger("p"));
+					this.pendingBlockUpdates.add(pendingTick);
 				}
 			}
 		}
@@ -707,7 +700,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 		}
 		nbttagcompound.setTag(	"Tiles",
 								tilesTag);
-		List pendingUpdates = ((World) this.getLittleWorld()).getPendingBlockUpdates(	new Chunk((World) this.getLittleWorld(), this.xCoord, this.yCoord),
+		List pendingUpdates = ((World) this.getLittleWorld()).getPendingBlockUpdates(	new Chunk((World) this.getLittleWorld(), this.xCoord, this.zCoord),
 																						false);
 		if (pendingUpdates != null) {
 			long time = ((World) this.getLittleWorld()).getTotalWorldTime();
@@ -715,7 +708,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 			Iterator pendingIterator = pendingUpdates.iterator();
 
 			while (pendingIterator.hasNext()) {
-				NextTickListEntry nextticklistentry = (NextTickListEntry) iterator.next();
+				NextTickListEntry nextticklistentry = (NextTickListEntry) pendingIterator.next();
 				NBTTagCompound pendingUpdate = new NBTTagCompound();
 				pendingUpdate.setInteger(	"i",
 											nextticklistentry.blockID);
