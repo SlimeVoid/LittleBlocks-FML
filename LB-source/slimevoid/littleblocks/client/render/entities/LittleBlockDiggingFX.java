@@ -16,7 +16,7 @@ import cpw.mods.fml.client.FMLClientHandler;
 public class LittleBlockDiggingFX extends EntityDiggingFX {
 
 	public LittleBlockDiggingFX(World par1World, double par2, double par4, double par6, double par8, double par10, double par12, Block par14Block, int par15) {
-		super(par1World, par2, par4, par6, par8, par10, par12, par14Block, par15, par1World.rand.nextInt(6), FMLClientHandler.instance().getClient().renderEngine);
+		super(par1World, par2, par4, par6, par8, par10, par12, par14Block, par15, par1World.rand.nextInt(6));
 		this.particleScale /= ConfigurationLib.littleBlocksSize;
 	}
 
@@ -54,9 +54,9 @@ public class LittleBlockDiggingFX extends EntityDiggingFX {
 																													- 0.5D, d2
 																															- (double) z
 																															- 0.5D, littleBlock, littleMeta);
-								effectRenderer.addEffect(particle.func_70596_a(	x,
-																				y,
-																				z));
+								effectRenderer.addEffect(particle.applyColourMultiplier(x,
+																						y,
+																						z));
 							} catch (ArrayIndexOutOfBoundsException e) {
 								LoggerLittleBlocks.getInstance(CoreLib.MOD_ID).write(	true,
 																						"Could not render digging FX for ["
@@ -140,9 +140,9 @@ public class LittleBlockDiggingFX extends EntityDiggingFX {
 				}
 				try {
 					LittleBlockDiggingFX particle = new LittleBlockDiggingFX(world, d0, d1, d2, 0.0D, 0.0D, 0.0D, littleBlock, littleMeta);
-					effectRenderer.addEffect(particle.func_70596_a(	x,
-																	y,
-																	z).multiplyVelocity(0.2F).multipleParticleScaleBy(0.6F));
+					effectRenderer.addEffect(particle.applyColourMultiplier(x,
+																			y,
+																			z).multiplyVelocity(0.2F).multipleParticleScaleBy(0.6F));
 				} catch (ArrayIndexOutOfBoundsException e) {
 					LoggerLittleBlocks.getInstance(CoreLib.MOD_ID).write(	true,
 																			"Could not render hit FX for ["

@@ -3,6 +3,7 @@ package slimevoid.littleblocks.items.wand;
 import java.util.HashMap;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ChatMessageComponent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -66,8 +67,8 @@ public enum EnumWandAction {
 		EnumWandAction nextAction = getAction(nextActionID);
 		setWandActionForPlayer(	entityplayer,
 								nextAction);
-		entityplayer.sendChatToPlayer("Little Wand now in "
-										+ nextAction.actionDescription);
+		entityplayer.sendChatToPlayer(ChatMessageComponent.createFromText("Little Wand now in "
+																			+ nextAction.actionDescription));
 	}
 
 	@SideOnly(Side.CLIENT)

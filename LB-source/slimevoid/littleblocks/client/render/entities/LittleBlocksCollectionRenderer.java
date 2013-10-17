@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
 
 public class LittleBlocksCollectionRenderer extends Render {
@@ -28,6 +29,11 @@ public class LittleBlocksCollectionRenderer extends Render {
 				}
 			}
 		}
+	}
+
+	@Override
+	protected ResourceLocation getEntityTexture(Entity entity) {
+		return null;
 	}
 
 }
