@@ -1064,10 +1064,13 @@ public class LittleWorld extends World implements ILittleWorld {
 			TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getRealWorld().getBlockTileEntity(x >> 3,
 																										y >> 3,
 																										z >> 3);
-			tile.setChunkBlockTileEntity(	x & 7,
-											y & 7,
-											z & 7,
-											tileentity);
+			if (tile != null) {
+				tile.setChunkBlockTileEntity(	x & 7,
+												y & 7,
+												z & 7,
+												tileentity);
+			}
+			this.func_96440_m(x, y, z, 0);			
 		} else {
 			this.getRealWorld().setBlockTileEntity(	x >> 3,
 													y >> 3,

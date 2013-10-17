@@ -267,14 +267,17 @@ public class BlockLittleChunk extends BlockContainer {
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int localSide, float hitX, float hitY, float hitZ) {
 		// System.out.println("Activated");
 		if (world.isRemote) {
-			if (BlockUtil.getLittleController().onPlayerRightClickFirst(	entityplayer,
-																		(World) LittleBlocks.proxy.getLittleWorld(world, false),
+			if (BlockUtil.getLittleController().onPlayerRightClickFirst(entityplayer,
+																		(World) LittleBlocks.proxy.getLittleWorld(	world,
+																													false),
 																		entityplayer.inventory.getCurrentItem(),
-																		(x << 3) + xSelected,
-																		(y << 3) + ySelected,
-																		(z << 3) + zSelected,
-																		(localSide << 3) + side,
-																		hitX, hitY, hitZ)) {
+																		((x << 3) + xSelected),
+																		((y << 3) + ySelected),
+																		((z << 3) + zSelected),
+																		side,
+																		hitX,
+																		hitY,
+																		hitZ)) {
 				entityplayer.swingItem();
 			}
 		}

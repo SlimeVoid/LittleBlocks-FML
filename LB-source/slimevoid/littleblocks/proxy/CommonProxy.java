@@ -2,7 +2,6 @@ package slimevoid.littleblocks.proxy;
 
 import java.io.File;
 
-import net.minecraft.client.multiplayer.NetClientHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.NetLoginHandler;
@@ -17,17 +16,16 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import slimevoid.littleblocks.api.ILBCommonProxy;
 import slimevoid.littleblocks.api.ILittleWorld;
+import slimevoid.littleblocks.blocks.core.LittleContainerInteract;
 import slimevoid.littleblocks.core.LBCore;
-import slimevoid.littleblocks.core.lib.BlockUtil;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
 import slimevoid.littleblocks.core.lib.PacketLib;
 import slimevoid.littleblocks.events.WorldServerLoadEvent;
 import slimevoid.littleblocks.events.WorldServerUnloadEvent;
+import slimevoid.littleblocks.items.LittleBlocksCollectionPickup;
 import slimevoid.littleblocks.network.CommonPacketHandler;
 import slimevoid.littleblocks.tickhandlers.LittleWorldServerTickHandler;
-import slimevoid.littleblocks.world.LittlePlayerController;
 import slimevoidlib.IPacketHandling;
-import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.common.registry.TickRegistry;
@@ -39,8 +37,6 @@ public class CommonProxy implements ILBCommonProxy {
 	public void preInit() {
 		CommonPacketHandler.init();
 		PacketLib.registerPacketHandlers();
-		MinecraftForge.EVENT_BUS.register(new WorldServerLoadEvent());
-		MinecraftForge.EVENT_BUS.register(new WorldServerUnloadEvent());
 	}
 
 	@Override
@@ -71,9 +67,20 @@ public class CommonProxy implements ILBCommonProxy {
 	}
 
 	@Override
-	public void registerTickHandler() {
+	public void registerTickHandlers() {
 		TickRegistry.registerTickHandler(	new LittleWorldServerTickHandler(),
 											Side.SERVER);
+	}
+
+	@Override
+	public void registerEventHandlers() {
+		MinecraftForge.EVENT_BUS.register(new WorldServerLoadEvent());
+		MinecraftForge.EVENT_BUS.register(new WorldServerUnloadEvent());
+		MinecraftForge.EVENT_BUS.register(new LittleBlocksCollectionPickup());
+		MinecraftForge.EVENT_BUS.register(new LittleContainerInteract());
+		//MinecraftForge.EVENT_BUS.register(new PlayerInteractInterrupt());
+		// MinecraftForge.EVENT_BUS.register(new LittleLadderHandler());
+		// MinecraftForge.EVENT_BUS.register(new PistonOrientation());
 	}
 
 	@Override

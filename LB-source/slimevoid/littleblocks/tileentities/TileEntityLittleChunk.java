@@ -249,12 +249,11 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 																												+ (y >= size ? 1 : 0),
 																										zCoord
 																												+ (z >= size ? 1 : 0));
-				tile.setBlockMetadata(	x >= size ? x - size : x,
-										y >= size ? y - size : y,
-										z >= size ? z - size : z,
-										metadata);
+				return tile.setBlockMetadata(	x >= size ? x - size : x,
+												y >= size ? y - size : y,
+												z >= size ? z - size : z,
+												metadata);
 			}
-			return true;
 		} else if (x < 0 | z < 0 | y < 0) {
 			if (this.worldObj.getBlockId(	xCoord - (x < 0 ? 1 : 0),
 											yCoord - (y < 0 ? 1 : 0),
@@ -275,17 +274,17 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 																												- (y < 0 ? 1 : 0),
 																										zCoord
 																												- (z < 0 ? 1 : 0));
-				tile.setBlockMetadata(	x < 0 ? x + size : x,
-										y < 0 ? y + size : y,
-										z < 0 ? z + size : z,
-										metadata);
+				return tile.setBlockMetadata(	x < 0 ? x + size : x,
+												y < 0 ? y + size : y,
+												z < 0 ? z + size : z,
+												metadata);
 			}
-			return true;
 		}
 		int lastData = this.metadatas[x][y][z];
 		if (lastData == metadata) {
 			return false;
 		} else {
+			this.onInventoryChanged();
 			this.metadatas[x][y][z] = metadata;
 			int blockId = this.content[x][y][z];
 
@@ -300,7 +299,6 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 					tileentity.blockMetadata = metadata;
 				}
 			}
-			this.onInventoryChanged();
 			return true;
 		}
 	}

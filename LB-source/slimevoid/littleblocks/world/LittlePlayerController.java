@@ -76,10 +76,11 @@ public class LittlePlayerController extends PlayerControllerMP {
 																															y,
 																															z))) {
 			blockId = world.getBlockId(	x,
-									y,
-									z);
+										y,
+										z);
 
-			if (blockId > 0 && Block.blocksList[blockId].onBlockActivated(world,
+			if (blockId > 0
+				&& Block.blocksList[blockId].onBlockActivated(	world,
 																x,
 																y,
 																z,
@@ -106,8 +107,16 @@ public class LittlePlayerController extends PlayerControllerMP {
 				return false;
 			}
 		}
-		
-		PacketLib.sendBlockPlace(world, entityplayer, x, y, z, side, hitX, hitY, hitZ);
+
+		PacketLib.sendBlockPlace(	world,
+									entityplayer,
+									x,
+									y,
+									z,
+									side,
+									hitX,
+									hitY,
+									hitZ);
 		
 		if (flag) {
 			return true;
