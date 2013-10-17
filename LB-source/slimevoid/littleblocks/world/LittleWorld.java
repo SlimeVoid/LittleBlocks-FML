@@ -1286,7 +1286,7 @@ public class LittleWorld extends World implements ILittleWorld {
 	}
 
 	@Override
-    public void updateTileEntityChunkAndDoNothing(int x, int y, int z, TileEntity tileentity) {
+    public void markTileEntityChunkModified(int x, int y, int z, TileEntity tileentity) {
 		TileEntity tile = this.getRealWorld().getBlockTileEntity(	x >> 3,
 																	y >> 3,
 																	z >> 3);
