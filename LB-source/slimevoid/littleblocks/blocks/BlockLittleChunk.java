@@ -380,11 +380,11 @@ public class BlockLittleChunk extends BlockContainer {
 	public void onServerBlockClicked(World world, int x, int y, int z, int side, EntityPlayer entityplayer) {
 		if (entityplayer instanceof EntityPlayerMP) {
 			EntityPlayerMP player = (EntityPlayerMP) entityplayer;
-			if (!FMLCommonHandler.instance().getMinecraftServerInstance().isBlockProtected(	((ILittleWorld) world).getRealWorld(),
-																							x >> 3,
-																							y >> 3,
-																							z >> 3,
-																							entityplayer)) {
+			if (!FMLCommonHandler.instance().getMinecraftServerInstance().func_96290_a(	((ILittleWorld) world).getRealWorld(),
+																						x >> 3,
+																						y >> 3,
+																						z >> 3,
+																						entityplayer)) {
 				BlockUtil.getLittleItemManager(	player,
 												(World) LittleBlocks.proxy.getLittleWorld(	world,
 																							false)).onBlockClicked(	x,

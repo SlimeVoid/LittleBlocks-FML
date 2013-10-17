@@ -371,14 +371,11 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 			return false;
 		} else {
 			if (lastId != 0 && !this.worldObj.isRemote) {
-				Block.blocksList[lastId].onBlockPreDestroy(	this.getWorldObj(),
-															(this.xCoord << 3)
-																	+ x,
-															(this.yCoord << 3)
-																	+ y,
-															(this.zCoord << 3)
-																	+ z,
-															lastData);
+				Block.blocksList[lastId].onSetBlockIDWithMetaData(	this.getWorldObj(),
+																	((this.xCoord << 3) + x),
+																	((this.yCoord << 3) + y),
+																	((this.zCoord << 3) + z),
+																	lastData);
 			}
 
 			content[x][y][z] = id;
@@ -718,7 +715,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 				pendingUpdate.setInteger(	"t",
 											(int) (nextticklistentry.scheduledTime - time));
 				pendingUpdate.setInteger(	"p",
-											nextticklistentry.priority);
+											nextticklistentry.field_82754_f);
 				pendingUpdateList.appendTag(pendingUpdate);
 			}
 			nbttagcompound.setTag(	"TileTicks",

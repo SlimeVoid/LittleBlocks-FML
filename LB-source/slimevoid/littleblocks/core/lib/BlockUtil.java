@@ -17,7 +17,6 @@ import net.minecraft.network.packet.Packet103SetSlot;
 import net.minecraft.network.packet.Packet3Chat;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.EnumGameType;
@@ -213,7 +212,7 @@ public class BlockUtil {
 		MinecraftServer mcServer = FMLCommonHandler.instance().getMinecraftServerInstance();
 		ItemStack itemstack = entityplayer.inventory.getCurrentItem();
 		boolean flag = false;
-		((EntityPlayerMP) entityplayer).func_143004_u();
+		// ((EntityPlayerMP) entityplayer).func_143004_u();
 
 		if (side == 255) {
 			if (itemstack == null) {
@@ -234,18 +233,20 @@ public class BlockUtil {
 			}
 		} else if (y >= world.getHeight() - 1
 					&& (side == 1 || y >= world.getHeight())) {
-			PacketDispatcher.sendPacketToPlayer(new Packet3Chat(ChatMessageComponent.createFromTranslationWithSubstitutions("build.tooHigh",
-																															new Object[] { Integer.valueOf(world.getHeight()) }).setColor(EnumChatFormatting.RED)),
+			PacketDispatcher.sendPacketToPlayer(new Packet3Chat(""
+																+ EnumChatFormatting.GRAY
+																+ "Height limit for building is "
+																+ world.getHeight()),
 												(Player) entityplayer);
 			flag = true;
 		} else {
 			// double dist = this.getBlockReachDistance() + 1;
 			// dist *= dist;
-			if (!mcServer.isBlockProtected(	((ILittleWorld) world).getRealWorld(),
-											x >> 3,
-											y >> 3,
-											z >> 3,
-											entityplayer)) {
+			if (!mcServer.func_96290_a(	((ILittleWorld) world).getRealWorld(),
+										x >> 3,
+										y >> 3,
+										z >> 3,
+										entityplayer)) {
 				getLittleItemManager(	(EntityPlayerMP) entityplayer,
 										world).activateBlockOrUseItem(	entityplayer,
 																		world,

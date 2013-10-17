@@ -6,8 +6,10 @@ import slimevoid.littleblocks.core.lib.CoreLib;
 import slimevoid.littleblocks.network.CommonPacketHandler;
 import slimevoid.littleblocks.network.ConnectionHandler;
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
+import cpw.mods.fml.common.Mod.PostInit;
+import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -39,18 +41,18 @@ public class LittleBlocks {
 	@Instance(CoreLib.MOD_ID)
 	public static LittleBlocks		instance;
 
-	@EventHandler
+	@PreInit
 	public void LittleBlocksPreInit(FMLPreInitializationEvent event) {
 		proxy.registerConfigurationProperties(event.getSuggestedConfigurationFile());
 		proxy.preInit();
 	}
 
-	@EventHandler
+	@Init
 	public void LittleBlocksInit(FMLInitializationEvent event) {
 		LBInit.initialize();
 	}
 
-	@EventHandler
+	@PostInit
 	public void LittleBlocksPostInit(FMLPostInitializationEvent event) {
 	}
 }
