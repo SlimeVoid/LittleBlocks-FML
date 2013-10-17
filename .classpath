@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry combineaccessrules="false" kind="src" path="/Minecraft"/>
+	<classpathentry kind="lib" path="/Minecraft/lib/guava-14.0-rc3.jar" sourcepath="/Minecraft/lib/guava-14.0-rc3-sources.jar"/>
 	<classpathentry kind="lib" path="/Minecraft/jars/bin/lwjgl.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SlimevoidLibrary"/>
 	<classpathentry kind="src" path="LB-source"/>

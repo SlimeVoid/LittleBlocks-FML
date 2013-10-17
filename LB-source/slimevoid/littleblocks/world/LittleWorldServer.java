@@ -4,12 +4,15 @@ import java.util.Collection;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.logging.ILogAgent;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.IProgressUpdate;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
@@ -48,7 +51,7 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 
 	@Override
 	public void metadataModified(int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
-		int blockX = (x << 3) + littleX;
+/*		int blockX = (x << 3) + littleX;
 		int	blockY = (y << 3) + littleY;
 		int blockZ = (z << 3) + littleZ;
 													
@@ -60,12 +63,12 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 									blockId,
 									side,
 									metadata);
-		}
+		}*/
 	}
 
 	@Override
 	public void idModified(int lastBlockId, int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
-		int blockX = (x << 3) + littleX;
+/*		int blockX = (x << 3) + littleX;
 		int blockY = (y << 3) + littleY;
 		int blockZ = (z << 3) + littleZ;
 		
@@ -102,7 +105,7 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 											blockId,
 											metadata);
 			}
-		}
+		}*/
 	}
 
 	@Override
@@ -190,20 +193,6 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 															forceRemove);
 	}
 
-	/*
-	 * ArrayList<NextTickListEntry> pendingUpdates = null; ChunkCoordIntPair
-	 * chunkPair = chunk.getChunkCoordIntPair(); int x = (chunkPair.chunkXPos <<
-	 * 4) + 2; int maxX = x + 16 + 2; int z = (chunkPair.chunkZPos << 4) + 2;
-	 * int maxZ = z + 16 + 2; Iterator<NextTickListEntry> pendingTicks =
-	 * this.pendingTickListEntries.iterator(); while (pendingTicks.hasNext()) {
-	 * NextTickListEntry nextTick = pendingTicks .next(); if (nextTick.xCoord >=
-	 * x && nextTick.xCoord < maxX && nextTick.zCoord >= z && nextTick.zCoord <
-	 * maxZ) { if (forceRemove) { this.scheduledTickSet.remove(nextTick);
-	 * pendingTicks.remove(); } if (pendingUpdates == null) { pendingUpdates =
-	 * new ArrayList<NextTickListEntry>(); } pendingUpdates.add(nextTick); } }
-	 * return pendingUpdates; }
-	 */
-
 	/**
 	 * Schedules a tick to a block with a delay (Most commonly the tick rate)
 	 */
@@ -231,13 +220,9 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 											someValue);
 	}
 
-	/**
-	 * Schedules a block update from the saved information in a chunk. Called
-	 * when the chunk is loaded.
-	 */
 	@Override
 	public void scheduleBlockUpdateFromLoad(int x, int y, int z, int blockId, int tickRate, int par6) {
-		this.scheduleBlockUpdateFromLoad(	x,
+		this.getLittleWorld().scheduleBlockUpdateFromLoad(	x,
 											y,
 											z,
 											blockId,
@@ -245,20 +230,6 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 											par6);
 	}
 
-	@Override
-	public void updateTileEntityChunkAndDoNothing(int x, int y, int z, TileEntity tileentity) {
-		if (this.blockExists(	x,
-				y,
-				z)) {
-			 PacketLib.sendTileEntity( this.getLittleWorld(),
-				 tileentity,
-				 x,
-				 y,
-				 z);
-		}
-	}
-
-	@Override
 	public int getSkyBlockTypeBrightness(EnumSkyBlock enumskyblock, int x, int y, int z) {
 		return this.getLittleWorld().getSkyBlockTypeBrightness(	enumskyblock,
 																x,
@@ -523,6 +494,11 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 															y2,
 															z2);
 	}
+	
+	@Override
+    public void updateTileEntityChunkAndDoNothing(int x, int y, int z, TileEntity tileentity) {
+		this.getLittleWorld().updateTileEntityChunkAndDoNothing(x, y, z, tileentity);
+	}
 
 	@Override
 	public void updateLightByType(EnumSkyBlock enumSkyBlock, int x, int y, int z) {
@@ -540,6 +516,36 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 	@Override
 	public void saveAllChunks(boolean par1, IProgressUpdate par2IProgressUpdate) throws MinecraftException {
 
+	}
+
+	@Override
+	public boolean canPlaceEntityOnSide(int blockId, int x, int y, int z, boolean flag, int side, Entity entityPlacing, ItemStack itemstack) {
+		return this.getLittleWorld().canPlaceEntityOnSide(blockId, x, y, z, flag, side, entityPlacing, itemstack);
+	}
+	
+	@Override
+	public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb, IEntitySelector entitySelector) {
+		return this.getLittleWorld().getEntitiesWithinAABBExcludingEntity(entity, axisalignedbb, entitySelector);
+	}
+
+	@Override
+    public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb) {
+		return this.getLittleWorld().getEntitiesWithinAABBExcludingEntity(entity, axisalignedbb);
+	}
+
+	@Override
+	public List selectEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisalignedbb, IEntitySelector entitySelector) {
+		return this.getLittleWorld().selectEntitiesWithinAABB(entityClass, axisalignedbb, entitySelector);
+	}
+	
+	@Override
+    public List getEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisAlignedBB) {
+		return this.getLittleWorld().getEntitiesWithinAABB(entityClass, axisAlignedBB);
+	}
+	
+	@Override
+	public boolean checkNoEntityCollision(AxisAlignedBB axisalignedbb, Entity entity) {
+		return this.getLittleWorld().checkNoEntityCollision(axisalignedbb, entity);
 	}
 
 	//

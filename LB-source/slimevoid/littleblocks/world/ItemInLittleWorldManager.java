@@ -3,10 +3,17 @@ package slimevoid.littleblocks.world;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemInWorldManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.Event;
+import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import slimevoid.littleblocks.core.LittleBlocks;
+import slimevoid.littleblocks.core.lib.PacketLib;
 
 public class ItemInLittleWorldManager extends ItemInWorldManager {
 
@@ -18,14 +25,42 @@ public class ItemInLittleWorldManager extends ItemInWorldManager {
 
 	@Override
 	public void onBlockClicked(int x, int y, int z, int side) {
-		if (!this.theWorld.extinguishFire(	(EntityPlayer) null,
-											x,
-											y,
-											z,
-											side)) {
-			this.tryHarvestBlock(	x,
-									y,
-									z);
+		PlayerInteractEvent event = new PlayerInteractEvent(this.thisPlayerMP, Action.LEFT_CLICK_BLOCK, x, y, z, side);
+		MinecraftForge.EVENT_BUS.post(event);
+		if (event.isCanceled()) {
+			PacketLib.sendBlockChange(this.theWorld, this.thisPlayerMP, x, y, z);
+			return;
+		}
+		if (this.isCreative()) {
+			if (!this.theWorld.extinguishFire(	this.thisPlayerMP,
+												x,
+												y,
+												z,
+												side)) {
+				this.tryHarvestBlock(	x,
+										y,
+										z);
+			}
+		} else {
+			int blockId = this.theWorld.getBlockId(x, y, z);
+			
+			Block block = Block.blocksList[blockId];
+			
+			if (event.useBlock != Event.Result.DENY) {
+				block.onBlockClicked(this.theWorld, x, y, z, this.thisPlayerMP);
+				this.theWorld.extinguishFire(this.thisPlayerMP, x, y, z, side);
+			} else {
+				PacketLib.sendBlockChange(this.theWorld, this.thisPlayerMP, x, y, z);
+			}
+			
+			if (event.useItem == Event.Result.DENY) {
+				PacketLib.sendBlockChange(this.theWorld, this.thisPlayerMP, x, y, z);
+				return;
+			}
+			
+			if (blockId > 0) {
+				this.tryHarvestBlock(x, y, z);
+			}
 		}
 	}
 
@@ -56,6 +91,7 @@ public class ItemInLittleWorldManager extends ItemInWorldManager {
 			blockHarvested = this.removeBlock(	x,
 												y,
 												z);
+			if (blockHarvested) PacketLib.sendBlockChange(this.theWorld, this.thisPlayerMP, x, y, z);
 		} else {
 			ItemStack playerHeldItem = this.thisPlayerMP.getCurrentEquippedItem();
 			boolean canHarvest = false;
@@ -120,5 +156,85 @@ public class ItemInLittleWorldManager extends ItemInWorldManager {
 		}
 
 		return blockIsRemoved;
+	}
+
+	
+	
+	public boolean activateBlockOrUseItem(EntityPlayer entityplayer, World world, ItemStack itemstack, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
+		PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(	entityplayer,
+																		Action.RIGHT_CLICK_BLOCK,
+																		x,
+																		y,
+																		z,
+																		side);
+		if (event.isCanceled()) {
+			PacketLib.sendBlockChange(this.theWorld, this.thisPlayerMP, x, y, z);
+			return false;
+		}
+
+		Item item = (itemstack != null ? itemstack.getItem() : null);
+		if (item != null && item.onItemUseFirst(itemstack,
+												entityplayer,
+												world,
+												x,
+												y,
+												z,
+												side,
+												hitX,
+												hitY,
+												hitZ)) {
+			if (itemstack.stackSize <= 0) ForgeEventFactory.onPlayerDestroyItem(thisPlayerMP,
+																				itemstack);
+			return true;
+		}
+
+		int i1 = world.getBlockId(	x,
+									y,
+									z);
+		Block block = Block.blocksList[i1];
+		boolean result = false;
+
+		if (block != null
+			&& (!entityplayer.isSneaking() || (entityplayer.getHeldItem() == null || entityplayer.getHeldItem().getItem().shouldPassSneakingClickToBlock(	world,
+																																							x,
+																																							y,
+																																							z)))) {
+			if (event.useBlock != Event.Result.DENY) {
+				result = block.onBlockActivated(world,
+												x,
+												y,
+												z,
+												entityplayer,
+												side,
+												hitX,
+												hitY,
+												hitZ);
+			} else {
+				PacketLib.sendBlockChange(this.theWorld, this.thisPlayerMP, x, y, z);
+				result = event.useItem != Event.Result.ALLOW;
+			}
+		}
+
+		if (itemstack != null && !result && event.useItem != Event.Result.DENY) {
+			int meta = itemstack.getItemDamage();
+			int size = itemstack.stackSize;
+			result = itemstack.tryPlaceItemIntoWorld(	entityplayer,
+														world,
+														x,
+														y,
+														z,
+														side,
+														hitX,
+														hitY,
+														hitZ);
+			if (isCreative()) {
+				itemstack.setItemDamage(meta);
+				itemstack.stackSize = size;
+			}
+			if (itemstack.stackSize <= 0) ForgeEventFactory.onPlayerDestroyItem(thisPlayerMP,
+																				itemstack);
+		}
+		 
+		return result;
 	}
 }

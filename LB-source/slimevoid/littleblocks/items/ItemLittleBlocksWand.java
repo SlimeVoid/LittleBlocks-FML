@@ -22,6 +22,7 @@ import slimevoid.littleblocks.items.wand.EnumWandAction;
 import slimevoid.littleblocks.network.packets.PacketLittleNotify;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 import slimevoidlib.data.ReadWriteLock;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.relauncher.Side;
@@ -156,6 +157,7 @@ public class ItemLittleBlocksWand extends Item {
 										z);
 			if (blockID == 0
 				|| Block.blocksList[blockID] == null
+				|| Block.blocksList[blockID].isAirBlock(world, x, y, z)
 				|| Block.blocksList[blockID].isBlockReplaceable(world,
 																x,
 																y,
@@ -170,10 +172,14 @@ public class ItemLittleBlocksWand extends Item {
 				TileEntity newtile = world.getBlockTileEntity(	x,
 																y,
 																z);
-				newtile.onInventoryChanged();
-				world.markBlockForUpdate(	x,
-											y,
-											z);
+				if (newtile != null) {
+					newtile.onInventoryChanged();
+					world.markBlockForUpdate(	x,
+												y,
+												z);
+				} else {
+					FMLCommonHandler.instance().getFMLLogger().warning("Could not initialize LittleChunk");
+				}
 			}
 			return true;
 		}
