@@ -529,12 +529,11 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 
 	@Override
 	public void onChunkUnload() {
-		/*
-		 * Iterator<TileEntity> tilelist = this.tiles.iterator(); while
-		 * (tilelist.hasNext()) { TileEntity tileentity = (TileEntity)
-		 * tilelist.next(); ((World)
-		 * this.getLittleWorld()).markTileEntityForDespawn(tileentity); }
-		 */
+		Iterator<TileEntity> tiles = this.chunkTileEntityMap.values().iterator();
+		while (tiles.hasNext()) {
+			TileEntity tile = tiles.next();
+			((World) this.getLittleWorld()).markTileEntityForDespawn(tile);
+		}
 	}
 
 	public TileEntity getChunkBlockTileEntity(int x, int y, int z) {
