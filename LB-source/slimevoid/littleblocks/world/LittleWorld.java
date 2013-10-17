@@ -2,8 +2,10 @@ package slimevoid.littleblocks.world;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -16,6 +18,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
+import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
@@ -23,12 +26,16 @@ import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.ForgeDirection;
 import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.core.LoggerLittleBlocks;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 import slimevoidlib.data.Logger;
+
+import com.google.common.collect.ImmutableSetMultimap;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -42,6 +49,7 @@ public class LittleWorld extends World implements ILittleWorld {
 	@SideOnly(Side.CLIENT)
 	public LittleWorld(World world, WorldProvider worldprovider, String worldName) {
 		super(world.getSaveHandler(), worldName, worldprovider, new WorldSettings(world.getWorldInfo().getSeed(), world.getWorldInfo().getGameType(), world.getWorldInfo().isMapFeaturesEnabled(), world.getWorldInfo().isHardcoreModeEnabled(), world.getWorldInfo().getTerrainType()), null, null/**
+		 * 
 		 * 
 		 * 
 		 * field_98181_L
@@ -92,12 +100,11 @@ public class LittleWorld extends World implements ILittleWorld {
 	@Override
 	public void tick() {
 		super.tick();
-		this.ticksInWorld++;
 		this.func_82738_a(this.getTotalWorldTime() + 1L);
-		this.setWorldTime(this.getWorldTime() + 1L);
-		if (this.ticksInWorld >= MAX_TICKS_IN_WORLD) {
-			this.ticksInWorld = 0;
+		if (this.getGameRules().getGameRuleBooleanValue("doDaylightCycle")) {
+			this.setWorldTime(this.getWorldTime() + 1L);
 		}
+		this.tickBlocksAndAmbiance();
 	}
 
 	/**
@@ -108,9 +115,64 @@ public class LittleWorld extends World implements ILittleWorld {
 		return false;
 	}
 
+	private final Set	previousActiveChunkSet	= new HashSet();
+
 	@Override
 	protected void tickBlocksAndAmbiance() {
+		/*
+		 * super.tickBlocksAndAmbiance();
+		 * this.previousActiveChunkSet.retainAll(this.activeChunkSet); if
+		 * (this.previousActiveChunkSet.size() == this.activeChunkSet.size()) {
+		 * this.previousActiveChunkSet.clear(); } int i = 0;
+		 * Iterator<ChunkCoordIntPair> iterator =
+		 * this.activeChunkSet.iterator(); while (iterator.hasNext()) {
+		 * ChunkCoordIntPair chunkcoordintpair = iterator.next(); if
+		 * (!this.previousActiveChunkSet.contains(chunkcoordintpair)) { int x =
+		 * chunkcoordintpair.chunkXPos * 16; int z = chunkcoordintpair.chunkZPos
+		 * * 16; //this.theProfiler.startSection("getChunk"); Chunk chunk =
+		 * this.getChunkFromChunkCoords( chunkcoordintpair.chunkXPos,
+		 * chunkcoordintpair.chunkZPos); boolean flag = false;
+		 * Iterator<TileEntity> tiles =
+		 * chunk.chunkTileEntityMap.values().iterator(); while (tiles.hasNext())
+		 * { TileEntity tile = tiles.next(); if (!flag && tile instanceof
+		 * TileEntityLittleChunk) { flag = true; } }
+		 * //this.theProfiler.endSection(); if (flag) {
+		 * this.previousActiveChunkSet.add(chunkcoordintpair); } ++i; if (i >=
+		 * 10) { return; } } }
+		 */
+	}
 
+	@Override
+	public ImmutableSetMultimap<ChunkCoordIntPair, Ticket> getPersistentChunks() {
+		return this.getRealWorld().getPersistentChunks();
+	}
+
+	@Override
+	protected void setActivePlayerChunksAndCheckLight() {
+		this.activeChunkSet.clear();
+		this.activeChunkSet.addAll(this.getPersistentChunks().keySet());
+
+		// this.theProfiler.startSection("buildList");
+		int playerIndex;
+		EntityPlayer entityplayer;
+		int x;
+		int z;
+
+		for (playerIndex = 0; playerIndex < this.getRealWorld().playerEntities.size(); playerIndex++) {
+
+			entityplayer = (EntityPlayer) this.getRealWorld().playerEntities.get(playerIndex);
+			x = MathHelper.floor_double(entityplayer.posX / 16.0D);
+			z = MathHelper.floor_double(entityplayer.posZ / 16.0D);
+			byte b0 = 7;
+
+			for (int max = -b0; max <= b0; ++max) {
+				for (int i1 = -b0; i1 <= b0; ++i1) {
+					this.activeChunkSet.add(new ChunkCoordIntPair(max + x, i1
+																			+ z));
+				}
+			}
+		}
+		// this.theProfiler.endSection();
 	}
 
 	public List<TileEntity>		loadedTiles	= new ArrayList<TileEntity>();
@@ -589,48 +651,58 @@ public class LittleWorld extends World implements ILittleWorld {
 																			z >> 7);
 				if (chunk.getBlockID(	(x & 0x7f) >> 3,
 										y >> 3,
-										(z & 0x7f) >> 3) != ConfigurationLib.littleChunkID && this.isAirBlock(x, y, z)) {
+										(z & 0x7f) >> 3) != ConfigurationLib.littleChunkID
+					&& this.isAirBlock(	x,
+										y,
+										z)) {
 					this.getRealWorld().setBlock(	x >> 3,
 													y >> 3,
 													z >> 3,
 													ConfigurationLib.littleChunkID);
-				} else if (chunk.getBlockID(	(x & 0x7f) >> 3,
-													y >> 3,
-													(z & 0x7f) >> 3) != ConfigurationLib.littleChunkID){
+				} else if (chunk.getBlockID((x & 0x7f) >> 3,
+											y >> 3,
+											(z & 0x7f) >> 3) != ConfigurationLib.littleChunkID) {
 					return false;
 				}
 				TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getRealWorld().getBlockTileEntity(x >> 3,
-																										y >> 3,
-																										z >> 3);
+																											y >> 3,
+																											z >> 3);
 				int originalId = 0;
-				
+
 				if ((update & 1) != 0) {
-					originalId = tile.getBlockID(x & 7, y & 7, z & 7);
+					originalId = tile.getBlockID(	x & 7,
+													y & 7,
+													z & 7);
 				}
-				
-				tile.checkForLittleBlock(x & 7, y & 7, z & 7);
-				boolean flag = tile.setBlockIDWithMetadata(x & 7,
+
+				tile.checkForLittleBlock(	x & 7,
 											y & 7,
-											z & 7,
-											blockID,
-											newmeta);
-				
-				this.updateAllLightTypes(x, y, z);
-				
+											z & 7);
+				boolean flag = tile.setBlockIDWithMetadata(	x & 7,
+															y & 7,
+															z & 7,
+															blockID,
+															newmeta);
+
+				this.updateAllLightTypes(	x,
+											y,
+											z);
+
 				if (flag) {
-					if ((update & 2) != 0 && (!this.getRealWorld().isRemote || (update & 4) == 0)) {
+					if ((update & 2) != 0
+						&& (!this.getRealWorld().isRemote || (update & 4) == 0)) {
 						this.markBlockForUpdate(x,
 												y,
 												z);
 					}
-	
+
 					if (!this.getRealWorld().isRemote && (update & 1) != 0) {
 						this.notifyBlockChange(	x,
 												y,
 												z,
 												originalId);
 						Block block = Block.blocksList[blockID];
-	
+
 						if (block != null && block.hasComparatorInputOverride()) {
 							this.func_96440_m(	x,
 												y,
@@ -667,7 +739,8 @@ public class LittleWorld extends World implements ILittleWorld {
 
 	@Override
 	public boolean setBlockMetadataWithNotify(int x, int y, int z, int metadata, int update) {
-		if (x >= 0xfe363c80 && z >= 0xfe363c80 && x < 0x1c9c380 && z < 0x1c9c380) {
+		if (x >= 0xfe363c80 && z >= 0xfe363c80 && x < 0x1c9c380
+			&& z < 0x1c9c380) {
 			if (y < 0) {
 				LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(	this.getRealWorld().isRemote,
 																											"setBlock("
@@ -705,40 +778,46 @@ public class LittleWorld extends World implements ILittleWorld {
 																			z >> 7);
 				if (chunk.getBlockID(	(x & 0x7f) >> 3,
 										y >> 3,
-										(z & 0x7f) >> 3) != ConfigurationLib.littleChunkID && this.isAirBlock(x, y, z)) {
+										(z & 0x7f) >> 3) != ConfigurationLib.littleChunkID
+					&& this.isAirBlock(	x,
+										y,
+										z)) {
 					this.getRealWorld().setBlock(	x >> 3,
 													y >> 3,
 													z >> 3,
 													ConfigurationLib.littleChunkID);
-				} else if (chunk.getBlockID(	(x & 0x7f) >> 3,
-													y >> 3,
-													(z & 0x7f) >> 3) != ConfigurationLib.littleChunkID){
+				} else if (chunk.getBlockID((x & 0x7f) >> 3,
+											y >> 3,
+											(z & 0x7f) >> 3) != ConfigurationLib.littleChunkID) {
 					return false;
 				}
 				TileEntityLittleChunk tile = (TileEntityLittleChunk) realWorld.getBlockTileEntity(	x >> 3,
 																									y >> 3,
 																									z >> 3);
-				boolean flag = tile.setBlockMetadata(x & 7, y & 7, z & 7, metadata);
+				boolean flag = tile.setBlockMetadata(	x & 7,
+														y & 7,
+														z & 7,
+														metadata);
 
 				if (flag) {
-					int blockId = tile.getBlockID(x & 7,
+					int blockId = tile.getBlockID(	x & 7,
 													y & 7,
 													z & 7);
-					
+
 					if ((update & 2) != 0
 						&& (!this.getRealWorld().isRemote || (update & 4) == 0)) {
 						this.markBlockForUpdate(x,
 												y,
 												z);
 					}
-	
+
 					if (!this.getRealWorld().isRemote && (update & 1) != 0) {
 						this.notifyBlockChange(	x,
 												y,
 												z,
 												blockId);
 						Block block = Block.blocksList[blockId];
-	
+
 						if (block != null && block.hasComparatorInputOverride()) {
 							this.func_96440_m(	x,
 												y,
@@ -926,9 +1005,9 @@ public class LittleWorld extends World implements ILittleWorld {
 					TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getRealWorld().getBlockTileEntity(x >> 3,
 																												y >> 3,
 																												z >> 3);
-					tileentity = tile.getChunkBlockTileEntity(x & 7,
-													y & 7,
-													z & 7);
+					tileentity = tile.getChunkBlockTileEntity(	x & 7,
+																y & 7,
+																z & 7);
 				}
 
 				if (tileentity == null) {
@@ -1041,9 +1120,9 @@ public class LittleWorld extends World implements ILittleWorld {
 				TileEntityLittleChunk tile = (TileEntityLittleChunk) realWorld.getBlockTileEntity(	x >> 3,
 																									y >> 3,
 																									z >> 3);
-				tile.removeChunkBlockTileEntity(	x & 7,
-										y & 7,
-										z & 7);
+				tile.removeChunkBlockTileEntity(x & 7,
+												y & 7,
+												z & 7);
 			}
 		}
 	}
@@ -1202,10 +1281,12 @@ public class LittleWorld extends World implements ILittleWorld {
 															y2 >> 3,
 															z2 >> 3);
 	}
-	
+
 	@Override
     public void updateTileEntityChunkAndDoNothing(int x, int y, int z, TileEntity tileentity) {
-		TileEntity tile = this.getRealWorld().getBlockTileEntity(x >> 3, y >> 3, z >> 3);
+		TileEntity tile = this.getRealWorld().getBlockTileEntity(	x >> 3,
+																	y >> 3,
+																	z >> 3);
 		if (tile != null && tile instanceof TileEntityLittleChunk) {
 			tile.onInventoryChanged();
 		}
@@ -1263,25 +1344,27 @@ public class LittleWorld extends World implements ILittleWorld {
 
 		for (int x = minX; x <= maxX; ++x) {
 			for (int z = minZ; z <= maxZ; ++z) {
-				//if (this.chunkExists(	x,
-				//						z)) {
-				//	this.getChunkFromChunkCoords(	x,
-				//									z).getEntitiesWithinAABBForEntity(	entity,
-				//																		axisalignedbb,
-				//																		arraylist,
-				//																		entitySelector);
-				//}
+				// if (this.chunkExists( x,
+				// z)) {
+				// this.getChunkFromChunkCoords( x,
+				// z).getEntitiesWithinAABBForEntity( entity,
+				// axisalignedbb,
+				// arraylist,
+				// entitySelector);
+				// }
 			}
 		}
 
 		return arraylist;
 	}
-	
+
 	@Override
-    public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb) {
-		return this.getEntitiesWithinAABBExcludingEntity(entity, axisalignedbb, (IEntitySelector) null);
+	public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb) {
+		return this.getEntitiesWithinAABBExcludingEntity(	entity,
+															axisalignedbb,
+															(IEntitySelector) null);
 	}
-	
+
 	@Override
 	public List selectEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisalignedbb, IEntitySelector entitySelector) {
 		ArrayList arraylist = new ArrayList();
@@ -1292,29 +1375,31 @@ public class LittleWorld extends World implements ILittleWorld {
 
 		for (int x = minX; x <= maxX; ++x) {
 			for (int z = minZ; z <= maxZ; ++z) {
-				//if (this.chunkExists(	x,
-				//						z)) {
-				//	this.getChunkFromChunkCoords(	x,
-				//									z).getEntitiesOfTypeWithinAAAB(entityClass,
-				//																	axisalignedbb,
-				//																	arraylist,
-				//																	entitySelector);
-				//}
+				// if (this.chunkExists( x,
+				// z)) {
+				// this.getChunkFromChunkCoords( x,
+				// z).getEntitiesOfTypeWithinAAAB(entityClass,
+				// axisalignedbb,
+				// arraylist,
+				// entitySelector);
+				// }
 			}
 		}
 
 		return arraylist;
 	}
-	
+
 	@Override
-    public List getEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisAlignedBB) {
-		return this.selectEntitiesWithinAABB(entityClass, axisAlignedBB, (IEntitySelector)null);
+	public List getEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisAlignedBB) {
+		return this.selectEntitiesWithinAABB(	entityClass,
+												axisAlignedBB,
+												(IEntitySelector) null);
 	}
 
 	@Override
 	public boolean checkNoEntityCollision(AxisAlignedBB axisalignedbb, Entity entity) {
 		List list = this.getEntitiesWithinAABBExcludingEntity(	(Entity) null,
-		                                                      	axisalignedbb);
+																axisalignedbb);
 
 		for (int i = 0; i < list.size(); ++i) {
 			Entity entity1 = (Entity) list.get(i);
@@ -1330,46 +1415,49 @@ public class LittleWorld extends World implements ILittleWorld {
 
 	@Override
 	public boolean canPlaceEntityOnSide(int blockId, int x, int y, int z, boolean flag, int side, Entity entityPlacing, ItemStack itemstack) {
-		int blockIdAt = this.getBlockId(	x,
-									y,
-									z);
+		int blockIdAt = this.getBlockId(x,
+										y,
+										z);
 		Block blockAt = Block.blocksList[blockIdAt];
 		Block block = Block.blocksList[blockId];
-		AxisAlignedBB axisalignedbb = block.getCollisionBoundingBoxFromPool(	this,
-																				x,
-																				y,
-																				z);
+		AxisAlignedBB axisalignedbb = block.getCollisionBoundingBoxFromPool(this,
+																			x,
+																			y,
+																			z);
 
 		if (flag) {
 			axisalignedbb = null;
 		}
 
-		if (axisalignedbb != null && !this.checkNoEntityCollision(axisalignedbb, entityPlacing)) {
+		if (axisalignedbb != null
+			&& !this.checkNoEntityCollision(axisalignedbb,
+											entityPlacing)) {
 			return false;
 		} else {
 			if (blockAt != null
 				&& (blockAt == Block.waterMoving || blockAt == Block.waterStill
-					|| blockAt == Block.lavaMoving || blockAt == Block.lavaStill
-					|| blockAt == Block.fire || blockAt.blockMaterial.isReplaceable())) {
+					|| blockAt == Block.lavaMoving
+					|| blockAt == Block.lavaStill || blockAt == Block.fire || blockAt.blockMaterial.isReplaceable())) {
 				blockAt = null;
 			}
 
 			if (blockAt != null && blockAt.isBlockReplaceable(	this,
-															x,
-															y,
-															z)) {
+																x,
+																y,
+																z)) {
 				blockAt = null;
 			}
 
-			return blockAt != null && blockAt.blockMaterial == Material.circuits
+			return blockAt != null
+					&& blockAt.blockMaterial == Material.circuits
 					&& block == Block.anvil ? true : blockId > 0
-					&& blockAt == null
-					&& block.canPlaceBlockOnSide(	this,
-													x,
-													y,
-													z,
-													side,
-													itemstack);
+														&& blockAt == null
+														&& block.canPlaceBlockOnSide(	this,
+																						x,
+																						y,
+																						z,
+																						side,
+																						itemstack);
 		}
 	}
 }
