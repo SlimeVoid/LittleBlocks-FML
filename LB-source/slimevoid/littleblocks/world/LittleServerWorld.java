@@ -37,46 +37,46 @@ public class LittleServerWorld extends LittleWorld {
 	 * TreeSet of scheduled ticks which is used as a priority queue for the
 	 * ticks
 	 */
-	private TreeSet<NextTickListEntry>		pendingTickListEntries;
+	private TreeSet<NextTickListEntry>		pendingTickListEntriesTreeSet;
 
 	/** Set of scheduled ticks (used for checking if a tick already exists) */
-	private Set<NextTickListEntry>			scheduledTickSet;
+	private Set<NextTickListEntry>			pendingTickListEntriesHashSet;
 
-	private ArrayList<NextTickListEntry>	tickedEntries			= new ArrayList<NextTickListEntry>();
+	private ArrayList<NextTickListEntry>	pendingTickListEntriesThisTick	= new ArrayList<NextTickListEntry>();
 
 	/**
 	 * Double buffer of ServerBlockEventList[] for holding pending
 	 * BlockEventData's
 	 */
-	private LittleBlockEventList[]			blockEventCache			= new LittleBlockEventList[] {
+	private LittleBlockEventList[]			blockEventCache					= new LittleBlockEventList[] {
 			new LittleBlockEventList((LittleBlockEvent) null),
-			new LittleBlockEventList((LittleBlockEvent) null)		};
+			new LittleBlockEventList((LittleBlockEvent) null)				};
 
 	/**
 	 * The index into the blockEventCache; either 0, or 1, toggled in
 	 * sendBlockEventPackets where all BlockEvent are applied locally and send
 	 * to clients.
 	 */
-	private int								blockEventCacheIndex	= 0;
+	private int								blockEventCacheIndex			= 0;
 
 	public LittleServerWorld(World world, WorldProvider worldprovider) {
 		super(world, worldprovider);
-		if (this.scheduledTickSet == null) {
-			this.scheduledTickSet = new HashSet<NextTickListEntry>();
+		if (this.pendingTickListEntriesHashSet == null) {
+			this.pendingTickListEntriesHashSet = new HashSet<NextTickListEntry>();
 		}
 
-		if (this.pendingTickListEntries == null) {
-			this.pendingTickListEntries = new TreeSet<NextTickListEntry>();
+		if (this.pendingTickListEntriesTreeSet == null) {
+			this.pendingTickListEntriesTreeSet = new TreeSet<NextTickListEntry>();
 		}
 	}
 
 	@Override
 	protected void initialize(WorldSettings worldSettings) {
-		if (this.scheduledTickSet == null) {
-			this.scheduledTickSet = new HashSet<NextTickListEntry>();
+		if (this.pendingTickListEntriesHashSet == null) {
+			this.pendingTickListEntriesHashSet = new HashSet<NextTickListEntry>();
 		}
-		if (this.pendingTickListEntries == null) {
-			this.pendingTickListEntries = new TreeSet<NextTickListEntry>();
+		if (this.pendingTickListEntriesTreeSet == null) {
+			this.pendingTickListEntriesTreeSet = new TreeSet<NextTickListEntry>();
 		}
 	}
 
@@ -86,10 +86,16 @@ public class LittleServerWorld extends LittleWorld {
 	@Override
 	public void tick() {
 		this.worldInfo.incrementTotalWorldTime(this.worldInfo.getWorldTotalTime() + 1L);
-		this.worldInfo.setWorldTime(this.worldInfo.getWorldTime() + 1L);
+
+		if (this.getGameRules().getGameRuleBooleanValue("doDaylightCycle")) {
+			this.worldInfo.setWorldTime(this.worldInfo.getWorldTime() + 1L);
+		}
+		// this.theProfiler.startSection("tickPending");
 		this.tickUpdates(false);
 		// this.littleTickUpdates(false);
+		// this.theProfiler.endStartSection("tickTiles");
 		this.tickBlocksAndAmbiance();
+		// this.theProfiler.endSection();
 		this.sendAndApplyBlockEvents();
 	}
 
@@ -99,28 +105,31 @@ public class LittleServerWorld extends LittleWorld {
 
 	@Override
 	public boolean tickUpdates(boolean tick) {
-		int numberOfUpdates = this.pendingTickListEntries.size();
+		int numberOfUpdates = this.pendingTickListEntriesTreeSet.size();
 
-		if (numberOfUpdates != this.scheduledTickSet.size()) {
+		if (numberOfUpdates != this.pendingTickListEntriesHashSet.size()) {
 			throw new IllegalStateException("TickNextTick list out of synch");
 		} else {
 			if (numberOfUpdates > 1000) {
 				numberOfUpdates = 1000;
 			}
+			// this.theProfiler.startSection("cleaning");
 			NextTickListEntry nextTick;
 			for (int update = 0; update < numberOfUpdates; ++update) {
-				nextTick = (NextTickListEntry) this.pendingTickListEntries.first();
+				nextTick = (NextTickListEntry) this.pendingTickListEntriesTreeSet.first();
 
 				if (!tick
 					&& nextTick.scheduledTime > this.getRealWorld().getWorldInfo().getWorldTotalTime()) {
 					break;
 				}
 
-				this.pendingTickListEntries.remove(nextTick);
-				this.scheduledTickSet.remove(nextTick);
-				this.tickedEntries.add(nextTick);
+				this.pendingTickListEntriesTreeSet.remove(nextTick);
+				this.pendingTickListEntriesHashSet.remove(nextTick);
+				this.pendingTickListEntriesThisTick.add(nextTick);
 			}
-			Iterator tickedEntryList = this.tickedEntries.iterator();
+			// this.theProfiler.endSection();
+			// this.theProfiler.startSection("ticking");
+			Iterator tickedEntryList = this.pendingTickListEntriesThisTick.iterator();
 
 			while (tickedEntryList.hasNext()) {
 				nextTick = (NextTickListEntry) tickedEntryList.next();
@@ -196,15 +205,6 @@ public class LittleServerWorld extends LittleWorld {
 																metadata);
 							throw new ReportedException(crashReport);
 						}
-						/*
-						 * TileEntity tileentity = this .getRealWorld()
-						 * .getBlockTileEntity( nextTick.xCoord >> 3,
-						 * nextTick.yCoord >> 3, nextTick.zCoord >> 3); if
-						 * (tileentity != null && tileentity instanceof
-						 * TileEntityLittleBlocks) { if
-						 * (!littleBlockTiles.contains(tileentity)) {
-						 * littleBlockTiles.add(tileentity); } }
-						 */
 					}
 				} else {
 					// System.out.println("Scheduling Update....");
@@ -215,18 +215,39 @@ public class LittleServerWorld extends LittleWorld {
 												0);
 				}
 			}
-			/*
-			 * if (this.ticksInWorld >= MAX_TICKS_IN_WORLD) { for (TileEntity
-			 * tile : littleBlockTiles) { } }
-			 */
-			this.tickedEntries.clear();
-			return !this.pendingTickListEntries.isEmpty();
+			// this.theProfiler.endSection();
+			this.pendingTickListEntriesThisTick.clear();
+			return !this.pendingTickListEntriesTreeSet.isEmpty();
 		}
 	}
 
+	protected Set<ChunkCoordIntPair>	doneChunks	= new HashSet<ChunkCoordIntPair>();
+
 	@Override
 	protected void tickBlocksAndAmbiance() {
+		super.tickBlocksAndAmbiance();
 
+		/*
+		 * Iterator<ChunkCoordIntPair> chunkpairs =
+		 * this.activeChunkSet.iterator();
+		 * this.doneChunks.retainAll(this.activeChunkSet); if
+		 * (this.doneChunks.size() == this.activeChunkSet.size()) {
+		 * this.doneChunks.clear(); } final long startTime = System.nanoTime();
+		 * while (chunkpairs.hasNext()) { ChunkCoordIntPair chunkpair =
+		 * chunkpairs.next(); int x = chunkpair.chunkXPos * 16; int z =
+		 * chunkpair.chunkZPos * 16;
+		 * //this.theProfiler.startSection("getChunk"); Chunk chunk =
+		 * this.getRealWorld().getChunkFromBlockCoords(chunkpair.chunkXPos,
+		 * chunkpair.chunkZPos);
+		 * //this.theProfiler.endStartSection("tickChunk"); if
+		 * (System.nanoTime() - startTime <= 4000000 &&
+		 * this.doneChunks.add(chunkpair)) { }
+		 * //this.theProfiler.endStartSection("tickTiles"); Iterator<TileEntity>
+		 * tiles = chunk.chunkTileEntityMap.values().iterator(); while
+		 * (tiles.hasNext()) { TileEntity tile = tiles.next(); if (tile
+		 * instanceof TileEntityLittleChunk) { ((TileEntityLittleChunk)
+		 * tile).updateTick(this.rand); } } //this.theProfiler.endSection(); }
+		 */
 	}
 
 	public void updateLittleEntities() {
@@ -245,7 +266,7 @@ public class LittleServerWorld extends LittleWorld {
 	public boolean isBlockTickScheduled(int x, int y, int z, int blockId) {
 		// System.out.println("isBlockTickScheduled");
 		NextTickListEntry nextticklistentry = new NextTickListEntry(x, y, z, blockId);
-		return this.tickedEntries.contains(nextticklistentry);
+		return this.pendingTickListEntriesThisTick.contains(nextticklistentry);
 	}
 
 	/**
@@ -386,23 +407,35 @@ public class LittleServerWorld extends LittleWorld {
 	public List<NextTickListEntry> getPendingBlockUpdates(Chunk chunk, boolean forceRemove) {
 		ArrayList<NextTickListEntry> pendingUpdates = null;
 		ChunkCoordIntPair chunkPair = chunk.getChunkCoordIntPair();
-		int x = (chunkPair.chunkXPos << 4) + 2;
-		int maxX = x + 16 + 2;
-		int z = (chunkPair.chunkZPos << 4) + 2;
-		int maxZ = z + 16 + 2;
-		Iterator<NextTickListEntry> pendingTicks = this.pendingTickListEntries.iterator();
-		while (pendingTicks.hasNext()) {
-			NextTickListEntry nextTick = pendingTicks.next();
-			if (nextTick.xCoord >= x && nextTick.xCoord < maxX
-				&& nextTick.zCoord >= z && nextTick.zCoord < maxZ) {
-				if (forceRemove) {
-					this.scheduledTickSet.remove(nextTick);
-					pendingTicks.remove();
+		int x = (chunkPair.chunkXPos << 3) - 2;
+		int maxX = x + 10;
+		int z = (chunkPair.chunkZPos << 3) - 2;
+		int maxZ = z + 10;
+
+		for (int i = 0; i < 2; i++) {
+			Iterator<NextTickListEntry> pendingTicks;
+
+			if (i == 0) {
+				pendingTicks = this.pendingTickListEntriesTreeSet.iterator();
+			} else {
+				pendingTicks = this.pendingTickListEntriesThisTick.iterator();
+				if (!this.pendingTickListEntriesThisTick.isEmpty()) {
+					System.out.println(this.pendingTickListEntriesThisTick.size());
 				}
-				if (pendingUpdates == null) {
-					pendingUpdates = new ArrayList<NextTickListEntry>();
+			}
+			while (pendingTicks.hasNext()) {
+				NextTickListEntry nextTick = pendingTicks.next();
+				if (nextTick.xCoord >= x && nextTick.xCoord < maxX
+					&& nextTick.zCoord >= z && nextTick.zCoord < maxZ) {
+					if (forceRemove) {
+						this.pendingTickListEntriesHashSet.remove(nextTick);
+						pendingTicks.remove();
+					}
+					if (pendingUpdates == null) {
+						pendingUpdates = new ArrayList<NextTickListEntry>();
+					}
+					pendingUpdates.add(nextTick);
 				}
-				pendingUpdates.add(nextTick);
 			}
 		}
 		return pendingUpdates;
@@ -466,9 +499,9 @@ public class LittleServerWorld extends LittleWorld {
 				nextTickEntry.func_82753_a(priority);
 			}
 
-			if (!this.scheduledTickSet.contains(nextTickEntry)) {
-				this.scheduledTickSet.add(nextTickEntry);
-				this.pendingTickListEntries.add(nextTickEntry);
+			if (!this.pendingTickListEntriesHashSet.contains(nextTickEntry)) {
+				this.pendingTickListEntriesHashSet.add(nextTickEntry);
+				this.pendingTickListEntriesTreeSet.add(nextTickEntry);
 			}
 		}
 		// this.getRealWorld().scheduleBlockUpdateWithPriority(x >> 3, y >> 3, z
@@ -489,9 +522,9 @@ public class LittleServerWorld extends LittleWorld {
 										+ this.getRealWorld().getWorldInfo().getWorldTotalTime());
 		}
 
-		if (!this.scheduledTickSet.contains(nextTick)) {
-			this.scheduledTickSet.add(nextTick);
-			this.pendingTickListEntries.add(nextTick);
+		if (!this.pendingTickListEntriesHashSet.contains(nextTick)) {
+			this.pendingTickListEntriesHashSet.add(nextTick);
+			this.pendingTickListEntriesTreeSet.add(nextTick);
 		}
 	}
 }

@@ -40,7 +40,7 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 							if (littleBlock.hasTileEntity(tileentitylittleblocks.getBlockMetadata(	x1,
 																									y1,
 																									z1))) {
-								TileEntity tileentity = tileentitylittleblocks.getTileEntity(	x1,
+								TileEntity tileentity = tileentitylittleblocks.getChunkBlockTileEntity(	x1,
 																								y1,
 																								z1);
 								if (tileentity != null) {

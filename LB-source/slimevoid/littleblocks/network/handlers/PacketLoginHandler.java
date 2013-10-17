@@ -1,6 +1,7 @@
 package slimevoid.littleblocks.network.handlers;
 
 import slimevoid.littleblocks.network.packets.PacketLittleBlocksSettings;
+import slimevoidlib.network.handlers.SubPacketHandler;
 import slimevoidlib.network.PacketUpdate;
 
 public class PacketLoginHandler extends SubPacketHandler {

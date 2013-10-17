@@ -5,28 +5,60 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockPistonBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemMonsterPlacer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.packet.Packet103SetSlot;
+import net.minecraft.network.packet.Packet3Chat;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.world.EnumGameType;
 import net.minecraft.world.World;
+import net.minecraftforge.event.Event;
+import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.LoggerLittleBlocks;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 import slimevoid.littleblocks.world.ItemInLittleWorldManager;
+import slimevoid.littleblocks.world.LittlePlayerController;
 import slimevoidlib.data.Logger;
 import buildcraft.core.IItemPipe;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.network.PacketDispatcher;
+import cpw.mods.fml.common.network.Player;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockUtil {
 
+	@SideOnly(Side.CLIENT)
+	private static LittlePlayerController								littlePlayerController;
+
 	private static HashMap<EntityPlayerMP, ItemInLittleWorldManager>	itemInLittleWorldManagers;
 
-	public static ItemInLittleWorldManager getLittleItemManager(EntityPlayerMP entityplayer) {
+	@SideOnly(Side.CLIENT)
+	public static void setLittleController(LittlePlayerController controller, EnumGameType gameType) {
+		littlePlayerController = controller;
+		littlePlayerController.setGameType(gameType);
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static LittlePlayerController getLittleController() {
+		return littlePlayerController;
+	}
+
+	public static ItemInLittleWorldManager getLittleItemManager(EntityPlayerMP entityplayer, World world) {
 		if (itemInLittleWorldManagers.containsKey(entityplayer)
-			&& itemInLittleWorldManagers.get(entityplayer).theWorld.equals(entityplayer.worldObj)) {
+			&& itemInLittleWorldManagers.get(entityplayer).theWorld.equals(world)) {
 			return itemInLittleWorldManagers.get(entityplayer);
 		}
 		return setLittleItemManagerForPlayer(entityplayer);
@@ -160,7 +192,7 @@ public class BlockUtil {
 		return false;
 	}
 
-	public static boolean isLittleBlock(World world, int x, int y, int z) {
+	public static boolean isLittleChunk(World world, int x, int y, int z) {
 		if (world instanceof ILittleWorld) {
 			return ((ILittleWorld) world).getRealWorld().getBlockId(x >> 3,
 																	y >> 3,
@@ -169,10 +201,151 @@ public class BlockUtil {
 		return false;
 	}
 
-	public static boolean isLittleBlock(World world, MovingObjectPosition target) {
-		return isLittleBlock(	world,
+	public static boolean isLittleChunk(World world, MovingObjectPosition target) {
+		return isLittleChunk(	world,
 								target.blockX,
 								target.blockY,
 								target.blockZ);
+	}
+
+	public static void onServerBlockActivated(World world, EntityPlayer entityplayer, ItemStack stack, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
+		MinecraftServer mcServer = FMLCommonHandler.instance().getMinecraftServerInstance();
+		ItemStack itemstack = entityplayer.inventory.getCurrentItem();
+		boolean flag = false;
+		// ((EntityPlayerMP) entityplayer).func_143004_u();
+
+		if (side == 255) {
+			if (itemstack == null) {
+				return;
+			}
+
+			PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(	entityplayer,
+																			PlayerInteractEvent.Action.RIGHT_CLICK_AIR,
+																			0,
+																			0,
+																			0,
+																			-1);
+			if (event.useItem != Event.Result.DENY) {
+				getLittleItemManager(	(EntityPlayerMP) entityplayer,
+										world).tryUseItem(	entityplayer,
+															world,
+															itemstack);
+			}
+		} else if (y >= world.getHeight() - 1
+					&& (side == 1 || y >= world.getHeight())) {
+			PacketDispatcher.sendPacketToPlayer(new Packet3Chat(""
+																+ EnumChatFormatting.GRAY
+																+ "Height limit for building is "
+																+ world.getHeight()),
+												(Player) entityplayer);
+			flag = true;
+		} else {
+			// double dist = this.getBlockReachDistance() + 1;
+			// dist *= dist;
+			if (!mcServer.func_96290_a(	((ILittleWorld) world).getRealWorld(),
+										x >> 3,
+										y >> 3,
+										z >> 3,
+										entityplayer)) {
+				getLittleItemManager(	(EntityPlayerMP) entityplayer,
+										world).activateBlockOrUseItem(	entityplayer,
+																		world,
+																		itemstack,
+																		x,
+																		y,
+																		z,
+																		side,
+																		hitX,
+																		hitY,
+																		hitZ);
+			}
+
+			flag = true;
+		}
+
+		if (flag) {
+			checkPlacement(	world,
+							entityplayer,
+							x,
+							y,
+							z,
+							side);
+		}
+
+		itemstack = entityplayer.inventory.getCurrentItem();
+
+		if (itemstack != null && itemstack.stackSize == 0) {
+			entityplayer.inventory.mainInventory[entityplayer.inventory.currentItem] = null;
+			itemstack = null;
+		}
+
+		if (itemstack == null || itemstack.getMaxItemUseDuration() == 0) {
+			((EntityPlayerMP) entityplayer).playerInventoryBeingManipulated = true;
+			entityplayer.inventory.mainInventory[entityplayer.inventory.currentItem] = ItemStack.copyItemStack(entityplayer.inventory.mainInventory[entityplayer.inventory.currentItem]);
+			Slot slot = entityplayer.openContainer.getSlotFromInventory(entityplayer.inventory,
+																		entityplayer.inventory.currentItem);
+			entityplayer.openContainer.detectAndSendChanges();
+			((EntityPlayerMP) entityplayer).playerInventoryBeingManipulated = false;
+
+			if (!ItemStack.areItemStacksEqual(	entityplayer.inventory.getCurrentItem(),
+												stack)) {
+				PacketDispatcher.sendPacketToPlayer(new Packet103SetSlot(entityplayer.openContainer.windowId, slot.slotNumber, entityplayer.inventory.getCurrentItem()),
+													(Player) entityplayer);
+			}
+		}
+	}
+
+	private static void checkPlacement(World world, EntityPlayer entityplayer, int x, int y, int z, int side) {
+		PacketLib.sendBlockChange(	world,
+									entityplayer,
+									x,
+									y,
+									z);
+		if (side == 0) {
+			--y;
+		}
+
+		if (side == 1) {
+			++y;
+		}
+
+		if (side == 2) {
+			--z;
+		}
+
+		if (side == 3) {
+			++z;
+		}
+
+		if (side == 4) {
+			--x;
+		}
+
+		if (side == 5) {
+			++x;
+		}
+		Block block = Block.blocksList[world.getBlockId(x,
+														y,
+														z)];
+		if (block != null && block instanceof BlockPistonBase) {
+			int newData = BlockPistonBase.determineOrientation(	((ILittleWorld) world).getRealWorld(),
+																x >> 3,
+																y >> 3,
+																z >> 3,
+																entityplayer);
+			world.setBlock/** .setBlockAndMetadataWithNotify **/
+			(	x,
+				y,
+				z,
+				block.blockID,
+				newData,
+				3);
+		}
+
+		PacketLib.sendBlockChange(	world,
+									entityplayer,
+									x,
+									y,
+									z);
 	}
 }

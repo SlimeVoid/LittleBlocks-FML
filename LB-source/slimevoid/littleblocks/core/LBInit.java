@@ -42,19 +42,28 @@ public class LBInit {
 		LBCore.registerBlocks();
 
 		SlimevoidCore.console(	CoreLib.MOD_ID,
-								"Registering events...");
-		LBCore.registerEvents();
+								"Registering event handlers...");
+		LittleBlocks.proxy.registerEventHandlers();
 
+		SlimevoidCore.console(	CoreLib.MOD_ID,
+								"Registering render information...");
 		LittleBlocks.proxy.registerRenderInformation();
 
-		LittleBlocks.proxy.registerTickHandler();
+		SlimevoidCore.console(	CoreLib.MOD_ID,
+								"Registering tick handlers...");
+		LittleBlocks.proxy.registerTickHandlers();
 
 		SlimevoidCore.console(	CoreLib.MOD_ID,
 								"Registering recipes...");
 		LBCore.registerRecipes();
 
+		SlimevoidCore.console(	CoreLib.MOD_ID,
+								"Initializing Little helper...");
 		LittleBlocksHelper.init(LittleBlocks.proxy,
 								ConfigurationLib.littleBlocksSize);
+
+		SlimevoidCore.console(	CoreLib.MOD_ID,
+								"Registering Little Wand...");
 		EnumWandAction.registerWandActions();
 	}
 }

@@ -8,8 +8,8 @@ import java.util.Map;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import slimevoid.littleblocks.core.LoggerLittleBlocks;
-import slimevoid.littleblocks.network.handlers.SubPacketHandler;
 import slimevoidlib.data.Logger;
+import slimevoidlib.network.handlers.SubPacketHandler;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
 

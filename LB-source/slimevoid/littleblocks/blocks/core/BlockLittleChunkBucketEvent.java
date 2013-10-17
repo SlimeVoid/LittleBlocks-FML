@@ -1,13 +1,13 @@
 package slimevoid.littleblocks.blocks.core;
 
-import slimevoid.littleblocks.blocks.BlockLittleChunk;
-import slimevoid.littleblocks.core.lib.ConfigurationLib;
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
 import static net.minecraftforge.event.Event.Result.ALLOW;
 import static net.minecraftforge.event.Event.Result.DENY;
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
+import slimevoid.littleblocks.blocks.BlockLittleChunk;
+import slimevoid.littleblocks.core.lib.ConfigurationLib;
 
 public class BlockLittleChunkBucketEvent {
 
@@ -25,16 +25,17 @@ public class BlockLittleChunkBucketEvent {
 											event.target.blockY,
 											event.target.blockZ) == ConfigurationLib.littleChunkID) {
 					BlockLittleChunk littleChunk = ((BlockLittleChunk) Block.blocksList[ConfigurationLib.littleChunkID]);
-					littleChunk.onBlockActivated(	event.world,
-													event.target.blockX,
-													event.target.blockY,
-													event.target.blockZ,
-													event.entityPlayer,
-													event.target.sideHit,
-													0,
-													0,
-													0);
-					event.setResult(ALLOW);
+					if (littleChunk.onBlockActivated(	event.world,
+														event.target.blockX,
+														event.target.blockY,
+														event.target.blockZ,
+														event.entityPlayer,
+														event.target.sideHit,
+														(float) BlockLittleChunk.hitVec.xCoord,
+														(float) BlockLittleChunk.hitVec.yCoord,
+														(float) BlockLittleChunk.hitVec.zCoord)) {
+						event.setResult(ALLOW);
+					}
 				}
 			}
 		}

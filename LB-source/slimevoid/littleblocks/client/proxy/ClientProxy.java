@@ -12,12 +12,15 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import slimevoid.littleblocks.api.ILittleWorld;
+import slimevoid.littleblocks.blocks.core.BlockLittleChunkBucketEvent;
+import slimevoid.littleblocks.blocks.core.BlockLittleChunkShiftRightClick;
 import slimevoid.littleblocks.client.handlers.DrawCopierHighlight;
 import slimevoid.littleblocks.client.network.ClientPacketHandler;
 import slimevoid.littleblocks.client.render.blocks.LittleBlocksRenderer;
 import slimevoid.littleblocks.client.render.entities.LittleBlocksCollectionRenderer;
 import slimevoid.littleblocks.client.render.tileentities.TileEntityLittleBlocksRenderer;
 import slimevoid.littleblocks.core.LBCore;
+import slimevoid.littleblocks.core.lib.BlockUtil;
 import slimevoid.littleblocks.core.lib.CommandLib;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
 import slimevoid.littleblocks.core.lib.PacketLib;
@@ -27,6 +30,8 @@ import slimevoid.littleblocks.network.packets.PacketLittleBlocksSettings;
 import slimevoid.littleblocks.proxy.CommonProxy;
 import slimevoid.littleblocks.tickhandlers.LittleWorldTickHandler;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
+import slimevoid.littleblocks.world.LittlePlayerController;
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.network.PacketDispatcher;
@@ -42,7 +47,6 @@ public class ClientProxy extends CommonProxy {
 		super.preInit();
 		ClientPacketHandler.init();
 		PacketLib.registerClientPacketHandlers();
-		MinecraftForge.EVENT_BUS.register(new WorldLoadEvent());
 	}
 
 	@Override
@@ -66,24 +70,24 @@ public class ClientProxy extends CommonProxy {
 	}
 
 	@Override
-	public void registerTickHandler() {
+	public void registerTickHandlers() {
 		TickRegistry.registerTickHandler(	new LittleWorldTickHandler(),
 											Side.CLIENT);
-		super.registerTickHandler();
+		super.registerTickHandlers();
 	}
-
-	public World getWorld(NetHandler handler) {
-		if (handler instanceof NetClientHandler) {
-			return ((NetClientHandler) handler).getPlayer().worldObj;
-		}
-		return null;
+	
+	@Override
+	public void registerEventHandlers() {
+		super.registerEventHandlers();
+		MinecraftForge.EVENT_BUS.register(new WorldLoadEvent());
+		MinecraftForge.EVENT_BUS.register(new BlockLittleChunkShiftRightClick());
+		MinecraftForge.EVENT_BUS.register(new BlockLittleChunkBucketEvent());
 	}
 
 	public ILittleWorld getLittleWorld(IBlockAccess iblockaccess, boolean needsRefresh) {
 		World world = (World) iblockaccess;
 		if (world != null) {
 			if (world.isRemote) {
-				int dimension = world.provider.dimensionId;
 				return LBCore.littleWorldClient;
 			} else {
 				return super.getLittleWorld(world,
@@ -101,6 +105,7 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void clientLoggedIn(NetHandler clientHandler, INetworkManager manager, Packet1Login login) {
+		BlockUtil.setLittleController(new LittlePlayerController(FMLClientHandler.instance().getClient(), (NetClientHandler) clientHandler), login.gameType);
 		World world = ((NetClientHandler) clientHandler).getPlayer().worldObj;
 		if (world != null) {
 			PacketLittleBlocksSettings packet = new PacketLittleBlocksSettings();
