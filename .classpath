@@ -6,5 +6,6 @@
 	<classpathentry kind="src" path="LB-source"/>
 	<classpathentry kind="src" path="LB-resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="lib" path="/Minecraft/jars/libraries/com/google/guava/guava/14.0/guava-14.0.jar" sourcepath="/Minecraft/jars/libraries/com/google/guava/guava/14.0/guava-14.0-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
