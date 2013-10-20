@@ -17,7 +17,6 @@ import net.minecraftforge.common.MinecraftForge;
 import slimevoid.littleblocks.api.ILBCommonProxy;
 import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.blocks.core.LittleContainerInteract;
-import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
 import slimevoid.littleblocks.core.lib.PacketLib;
 import slimevoid.littleblocks.events.WorldServerLoadEvent;
@@ -78,7 +77,7 @@ public class CommonProxy implements ILBCommonProxy {
 		MinecraftForge.EVENT_BUS.register(new WorldServerUnloadEvent());
 		MinecraftForge.EVENT_BUS.register(new LittleBlocksCollectionPickup());
 		MinecraftForge.EVENT_BUS.register(new LittleContainerInteract());
-		//MinecraftForge.EVENT_BUS.register(new PlayerInteractInterrupt());
+		// MinecraftForge.EVENT_BUS.register(new PlayerInteractInterrupt());
 		// MinecraftForge.EVENT_BUS.register(new LittleLadderHandler());
 		// MinecraftForge.EVENT_BUS.register(new PistonOrientation());
 	}
@@ -93,8 +92,12 @@ public class CommonProxy implements ILBCommonProxy {
 		World world = (World) iblockaccess;
 		if (world != null) {
 			int dimension = world.provider.dimensionId;
-			if (LBCore.littleWorldServer.containsKey(dimension)) {
-				World littleWorld = DimensionManager.getWorld(LBCore.littleWorldServer.get(dimension));
+			if (ConfigurationLib.littleWorldServer.containsKey(dimension)) {
+				World littleWorld = DimensionManager.getWorld(ConfigurationLib.littleWorldServer.get(dimension));
+				if (littleWorld == null) {
+					throw new NullPointerException("A LittleWorld does not exist for reference world - "
+													+ world.getWorldInfo().getWorldName());
+				}
 				if (littleWorld instanceof ILittleWorld) {
 					return (ILittleWorld) littleWorld;
 				}

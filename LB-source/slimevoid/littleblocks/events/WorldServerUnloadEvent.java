@@ -5,7 +5,7 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.world.WorldEvent.Unload;
 import slimevoid.littleblocks.api.ILittleWorld;
-import slimevoid.littleblocks.core.LBCore;
+import slimevoid.littleblocks.core.lib.ConfigurationLib;
 
 public class WorldServerUnloadEvent {
 
@@ -16,8 +16,8 @@ public class WorldServerUnloadEvent {
 			WorldServer world = (WorldServer) event.world;
 			int dimension = world.provider.dimensionId;
 
-			if (LBCore.littleWorldServer.containsKey(dimension)) {
-				int littleDimension = LBCore.littleWorldServer.remove(dimension);
+			if (ConfigurationLib.littleWorldServer.containsKey(dimension)) {
+				int littleDimension = ConfigurationLib.littleWorldServer.remove(dimension);
 				if (DimensionManager.isDimensionRegistered(littleDimension)) {
 					DimensionManager.setWorld(	littleDimension,
 												null);

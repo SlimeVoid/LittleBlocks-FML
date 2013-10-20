@@ -10,7 +10,6 @@ import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.world.ChunkDataEvent;
 import net.minecraftforge.event.world.WorldEvent.Load;
 import slimevoid.littleblocks.api.ILittleWorld;
-import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
 import slimevoid.littleblocks.world.LittleWorldServer;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -46,8 +45,8 @@ public class WorldServerLoadEvent {
 			DimensionManager.registerDimension(	littleDimension,
 												0);
 
-			LBCore.littleWorldServer.put(	dimension,
-											littleDimension);
+			ConfigurationLib.littleWorldServer.put(	dimension,
+													littleDimension);
 
 			String worldName = world.getWorldInfo().getWorldName()
 								+ ".littleWorld";

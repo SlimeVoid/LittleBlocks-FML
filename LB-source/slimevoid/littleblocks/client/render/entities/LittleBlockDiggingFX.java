@@ -18,9 +18,9 @@ public class LittleBlockDiggingFX extends EntityDiggingFX {
 	}
 
 	public static boolean doBlockDestroyEffects(World world, int x, int y, int z, int meta, EffectRenderer effectRenderer, BlockLittleChunk block) {
-		int xx = (x << 3) + block.xSelected;
-		int yy = (y << 3) + block.ySelected;
-		int zz = (z << 3) + block.zSelected;
+		int xx = (x << 3) + BlockLittleChunk.xSelected;
+		int yy = (y << 3) + BlockLittleChunk.ySelected;
+		int zz = (z << 3) + BlockLittleChunk.zSelected;
 		World littleWorld = (World) LittleBlocks.proxy.getLittleWorld(	world,
 																		false);
 		if (littleWorld != null) {
@@ -65,9 +65,9 @@ public class LittleBlockDiggingFX extends EntityDiggingFX {
 		int x = target.blockX;
 		int y = target.blockY;
 		int z = target.blockZ;
-		int xx = (x << 3) + block.xSelected;
-		int yy = (y << 3) + block.ySelected;
-		int zz = (z << 3) + block.zSelected;
+		int xx = (x << 3) + BlockLittleChunk.xSelected;
+		int yy = (y << 3) + BlockLittleChunk.ySelected;
+		int zz = (z << 3) + BlockLittleChunk.zSelected;
 		World littleWorld = (World) LittleBlocks.proxy.getLittleWorld(	world,
 																		false);
 		if (littleWorld != null) {
@@ -96,32 +96,32 @@ public class LittleBlockDiggingFX extends EntityDiggingFX {
 								- littleBlock.getBlockBoundsMinZ() - (double) (f * 2.0F))
 							+ (double) f + littleBlock.getBlockBoundsMinZ();
 
-				if (block.side == 0) {
+				if (BlockLittleChunk.side == 0) {
 					d1 = (double) y + littleBlock.getBlockBoundsMinY()
 							- (double) f;
 				}
 
-				if (block.side == 1) {
+				if (BlockLittleChunk.side == 1) {
 					d1 = (double) y + littleBlock.getBlockBoundsMaxY()
 							+ (double) f;
 				}
 
-				if (block.side == 2) {
+				if (BlockLittleChunk.side == 2) {
 					d2 = (double) z + littleBlock.getBlockBoundsMinZ()
 							- (double) f;
 				}
 
-				if (block.side == 3) {
+				if (BlockLittleChunk.side == 3) {
 					d2 = (double) z + littleBlock.getBlockBoundsMaxZ()
 							+ (double) f;
 				}
 
-				if (block.side == 4) {
+				if (BlockLittleChunk.side == 4) {
 					d0 = (double) x + littleBlock.getBlockBoundsMinX()
 							- (double) f;
 				}
 
-				if (block.side == 5) {
+				if (BlockLittleChunk.side == 5) {
 					d0 = (double) x + littleBlock.getBlockBoundsMaxX()
 							+ (double) f;
 				}

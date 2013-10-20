@@ -1,7 +1,5 @@
 package slimevoid.littleblocks.core;
 
-import java.util.HashMap;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.ItemStack;
@@ -14,14 +12,10 @@ import slimevoid.littleblocks.core.lib.LocalizationLib;
 import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
 import slimevoid.littleblocks.items.ItemLittleBlocksWand;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
-import slimevoid.littleblocks.world.LittleWorldClient;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 public class LBCore {
-
-	public static LittleWorldClient			littleWorldClient;
-	public static HashMap<Integer, Integer>	littleWorldServer	= new HashMap<Integer, Integer>();
 
 	public static void registerItems() {
 		ConfigurationLib.littleChunk = new BlockLittleChunk(ConfigurationLib.littleChunkID, TileEntityLittleChunk.class, Material.wood, 2F, true).setUnlocalizedName(BlockLib.LITTLECHUNK);

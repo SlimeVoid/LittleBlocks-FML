@@ -52,6 +52,16 @@ public class LittleWorld extends World implements ILittleWorld {
 		 * 
 		 * 
 		 * 
+		 * 
+		 * 
+		 * 
+		 * 
+		 * 
+		 * 
+		 * 
+		 * 
+		 * 
+		 * 
 		 * field_98181_L
 		 **/
 		);
@@ -322,26 +332,66 @@ public class LittleWorld extends World implements ILittleWorld {
 		}
 	}
 
-	@SideOnly(Side.CLIENT)
+	// @SideOnly(Side.CLIENT)
+	// @Override
+	// public float getBrightness(int x, int y, int z, int l) {
+	// if (realWorld != null) {
+	// return this.getRealWorld().getBrightness( x >> 3,
+	// y >> 3,
+	// z >> 3,
+	// l);
+	// } else {
+	// LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(
+	// this.getRealWorld().isRemote,
+	// "getBrightness().[null]",
+	// LoggerLittleBlocks.LogLevel.DEBUG);
+	// return 0;
+	// }
+	// }
+
 	@Override
-	public float getBrightness(int x, int y, int z, int l) {
-		if (realWorld != null) {
-			return this.getRealWorld().getBrightness(	x >> 3,
-														y >> 3,
-														z >> 3,
-														l);
-		} else {
-			LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(	this.getRealWorld().isRemote,
-																										"getBrightness().[null]",
-																										LoggerLittleBlocks.LogLevel.DEBUG);
-			return 0;
+	public void setLightValue(EnumSkyBlock sky, int x, int y, int z, int value) {
+		if (x >= 0xfe363c80 && z >= 0xfe363c80 && x < 0x1c9c380
+			&& z < 0x1c9c380) {
+			if (y >= 0) {
+				if (y >= this.getHeight()) {
+					Chunk chunk = this.getRealWorld().getChunkFromChunkCoords(	x >> 7,
+																				z >> 7);
+					if (chunk.getBlockID(	(x & 0x7f) >> 3,
+											y >> 3,
+											(z & 0x7f) >> 3) != ConfigurationLib.littleChunkID
+						&& this.isAirBlock(	x,
+											y,
+											z)) {
+						this.getRealWorld().setLightValue(	sky,
+															x >> 3,
+															y >> 3,
+															z >> 3,
+															MathHelper.floor_double(value / 8));
+					} else if (chunk.getBlockID((x & 0x7f) >> 3,
+												y >> 3,
+												(z & 0x7f) >> 3) != ConfigurationLib.littleChunkID) {
+						return;
+					}
+					TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getRealWorld().getBlockTileEntity(x >> 3,
+																												y >> 3,
+																												z >> 3);
+					tile.setLightValue(	x & 7,
+										y & 7,
+										z & 7,
+										value);
+					this.markBlockForRenderUpdate(	x >> 3,
+													y >> 3,
+													z >> 3);
+				}
+			}
 		}
 	}
 
 	@SideOnly(Side.CLIENT)
 	@Override
 	public int getBlockLightValue(int x, int y, int z) {
-		if (realWorld != null) {
+		if (this.getRealWorld() != null) {
 			return this.getRealWorld().getBlockLightValue(	x >> 3,
 															y >> 3,
 															z >> 3);
@@ -1070,7 +1120,10 @@ public class LittleWorld extends World implements ILittleWorld {
 												z & 7,
 												tileentity);
 			}
-			this.func_96440_m(x, y, z, 0);			
+			this.func_96440_m(	x,
+								y,
+								z,
+								0);
 		} else {
 			this.getRealWorld().setBlockTileEntity(	x >> 3,
 													y >> 3,
@@ -1286,7 +1339,7 @@ public class LittleWorld extends World implements ILittleWorld {
 	}
 
 	@Override
-    public void updateTileEntityChunkAndDoNothing(int x, int y, int z, TileEntity tileentity) {
+	public void updateTileEntityChunkAndDoNothing(int x, int y, int z, TileEntity tileentity) {
 		TileEntity tile = this.getRealWorld().getBlockTileEntity(	x >> 3,
 																	y >> 3,
 																	z >> 3);

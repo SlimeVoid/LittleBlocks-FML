@@ -19,7 +19,6 @@ import slimevoid.littleblocks.client.network.ClientPacketHandler;
 import slimevoid.littleblocks.client.render.blocks.LittleBlocksRenderer;
 import slimevoid.littleblocks.client.render.entities.LittleBlocksCollectionRenderer;
 import slimevoid.littleblocks.client.render.tileentities.TileEntityLittleBlocksRenderer;
-import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.lib.BlockUtil;
 import slimevoid.littleblocks.core.lib.CommandLib;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
@@ -75,7 +74,7 @@ public class ClientProxy extends CommonProxy {
 											Side.CLIENT);
 		super.registerTickHandlers();
 	}
-	
+
 	@Override
 	public void registerEventHandlers() {
 		super.registerEventHandlers();
@@ -88,7 +87,7 @@ public class ClientProxy extends CommonProxy {
 		World world = (World) iblockaccess;
 		if (world != null) {
 			if (world.isRemote) {
-				return LBCore.littleWorldClient;
+				return ConfigurationLib.littleWorldClient;
 			} else {
 				return super.getLittleWorld(world,
 											needsRefresh);
@@ -105,7 +104,8 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void clientLoggedIn(NetHandler clientHandler, INetworkManager manager, Packet1Login login) {
-		BlockUtil.setLittleController(new LittlePlayerController(FMLClientHandler.instance().getClient(), (NetClientHandler) clientHandler), login.gameType);
+		BlockUtil.setLittleController(	new LittlePlayerController(FMLClientHandler.instance().getClient(), (NetClientHandler) clientHandler),
+										login.gameType);
 		World world = ((NetClientHandler) clientHandler).getPlayer().worldObj;
 		if (world != null) {
 			PacketLittleBlocksSettings packet = new PacketLittleBlocksSettings();

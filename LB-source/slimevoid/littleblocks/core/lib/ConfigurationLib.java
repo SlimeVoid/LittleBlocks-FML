@@ -11,9 +11,8 @@ import net.minecraft.item.Item;
 import net.minecraft.world.World;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.DimensionManager;
-import slimevoid.littleblocks.api.ILittleWorld;
-import slimevoid.littleblocks.core.LittleBlocks;
 import slimevoid.littleblocks.core.LoggerLittleBlocks;
+import slimevoid.littleblocks.world.LittleWorldClient;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.EntityRegistry;
@@ -22,28 +21,28 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class ConfigurationLib {
 
-	private static File								configurationFile;
-	private static Configuration					configuration;
+	private static File						configurationFile;
+	private static Configuration			configuration;
 
-	public static boolean							littleBlocksForceUpdate;
-	public static String							loggerLevel				= "INFO";
-	public static Block								littleChunk;
-	public static Item								littleBlocksWand;
+	public static LittleWorldClient			littleWorldClient;
+	public static HashMap<Integer, Integer>	littleWorldServer		= new HashMap<Integer, Integer>();
+
+	public static boolean					littleBlocksForceUpdate;
+	public static String					loggerLevel				= "INFO";
+	public static Block						littleChunk;
+	public static Item						littleBlocksWand;
+	public static int						littleChunkID;
+	public static int						littleBlocksWandID;
+	public static int						littleBlocksCollectionID;
+	public static boolean					littleBlocksClip;
+	public static int						renderingMethod;
+	public static int						renderType;
+	public static int						littleBlocksSize		= 8;
+
+	private static List<Integer>			disallowedDimensionIds	= new ArrayList<Integer>();
+
 	@SideOnly(Side.CLIENT)
-	public static HashMap<Integer, ILittleWorld>	littleWorldClient;
-	public static HashMap<Integer, ILittleWorld>	littleWorldServer;
-	public static int								littleChunkID;
-	public static int								littleBlocksWandID;
-	public static int								littleBlocksCollectionID;
-	public static boolean							littleBlocksClip;
-	public static int								renderingMethod;
-	public static int								renderType;
-	public static int								littleBlocksSize		= 8;
-
-	private static List<Integer>					disallowedDimensionIds	= new ArrayList<Integer>();
-
-	@SideOnly(Side.CLIENT)
-	public static RenderBlocks						littleRenderer;
+	public static RenderBlocks				littleRenderer;
 
 	public static Configuration getConfiguration() {
 		return configuration;
@@ -137,19 +136,7 @@ public class ConfigurationLib {
 		if (world == null) {
 			return littleRenderer = null;
 		}
-		return littleRenderer = new RenderBlocks(LittleBlocks.proxy.getLittleWorld(	world,
-																					false));
-	}
-
-	@SideOnly(Side.CLIENT)
-	public static int getLittleDimension(int dimension) {
-		configuration.load();
-		int littleDimension = configuration.get(Configuration.CATEGORY_GENERAL,
-												"littleDimension[" + dimension
-														+ "]",
-												DimensionManager.getNextFreeDimId()).getInt();
-		configuration.save();
-		return littleDimension;
+		return littleRenderer = new RenderBlocks(littleWorldClient);
 	}
 
 	public static int getLittleServerDimension(int dimension) {

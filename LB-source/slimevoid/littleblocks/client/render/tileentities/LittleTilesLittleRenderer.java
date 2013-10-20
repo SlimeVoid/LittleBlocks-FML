@@ -20,12 +20,14 @@ import java.util.Set;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
-import slimevoid.littleblocks.core.LBCore;
+import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 
@@ -34,11 +36,13 @@ public class LittleTilesLittleRenderer {
 	private Set<String>												textures	= new HashSet<String>();
 	private HashMap<String, HashMap<Integer, LittleTileToRender>>	texturedTilesToRender;
 	private List<LittleTileToRender>								tilesToRender;
+	private World													littleWorld;
 
-	public LittleTilesLittleRenderer(TileEntityRenderer tileEntityRenderer) {
+	public LittleTilesLittleRenderer(TileEntityRenderer tileEntityRenderer, World world) {
 		this.tileEntityRenderer = tileEntityRenderer;
 		this.texturedTilesToRender = new HashMap<String, HashMap<Integer, LittleTileToRender>>();
 		this.tilesToRender = new ArrayList<LittleTileToRender>();
+		this.littleWorld = world;
 	}
 
 	public void addLittleTileToRender(TileEntity tileentity) {
@@ -90,13 +94,24 @@ public class LittleTilesLittleRenderer {
 		} else {
 			GL11.glShadeModel(GL11.GL_FLAT);
 		}
-
 		for (LittleTileToRender tileToRender : this.tilesToRender) {
-			this.tileEntityRenderer.renderTileEntityAt(	tileToRender.tileentity,
-														tileToRender.x,
-														tileToRender.y,
-														tileToRender.z,
-														f);
+			TileEntitySpecialRenderer renderer = TileEntityRenderer.instance.getSpecialRendererForEntity(tileToRender.tileentity);
+			boolean flag = renderer != null;
+			if (flag) renderer.onWorldChange(this.littleWorld);
+			if (flag) {
+				renderer.renderTileEntityAt(tileToRender.tileentity,
+											tileToRender.x,
+											tileToRender.y,
+											tileToRender.z,
+											f);
+			} else {
+				this.tileEntityRenderer.renderTileEntityAt(	tileToRender.tileentity,
+															tileToRender.x,
+															tileToRender.y,
+															tileToRender.z,
+															f);
+			}
+			if (flag) renderer.onWorldChange(((ILittleWorld) this.littleWorld).getRealWorld());
 		}
 
 		GL11.glDisable(GL12.GL_RESCALE_NORMAL);

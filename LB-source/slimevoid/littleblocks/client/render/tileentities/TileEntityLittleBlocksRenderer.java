@@ -1,10 +1,11 @@
 package slimevoid.littleblocks.client.render.tileentities;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
+import cpw.mods.fml.common.FMLCommonHandler;
 
 public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 
@@ -23,12 +24,9 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 			return;
 		}
 
-		LittleTilesLittleRenderer littleTiles = new LittleTilesLittleRenderer(this.tileEntityRenderer);
-
-		int blockX = (int) x, blockY = (int) y, blockZ = (int) z;
+		LittleTilesLittleRenderer littleTiles = new LittleTilesLittleRenderer(this.tileEntityRenderer, (World) tileentitylittleblocks.getLittleWorld());
 
 		int[][][] content = tileentitylittleblocks.getContents();
-		// boolean optifineEnabled = LBCore.optifine;
 
 		for (int x1 = 0; x1 < content.length; x1++) {
 			for (int y1 = 0; y1 < content[x1].length; y1++) {
@@ -40,18 +38,11 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 							if (littleBlock.hasTileEntity(tileentitylittleblocks.getBlockMetadata(	x1,
 																									y1,
 																									z1))) {
-								TileEntity tileentity = tileentitylittleblocks.getChunkBlockTileEntity(	x1,
-																								y1,
-																								z1);
+								TileEntity tileentity = tileentitylittleblocks.getLittleWorld().getBlockTileEntity(	((tileentitylittleblocks.xCoord << 3) + x1),
+																													((tileentitylittleblocks.yCoord << 3) + y1),
+																													((tileentitylittleblocks.zCoord << 3) + z1));
 								if (tileentity != null) {
-									// FMLCommonHandler.instance().getFMLLogger().warning("Rendering a tile for ["
-									// + tileentity + "]");
-									littleTiles.addLittleTileToRender(tileentity/**
-									 * 
-									 * 
-									 * , littleBlock.getTextureFile()
-									 **/
-									);
+									littleTiles.addLittleTileToRender(tileentity);
 								} else {
 									FMLCommonHandler.instance().getFMLLogger().warning("Attempted to render a tile for ["
 																						+ littleBlock
