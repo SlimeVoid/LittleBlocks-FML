@@ -15,7 +15,7 @@ import slimevoid.littleblocks.core.lib.CoreLib;
 
 public class LittleContainerInteract {
 
-	/*@ForgeSubscribe
+	@ForgeSubscribe
 	public void onInteractEvent(PlayerOpenContainerEvent event) {
 		if (!event.canInteractWith) {
 			Field fields[] = event.entityPlayer.openContainer.getClass().getDeclaredFields();
@@ -151,5 +151,5 @@ public class LittleContainerInteract {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}*/
+	}
 }
