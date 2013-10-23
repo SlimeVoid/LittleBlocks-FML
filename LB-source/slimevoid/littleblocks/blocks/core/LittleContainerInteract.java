@@ -8,7 +8,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.FakePlayer;
 import net.minecraftforge.event.Event.Result;
 import net.minecraftforge.event.ForgeSubscribe;
-//import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
+import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.core.LittleBlocks;
 import slimevoid.littleblocks.core.lib.CoreLib;
