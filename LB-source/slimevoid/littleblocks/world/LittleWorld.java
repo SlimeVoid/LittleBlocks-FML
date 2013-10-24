@@ -62,6 +62,7 @@ public class LittleWorld extends World implements ILittleWorld {
 		 * 
 		 * 
 		 * 
+		 * 
 		 * field_98181_L
 		 **/
 		);
@@ -636,7 +637,7 @@ public class LittleWorld extends World implements ILittleWorld {
 				int littleMetaData = tile.getBlockMetadata(	x & 7,
 															y & 7,
 															z & 7);
-				return littleMetaData;
+				return littleMetaData & 15;
 			} else {
 				return metadata;
 			}
