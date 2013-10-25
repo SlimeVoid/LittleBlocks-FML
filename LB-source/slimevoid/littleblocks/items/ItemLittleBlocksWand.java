@@ -62,32 +62,31 @@ public class ItemLittleBlocksWand extends Item {
 										itemstack)) {
 			if (!world.isRemote) {
 				EnumWandAction playerWandAction = EnumWandAction.getWandActionForPlayer(entityplayer);
-				if (playerWandAction != null) {
-					if (playerWandAction.equals(EnumWandAction.COPY_LB)) {
-						return this.doCopyLB(	itemstack,
-												entityplayer,
-												world,
-												x,
-												y,
-												z,
-												l,
-												a,
-												b,
-												c);
-					}
-					if (playerWandAction.equals(EnumWandAction.ROTATE_LB)) {
-						return this.doRotateLB(	itemstack,
-												entityplayer,
-												world,
-												x,
-												y,
-												z,
-												l,
-												a,
-												b,
-												c);
-					}
-				} else {
+				if (playerWandAction.equals(EnumWandAction.COPY_LB)) {
+					return this.doCopyLB(	itemstack,
+											entityplayer,
+											world,
+											x,
+											y,
+											z,
+											l,
+											a,
+											b,
+											c);
+				}
+				if (playerWandAction.equals(EnumWandAction.ROTATE_LB)) {
+					return this.doRotateLB(	itemstack,
+											entityplayer,
+											world,
+											x,
+											y,
+											z,
+											l,
+											a,
+											b,
+											c);
+				}
+				if (playerWandAction.equals(EnumWandAction.PLACE_LB)) {
 					return this.doPlaceLB(	itemstack,
 											entityplayer,
 											world,
@@ -157,7 +156,10 @@ public class ItemLittleBlocksWand extends Item {
 										z);
 			if (blockID == 0
 				|| Block.blocksList[blockID] == null
-				|| Block.blocksList[blockID].isAirBlock(world, x, y, z)
+				|| Block.blocksList[blockID].isAirBlock(world,
+														x,
+														y,
+														z)
 				|| Block.blocksList[blockID].isBlockReplaceable(world,
 																x,
 																y,

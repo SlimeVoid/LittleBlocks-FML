@@ -15,6 +15,7 @@ import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.blocks.core.BlockLittleChunkBucketEvent;
 import slimevoid.littleblocks.blocks.core.BlockLittleChunkShiftRightClick;
 import slimevoid.littleblocks.client.handlers.DrawCopierHighlight;
+import slimevoid.littleblocks.client.handlers.KeyBindingHandler;
 import slimevoid.littleblocks.client.network.ClientPacketHandler;
 import slimevoid.littleblocks.client.render.blocks.LittleBlocksRenderer;
 import slimevoid.littleblocks.client.render.entities.LittleBlocksCollectionRenderer;
@@ -32,6 +33,7 @@ import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 import slimevoid.littleblocks.world.LittlePlayerController;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.ClientRegistry;
+import cpw.mods.fml.client.registry.KeyBindingRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.registry.TickRegistry;
@@ -72,6 +74,7 @@ public class ClientProxy extends CommonProxy {
 	public void registerTickHandlers() {
 		TickRegistry.registerTickHandler(	new LittleWorldTickHandler(),
 											Side.CLIENT);
+		KeyBindingRegistry.registerKeyBinding(new KeyBindingHandler());
 		super.registerTickHandlers();
 	}
 

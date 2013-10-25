@@ -28,7 +28,11 @@ public class ItemInLittleWorldManager extends ItemInWorldManager {
 		PlayerInteractEvent event = new PlayerInteractEvent(this.thisPlayerMP, Action.LEFT_CLICK_BLOCK, x, y, z, side);
 		MinecraftForge.EVENT_BUS.post(event);
 		if (event.isCanceled()) {
-			PacketLib.sendBlockChange(this.theWorld, this.thisPlayerMP, x, y, z);
+			PacketLib.sendBlockChange(	this.theWorld,
+										this.thisPlayerMP,
+										x,
+										y,
+										z);
 			return;
 		}
 		if (this.isCreative()) {
@@ -42,24 +46,45 @@ public class ItemInLittleWorldManager extends ItemInWorldManager {
 										z);
 			}
 		} else {
-			int blockId = this.theWorld.getBlockId(x, y, z);
-			
+			int blockId = this.theWorld.getBlockId(	x,
+													y,
+													z);
+
 			Block block = Block.blocksList[blockId];
-			
+			if (block == null) return;
+
 			if (event.useBlock != Event.Result.DENY) {
-				block.onBlockClicked(this.theWorld, x, y, z, this.thisPlayerMP);
-				this.theWorld.extinguishFire(this.thisPlayerMP, x, y, z, side);
+				block.onBlockClicked(	this.theWorld,
+										x,
+										y,
+										z,
+										this.thisPlayerMP);
+				this.theWorld.extinguishFire(	this.thisPlayerMP,
+												x,
+												y,
+												z,
+												side);
 			} else {
-				PacketLib.sendBlockChange(this.theWorld, this.thisPlayerMP, x, y, z);
+				PacketLib.sendBlockChange(	this.theWorld,
+											this.thisPlayerMP,
+											x,
+											y,
+											z);
 			}
-			
+
 			if (event.useItem == Event.Result.DENY) {
-				PacketLib.sendBlockChange(this.theWorld, this.thisPlayerMP, x, y, z);
+				PacketLib.sendBlockChange(	this.theWorld,
+											this.thisPlayerMP,
+											x,
+											y,
+											z);
 				return;
 			}
-			
+
 			if (blockId > 0) {
-				this.tryHarvestBlock(x, y, z);
+				this.tryHarvestBlock(	x,
+										y,
+										z);
 			}
 		}
 	}
@@ -91,7 +116,11 @@ public class ItemInLittleWorldManager extends ItemInWorldManager {
 			blockHarvested = this.removeBlock(	x,
 												y,
 												z);
-			if (blockHarvested) PacketLib.sendBlockChange(this.theWorld, this.thisPlayerMP, x, y, z);
+			if (blockHarvested) PacketLib.sendBlockChange(	this.theWorld,
+															this.thisPlayerMP,
+															x,
+															y,
+															z);
 		} else {
 			ItemStack playerHeldItem = this.thisPlayerMP.getCurrentEquippedItem();
 			boolean canHarvest = false;
@@ -158,8 +187,6 @@ public class ItemInLittleWorldManager extends ItemInWorldManager {
 		return blockIsRemoved;
 	}
 
-	
-	
 	public boolean activateBlockOrUseItem(EntityPlayer entityplayer, World world, ItemStack itemstack, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
 		PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(	entityplayer,
 																		Action.RIGHT_CLICK_BLOCK,
@@ -168,7 +195,11 @@ public class ItemInLittleWorldManager extends ItemInWorldManager {
 																		z,
 																		side);
 		if (event.isCanceled()) {
-			PacketLib.sendBlockChange(this.theWorld, this.thisPlayerMP, x, y, z);
+			PacketLib.sendBlockChange(	this.theWorld,
+										this.thisPlayerMP,
+										x,
+										y,
+										z);
 			return false;
 		}
 
@@ -210,7 +241,11 @@ public class ItemInLittleWorldManager extends ItemInWorldManager {
 												hitY,
 												hitZ);
 			} else {
-				PacketLib.sendBlockChange(this.theWorld, this.thisPlayerMP, x, y, z);
+				PacketLib.sendBlockChange(	this.theWorld,
+											this.thisPlayerMP,
+											x,
+											y,
+											z);
 				result = event.useItem != Event.Result.ALLOW;
 			}
 		}
@@ -234,7 +269,7 @@ public class ItemInLittleWorldManager extends ItemInWorldManager {
 			if (itemstack.stackSize <= 0) ForgeEventFactory.onPlayerDestroyItem(thisPlayerMP,
 																				itemstack);
 		}
-		 
+
 		return result;
 	}
 }

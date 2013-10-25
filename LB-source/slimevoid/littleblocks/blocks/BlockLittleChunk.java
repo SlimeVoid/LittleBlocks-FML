@@ -79,15 +79,19 @@ public class BlockLittleChunk extends BlockContainer {
 		this.stepSound = Block.wood.stepSound;
 		this.setCreativeTab(CreativeTabs.tabDecorations);
 	}
-	
+
 	@Override
 	public boolean getTickRandomly() {
 		return true;
 	}
-	
+
 	@Override
 	public void updateTick(World world, int x, int y, int z, Random rand) {
-		TileEntityLittleChunk tile = (TileEntityLittleChunk) BlockHelper.getTileEntity(world, x, y, z, TileEntityLittleChunk.class);
+		TileEntityLittleChunk tile = (TileEntityLittleChunk) BlockHelper.getTileEntity(	world,
+																						x,
+																						y,
+																						z,
+																						TileEntityLittleChunk.class);
 		if (tile != null) {
 			tile.updateTick(rand);
 		}
@@ -149,9 +153,8 @@ public class BlockLittleChunk extends BlockContainer {
 												ySelected,
 												zSelected);
 			if (pickedID > 0) {
-				int xx = (x << 3) + xSelected, yy = (y << 3)
-															+ ySelected, zz = (z << 3)
-																					+ zSelected;
+				int xx = (x << 3) + xSelected, yy = (y << 3) + ySelected, zz = (z << 3)
+																				+ zSelected;
 				return Block.blocksList[pickedID].getDamageValue(	(World) tilelb.getLittleWorld(),
 																	xx,
 																	yy,
@@ -283,7 +286,7 @@ public class BlockLittleChunk extends BlockContainer {
 		}
 		return true;
 	}
-	
+
 	private boolean canPlayerPlaceBlockOrUseItem(World world, EntityPlayer entityplayer) {
 		boolean denyPlacement = false;
 		String placementMessage = "";
@@ -342,8 +345,8 @@ public class BlockLittleChunk extends BlockContainer {
 			return false;
 		}
 		return true;
-	}	
-	
+	}
+
 	public void onServerBlockActivated(World world, EntityPlayer entityplayer, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
 		if (!entityplayer.canPlayerEdit(x >> 3,
 										y >> 3,
@@ -356,13 +359,20 @@ public class BlockLittleChunk extends BlockContainer {
 			&& entityplayer.getHeldItem().getItem() instanceof ItemLittleBlocksWand) {
 			return;
 		}
-		if (canPlayerPlaceBlockOrUseItem(world,
-								entityplayer)) {
-			BlockUtil.onServerBlockActivated(world, entityplayer, entityplayer.getCurrentEquippedItem(), x, y, z, side, hitX, hitY, hitZ);
+		if (canPlayerPlaceBlockOrUseItem(	world,
+											entityplayer)) {
+			BlockUtil.onServerBlockActivated(	world,
+												entityplayer,
+												entityplayer.getCurrentEquippedItem(),
+												x,
+												y,
+												z,
+												side,
+												hitX,
+												hitY,
+												hitZ);
 		}
 	}
-	
-	
 
 	@Override
 	public void onBlockClicked(World world, int x, int y, int z, EntityPlayer entityplayer) {
@@ -668,9 +678,9 @@ public class BlockLittleChunk extends BlockContainer {
 					if (littleBlock != null) {
 						if (!(littleBlock.hasTileEntity(tile.getBlockMetadata(	xSelected,
 																				ySelected,
-																				zSelected)) && tile.getChunkBlockTileEntity(	xSelected,
-																																	ySelected,
-																																	zSelected) == null)) {
+																				zSelected)) && tile.getChunkBlockTileEntity(xSelected,
+																															ySelected,
+																															zSelected) == null)) {
 							littleBlock.collisionRayTrace(	(World) tile.getLittleWorld(),
 															(x << 3)
 																	+ xSelected,
@@ -698,10 +708,10 @@ public class BlockLittleChunk extends BlockContainer {
 				return new MovingObjectPosition(x, y, z, (byte) min.sideHit,
 				/** ((Vec3) min.hitVec).addVector(x, y, z) **/
 				hitVec = min.hitVec.myVec3LocalPool.getVecFromPool(	(min.hitVec.xCoord * 8) % 1,
-															(min.hitVec.yCoord * 8) % 1,
-															(min.hitVec.zCoord * 8) % 1).addVector(	x,
-																									y,
-																									z));
+																	(min.hitVec.yCoord * 8) % 1,
+																	(min.hitVec.zCoord * 8) % 1).addVector(	x,
+																											y,
+																											z));
 			}
 		}
 		xSelected = -10;
