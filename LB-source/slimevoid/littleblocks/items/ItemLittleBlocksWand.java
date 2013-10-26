@@ -9,6 +9,7 @@ import net.minecraft.block.BlockFluid;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -189,94 +190,108 @@ public class ItemLittleBlocksWand extends Item {
 	}
 
 	private boolean doCopyLB(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int l, float a, float b, float c) {
-		TileEntity tileentity = world.getBlockTileEntity(	x,
-															y,
-															z);
-		if (tileentity != null && tileentity instanceof TileEntityLittleChunk) {
-			try {
-				tileLock.writeLock(world);
-				selectedLittleTiles.put(entityplayer,
-										(TileEntityLittleChunk) tileentity);
-				tileLock.writeUnlock();
-			} catch (InterruptedException e) {
-				LoggerLittleBlocks.getInstance("ItemLittleBlocksCopier").writeStackTrace(e);
-			}
-			return true;
-		} else if (tileentity == null) {
-			try {
-				tileLock.readLock(world);
-				if (!selectedLittleTiles.containsKey(entityplayer)) {
-					tileLock.readUnlock();
-					return false;
+		if (((EntityPlayerMP) entityplayer).capabilities.isCreativeMode) {
+			TileEntity tileentity = world.getBlockTileEntity(	x,
+																y,
+																z);
+			if (tileentity != null
+				&& tileentity instanceof TileEntityLittleChunk) {
+				try {
+					tileLock.writeLock(world);
+					selectedLittleTiles.put(entityplayer,
+											(TileEntityLittleChunk) tileentity);
+					tileLock.writeUnlock();
+				} catch (InterruptedException e) {
+					LoggerLittleBlocks.getInstance("ItemLittleBlocksCopier").writeStackTrace(e);
 				}
-				TileEntityLittleChunk selectedLittleTile = selectedLittleTiles.get(entityplayer);
-				tileLock.readUnlock();
-				int xx = x, yy = y, zz = z;
-				if (selectedLittleTile != null) {
-					if (l == 0) {
-						--yy;
-					}
-
-					if (l == 1) {
-						++yy;
-					}
-
-					if (l == 2) {
-						--zz;
-					}
-
-					if (l == 3) {
-						++zz;
-					}
-
-					if (l == 4) {
-						--xx;
-					}
-
-					if (l == 5) {
-						++xx;
-					}
-					world.setBlock(	xx,
-									yy,
-									zz,
-									ConfigurationLib.littleChunkID);
-					TileEntity newtile = world.getBlockTileEntity(	xx,
-																	yy,
-																	zz);
-					if (newtile != null
-						&& newtile instanceof TileEntityLittleChunk) {
-						TileEntityLittleChunk newtilelb = (TileEntityLittleChunk) newtile;
-						tileLock.readLock(world);
-						TileEntityLittleChunk oldtile = selectedLittleTiles.get(entityplayer);
+				return true;
+			} else if (tileentity == null) {
+				try {
+					tileLock.readLock(world);
+					if (!selectedLittleTiles.containsKey(entityplayer)) {
 						tileLock.readUnlock();
-						for (int x1 = 0; x1 < ConfigurationLib.littleBlocksSize; x1++) {
-							for (int y1 = 0; y1 < ConfigurationLib.littleBlocksSize; y1++) {
-								for (int z1 = 0; z1 < ConfigurationLib.littleBlocksSize; z1++) {
-									if (oldtile.getBlockID(	x1,
-															y1,
-															z1) > 0) {
-										newtilelb.setBlockIDWithMetadata(	x1,
-																			y1,
-																			z1,
-																			oldtile.getBlockID(	x1,
-																								y1,
-																								z1),
-																			oldtile.getBlockMetadata(	x1,
+						return false;
+					}
+					TileEntityLittleChunk selectedLittleTile = selectedLittleTiles.get(entityplayer);
+					tileLock.readUnlock();
+					int xx = x, yy = y, zz = z;
+					if (selectedLittleTile != null) {
+						if (l == 0) {
+							--yy;
+						}
+
+						if (l == 1) {
+							++yy;
+						}
+
+						if (l == 2) {
+							--zz;
+						}
+
+						if (l == 3) {
+							++zz;
+						}
+
+						if (l == 4) {
+							--xx;
+						}
+
+						if (l == 5) {
+							++xx;
+						}
+						world.setBlock(	xx,
+										yy,
+										zz,
+										ConfigurationLib.littleChunkID);
+						TileEntity newtile = world.getBlockTileEntity(	xx,
+																		yy,
+																		zz);
+						if (newtile != null
+							&& newtile instanceof TileEntityLittleChunk) {
+							TileEntityLittleChunk newtilelb = (TileEntityLittleChunk) newtile;
+							tileLock.readLock(world);
+							TileEntityLittleChunk oldtile = selectedLittleTiles.get(entityplayer);
+							tileLock.readUnlock();
+							for (int x1 = 0; x1 < ConfigurationLib.littleBlocksSize; x1++) {
+								for (int y1 = 0; y1 < ConfigurationLib.littleBlocksSize; y1++) {
+									for (int z1 = 0; z1 < ConfigurationLib.littleBlocksSize; z1++) {
+										if (oldtile.getBlockID(	x1,
+																y1,
+																z1) > 0) {
+											int blockId = oldtile.getBlockID(	x1,
+																				y1,
+																				z1);
+											int metadata = oldtile.getBlockMetadata(x1,
+																					y1,
+																					z1);
+											newtilelb.setBlockIDWithMetadata(	x1,
+																				y1,
+																				z1,
+																				blockId,
+																				metadata);
+											TileEntity oldLittleTile = oldtile.getChunkBlockTileEntity(	x1,
 																										y1,
-																										z1));
+																										z1);
+											if (oldLittleTile != null) {
+												newtilelb.setChunkBlockTileEntity(	x1,
+																					y1,
+																					z1,
+																					oldLittleTile);
+											}
+										}
 									}
 								}
 							}
+							newtilelb.onInventoryChanged();
+							world.markBlockForUpdate(	xx,
+														yy,
+														zz);
 						}
-						newtilelb.onInventoryChanged();
-						world.markBlockForUpdate(	xx,
-													yy,
-													zz);
 					}
+					return true;
+				} catch (InterruptedException e) {
+					LoggerLittleBlocks.getInstance("ItemLittleBlocksCopier").writeStackTrace(e);
 				}
-				return true;
-			} catch (InterruptedException e) {
-				LoggerLittleBlocks.getInstance("ItemLittleBlocksCopier").writeStackTrace(e);
 			}
 		}
 		PacketDispatcher.sendPacketToPlayer(new PacketLittleNotify(CommandLib.COPIER_MESSAGE).getPacket(),

@@ -7,6 +7,7 @@ import net.minecraft.client.settings.KeyBinding;
 import org.lwjgl.input.Keyboard;
 
 import slimevoid.littleblocks.core.lib.CommandLib;
+import slimevoid.littleblocks.items.wand.EnumWandAction;
 import slimevoid.littleblocks.network.packets.PacketLittleNotify;
 import cpw.mods.fml.client.registry.KeyBindingRegistry.KeyHandler;
 import cpw.mods.fml.common.TickType;
@@ -39,6 +40,7 @@ public class KeyBindingHandler extends KeyHandler {
 			if (kb.equals(switchAction)) {
 				PacketLittleNotify packet = new PacketLittleNotify(CommandLib.WAND_SWITCH);
 				PacketDispatcher.sendPacketToServer(packet.getPacket());
+				EnumWandAction.setNextWandAction();
 			}
 		}
 	}

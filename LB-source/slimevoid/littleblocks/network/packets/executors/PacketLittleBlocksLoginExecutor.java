@@ -7,6 +7,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import slimevoid.littleblocks.core.lib.CommandLib;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
+import slimevoid.littleblocks.items.wand.EnumWandAction;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocksSettings;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 import slimevoidlib.IPacketExecutor;
@@ -21,6 +22,7 @@ public class PacketLittleBlocksLoginExecutor implements IPacketExecutor {
 	public void execute(PacketUpdate packet, World world, EntityPlayer entityplayer) {
 		if (packet instanceof PacketLittleBlocksSettings
 			&& packet.getCommand() == CommandLib.FETCH) {
+			EnumWandAction.getWandActionForPlayer(entityplayer);
 			PacketLittleBlocksSettings packetSettings = new PacketLittleBlocksSettings();
 			packetSettings.setCommand(CommandLib.SETTINGS);
 			packetSettings.setClipMode(ConfigurationLib.littleBlocksClip);

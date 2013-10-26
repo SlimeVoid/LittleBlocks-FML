@@ -3,6 +3,8 @@ package slimevoid.littleblocks.items.wand;
 import java.util.HashMap;
 
 import net.minecraft.entity.player.EntityPlayer;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public enum EnumWandAction {
 	PLACE_LB, ROTATE_LB, COPY_LB, DESTROY_LB;
@@ -12,6 +14,7 @@ public enum EnumWandAction {
 	String													actionDescription;
 
 	private static HashMap<EntityPlayer, EnumWandAction>	playerWandActions;
+	private static EnumWandAction							playerWandAction	= PLACE_LB;
 
 	public static void registerWandActions() {
 		PLACE_LB.actionID = 0;
@@ -51,8 +54,9 @@ public enum EnumWandAction {
 	}
 
 	public static EnumWandAction setWandActionForPlayer(EntityPlayer entityplayer, EnumWandAction action) {
-		return playerWandActions.put(	entityplayer,
-										action);
+		playerWandActions.put(	entityplayer,
+								action);
+		return action;
 	}
 
 	public static void setNextActionForPlayer(EntityPlayer entityplayer) {
@@ -64,5 +68,23 @@ public enum EnumWandAction {
 								nextAction);
 		entityplayer.sendChatToPlayer("Little Wand now in "
 										+ nextAction.actionDescription);
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static EnumWandAction getWandAction() {
+		return playerWandAction;
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static void setNextWandAction() {
+		EnumWandAction currentAction = getWandAction();
+		int nextActionID = currentAction.actionID;
+		EnumWandAction nextAction = getAction(nextActionID);
+		setWandAction(nextAction);
+	}
+
+	@SideOnly(Side.CLIENT)
+	private static void setWandAction(EnumWandAction action) {
+		playerWandAction = action;
 	}
 }

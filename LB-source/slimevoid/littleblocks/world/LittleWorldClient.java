@@ -3,9 +3,6 @@ package slimevoid.littleblocks.world;
 import java.util.Collection;
 import java.util.List;
 
-import slimevoid.littleblocks.api.ILittleWorld;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,6 +21,9 @@ import net.minecraft.world.WorldSettings;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraftforge.common.ForgeDirection;
+import slimevoid.littleblocks.api.ILittleWorld;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class LittleWorldClient extends World implements ILittleWorld {
@@ -34,6 +34,7 @@ public class LittleWorldClient extends World implements ILittleWorld {
 	public LittleWorldClient(World referenceWorld, ISaveHandler saveHandler, String worldName, WorldProvider provider, WorldSettings worldSettings, int difficultySetting, Profiler profiler, ILogAgent iLogAgent) {
 		super(saveHandler, worldName, provider, worldSettings, profiler, iLogAgent);
 		this.realWorld = referenceWorld;
+		this.isRemote = true;
 		String name = referenceWorld.getWorldInfo().getWorldName()
 						+ ".littleWorld";
 		this.finishSetup();
@@ -383,10 +384,13 @@ public class LittleWorldClient extends World implements ILittleWorld {
 															y2,
 															z2);
 	}
-	
+
 	@Override
-    public void updateTileEntityChunkAndDoNothing(int x, int y, int z, TileEntity tileentity) {
-		this.getLittleWorld().updateTileEntityChunkAndDoNothing(x, y, z, tileentity);
+	public void updateTileEntityChunkAndDoNothing(int x, int y, int z, TileEntity tileentity) {
+		this.getLittleWorld().updateTileEntityChunkAndDoNothing(x,
+																y,
+																z,
+																tileentity);
 	}
 
 	@Override
@@ -399,31 +403,45 @@ public class LittleWorldClient extends World implements ILittleWorld {
 
 	@Override
 	public boolean canPlaceEntityOnSide(int blockId, int x, int y, int z, boolean flag, int side, Entity entityPlacing, ItemStack itemstack) {
-		return this.getLittleWorld().canPlaceEntityOnSide(blockId, x, y, z, flag, side, entityPlacing, itemstack);
-	}
-	
-	@Override
-	public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb, IEntitySelector entitySelector) {
-		return this.getLittleWorld().getEntitiesWithinAABBExcludingEntity(entity, axisalignedbb, entitySelector);
+		return this.getLittleWorld().canPlaceEntityOnSide(	blockId,
+															x,
+															y,
+															z,
+															flag,
+															side,
+															entityPlacing,
+															itemstack);
 	}
 
 	@Override
-    public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb) {
-		return this.getLittleWorld().getEntitiesWithinAABBExcludingEntity(entity, axisalignedbb);
+	public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb, IEntitySelector entitySelector) {
+		return this.getLittleWorld().getEntitiesWithinAABBExcludingEntity(	entity,
+																			axisalignedbb,
+																			entitySelector);
+	}
+
+	@Override
+	public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb) {
+		return this.getLittleWorld().getEntitiesWithinAABBExcludingEntity(	entity,
+																			axisalignedbb);
 	}
 
 	@Override
 	public List selectEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisalignedbb, IEntitySelector entitySelector) {
-		return this.getLittleWorld().selectEntitiesWithinAABB(entityClass, axisalignedbb, entitySelector);
+		return this.getLittleWorld().selectEntitiesWithinAABB(	entityClass,
+																axisalignedbb,
+																entitySelector);
 	}
-	
+
 	@Override
-    public List getEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisAlignedBB) {
-		return this.getLittleWorld().getEntitiesWithinAABB(entityClass, axisAlignedBB);
+	public List getEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisAlignedBB) {
+		return this.getLittleWorld().getEntitiesWithinAABB(	entityClass,
+															axisAlignedBB);
 	}
-	
+
 	@Override
 	public boolean checkNoEntityCollision(AxisAlignedBB axisalignedbb, Entity entity) {
-		return this.getLittleWorld().checkNoEntityCollision(axisalignedbb, entity);
+		return this.getLittleWorld().checkNoEntityCollision(axisalignedbb,
+															entity);
 	}
 }

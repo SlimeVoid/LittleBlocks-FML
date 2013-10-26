@@ -16,11 +16,13 @@ import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import slimevoid.littleblocks.core.LittleBlocks;
 import slimevoid.littleblocks.core.lib.BlockUtil;
 import slimevoid.littleblocks.core.lib.PacketLib;
+import slimevoid.littleblocks.items.ItemLittleBlocksWand;
+import slimevoid.littleblocks.items.wand.EnumWandAction;
 
 public class LittlePlayerController extends PlayerControllerMP {
 
-	private Minecraft				mc;
-	private EnumGameType			currentGameType;
+	private Minecraft		mc;
+	private EnumGameType	currentGameType;
 
 	public LittlePlayerController(Minecraft client, NetClientHandler clientHandler) {
 		super(client, clientHandler);
@@ -34,7 +36,7 @@ public class LittlePlayerController extends PlayerControllerMP {
 		this.currentGameType.configurePlayerCapabilities(this.mc.thePlayer.capabilities);
 	}
 
-	public static void clickBlockCreative(Minecraft client, PlayerControllerMP controller, int x, int y, int z, int side) {
+	public static void clickBlockCreative(Minecraft client, LittlePlayerController controller, int x, int y, int z, int side) {
 		if (!((World) LittleBlocks.proxy.getLittleWorld(client.theWorld,
 														false)).extinguishFire(	client.thePlayer,
 																				x,
@@ -47,7 +49,6 @@ public class LittlePlayerController extends PlayerControllerMP {
 											side);
 		}
 	}
-	
 
 	public boolean onPlayerRightClickFirst(EntityPlayer entityplayer, World world, ItemStack itemstack, int x, int y, int z, int sumside, float hitX, float hitY, float hitZ) {
 		int side = sumside & 7;
@@ -117,7 +118,7 @@ public class LittlePlayerController extends PlayerControllerMP {
 									hitX,
 									hitY,
 									hitZ);
-		
+
 		if (flag) {
 			return true;
 		} else if (itemstack == null) {
@@ -148,8 +149,11 @@ public class LittlePlayerController extends PlayerControllerMP {
 	@Override
 	public void clickBlock(int x, int y, int z, int side) {
 		World littleWorld = (World) LittleBlocks.proxy.getLittleWorld(	mc.theWorld,
-																false);
-		if (!BlockUtil.isLittleChunk(littleWorld, x, y, z)) {
+																		false);
+		if (!BlockUtil.isLittleChunk(	littleWorld,
+										x,
+										y,
+										z)) {
 			return;
 		}
 		if (this.currentGameType.isCreative()) {
@@ -164,15 +168,15 @@ public class LittlePlayerController extends PlayerControllerMP {
 								z,
 								side);
 		} else {
-			PacketLib.sendBlockClick(x,
-			                         y,
-			                         z,
-			                         side);
+			PacketLib.sendBlockClick(	x,
+										y,
+										z,
+										side);
 			int blockId = littleWorld.getBlockId(	x,
 													y,
 													z);
 			if (blockId > 0) {
-				Block.blocksList[blockId].onBlockClicked(littleWorld,
+				Block.blocksList[blockId].onBlockClicked(	littleWorld,
 															x,
 															y,
 															z,
@@ -187,38 +191,49 @@ public class LittlePlayerController extends PlayerControllerMP {
 
 	@Override
 	public boolean onPlayerDestroyBlock(int x, int y, int z, int side) {
-		 if (this.currentGameType.isCreative()
-					&& this.mc.thePlayer.getHeldItem() != null
-					&& this.mc.thePlayer.getHeldItem().getItem() instanceof ItemSword) {
+		if (this.currentGameType.isCreative()
+			&& this.mc.thePlayer.getHeldItem() != null
+			&& this.mc.thePlayer.getHeldItem().getItem() instanceof ItemSword) {
 			return false;
 		} else {
-			World worldclient = (World) LittleBlocks.proxy.getLittleWorld(this.mc.theWorld, false);
-			Block block = Block.blocksList[worldclient.getBlockId(	x,
+			World littleWorld = (World) LittleBlocks.proxy.getLittleWorld(	this.mc.theWorld,
+																			false);
+			Block littleBlock = Block.blocksList[littleWorld.getBlockId(	x,
 																	y,
 																	z)];
 
-			if (block == null) {
+			if (littleBlock == null) {
 				return false;
 			} else {
-				worldclient.playAuxSFX(	2001,
+				littleWorld.playAuxSFX(	2001,
 										x,
 										y,
 										z,
-										block.blockID
-												+ (worldclient.getBlockMetadata(x,
+										littleBlock.blockID
+												+ (littleWorld.getBlockMetadata(x,
 																				y,
 																				z) << 12));
-				int i1 = worldclient.getBlockMetadata(	x,
+				int i1 = littleWorld.getBlockMetadata(	x,
 														y,
 														z);
-				boolean flag = block.removeBlockByPlayer(	worldclient,
+
+				boolean blockIsRemoved = littleBlock.removeBlockByPlayer(	littleWorld,
 															mc.thePlayer,
 															x,
 															y,
 															z);
 
-				if (flag) {
-					block.onBlockDestroyedByPlayer(	worldclient,
+				if (this.mc.thePlayer.getHeldItem() != null
+					&& this.mc.thePlayer.getHeldItem().getItem() instanceof ItemLittleBlocksWand) {
+					if (EnumWandAction.getWandAction().equals(EnumWandAction.DESTROY_LB)) {
+						littleWorld.setBlockToAir(	x,
+													y,
+													z);
+						blockIsRemoved = true;
+					}
+				}
+				if (blockIsRemoved) {
+					littleBlock.onBlockDestroyedByPlayer(	littleWorld,
 													x,
 													y,
 													z,
@@ -229,8 +244,8 @@ public class LittlePlayerController extends PlayerControllerMP {
 					ItemStack itemstack = this.mc.thePlayer.getCurrentEquippedItem();
 
 					if (itemstack != null) {
-						itemstack.onBlockDestroyed(	worldclient,
-													block.blockID,
+						itemstack.onBlockDestroyed(	littleWorld,
+													littleBlock.blockID,
 													x,
 													y,
 													z,
@@ -242,9 +257,8 @@ public class LittlePlayerController extends PlayerControllerMP {
 					}
 				}
 
-				return flag;
+				return blockIsRemoved;
 			}
 		}
 	}
-
 }

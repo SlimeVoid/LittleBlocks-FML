@@ -1,6 +1,7 @@
 package slimevoid.littleblocks.world;
 
 import net.minecraft.block.Block;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
@@ -14,6 +15,8 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import slimevoid.littleblocks.core.LittleBlocks;
 import slimevoid.littleblocks.core.lib.PacketLib;
+import slimevoid.littleblocks.items.ItemLittleBlocksWand;
+import slimevoid.littleblocks.items.wand.EnumWandAction;
 
 public class ItemInLittleWorldManager extends ItemInWorldManager {
 
@@ -175,6 +178,26 @@ public class ItemInLittleWorldManager extends ItemInWorldManager {
 																							x,
 																							y,
 																							z));
+		;
+
+		if (this.thisPlayerMP.getHeldItem() != null
+			&& this.thisPlayerMP.getHeldItem().getItem() instanceof ItemLittleBlocksWand) {
+			if (EnumWandAction.getWandActionForPlayer(this.thisPlayerMP).equals(EnumWandAction.DESTROY_LB)) {
+				this.theWorld.setBlockToAir(x,
+											y,
+											z);
+				if (!blockIsRemoved) {
+					int fortune = EnchantmentHelper.getFortuneModifier(this.thisPlayerMP);
+					littleBlock.dropBlockAsItem(this.theWorld,
+												x,
+												y,
+												z,
+												metadata,
+												fortune);
+				}
+				blockIsRemoved = true;
+			}
+		}
 
 		if (littleBlock != null && blockIsRemoved) {
 			littleBlock.onBlockDestroyedByPlayer(	this.theWorld,
