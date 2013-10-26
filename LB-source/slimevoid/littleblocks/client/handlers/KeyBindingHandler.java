@@ -15,7 +15,7 @@ import cpw.mods.fml.common.network.PacketDispatcher;
 
 public class KeyBindingHandler extends KeyHandler {
 
-	private static KeyBinding	switchAction	= new KeyBinding("Little Wand Switch Action", Keyboard.KEY_O);
+	private static KeyBinding	switchAction	= new KeyBinding("LittleBlocks Wand-Action Change", Keyboard.KEY_O);
 
 	public KeyBindingHandler() {
 		super(new KeyBinding[] { switchAction }, new boolean[] { false });
@@ -23,7 +23,7 @@ public class KeyBindingHandler extends KeyHandler {
 
 	@Override
 	public String getLabel() {
-		return "Little Wand Action Change";
+		return "LittleBlocks Wand-Action Change";
 	}
 
 	private static boolean	keyHasBeenPressed	= false;
