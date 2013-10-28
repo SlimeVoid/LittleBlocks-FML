@@ -270,18 +270,22 @@ public class BlockLittleChunk extends BlockContainer {
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int localSide, float hitX, float hitY, float hitZ) {
 		// System.out.println("Activated");
 		if (world.isRemote) {
-			if (BlockUtil.getLittleController().onPlayerRightClickFirst(entityplayer,
-																		(World) LittleBlocks.proxy.getLittleWorld(	world,
-																													false),
-																		entityplayer.inventory.getCurrentItem(),
-																		((x << 3) + xSelected),
-																		((y << 3) + ySelected),
-																		((z << 3) + zSelected),
-																		side,
-																		hitX,
-																		hitY,
-																		hitZ)) {
-				entityplayer.swingItem();
+			try {
+				if (BlockUtil.getLittleController().onPlayerRightClickFirst(entityplayer,
+																			(World) LittleBlocks.proxy.getLittleWorld(	world,
+																														false),
+																			entityplayer.inventory.getCurrentItem(),
+																			((x << 3) + xSelected),
+																			((y << 3) + ySelected),
+																			((z << 3) + zSelected),
+																			side,
+																			hitX,
+																			hitY,
+																			hitZ)) {
+					entityplayer.swingItem();
+				}
+			} catch (ClassCastException e) {
+				FMLCommonHandler.instance().getFMLLogger().warning(e.getLocalizedMessage());
 			}
 		}
 		return true;
@@ -361,16 +365,20 @@ public class BlockLittleChunk extends BlockContainer {
 		}
 		if (canPlayerPlaceBlockOrUseItem(	world,
 											entityplayer)) {
-			BlockUtil.onServerBlockActivated(	world,
-												entityplayer,
-												entityplayer.getCurrentEquippedItem(),
-												x,
-												y,
-												z,
-												side,
-												hitX,
-												hitY,
-												hitZ);
+			try {
+				BlockUtil.onServerBlockActivated(	world,
+													entityplayer,
+													entityplayer.getCurrentEquippedItem(),
+													x,
+													y,
+													z,
+													side,
+													hitX,
+													hitY,
+													hitZ);
+			} catch (ClassCastException e) {
+				FMLCommonHandler.instance().getFMLLogger().warning(e.getLocalizedMessage());
+			}
 		}
 	}
 
@@ -493,13 +501,17 @@ public class BlockLittleChunk extends BlockContainer {
 												1,
 												1);
 					} else {
-						block.setBlockBoundsBasedOnState(	tile.getLittleWorld(),
-															(x << 3)
-																	+ xSelected,
-															(y << 3)
-																	+ ySelected,
-															(z << 3)
-																	+ zSelected);
+						try {
+							block.setBlockBoundsBasedOnState(	tile.getLittleWorld(),
+																(x << 3)
+																		+ xSelected,
+																(y << 3)
+																		+ ySelected,
+																(z << 3)
+																		+ zSelected);
+						} catch (ClassCastException caster) {
+							FMLCommonHandler.instance().getFMLLogger().warning(caster.getLocalizedMessage());
+						}
 					}
 					setBlockBounds(	(float) (xSelected + block.getBlockBoundsMinX())
 											/ m,
@@ -606,30 +618,38 @@ public class BlockLittleChunk extends BlockContainer {
 
 		List<MovingObjectPosition> returns = new ArrayList<MovingObjectPosition>();
 
-		returns = CollisionRayTrace.rayTraceLittleBlocks(	this,
-															player,
-															view,
-															x,
-															y,
-															z,
-															returns,
-															content,
-															tile,
-															isFluid);
+		try {
+			returns = CollisionRayTrace.rayTraceLittleBlocks(	this,
+																player,
+																view,
+																x,
+																y,
+																z,
+																returns,
+																content,
+																tile,
+																isFluid);
+		} catch (ClassCastException e) {
+			FMLCommonHandler.instance().getFMLLogger().warning(e.getLocalizedMessage());
+		}
 		player = player.addVector(	-x,
 									-y,
 									-z);
 		view = view.addVector(	-x,
 								-y,
 								-z);
-		returns = CollisionRayTrace.collisionRayTracer(	this,
-														world,
-														player,
-														view,
-														x,
-														y,
-														z,
-														returns);
+		try {
+			returns = CollisionRayTrace.collisionRayTracer(	this,
+															world,
+															player,
+															view,
+															x,
+															y,
+															z,
+															returns);
+		} catch (ClassCastException e) {
+			FMLCommonHandler.instance().getFMLLogger().warning(e.getLocalizedMessage());
+		}
 		if (!returns.isEmpty()) {
 			MovingObjectPosition min = null;
 			double distMin = 0;
@@ -681,23 +701,20 @@ public class BlockLittleChunk extends BlockContainer {
 																				zSelected)) && tile.getChunkBlockTileEntity(xSelected,
 																															ySelected,
 																															zSelected) == null)) {
-							littleBlock.collisionRayTrace(	(World) tile.getLittleWorld(),
-															(x << 3)
-																	+ xSelected,
-															(y << 3)
-																	+ ySelected,
-															(z << 3)
-																	+ zSelected,
-															player,
-															view);
-						} else {
-							FMLCommonHandler.instance().getFMLLogger().warning("Tried to trace through a tile entity at ["
-																				+ xSelected
-																				+ ", "
-																				+ ySelected
-																				+ ", "
-																				+ zSelected
-																				+ "]");
+
+							try {
+								littleBlock.collisionRayTrace(	(World) tile.getLittleWorld(),
+																(x << 3)
+																		+ xSelected,
+																(y << 3)
+																		+ ySelected,
+																(z << 3)
+																		+ zSelected,
+																player,
+																view);
+							} catch (ClassCastException e) {
+								FMLCommonHandler.instance().getFMLLogger().warning(e.getLocalizedMessage());
+							}
 						}
 					}
 				}
