@@ -7,7 +7,10 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import slimevoid.littleblocks.blocks.BlockLittleChunk;
 import slimevoid.littleblocks.core.LittleBlocks;
+import slimevoid.littleblocks.core.LoggerLittleBlocks;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
+import slimevoid.littleblocks.core.lib.CoreLib;
+import slimevoidlib.data.Logger.LogLevel;
 import cpw.mods.fml.client.FMLClientHandler;
 
 public class LittleBlockDiggingFX extends EntityDiggingFX {
@@ -43,16 +46,26 @@ public class LittleBlockDiggingFX extends EntityDiggingFX {
 										/ (double) b0;
 							double d2 = (double) z + ((double) l1 + 0.5D)
 										/ (double) b0;
-							LittleBlockDiggingFX particle = new LittleBlockDiggingFX(world, d0, d1, d2, d0
-																										- (double) x
-																										- 0.5D, d1
-																												- (double) y
-																												- 0.5D, d2
-																														- (double) z
-																														- 0.5D, littleBlock, littleMeta);
-							effectRenderer.addEffect(particle.func_70596_a(	x,
-																			y,
-																			z));
+							try {
+								LittleBlockDiggingFX particle = new LittleBlockDiggingFX(world, d0, d1, d2, d0
+																											- (double) x
+																											- 0.5D, d1
+																													- (double) y
+																													- 0.5D, d2
+																															- (double) z
+																															- 0.5D, littleBlock, littleMeta);
+								effectRenderer.addEffect(particle.func_70596_a(	x,
+																				y,
+																				z));
+							} catch (ArrayIndexOutOfBoundsException e) {
+								LoggerLittleBlocks.getInstance(CoreLib.MOD_ID).write(	true,
+																						"Could not render digging FX for ["
+																								+ littleBlock.getLocalizedName()
+																								+ "] error was ["
+																								+ e.getLocalizedMessage()
+																								+ "]",
+																						LogLevel.DEBUG);
+							}
 						}
 					}
 				}
@@ -125,10 +138,20 @@ public class LittleBlockDiggingFX extends EntityDiggingFX {
 					d0 = (double) x + littleBlock.getBlockBoundsMaxX()
 							+ (double) f;
 				}
-				LittleBlockDiggingFX particle = new LittleBlockDiggingFX(world, d0, d1, d2, 0.0D, 0.0D, 0.0D, littleBlock, littleMeta);
-				effectRenderer.addEffect(particle.func_70596_a(	x,
-																y,
-																z).multiplyVelocity(0.2F).multipleParticleScaleBy(0.6F));
+				try {
+					LittleBlockDiggingFX particle = new LittleBlockDiggingFX(world, d0, d1, d2, 0.0D, 0.0D, 0.0D, littleBlock, littleMeta);
+					effectRenderer.addEffect(particle.func_70596_a(	x,
+																	y,
+																	z).multiplyVelocity(0.2F).multipleParticleScaleBy(0.6F));
+				} catch (ArrayIndexOutOfBoundsException e) {
+					LoggerLittleBlocks.getInstance(CoreLib.MOD_ID).write(	true,
+																			"Could not render hit FX for ["
+																					+ littleBlock.getLocalizedName()
+																					+ "] error was ["
+																					+ e.getLocalizedMessage()
+																					+ "]",
+																			LogLevel.DEBUG);
+				}
 			}
 		}
 		return true;

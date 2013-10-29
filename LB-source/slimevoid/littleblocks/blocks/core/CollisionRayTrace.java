@@ -11,6 +11,7 @@ import net.minecraft.world.World;
 import slimevoid.littleblocks.blocks.BlockLittleChunk;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
+import cpw.mods.fml.common.FMLCommonHandler;
 
 public class CollisionRayTrace {
 
@@ -23,30 +24,34 @@ public class CollisionRayTrace {
 						Block block = Block.blocksList[content[x][y][z]];
 						if (block != null
 							&& (!(block instanceof BlockFluid) || isFluid)) {
-							MovingObjectPosition ret = block.collisionRayTrace(	(World) tile.getLittleWorld(),
-																				(i << 3)
-																						+ x,
-																				(j << 3)
-																						+ y,
-																				(k << 3)
-																						+ z,
-																				player.myVec3LocalPool.getVecFromPool(	player.xCoord * 8,
-																														player.yCoord * 8,
-																														player.zCoord * 8),
-																				view.myVec3LocalPool.getVecFromPool(view.xCoord * 8,
-																													view.yCoord * 8,
-																													view.zCoord * 8));
-							if (ret != null) {
-								ret.blockX -= (i << 3);
-								ret.blockY -= (j << 3);
-								ret.blockZ -= (k << 3);
-								ret.hitVec = ret.hitVec.myVec3LocalPool.getVecFromPool(	ret.hitVec.xCoord / 8.0,
-																						ret.hitVec.yCoord / 8.0,
-																						ret.hitVec.zCoord / 8.0);
-								ret.hitVec = ret.hitVec.addVector(	-i,
-																	-j,
-																	-k);
-								returns.add(ret);
+							try {
+								MovingObjectPosition ret = block.collisionRayTrace(	(World) tile.getLittleWorld(),
+																					(i << 3)
+																							+ x,
+																					(j << 3)
+																							+ y,
+																					(k << 3)
+																							+ z,
+																					player.myVec3LocalPool.getVecFromPool(	player.xCoord * 8,
+																															player.yCoord * 8,
+																															player.zCoord * 8),
+																					view.myVec3LocalPool.getVecFromPool(view.xCoord * 8,
+																														view.yCoord * 8,
+																														view.zCoord * 8));
+								if (ret != null) {
+									ret.blockX -= (i << 3);
+									ret.blockY -= (j << 3);
+									ret.blockZ -= (k << 3);
+									ret.hitVec = ret.hitVec.myVec3LocalPool.getVecFromPool(	ret.hitVec.xCoord / 8.0,
+																							ret.hitVec.yCoord / 8.0,
+																							ret.hitVec.zCoord / 8.0);
+									ret.hitVec = ret.hitVec.addVector(	-i,
+																		-j,
+																		-k);
+									returns.add(ret);
+								}
+							} catch (ClassCastException e) {
+								FMLCommonHandler.instance().getFMLLogger().warning(e.getLocalizedMessage());
 							}
 						}
 					}

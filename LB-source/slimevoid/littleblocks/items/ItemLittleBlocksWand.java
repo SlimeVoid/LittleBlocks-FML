@@ -15,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
+import slimevoid.littleblocks.blocks.BlockLittleChunk;
 import slimevoid.littleblocks.core.LoggerLittleBlocks;
 import slimevoid.littleblocks.core.lib.CommandLib;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
@@ -108,11 +109,11 @@ public class ItemLittleBlocksWand extends Item {
 		if (world.getBlockId(	x,
 								y,
 								z) == ConfigurationLib.littleChunkID) {
-			Block.blocksList[ConfigurationLib.littleChunkID].rotateBlock(	world,
-																			x,
-																			y,
-																			z,
-																			UP);
+			((BlockLittleChunk) Block.blocksList[ConfigurationLib.littleChunkID]).rotateLittleChunk(world,
+																									x,
+																									y,
+																									z,
+																									UP);
 			return true;
 		}
 		return false;

@@ -18,6 +18,7 @@ import slimevoid.littleblocks.core.lib.BlockUtil;
 import slimevoid.littleblocks.core.lib.PacketLib;
 import slimevoid.littleblocks.items.ItemLittleBlocksWand;
 import slimevoid.littleblocks.items.wand.EnumWandAction;
+import cpw.mods.fml.client.FMLClientHandler;
 
 public class LittlePlayerController extends PlayerControllerMP {
 
@@ -50,11 +51,76 @@ public class LittlePlayerController extends PlayerControllerMP {
 		}
 	}
 
-	public boolean onPlayerRightClickFirst(EntityPlayer entityplayer, World world, ItemStack itemstack, int x, int y, int z, int sumside, float hitX, float hitY, float hitZ) {
-		int side = sumside & 7;
-		float xOffset = hitX;
-		float yOffset = hitY;
-		float zOffset = hitZ;
+	public void onPlayerRightClickFirst(EntityPlayer entityplayer, World world, ItemStack itemstack, int x, int y, int z, int sumside, float hitX, float hitY, float hitZ) {
+		boolean flag = true;
+		int stackSize = itemstack != null ? itemstack.stackSize : 0;
+		if (this.onPlayerRightClick(entityplayer,
+									world,
+									itemstack,
+									x,
+									y,
+									z,
+									sumside,
+									Vec3.createVectorHelper(hitX,
+															hitY,
+															hitZ))) {
+			flag = false;
+			entityplayer.swingItem();
+		}
+		if (itemstack == null) {
+			return;
+		}
+
+		if (itemstack.stackSize == 0) {
+			entityplayer.inventory.mainInventory[entityplayer.inventory.currentItem] = null;
+		} else if (itemstack.stackSize != stackSize || this.isInCreativeMode()) {
+			FMLClientHandler.instance().getClient().entityRenderer.itemRenderer.resetEquippedProgress();
+		}
+
+		if (flag) {
+			ItemStack itemstack1 = entityplayer.inventory.getCurrentItem();
+			if (itemstack1 != null && this.sendUseItem(	entityplayer,
+														world,
+														itemstack1)) {
+				FMLClientHandler.instance().getClient().entityRenderer.itemRenderer.resetEquippedProgress2();
+			}
+		}
+	}
+
+	@Override
+	public boolean sendUseItem(EntityPlayer entityplayer, World world, ItemStack itemstack) {
+		PacketLib.sendItemUse(	world,
+								entityplayer,
+								-1,
+								-1,
+								-1,
+								255,
+								itemstack);
+		int i = itemstack.stackSize;
+		ItemStack itemstack1 = itemstack.useItemRightClick(	world,
+															entityplayer);
+
+		if (itemstack1 == itemstack
+			&& (itemstack1 == null || itemstack1.stackSize == i)) {
+			return false;
+		} else {
+			entityplayer.inventory.mainInventory[entityplayer.inventory.currentItem] = itemstack1;
+
+			if (itemstack1.stackSize <= 0) {
+				entityplayer.inventory.mainInventory[entityplayer.inventory.currentItem] = null;
+				MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(entityplayer, itemstack1));
+			}
+
+			return true;
+		}
+	}
+
+	@Override
+	public boolean onPlayerRightClick(EntityPlayer entityplayer, World world, ItemStack itemstack, int x, int y, int z, int side, Vec3 hitAt) {
+
+		float xOffset = (float) hitAt.xCoord;
+		float yOffset = (float) hitAt.yCoord;
+		float zOffset = (float) hitAt.zCoord;
 		boolean flag = false;
 		int blockId;
 		if (itemstack != null && itemstack.getItem() != null
@@ -115,35 +181,46 @@ public class LittlePlayerController extends PlayerControllerMP {
 									y,
 									z,
 									side,
-									hitX,
-									hitY,
-									hitZ);
+									xOffset,
+									yOffset,
+									zOffset);
 
 		if (flag) {
 			return true;
 		} else if (itemstack == null) {
 			return false;
+		} else if (this.currentGameType.isCreative()) {
+			blockId = itemstack.getItemDamage();
+			int stackSize = itemstack.stackSize;
+			boolean placedOrUsed = itemstack.tryPlaceItemIntoWorld(	entityplayer,
+																	world,
+																	x,
+																	y,
+																	z,
+																	side,
+																	xOffset,
+																	yOffset,
+																	zOffset);
+			itemstack.setItemDamage(blockId);
+			itemstack.stackSize = stackSize;
+			return placedOrUsed;
+		} else {
+			if (!itemstack.tryPlaceItemIntoWorld(	entityplayer,
+													world,
+													x,
+													y,
+													z,
+													side,
+													xOffset,
+													yOffset,
+													zOffset)) {
+				return false;
+			}
+			if (itemstack.stackSize <= 0) {
+				MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(entityplayer, itemstack));
+			}
+			return true;
 		}
-		if (!itemstack.tryPlaceItemIntoWorld(	entityplayer,
-												world,
-												x,
-												y,
-												z,
-												side,
-												xOffset,
-												yOffset,
-												zOffset)) {
-			return false;
-		}
-		if (itemstack.stackSize <= 0) {
-			MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(entityplayer, itemstack));
-		}
-		return true;
-	}
-
-	@Override
-	public boolean onPlayerRightClick(EntityPlayer entityplayer, World world, ItemStack itemstack, int x, int y, int z, int side, Vec3 hitAt) {
-		return false;
 	}
 
 	@Override
@@ -198,9 +275,9 @@ public class LittlePlayerController extends PlayerControllerMP {
 		} else {
 			World littleWorld = (World) LittleBlocks.proxy.getLittleWorld(	this.mc.theWorld,
 																			false);
-			Block littleBlock = Block.blocksList[littleWorld.getBlockId(	x,
-																	y,
-																	z)];
+			Block littleBlock = Block.blocksList[littleWorld.getBlockId(x,
+																		y,
+																		z)];
 
 			if (littleBlock == null) {
 				return false;
@@ -218,10 +295,10 @@ public class LittlePlayerController extends PlayerControllerMP {
 														z);
 
 				boolean blockIsRemoved = littleBlock.removeBlockByPlayer(	littleWorld,
-															mc.thePlayer,
-															x,
-															y,
-															z);
+																			mc.thePlayer,
+																			x,
+																			y,
+																			z);
 
 				if (this.mc.thePlayer.getHeldItem() != null
 					&& this.mc.thePlayer.getHeldItem().getItem() instanceof ItemLittleBlocksWand) {
@@ -234,10 +311,10 @@ public class LittlePlayerController extends PlayerControllerMP {
 				}
 				if (blockIsRemoved) {
 					littleBlock.onBlockDestroyedByPlayer(	littleWorld,
-													x,
-													y,
-													z,
-													i1);
+															x,
+															y,
+															z,
+															i1);
 				}
 
 				if (!this.currentGameType.isCreative()) {

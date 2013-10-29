@@ -22,9 +22,10 @@ import net.minecraft.world.IBlockAccess;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
-import slimevoid.littleblocks.core.LBCore;
+import slimevoid.littleblocks.core.LoggerLittleBlocks;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
 import slimevoid.littleblocks.core.lib.CoreLib;
+import slimevoidlib.data.Logger.LogLevel;
 
 public class LittleBlocksLittleRenderer {
 	private RenderBlocks				renderBlocks;
@@ -65,10 +66,20 @@ public class LittleBlocksLittleRenderer {
 
 			tessellator.startDrawing(mode);
 			for (LittleBlockToRender littleBlockToRender : this.littleBlocksToRender) {
-				this.renderBlocks.renderBlockByRenderType(	littleBlockToRender.block,
-															littleBlockToRender.x,
-															littleBlockToRender.y,
-															littleBlockToRender.z);
+				try {
+					this.renderBlocks.renderBlockByRenderType(	littleBlockToRender.block,
+																littleBlockToRender.x,
+																littleBlockToRender.y,
+																littleBlockToRender.z);
+				} catch (IllegalArgumentException e) {
+					LoggerLittleBlocks.getInstance("LittleBlocksMod").write(true,
+																			"Issue when rendering block ["
+																					+ littleBlockToRender.block.getLocalizedName()
+																					+ "] failed with error ["
+																					+ e.getLocalizedMessage()
+																					+ "]",
+																			LogLevel.DEBUG);
+				}
 			}
 			tessellator.draw();
 			GL11.glDisable(GL12.GL_RESCALE_NORMAL);

@@ -1,6 +1,7 @@
 package slimevoid.littleblocks.core.lib;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import slimevoid.littleblocks.client.network.ClientPacketHandler;
 import slimevoid.littleblocks.client.network.packets.executors.ClientBlockChangeExecutor;
@@ -159,6 +160,11 @@ public class PacketLib {
 	public static void sendBlockPlace(World world, EntityPlayer entityplayer, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
 		PacketLittleBlock placePacket = new PacketLittleBlock(x, y, z, side, entityplayer.inventory.getCurrentItem(), hitX, hitY, hitZ);
 		PacketDispatcher.sendPacketToServer(placePacket.getPacket());
+	}
+
+	public static void sendItemUse(World world, EntityPlayer entityplayer, int x, int y, int z, int side, ItemStack itemstack) {
+		PacketLittleBlock usePacket = new PacketLittleBlock(x, y, z, side, itemstack, 0.0f, 0.0f, 0.0f);
+		PacketDispatcher.sendPacketToServer(usePacket.getPacket());
 	}
 
 	public static void sendBlockChange(World world, EntityPlayer entityplayer, int x, int y, int z) {
