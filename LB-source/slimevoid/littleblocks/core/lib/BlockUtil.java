@@ -31,7 +31,6 @@ import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 import slimevoid.littleblocks.world.ItemInLittleWorldManager;
 import slimevoid.littleblocks.world.LittlePlayerController;
 import slimevoidlib.data.Logger;
-import buildcraft.core.IItemPipe;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
@@ -151,9 +150,6 @@ public class BlockUtil {
 				return false;
 			}
 			if (disallowedItemIDs.contains(item.itemID)) {
-				return false;
-			}
-			if (item instanceof IItemPipe) {
 				return false;
 			}
 		}
