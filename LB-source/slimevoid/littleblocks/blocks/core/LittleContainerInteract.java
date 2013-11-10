@@ -1,4 +1,4 @@
-package slimevoid.littleblocks.blocks.core;
+/*package slimevoid.littleblocks.blocks.core;
 
 import java.lang.reflect.Field;
 
@@ -153,3 +153,4 @@ public class LittleContainerInteract {
 		}
 	}
 }
+*/
