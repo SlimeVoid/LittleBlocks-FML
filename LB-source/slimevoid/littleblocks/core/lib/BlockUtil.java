@@ -31,6 +31,7 @@ import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 import slimevoid.littleblocks.world.ItemInLittleWorldManager;
 import slimevoid.littleblocks.world.LittlePlayerController;
 import slimevoidlib.data.Logger;
+import slimevoidlib.util.helpers.SlimevoidHelper;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
@@ -343,5 +344,10 @@ public class BlockUtil {
 									x,
 									y,
 									z);
+	}
+
+	public static boolean isPistonExtending() {
+		return SlimevoidHelper.isReflectedClass(BlockPistonBase.class,
+												3);
 	}
 }

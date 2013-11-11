@@ -30,6 +30,7 @@ import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.ForgeDirection;
 import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.core.LoggerLittleBlocks;
+import slimevoid.littleblocks.core.lib.BlockUtil;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 import slimevoidlib.data.Logger;
@@ -49,6 +50,7 @@ public class LittleWorld extends World implements ILittleWorld {
 	@SideOnly(Side.CLIENT)
 	public LittleWorld(World world, WorldProvider worldprovider, String worldName) {
 		super(world.getSaveHandler(), worldName, worldprovider, new WorldSettings(world.getWorldInfo().getSeed(), world.getWorldInfo().getGameType(), world.getWorldInfo().isMapFeaturesEnabled(), world.getWorldInfo().isHardcoreModeEnabled(), world.getWorldInfo().getTerrainType()), null, null/**
+		 * 
 		 * 
 		 * 
 		 * 
@@ -551,7 +553,7 @@ public class LittleWorld extends World implements ILittleWorld {
 				return littleBlockId;
 			} else {
 				/** POSSIBLE FIX FOR PISTON BLOCK DUPE BUG **/
-				if (id != 0) return Block.bedrock.blockID;
+				if (BlockUtil.isPistonExtending()) return Block.bedrock.blockID;
 				return id;
 				/********************************************/
 			}
