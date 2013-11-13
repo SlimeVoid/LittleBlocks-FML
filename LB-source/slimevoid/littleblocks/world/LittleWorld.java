@@ -65,10 +65,13 @@ public class LittleWorld extends World implements ILittleWorld {
 		 * 
 		 * 
 		 * 
+		 * 
+		 * 
 		 * field_98181_L
 		 **/
 		);
 		this.realWorld = world;
+		this.isRemote = true;
 		LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(	this.getRealWorld().isRemote,
 																									"LittleWorld["
 																											+ world.toString()
@@ -91,6 +94,7 @@ public class LittleWorld extends World implements ILittleWorld {
 	public LittleWorld(World world, WorldProvider worldprovider) {
 		super(world.getSaveHandler(), "LittleBlocksWorld", new WorldSettings(world.getWorldInfo().getSeed(), world.getWorldInfo().getGameType(), world.getWorldInfo().isMapFeaturesEnabled(), world.getWorldInfo().isHardcoreModeEnabled(), world.getWorldInfo().getTerrainType()), worldprovider, null, null);
 		this.realWorld = world;
+		this.isRemote = false;
 		LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(	this.getRealWorld().isRemote,
 																									"LittleWorld["
 																											+ world.toString()
