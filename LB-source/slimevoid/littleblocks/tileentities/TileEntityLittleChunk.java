@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.logging.Level;
 
 import net.minecraft.block.Block;
@@ -254,25 +253,25 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 		}
 	}
 
-	public void updateTick(Random rand) {
-		for (int xx = 0; xx < ConfigurationLib.littleBlocksSize; xx++) {
-			for (int yy = 0; yy < ConfigurationLib.littleBlocksSize; yy++) {
-				for (int zz = 0; zz < ConfigurationLib.littleBlocksSize; zz++) {
-					Block littleBlock = Block.blocksList[this.content[xx][yy][zz]];
-					if (littleBlock != null && littleBlock.getTickRandomly()) {
-						int x = (this.xCoord << 3) + xx, y = (this.yCoord << 3)
-																+ yy, z = (this.zCoord << 3)
-																			+ zz;
-						littleBlock.updateTick(	(World) this.getLittleWorld(),
-												x,
-												y,
-												z,
-												rand);
-					}
-				}
-			}
-		}
-	}
+	// public void updateTick(Random rand) {
+	// for (int xx = 0; xx < ConfigurationLib.littleBlocksSize; xx++) {
+	// for (int yy = 0; yy < ConfigurationLib.littleBlocksSize; yy++) {
+	// for (int zz = 0; zz < ConfigurationLib.littleBlocksSize; zz++) {
+	// Block littleBlock = Block.blocksList[this.content[xx][yy][zz]];
+	// if (littleBlock != null && littleBlock.getTickRandomly()) {
+	// int x = (this.xCoord << 3) + xx, y = (this.yCoord << 3)
+	// + yy, z = (this.zCoord << 3)
+	// + zz;
+	// littleBlock.updateTick( (World) this.getLittleWorld(),
+	// x,
+	// y,
+	// z,
+	// rand);
+	// }
+	// }
+	// }
+	// }
+	// }
 
 	public void setLightValue(int x, int y, int z, int value) {
 		if (x >= size | y >= size | z >= size) {

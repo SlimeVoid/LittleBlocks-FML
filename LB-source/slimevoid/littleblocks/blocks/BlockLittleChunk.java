@@ -40,7 +40,6 @@ import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
 import slimevoid.littleblocks.items.ItemLittleBlocksWand;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocksCollection;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
-import slimevoidlib.util.helpers.BlockHelper;
 import slimevoidlib.util.helpers.SlimevoidHelper;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -80,22 +79,23 @@ public class BlockLittleChunk extends BlockContainer {
 		this.setCreativeTab(CreativeTabs.tabDecorations);
 	}
 
-	@Override
-	public boolean getTickRandomly() {
-		return true;
-	}
-
-	@Override
-	public void updateTick(World world, int x, int y, int z, Random rand) {
-		TileEntityLittleChunk tile = (TileEntityLittleChunk) BlockHelper.getTileEntity(	world,
-																						x,
-																						y,
-																						z,
-																						TileEntityLittleChunk.class);
-		if (tile != null) {
-			tile.updateTick(rand);
-		}
-	}
+	// @Override
+	// public boolean getTickRandomly() {
+	// return true;
+	// }
+	//
+	// @Override
+	// public void updateTick(World world, int x, int y, int z, Random rand) {
+	// TileEntityLittleChunk tile = (TileEntityLittleChunk)
+	// BlockHelper.getTileEntity( world,
+	// x,
+	// y,
+	// z,
+	// TileEntityLittleChunk.class);
+	// if (tile != null) {
+	// tile.updateTick(rand);
+	// }
+	// }
 
 	@Override
 	public boolean isBlockSolid(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5) {
