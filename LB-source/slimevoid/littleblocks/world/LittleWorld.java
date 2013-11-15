@@ -30,7 +30,6 @@ import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.ForgeDirection;
 import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.core.LoggerLittleBlocks;
-import slimevoid.littleblocks.core.lib.BlockUtil;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 import slimevoidlib.data.Logger;
@@ -536,10 +535,7 @@ public class LittleWorld extends World implements ILittleWorld {
 													z & 7);
 				return littleBlockId;
 			} else {
-				/** POSSIBLE FIX FOR PISTON BLOCK DUPE BUG **/
-				if (BlockUtil.isPistonExtending()) return Block.bedrock.blockID;
 				return id;
-				/********************************************/
 			}
 		}
 	}
@@ -1502,5 +1498,14 @@ public class LittleWorld extends World implements ILittleWorld {
 																						side,
 																						itemstack);
 		}
+	}
+
+	@Override
+	public boolean isOutSideLittleWorld(int x, int y, int z) {
+		int id = realWorld.getChunkFromChunkCoords(	x >> 7,
+													z >> 7).getBlockID(	(x & 0x7f) >> 3,
+																		y >> 3,
+																		(z & 0x7f) >> 3);
+		return id != ConfigurationLib.littleChunkID;
 	}
 }

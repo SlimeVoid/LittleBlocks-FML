@@ -3,7 +3,6 @@ package slimevoid.littleblocks.world;
 import java.util.Collection;
 import java.util.List;
 
-import net.minecraft.block.Block;
 import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,7 +26,6 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraftforge.common.ForgeDirection;
 import slimevoid.littleblocks.api.ILittleWorld;
-import slimevoid.littleblocks.core.lib.PacketLib;
 
 public class LittleWorldServer extends WorldServer implements ILittleWorld {
 
@@ -51,61 +49,28 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 
 	@Override
 	public void metadataModified(int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
-/*		int blockX = (x << 3) + littleX;
-		int	blockY = (y << 3) + littleY;
-		int blockZ = (z << 3) + littleZ;
-													
-		if (this.blockExists(blockX, blockY, blockZ)) {
-			PacketLib.sendMetadata(	this,
-									blockX,
-									blockY,
-									blockZ,
-									blockId,
-									side,
-									metadata);
-		}*/
+		/*
+		 * int blockX = (x << 3) + littleX; int blockY = (y << 3) + littleY; int
+		 * blockZ = (z << 3) + littleZ; if (this.blockExists(blockX, blockY,
+		 * blockZ)) { PacketLib.sendMetadata( this, blockX, blockY, blockZ,
+		 * blockId, side, metadata); }
+		 */
 	}
 
 	@Override
 	public void idModified(int lastBlockId, int x, int y, int z, int side, int littleX, int littleY, int littleZ, int blockId, int metadata) {
-/*		int blockX = (x << 3) + littleX;
-		int blockY = (y << 3) + littleY;
-		int blockZ = (z << 3) + littleZ;
-		
-		if (lastBlockId != 0) {
-			Block block = Block.blocksList[lastBlockId];
-			if (block != null) {
-				block.breakBlock(	this,
-									blockX,
-									blockY,
-									blockZ,
-									side,
-									metadata);
-				PacketLib.sendBreakBlock(	this.getLittleWorld(),
-											blockX,
-											blockY,
-											blockZ,
-											side,
-											lastBlockId,
-											metadata);
-			}
-		}
-		if (blockId != 0) {
-			Block block = Block.blocksList[blockId];
-			if (block != null) {
-				block.onBlockAdded(	this,
-									blockX,
-									blockY,
-									blockZ);
-				PacketLib.sendBlockAdded(	this.getLittleWorld(),
-											blockX,
-											blockY,
-											blockZ,
-											side,
-											blockId,
-											metadata);
-			}
-		}*/
+		/*
+		 * int blockX = (x << 3) + littleX; int blockY = (y << 3) + littleY; int
+		 * blockZ = (z << 3) + littleZ; if (lastBlockId != 0) { Block block =
+		 * Block.blocksList[lastBlockId]; if (block != null) { block.breakBlock(
+		 * this, blockX, blockY, blockZ, side, metadata);
+		 * PacketLib.sendBreakBlock( this.getLittleWorld(), blockX, blockY,
+		 * blockZ, side, lastBlockId, metadata); } } if (blockId != 0) { Block
+		 * block = Block.blocksList[blockId]; if (block != null) {
+		 * block.onBlockAdded( this, blockX, blockY, blockZ);
+		 * PacketLib.sendBlockAdded( this.getLittleWorld(), blockX, blockY,
+		 * blockZ, side, blockId, metadata); } }
+		 */
 	}
 
 	@Override
@@ -223,11 +188,11 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 	@Override
 	public void scheduleBlockUpdateFromLoad(int x, int y, int z, int blockId, int tickRate, int par6) {
 		this.getLittleWorld().scheduleBlockUpdateFromLoad(	x,
-											y,
-											z,
-											blockId,
-											tickRate,
-											par6);
+															y,
+															z,
+															blockId,
+															tickRate,
+															par6);
 	}
 
 	public int getSkyBlockTypeBrightness(EnumSkyBlock enumskyblock, int x, int y, int z) {
@@ -494,10 +459,13 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 															y2,
 															z2);
 	}
-	
+
 	@Override
-    public void updateTileEntityChunkAndDoNothing(int x, int y, int z, TileEntity tileentity) {
-		this.getLittleWorld().updateTileEntityChunkAndDoNothing(x, y, z, tileentity);
+	public void updateTileEntityChunkAndDoNothing(int x, int y, int z, TileEntity tileentity) {
+		this.getLittleWorld().updateTileEntityChunkAndDoNothing(x,
+																y,
+																z,
+																tileentity);
 	}
 
 	@Override
@@ -520,32 +488,53 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 
 	@Override
 	public boolean canPlaceEntityOnSide(int blockId, int x, int y, int z, boolean flag, int side, Entity entityPlacing, ItemStack itemstack) {
-		return this.getLittleWorld().canPlaceEntityOnSide(blockId, x, y, z, flag, side, entityPlacing, itemstack);
-	}
-	
-	@Override
-	public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb, IEntitySelector entitySelector) {
-		return this.getLittleWorld().getEntitiesWithinAABBExcludingEntity(entity, axisalignedbb, entitySelector);
+		return this.getLittleWorld().canPlaceEntityOnSide(	blockId,
+															x,
+															y,
+															z,
+															flag,
+															side,
+															entityPlacing,
+															itemstack);
 	}
 
 	@Override
-    public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb) {
-		return this.getLittleWorld().getEntitiesWithinAABBExcludingEntity(entity, axisalignedbb);
+	public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb, IEntitySelector entitySelector) {
+		return this.getLittleWorld().getEntitiesWithinAABBExcludingEntity(	entity,
+																			axisalignedbb,
+																			entitySelector);
+	}
+
+	@Override
+	public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb) {
+		return this.getLittleWorld().getEntitiesWithinAABBExcludingEntity(	entity,
+																			axisalignedbb);
 	}
 
 	@Override
 	public List selectEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisalignedbb, IEntitySelector entitySelector) {
-		return this.getLittleWorld().selectEntitiesWithinAABB(entityClass, axisalignedbb, entitySelector);
+		return this.getLittleWorld().selectEntitiesWithinAABB(	entityClass,
+																axisalignedbb,
+																entitySelector);
 	}
-	
+
 	@Override
-    public List getEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisAlignedBB) {
-		return this.getLittleWorld().getEntitiesWithinAABB(entityClass, axisAlignedBB);
+	public List getEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisAlignedBB) {
+		return this.getLittleWorld().getEntitiesWithinAABB(	entityClass,
+															axisAlignedBB);
 	}
-	
+
 	@Override
 	public boolean checkNoEntityCollision(AxisAlignedBB axisalignedbb, Entity entity) {
-		return this.getLittleWorld().checkNoEntityCollision(axisalignedbb, entity);
+		return this.getLittleWorld().checkNoEntityCollision(axisalignedbb,
+															entity);
+	}
+
+	@Override
+	public boolean isOutSideLittleWorld(int x, int y, int z) {
+		return this.getLittleWorld().isOutSideLittleWorld(	x,
+															y,
+															z);
 	}
 
 	//

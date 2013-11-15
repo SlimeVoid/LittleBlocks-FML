@@ -444,4 +444,11 @@ public class LittleWorldClient extends World implements ILittleWorld {
 		return this.getLittleWorld().checkNoEntityCollision(axisalignedbb,
 															entity);
 	}
+
+	@Override
+	public boolean isOutSideLittleWorld(int x, int y, int z) {
+		return this.getLittleWorld().isOutSideLittleWorld(	x,
+															y,
+															z);
+	}
 }

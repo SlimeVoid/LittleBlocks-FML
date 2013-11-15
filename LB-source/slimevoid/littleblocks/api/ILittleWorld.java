@@ -12,4 +12,6 @@ public interface ILittleWorld extends IBlockAccess {
 	public void metadataModified(int xCoord, int yCoord, int zCoord, int side, int littleX, int littleY, int littleZ, int blockId, int metadata);
 
 	boolean isOutdated(World world);
+
+	public boolean isOutSideLittleWorld(int x, int y, int z);
 }
