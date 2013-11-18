@@ -16,9 +16,10 @@ public class PacketLittleBlockActivatedExecutor implements IPacketExecutor {
 	public void execute(PacketUpdate packet, World world, EntityPlayer entityplayer) {
 		if (packet instanceof PacketLittleBlock
 			&& packet.getCommand().equals(CommandLib.BLOCK_ACTIVATED)) {
-			((BlockLittleChunk) ConfigurationLib.littleChunk).onServerBlockActivated(	(World) LittleBlocks.proxy.getLittleWorld(world, false),
+			((BlockLittleChunk) ConfigurationLib.littleChunk).onServerBlockActivated(	(World) LittleBlocks.proxy.getLittleWorld(	world,
+																																	false),
 																						entityplayer,
-																						//littlePacket.getItemStack(),
+																						// littlePacket.getItemStack(),
 																						packet.xPosition,
 																						packet.yPosition,
 																						packet.zPosition,

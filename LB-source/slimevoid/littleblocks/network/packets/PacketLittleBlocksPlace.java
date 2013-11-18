@@ -14,12 +14,13 @@ import slimevoidlib.network.PacketUpdate;
 
 public class PacketLittleBlocksPlace extends PacketUpdate {
 
-	private ItemStack itemStack;
+	private ItemStack	itemStack;
 
 	@Override
 	public void writeData(DataOutputStream data) throws IOException {
 		super.writeData(data);
-		Packet.writeItemStack(itemStack, data);
+		Packet.writeItemStack(	itemStack,
+								data);
 	}
 
 	@Override
@@ -39,15 +40,17 @@ public class PacketLittleBlocksPlace extends PacketUpdate {
 							y,
 							z,
 							direction);
-		this.setHitVectors(xOff, yOff, zOff);
+		this.setHitVectors(	xOff,
+							yOff,
+							zOff);
 		this.itemStack = itemStack != null ? itemStack.copy() : null;
 		this.setCommand(CommandLib.BLOCK_ACTIVATED);
 	}
-	
+
 	public int getDirection() {
 		return this.side;
 	}
-	
+
 	public ItemStack getItemStack() {
 		return this.itemStack;
 	}

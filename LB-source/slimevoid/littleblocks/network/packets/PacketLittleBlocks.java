@@ -52,10 +52,14 @@ public class PacketLittleBlocks extends PacketUpdate {
 		this.setPosition(	x,
 							y,
 							z,
-							world.getBlockId(x, y, z));
+							world.getBlockId(	x,
+												y,
+												z));
 		this.payload = new PacketPayload(1, 0, 0, 1);
 		this.setCommand(CommandLib.UPDATE_CLIENT);
-		this.setMetadata(world.getBlockMetadata(x, y, z));
+		this.setMetadata(world.getBlockMetadata(x,
+												y,
+												z));
 		this.payload.setBoolPayload(0,
 									false);
 	}
