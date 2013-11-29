@@ -55,6 +55,14 @@ public class ItemLittleBlocksWand extends Item {
 		this.setCreativeTab(CreativeTabs.tabTools);
 	}
 
+	public boolean isFull3D() {
+		return true;
+	}
+
+	public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10) {
+		return true;
+	}
+
 	@Override
 	public boolean onItemUseFirst(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int l, float a, float b, float c) {
 		if (entityplayer.canPlayerEdit(	x,

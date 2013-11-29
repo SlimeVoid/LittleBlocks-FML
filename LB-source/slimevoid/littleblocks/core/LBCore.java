@@ -2,6 +2,7 @@ package slimevoid.littleblocks.core;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import slimevoid.littleblocks.blocks.BlockLBPistonBase;
 import slimevoid.littleblocks.blocks.BlockLittleChunk;
@@ -37,9 +38,19 @@ public class LBCore {
 	public static void registerRecipes() {
 		GameRegistry.addRecipe(	new ItemStack(ConfigurationLib.littleBlocksWand),
 								new Object[] {
-										"#",
-										Character.valueOf('#'),
-										Block.dirt });
+										"LIL",
+										"BGB",
+										"BWB",
+										Character.valueOf('L'),
+										new ItemStack(Item.dyePowder, 9, 4),
+										Character.valueOf('I'),
+										Item.ingotIron,
+										Character.valueOf('B'),
+										new ItemStack(Item.dyePowder, 1, 0),
+										Character.valueOf('G'),
+										Item.goldNugget,
+										Character.valueOf('W'),
+										Block.cloth });
 	}
 
 	public static void registerBlocks() {
