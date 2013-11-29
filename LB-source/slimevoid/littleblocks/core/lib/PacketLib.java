@@ -19,6 +19,7 @@ import slimevoid.littleblocks.network.handlers.PacketLoginHandler;
 import slimevoid.littleblocks.network.packets.PacketLittleBlock;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocks;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocksEvents;
+import slimevoid.littleblocks.network.packets.PacketLittleNotify;
 import slimevoid.littleblocks.network.packets.executors.PacketLittleBlockActivatedExecutor;
 import slimevoid.littleblocks.network.packets.executors.PacketLittleBlockClickedExecutor;
 import slimevoid.littleblocks.network.packets.executors.PacketLittleBlocksLoginExecutor;
@@ -114,38 +115,7 @@ public class PacketLib {
 	public static void blockActivated(World world, EntityPlayer entityplayer, int x, int y, int z, int q, float a, float b, float c) {
 		PacketLittleBlock packetLB = new PacketLittleBlock(x, y, z, q, entityplayer.getCurrentEquippedItem(), a, b, c);
 		PacketDispatcher.sendPacketToServer(packetLB.getPacket());
-	}/*
-	 * @SideOnly(Side.CLIENT) public static void blockClicked(World world,
-	 * EntityPlayer entityplayer, int x, int y, int z, BlockLittleChunk block) {
-	 * PacketLittleBlocks packetLB = new
-	 * PacketLittleBlocks(CommandLib.BLOCK_CLICKED, x, y, z, 0, 0, 0, 0,
-	 * block.xSelected, block.ySelected, block.zSelected, block.blockID,
-	 * block.side); PacketDispatcher.sendPacketToServer(packetLB.getPacket()); }
-	 * public static void sendBreakBlock(ILittleWorld littleWorld, int blockX,
-	 * int blockY, int blockZ, int side, int lastBlockId, int metadata) {
-	 * PacketLittleBlocks packetLB = new
-	 * PacketLittleBlocks(CommandLib.BREAK_BLOCK, blockX, blockY, blockZ, side,
-	 * lastBlockId, metadata);
-	 * PacketDispatcher.sendPacketToAllPlayers(packetLB.getPacket()); } public
-	 * static void sendBlockAdded(ILittleWorld littleWorld, int blockX, int
-	 * blockY, int blockZ, int side, int blockId, int metadata) {
-	 * PacketLittleBlocks packetLB = new
-	 * PacketLittleBlocks(CommandLib.BLOCK_ADDED, blockX, blockY, blockZ, side,
-	 * blockId, metadata);
-	 * PacketDispatcher.sendPacketToAllPlayers(packetLB.getPacket()); } public
-	 * static void sendMetadata(ILittleWorld littleWorld, int blockX, int
-	 * blockY, int blockZ, int blockId, int side, int metadata) {
-	 * PacketLittleBlocks packetLB = new
-	 * PacketLittleBlocks(CommandLib.METADATA_MODIFIED, blockX, blockY, blockZ,
-	 * side, blockId, metadata);
-	 * PacketDispatcher.sendPacketToAllPlayers(packetLB.getPacket()); } public
-	 * static void sendTileEntity(ILittleWorld littleWorld, TileEntity
-	 * tileentity, int x, int y, int z) { PacketLittleBlocks packetTile = new
-	 * PacketLittleBlocks(CommandLib.TILE_ENTITY_UPDATE, x, y, z, 0,
-	 * littleWorld.getBlockId( x, y, z), littleWorld.getBlockMetadata( x, y,
-	 * z)); packetTile.setTileEntityData(tileentity);
-	 * PacketDispatcher.sendPacketToAllPlayers(packetTile.getPacket()); }
-	 */
+	}
 
 	public static void sendBlockEvent(int x, int y, int z, int blockID, int eventID, int eventParameter) {
 		PacketLittleBlocksEvents eventPacket = new PacketLittleBlocksEvents(x, y, z, blockID, eventID, eventParameter);
@@ -170,6 +140,19 @@ public class PacketLib {
 	public static void sendBlockChange(World world, EntityPlayer entityplayer, int x, int y, int z) {
 		PacketLittleBlocks changePacket = new PacketLittleBlocks(x, y, z, world);
 		PacketDispatcher.sendPacketToPlayer(changePacket.getPacket(),
+											(Player) entityplayer);
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static void wandModeSwitched() {
+		PacketLittleNotify packet = new PacketLittleNotify(CommandLib.WAND_SWITCH);
+		PacketDispatcher.sendPacketToServer(packet.getPacket());
+	}
+
+	public static void sendWandChange(World world, EntityPlayer entityplayer, int actionID) {
+		PacketLittleNotify wandPacket = new PacketLittleNotify(CommandLib.WAND_SWITCH);
+		wandPacket.side = actionID;
+		PacketDispatcher.sendPacketToPlayer(wandPacket.getPacket(),
 											(Player) entityplayer);
 	}
 }

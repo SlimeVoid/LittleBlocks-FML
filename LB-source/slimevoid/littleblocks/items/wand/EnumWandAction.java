@@ -3,13 +3,14 @@ package slimevoid.littleblocks.items.wand;
 import java.util.HashMap;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
+import slimevoid.littleblocks.core.lib.PacketLib;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public enum EnumWandAction {
 	PLACE_LB, ROTATE_LB, COPY_LB, DESTROY_LB;
 
-	int														actionID;
 	String													actionName;
 	String													actionDescription;
 
@@ -17,19 +18,15 @@ public enum EnumWandAction {
 	private static EnumWandAction							playerWandAction	= PLACE_LB;
 
 	public static void registerWandActions() {
-		PLACE_LB.actionID = 0;
 		PLACE_LB.actionName = "placeLB";
 		PLACE_LB.actionDescription = "Place Mode";
 
-		ROTATE_LB.actionID = 1;
 		ROTATE_LB.actionName = "rotateLB";
 		ROTATE_LB.actionDescription = "Rotate Mode";
 
-		COPY_LB.actionID = 2;
 		COPY_LB.actionName = "copyLB";
 		COPY_LB.actionDescription = "Copy Mode";
 
-		DESTROY_LB.actionID = 3;
 		DESTROY_LB.actionName = "destroyLB";
 		DESTROY_LB.actionDescription = "Destroy Mode";
 
@@ -59,15 +56,25 @@ public enum EnumWandAction {
 		return action;
 	}
 
-	public static void setNextActionForPlayer(EntityPlayer entityplayer) {
+	public static void setNextActionForPlayer(World world, EntityPlayer entityplayer) {
 		EnumWandAction currentAction = getWandActionForPlayer(entityplayer);
-		int nextActionID = currentAction.actionID;
+		int nextActionID = currentAction.ordinal();
 		nextActionID++;
-		EnumWandAction nextAction = getAction(nextActionID);
+		EnumWandAction nextAction = validateAction(	entityplayer,
+													getAction(nextActionID));
 		setWandActionForPlayer(	entityplayer,
 								nextAction);
 		entityplayer.sendChatToPlayer("Little Wand now in "
 										+ nextAction.actionDescription);
+		PacketLib.sendWandChange(	world,
+									entityplayer,
+									nextAction.ordinal());
+	}
+
+	private static EnumWandAction validateAction(EntityPlayer entityplayer, EnumWandAction action) {
+		int nextActionID = action.ordinal();
+		nextActionID++;
+		return action.equals(EnumWandAction.COPY_LB) ? entityplayer.capabilities.isCreativeMode ? action : getAction(nextActionID) : action;
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -76,10 +83,8 @@ public enum EnumWandAction {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public static void setNextWandAction() {
-		EnumWandAction currentAction = getWandAction();
-		int nextActionID = currentAction.actionID;
-		EnumWandAction nextAction = getAction(nextActionID);
+	public static void setNextWandAction(int actionID) {
+		EnumWandAction nextAction = getAction(actionID);
 		setWandAction(nextAction);
 	}
 
