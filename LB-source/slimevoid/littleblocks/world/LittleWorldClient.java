@@ -386,8 +386,8 @@ public class LittleWorldClient extends World implements ILittleWorld {
 	}
 
 	@Override
-	public void updateTileEntityChunkAndDoNothing(int x, int y, int z, TileEntity tileentity) {
-		this.getLittleWorld().updateTileEntityChunkAndDoNothing(x,
+	public void markTileEntityChunkModified(int x, int y, int z, TileEntity tileentity) {
+		this.getLittleWorld().markTileEntityChunkModified(x,
 																y,
 																z,
 																tileentity);

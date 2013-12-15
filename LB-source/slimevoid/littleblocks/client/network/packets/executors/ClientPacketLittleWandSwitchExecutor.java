@@ -14,7 +14,7 @@ public class ClientPacketLittleWandSwitchExecutor implements IPacketExecutor {
 	public void execute(PacketUpdate packet, World world, EntityPlayer entityplayer) {
 		if (packet instanceof PacketLittleNotify
 			&& packet.getCommand().equals(CommandLib.WAND_SWITCH)) {
-			EnumWandAction.setNextWandAction(packet.side);
+			EnumWandAction.setNextWandAction();
 		}
 	}
 }

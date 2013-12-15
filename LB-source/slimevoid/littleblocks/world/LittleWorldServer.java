@@ -113,11 +113,11 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 	 * future. Args: X, Y, Z, blockID
 	 */
 	@Override
-	public boolean isBlockTickScheduled(int x, int y, int z, int blockId) {
-		return this.getLittleWorld().isBlockTickScheduled(	x,
-															y,
-															z,
-															blockId);
+	public boolean isBlockTickScheduledThisTick(int x, int y, int z, int blockId) {
+		return this.getLittleWorld().isBlockTickScheduledThisTick(	x,
+																	y,
+																	z,
+																	blockId);
 	}
 
 	/**
@@ -163,12 +163,12 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 	 */
 	@Override
 	public void scheduleBlockUpdate(int x, int y, int z, int blockId, int tickRate) {
-		this.func_82740_a(	x,
-							y,
-							z,
-							blockId,
-							tickRate,
-							0);
+		this.scheduleBlockUpdateWithPriority(	x,
+												y,
+												z,
+												blockId,
+												tickRate,
+												0);
 	}
 
 	/**
@@ -176,13 +176,13 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 	 * with some Value
 	 */
 	@Override
-	public void func_82740_a(int x, int y, int z, int blockId, int tickRate, int someValue) {
-		this.getLittleWorld().func_82740_a(	x,
-											y,
-											z,
-											blockId,
-											tickRate,
-											someValue);
+	public void scheduleBlockUpdateWithPriority(int x, int y, int z, int blockId, int tickRate, int someValue) {
+		this.getLittleWorld().scheduleBlockUpdateWithPriority(	x,
+																y,
+																z,
+																blockId,
+																tickRate,
+																someValue);
 	}
 
 	@Override
@@ -461,11 +461,8 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 	}
 
 	@Override
-	public void updateTileEntityChunkAndDoNothing(int x, int y, int z, TileEntity tileentity) {
-		this.getLittleWorld().updateTileEntityChunkAndDoNothing(x,
-																y,
-																z,
-																tileentity);
+    public void markTileEntityChunkModified(int x, int y, int z, TileEntity tileentity) {
+		this.getLittleWorld().markTileEntityChunkModified(x, y, z, tileentity);
 	}
 
 	@Override

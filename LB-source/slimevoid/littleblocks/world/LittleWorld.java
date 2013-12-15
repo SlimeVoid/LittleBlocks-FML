@@ -318,22 +318,21 @@ public class LittleWorld extends World implements ILittleWorld {
 		}
 	}
 
-	// @SideOnly(Side.CLIENT)
-	// @Override
-	// public float getBrightness(int x, int y, int z, int l) {
-	// if (realWorld != null) {
-	// return this.getRealWorld().getBrightness( x >> 3,
-	// y >> 3,
-	// z >> 3,
-	// l);
-	// } else {
-	// LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(
-	// this.getRealWorld().isRemote,
-	// "getBrightness().[null]",
-	// LoggerLittleBlocks.LogLevel.DEBUG);
-	// return 0;
-	// }
-	// }
+	@SideOnly(Side.CLIENT)
+	@Override
+	public float getBrightness(int x, int y, int z, int l) {
+		if (realWorld != null) {
+			return this.getRealWorld().getBrightness(	x >> 3,
+														y >> 3,
+														z >> 3,
+														l);
+		} else {
+			LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(	this.getRealWorld().isRemote,
+																										"getBrightness().[null]",
+																										LoggerLittleBlocks.LogLevel.DEBUG);
+			return 0;
+		}
+	}
 
 	@Override
 	public void setLightValue(EnumSkyBlock sky, int x, int y, int z, int value) {
@@ -1321,8 +1320,7 @@ public class LittleWorld extends World implements ILittleWorld {
 															z2 >> 3);
 	}
 
-	@Override
-	public void updateTileEntityChunkAndDoNothing(int x, int y, int z, TileEntity tileentity) {
+	public void markTileEntityChunkModified(int x, int y, int z, TileEntity tileentity) {
 		TileEntity tile = this.getRealWorld().getBlockTileEntity(	x >> 3,
 																	y >> 3,
 																	z >> 3);

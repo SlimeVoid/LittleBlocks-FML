@@ -197,12 +197,12 @@ public class LittleServerWorld extends LittleWorld {
 								metadata = -1;
 							}
 
-							CrashReportCategory.func_85068_a(	var9,
-																nextTick.xCoord,
-																nextTick.yCoord,
-																nextTick.zCoord,
-																blockId,
-																metadata);
+							CrashReportCategory.addBlockCrashInfo(	var9,
+																	nextTick.xCoord,
+																	nextTick.yCoord,
+																	nextTick.zCoord,
+																	blockId,
+																	metadata);
 							throw new ReportedException(crashReport);
 						}
 					}
@@ -263,7 +263,7 @@ public class LittleServerWorld extends LittleWorld {
 	 * future. Args: X, Y, Z, blockID
 	 */
 	@Override
-	public boolean isBlockTickScheduled(int x, int y, int z, int blockId) {
+	public boolean isBlockTickScheduledThisTick(int x, int y, int z, int blockId) {
 		// System.out.println("isBlockTickScheduled");
 		NextTickListEntry nextticklistentry = new NextTickListEntry(x, y, z, blockId);
 		return this.pendingTickListEntriesThisTick.contains(nextticklistentry);
@@ -446,12 +446,12 @@ public class LittleServerWorld extends LittleWorld {
 	 */
 	@Override
 	public void scheduleBlockUpdate(int x, int y, int z, int blockId, int tickRate) {
-		this.func_82740_a(	x,
-							y,
-							z,
-							blockId,
-							tickRate,
-							0);
+		this.scheduleBlockUpdateWithPriority(	x,
+												y,
+												z,
+												blockId,
+												tickRate,
+												0);
 	}
 
 	/**
@@ -459,7 +459,7 @@ public class LittleServerWorld extends LittleWorld {
 	 * with some Value
 	 */
 	@Override
-	public void func_82740_a(int x, int y, int z, int blockId, int tickRate, int priority) {
+	public void scheduleBlockUpdateWithPriority(int x, int y, int z, int blockId, int tickRate, int priority) {
 		NextTickListEntry nextTickEntry = new NextTickListEntry(x, y, z, blockId);
 		byte max = 8;
 
@@ -496,7 +496,7 @@ public class LittleServerWorld extends LittleWorld {
 			if (blockId > 0) {
 				nextTickEntry.setScheduledTime(tickRate
 												+ this.getRealWorld().getWorldInfo().getWorldTotalTime());
-				nextTickEntry.func_82753_a(priority);
+				nextTickEntry.setPriority(priority);
 			}
 
 			if (!this.pendingTickListEntriesHashSet.contains(nextTickEntry)) {
@@ -515,7 +515,7 @@ public class LittleServerWorld extends LittleWorld {
 	@Override
 	public void scheduleBlockUpdateFromLoad(int x, int y, int z, int blockId, int tickRate, int priority) {
 		NextTickListEntry nextTick = new NextTickListEntry(x, y, z, blockId);
-		nextTick.func_82753_a(priority);
+		nextTick.setPriority(priority);
 
 		if (blockId > 0) {
 			nextTick.setScheduledTime((long) tickRate

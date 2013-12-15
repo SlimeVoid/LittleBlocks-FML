@@ -239,11 +239,11 @@ public class BlockUtil {
 		} else {
 			// double dist = this.getBlockReachDistance() + 1;
 			// dist *= dist;
-			if (!mcServer.func_96290_a(	((ILittleWorld) world).getRealWorld(),
-										x >> 3,
-										y >> 3,
-										z >> 3,
-										entityplayer)) {
+			if (!mcServer.isBlockProtected(	((ILittleWorld) world).getRealWorld(),
+											x >> 3,
+											y >> 3,
+											z >> 3,
+											entityplayer)) {
 				getLittleItemManager(	(EntityPlayerMP) entityplayer,
 										world).activateBlockOrUseItem(	entityplayer,
 																		world,
