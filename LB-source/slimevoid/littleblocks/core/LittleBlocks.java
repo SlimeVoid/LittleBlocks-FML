@@ -28,9 +28,9 @@ import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
 		clientPacketHandlerSpec = @SidedPacketHandler(
 				channels = { CoreLib.MOD_CHANNEL },
 				packetHandler = ClientPacketHandler.class),
-		serverPacketHandlerSpec = @SidedPacketHandler(
-				channels = { CoreLib.MOD_CHANNEL },
-				packetHandler = CommonPacketHandler.class),
+		serverPacketHandlerSpec = @SidedPacketHandler(channels = {
+				CoreLib.MOD_CHANNEL,
+				"MC|AdvCdm" }, packetHandler = CommonPacketHandler.class),
 		connectionHandler = ConnectionHandler.class)
 public class LittleBlocks {
 	@SidedProxy(
