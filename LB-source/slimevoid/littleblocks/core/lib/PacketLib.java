@@ -1,7 +1,16 @@
 package slimevoid.littleblocks.core.lib;
 
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.INetworkManager;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityCommandBlock;
+import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.world.World;
 import slimevoid.littleblocks.client.network.ClientPacketHandler;
 import slimevoid.littleblocks.client.network.packets.executors.ClientBlockChangeExecutor;
@@ -9,6 +18,7 @@ import slimevoid.littleblocks.client.network.packets.executors.ClientBlockEventE
 import slimevoid.littleblocks.client.network.packets.executors.ClientCopierNotifyExecutor;
 import slimevoid.littleblocks.client.network.packets.executors.ClientLittleCollectionExecutor;
 import slimevoid.littleblocks.client.network.packets.executors.ClientPacketLittleBlocksLoginExecutor;
+import slimevoid.littleblocks.core.LittleBlocks;
 import slimevoid.littleblocks.network.CommonPacketHandler;
 import slimevoid.littleblocks.network.handlers.PacketLittleBlockCollectionHandler;
 import slimevoid.littleblocks.network.handlers.PacketLittleBlockEventHandler;
@@ -25,6 +35,7 @@ import slimevoid.littleblocks.network.packets.executors.PacketLittleBlockClicked
 import slimevoid.littleblocks.network.packets.executors.PacketLittleBlocksLoginExecutor;
 import slimevoid.littleblocks.network.packets.executors.PacketLittleWandSwitchExecutor;
 import slimevoidlib.network.PacketIds;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.relauncher.Side;
@@ -32,10 +43,12 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class PacketLib {
 
-	public final static int	PACKETID_EVENT	= PacketIds.PLAYER + 100;
-	public final static int	BLOCK_CLICK		= 0;
-	public final static int	DIG_ONGOING		= 1;
-	public final static int	DIG_BROKEN		= 2;
+	public final static String	CHANNEL_COMMAND_BLOCK	= "MC|AdvCdm";
+	public final static String	LITTLEWORLD				= "LW:";
+	public final static int		PACKETID_EVENT			= PacketIds.PLAYER + 100;
+	public final static int		BLOCK_CLICK				= 0;
+	public final static int		DIG_ONGOING				= 1;
+	public final static int		DIG_BROKEN				= 2;
 
 	@SideOnly(Side.CLIENT)
 	public static void registerClientPacketHandlers() {
@@ -154,5 +167,55 @@ public class PacketLib {
 		wandPacket.side = actionID;
 		PacketDispatcher.sendPacketToPlayer(wandPacket.getPacket(),
 											(Player) entityplayer);
+	}
+
+	public static void tryMinecraftPacket(INetworkManager manager, Packet250CustomPayload packet, Player player) {
+		if (packet.channel.equals(CHANNEL_COMMAND_BLOCK)) {
+			if (!FMLCommonHandler.instance().getMinecraftServerInstance().isCommandBlockEnabled()) {
+				((EntityPlayer) player).sendChatToPlayer(ChatMessageComponent.createFromTranslationKey(MessageLib.COMMAND_BLOCK_DISABLED));
+			} else if (((EntityPlayer) player).canCommandSenderUseCommand(	2,
+																			"")
+						&& ((EntityPlayer) player).capabilities.isCreativeMode) {
+				try {
+					DataInputStream data = new DataInputStream(new ByteArrayInputStream(packet.data));
+					int i = data.readInt();
+					int j = data.readInt();
+					int k = data.readInt();
+					String s = Packet.readString(	data,
+													256);
+					TileEntity tileentity = ((EntityPlayer) player).worldObj.getBlockTileEntity(i,
+																								j,
+																								k);
+					// attempt to get littleworld
+					if (tileentity == null || s.startsWith(LITTLEWORLD)) { // TODO::
+																			// What
+																			// is
+																			// this???
+						World littleWorld = (World) LittleBlocks.proxy.getLittleWorld(	((EntityPlayer) player).worldObj,
+																						false);
+						tileentity = littleWorld.getBlockTileEntity(i,
+																	j,
+																	k);
+						if (s.startsWith("LW:")) {
+							s = s.substring(3);
+						}
+					}
+
+					if (tileentity != null
+						&& tileentity instanceof TileEntityCommandBlock) {
+						((TileEntityCommandBlock) tileentity).setCommand(s);
+						((EntityPlayer) player).worldObj.markBlockForUpdate(i,
+																			j,
+																			k);
+						((EntityPlayer) player).sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions(	MessageLib.COMMAND_BLOCK_SUCCESS,
+																																new Object[] { s }));
+					}
+				} catch (Exception exception3) {
+					exception3.printStackTrace();
+				}
+			} else {
+				((EntityPlayer) player).sendChatToPlayer(ChatMessageComponent.createFromTranslationKey(MessageLib.COMMAND_BLOCK_NOT_ALLOWED));
+			}
+		}
 	}
 }

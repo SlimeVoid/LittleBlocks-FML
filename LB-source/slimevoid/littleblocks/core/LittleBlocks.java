@@ -3,6 +3,7 @@ package slimevoid.littleblocks.core;
 import slimevoid.littleblocks.api.ILBCommonProxy;
 import slimevoid.littleblocks.client.network.ClientPacketHandler;
 import slimevoid.littleblocks.core.lib.CoreLib;
+import slimevoid.littleblocks.core.lib.PacketLib;
 import slimevoid.littleblocks.network.CommonPacketHandler;
 import slimevoid.littleblocks.network.ConnectionHandler;
 import cpw.mods.fml.common.Mod;
@@ -28,7 +29,7 @@ import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
 				packetHandler = ClientPacketHandler.class),
 		serverPacketHandlerSpec = @SidedPacketHandler(channels = {
 				CoreLib.MOD_CHANNEL,
-				"MC|AdvCdm" }, packetHandler = CommonPacketHandler.class),
+				PacketLib.CHANNEL_COMMAND_BLOCK }, packetHandler = CommonPacketHandler.class),
 		connectionHandler = ConnectionHandler.class)
 public class LittleBlocks {
 	@SidedProxy(

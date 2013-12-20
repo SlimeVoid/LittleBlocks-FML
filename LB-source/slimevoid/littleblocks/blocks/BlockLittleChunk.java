@@ -79,24 +79,6 @@ public class BlockLittleChunk extends BlockContainer {
 		this.setCreativeTab(CreativeTabs.tabDecorations);
 	}
 
-	// @Override
-	// public boolean getTickRandomly() {
-	// return true;
-	// }
-	//
-	// @Override
-	// public void updateTick(World world, int x, int y, int z, Random rand) {
-	// TileEntityLittleChunk tile = (TileEntityLittleChunk)
-	// BlockHelper.getTileEntity( world,
-	// x,
-	// y,
-	// z,
-	// TileEntityLittleChunk.class);
-	// if (tile != null) {
-	// tile.updateTick(rand);
-	// }
-	// }
-
 	@Override
 	public boolean isBlockSolid(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5) {
 		return false;
