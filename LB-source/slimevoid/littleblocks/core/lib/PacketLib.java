@@ -12,13 +12,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityCommandBlock;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.world.World;
+import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.client.network.ClientPacketHandler;
 import slimevoid.littleblocks.client.network.packets.executors.ClientBlockChangeExecutor;
 import slimevoid.littleblocks.client.network.packets.executors.ClientBlockEventExecutor;
 import slimevoid.littleblocks.client.network.packets.executors.ClientCopierNotifyExecutor;
 import slimevoid.littleblocks.client.network.packets.executors.ClientLittleCollectionExecutor;
 import slimevoid.littleblocks.client.network.packets.executors.ClientPacketLittleBlocksLoginExecutor;
-import slimevoid.littleblocks.core.LittleBlocks;
 import slimevoid.littleblocks.network.CommonPacketHandler;
 import slimevoid.littleblocks.network.handlers.PacketLittleBlockCollectionHandler;
 import slimevoid.littleblocks.network.handlers.PacketLittleBlockEventHandler;
@@ -35,6 +35,7 @@ import slimevoid.littleblocks.network.packets.executors.PacketLittleBlockClicked
 import slimevoid.littleblocks.network.packets.executors.PacketLittleBlocksLoginExecutor;
 import slimevoid.littleblocks.network.packets.executors.PacketLittleWandSwitchExecutor;
 import slimevoidlib.network.PacketIds;
+import slimevoidlib.util.helpers.SlimevoidHelper;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
@@ -183,32 +184,29 @@ public class PacketLib {
 					int k = data.readInt();
 					String s = Packet.readString(	data,
 													256);
-					TileEntity tileentity = ((EntityPlayer) player).worldObj.getBlockTileEntity(i,
-																								j,
-																								k);
-					// attempt to get littleworld
-					if (tileentity == null || s.startsWith(LITTLEWORLD)) { // TODO::
-																			// What
-																			// is
-																			// this???
-						World littleWorld = (World) LittleBlocks.proxy.getLittleWorld(	((EntityPlayer) player).worldObj,
-																						false);
-						tileentity = littleWorld.getBlockTileEntity(i,
+					TileEntity realTileEntity = ((EntityPlayer) player).worldObj.getBlockTileEntity(i,
+																									j,
+																									k);
+					boolean littleCommand = s.startsWith(LITTLEWORLD);
+					if (realTileEntity == null || littleCommand) {
+						TileEntity tileentity = SlimevoidHelper.getBlockTileEntity(	((EntityPlayer) player).worldObj,
+																					i,
+																					j,
+																					k);
+
+						if (tileentity != null
+							&& tileentity instanceof TileEntityCommandBlock
+							&& tileentity.worldObj instanceof ILittleWorld) {
+							if (littleCommand) {
+								s = s.substring(LITTLEWORLD.length());
+							}
+							((TileEntityCommandBlock) tileentity).setCommand(s);
+							tileentity.worldObj.markBlockForUpdate(	i,
 																	j,
 																	k);
-						if (s.startsWith("LW:")) {
-							s = s.substring(3);
+							((EntityPlayer) player).sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions(	MessageLib.COMMAND_BLOCK_SUCCESS,
+																																	new Object[] { s }));
 						}
-					}
-
-					if (tileentity != null
-						&& tileentity instanceof TileEntityCommandBlock) {
-						((TileEntityCommandBlock) tileentity).setCommand(s);
-						((EntityPlayer) player).worldObj.markBlockForUpdate(i,
-																			j,
-																			k);
-						((EntityPlayer) player).sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions(	MessageLib.COMMAND_BLOCK_SUCCESS,
-																																new Object[] { s }));
 					}
 				} catch (Exception exception3) {
 					exception3.printStackTrace();

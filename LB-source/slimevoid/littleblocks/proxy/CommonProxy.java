@@ -13,10 +13,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.ForgeDummyContainer;
 import net.minecraftforge.common.MinecraftForge;
 import slimevoid.littleblocks.api.ILBCommonProxy;
 import slimevoid.littleblocks.api.ILittleWorld;
-//import slimevoid.littleblocks.blocks.core.LittleContainerInteract;
+import slimevoid.littleblocks.blocks.core.LittleContainerInteract;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
 import slimevoid.littleblocks.core.lib.PacketLib;
 import slimevoid.littleblocks.events.WorldServerLoadEvent;
@@ -30,12 +31,15 @@ import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 
+// import slimevoid.littleblocks.blocks.core.LittleContainerInteract;
+
 public class CommonProxy implements ILBCommonProxy {
 
 	@Override
 	public void preInit() {
 		CommonPacketHandler.init();
 		PacketLib.registerPacketHandlers();
+		ForgeDummyContainer.fullBoundingBoxLadders = true;
 	}
 
 	@Override
@@ -76,7 +80,7 @@ public class CommonProxy implements ILBCommonProxy {
 		MinecraftForge.EVENT_BUS.register(new WorldServerLoadEvent());
 		MinecraftForge.EVENT_BUS.register(new WorldServerUnloadEvent());
 		MinecraftForge.EVENT_BUS.register(new LittleBlocksCollectionPickup());
-		//MinecraftForge.EVENT_BUS.register(new LittleContainerInteract());
+		MinecraftForge.EVENT_BUS.register(new LittleContainerInteract());
 		// MinecraftForge.EVENT_BUS.register(new PlayerInteractInterrupt());
 		// MinecraftForge.EVENT_BUS.register(new LittleLadderHandler());
 		// MinecraftForge.EVENT_BUS.register(new PistonOrientation());
