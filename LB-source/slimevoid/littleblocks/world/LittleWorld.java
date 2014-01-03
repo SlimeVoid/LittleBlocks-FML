@@ -1506,4 +1506,13 @@ public class LittleWorld extends World implements ILittleWorld {
 																		(z & 0x7f) >> 3);
 		return id != ConfigurationLib.littleChunkID;
 	}
+
+	@Override
+	public int getFullBlockLightValue(int x, int y, int z) {
+		return realWorld.getChunkFromChunkCoords(	x >> 7,
+													z >> 7).getBlockLightValue(	(x & 0x7f) >> 3,
+																				y >> 3,
+																				(z & 0x7f) >> 3,
+																				0);
+	}
 }
