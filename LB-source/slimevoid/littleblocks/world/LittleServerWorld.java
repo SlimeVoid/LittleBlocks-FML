@@ -80,9 +80,6 @@ public class LittleServerWorld extends LittleWorld {
 		}
 	}
 
-	public void littleTick() {
-	}
-
 	@Override
 	public void tick() {
 		this.worldInfo.incrementTotalWorldTime(this.worldInfo.getWorldTotalTime() + 1L);
@@ -226,28 +223,6 @@ public class LittleServerWorld extends LittleWorld {
 	@Override
 	protected void tickBlocksAndAmbiance() {
 		super.tickBlocksAndAmbiance();
-
-		/*
-		 * Iterator<ChunkCoordIntPair> chunkpairs =
-		 * this.activeChunkSet.iterator();
-		 * this.doneChunks.retainAll(this.activeChunkSet); if
-		 * (this.doneChunks.size() == this.activeChunkSet.size()) {
-		 * this.doneChunks.clear(); } final long startTime = System.nanoTime();
-		 * while (chunkpairs.hasNext()) { ChunkCoordIntPair chunkpair =
-		 * chunkpairs.next(); int x = chunkpair.chunkXPos * 16; int z =
-		 * chunkpair.chunkZPos * 16;
-		 * //this.theProfiler.startSection("getChunk"); Chunk chunk =
-		 * this.getRealWorld().getChunkFromBlockCoords(chunkpair.chunkXPos,
-		 * chunkpair.chunkZPos);
-		 * //this.theProfiler.endStartSection("tickChunk"); if
-		 * (System.nanoTime() - startTime <= 4000000 &&
-		 * this.doneChunks.add(chunkpair)) { }
-		 * //this.theProfiler.endStartSection("tickTiles"); Iterator<TileEntity>
-		 * tiles = chunk.chunkTileEntityMap.values().iterator(); while
-		 * (tiles.hasNext()) { TileEntity tile = tiles.next(); if (tile
-		 * instanceof TileEntityLittleChunk) { ((TileEntityLittleChunk)
-		 * tile).updateTick(this.rand); } } //this.theProfiler.endSection(); }
-		 */
 	}
 
 	public void updateLittleEntities() {

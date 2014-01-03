@@ -28,12 +28,10 @@ import cpw.mods.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class LittleWorldClient extends World implements ILittleWorld {
 
-	private final World			realWorld;
 	private final LittleWorld	littleWorld;
 
 	public LittleWorldClient(World referenceWorld, ISaveHandler saveHandler, String worldName, WorldProvider provider, WorldSettings worldSettings, int difficultySetting, Profiler profiler, ILogAgent iLogAgent) {
 		super(saveHandler, worldName, provider, worldSettings, profiler, iLogAgent);
-		this.realWorld = referenceWorld;
 		this.isRemote = true;
 		String name = referenceWorld.getWorldInfo().getWorldName()
 						+ ".littleWorld";
@@ -49,7 +47,7 @@ public class LittleWorldClient extends World implements ILittleWorld {
 
 	@Override
 	public World getRealWorld() {
-		return this.realWorld;
+		return this.getLittleWorld().getRealWorld();
 	}
 
 	public LittleWorld getLittleWorld() {
@@ -140,6 +138,20 @@ public class LittleWorldClient extends World implements ILittleWorld {
 	@Override
 	public int getBlockLightValue(int x, int y, int z) {
 		return this.getLittleWorld().getBlockLightValue(x,
+														y,
+														z);
+	}
+
+	@Override
+	public int getFullBlockLightValue(int x, int y, int z) {
+		return this.getLittleWorld().getFullBlockLightValue(x,
+															y,
+															z);
+	}
+
+	@Override
+	public boolean canBlockSeeTheSky(int x, int y, int z) {
+		return this.getLittleWorld().canBlockSeeTheSky(	x,
 														y,
 														z);
 	}
@@ -387,10 +399,10 @@ public class LittleWorldClient extends World implements ILittleWorld {
 
 	@Override
 	public void markTileEntityChunkModified(int x, int y, int z, TileEntity tileentity) {
-		this.getLittleWorld().markTileEntityChunkModified(x,
-																y,
-																z,
-																tileentity);
+		this.getLittleWorld().markTileEntityChunkModified(	x,
+															y,
+															z,
+															tileentity);
 	}
 
 	@Override

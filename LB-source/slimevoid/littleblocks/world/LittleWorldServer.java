@@ -29,18 +29,16 @@ import slimevoid.littleblocks.api.ILittleWorld;
 
 public class LittleWorldServer extends WorldServer implements ILittleWorld {
 
-	private final World				realWorld;
 	private final LittleServerWorld	littleWorld;
 
 	public LittleWorldServer(World referenceWorld, MinecraftServer minecraftServer, ISaveHandler iSaveHandler, String par3Str, int par4, WorldSettings par5WorldSettings, Profiler par6Profiler, ILogAgent par7iLogAgent) {
 		super(minecraftServer, iSaveHandler, par3Str, par4, par5WorldSettings, par6Profiler, par7iLogAgent);
-		this.realWorld = referenceWorld;
 		this.littleWorld = new LittleServerWorld(referenceWorld, this.provider);
 	}
 
 	@Override
 	public World getRealWorld() {
-		return this.realWorld;
+		return this.getLittleWorld().getRealWorld();
 	}
 
 	public LittleServerWorld getLittleWorld() {
@@ -76,9 +74,6 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 	@Override
 	public boolean isOutdated(World world) {
 		return this.getLittleWorld().isOutdated(world);
-	}
-
-	public void littleTick() {
 	}
 
 	@Override
@@ -231,6 +226,20 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 	@Override
 	public int getBlockLightValue(int x, int y, int z) {
 		return this.getLittleWorld().getBlockLightValue(x,
+														y,
+														z);
+	}
+
+	@Override
+	public int getFullBlockLightValue(int x, int y, int z) {
+		return this.getLittleWorld().getFullBlockLightValue(x,
+															y,
+															z);
+	}
+
+	@Override
+	public boolean canBlockSeeTheSky(int x, int y, int z) {
+		return this.getLittleWorld().canBlockSeeTheSky(	x,
 														y,
 														z);
 	}
@@ -461,8 +470,11 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 	}
 
 	@Override
-    public void markTileEntityChunkModified(int x, int y, int z, TileEntity tileentity) {
-		this.getLittleWorld().markTileEntityChunkModified(x, y, z, tileentity);
+	public void markTileEntityChunkModified(int x, int y, int z, TileEntity tileentity) {
+		this.getLittleWorld().markTileEntityChunkModified(	x,
+															y,
+															z,
+															tileentity);
 	}
 
 	@Override
