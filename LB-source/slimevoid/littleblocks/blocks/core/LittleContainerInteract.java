@@ -105,35 +105,39 @@ public class LittleContainerInteract {
 
 	private void WorldCanInteract(PlayerOpenContainerEvent event, Field worldField, IBlockAccess world, Field[] fields, int worldFieldIndex, Object datasource) {
 		try {
+			boolean checked = false;
 			worldField.set(	datasource,
 							LittleBlocks.proxy.getLittleWorld(	world,
 																false));
-
-			fields[worldFieldIndex + 1].setAccessible(true);
-			fields[worldFieldIndex + 2].setAccessible(true);
-			fields[worldFieldIndex + 3].setAccessible(true);
-
 			FakePlayer fakePlayer = new FakePlayer(event.entityPlayer.worldObj, CoreLib.MOD_CHANNEL);
-			fakePlayer.openContainer = event.entityPlayer.openContainer;
-			if (fields[worldFieldIndex + 1].get(datasource) instanceof Integer
-				&& fields[worldFieldIndex + 2].get(datasource) instanceof Integer
-				&& fields[worldFieldIndex + 3].get(datasource) instanceof Integer) {
-				System.out.println("possible coords");
-				if (Math.pow(	Math.pow(	(fields[worldFieldIndex + 1].getInt(datasource) >> 3)
-													- event.entityPlayer.posX,
-											2)
-										+ Math.pow(	(fields[worldFieldIndex + 2].getInt(datasource) >> 3)
-															- event.entityPlayer.posY,
-													2)
-										+ Math.pow(	(fields[worldFieldIndex + 3].getInt(datasource) >> 3)
-															- event.entityPlayer.posZ,
-													2),
-								.5) <= 4) {
-					fakePlayer.posX = fields[worldFieldIndex + 1].getInt(datasource);
-					fakePlayer.posY = fields[worldFieldIndex + 2].getInt(datasource);
-					fakePlayer.posZ = fields[worldFieldIndex + 3].getInt(datasource);
+			if (fields.length > worldFieldIndex + 3) {
+				fields[worldFieldIndex + 1].setAccessible(true);
+				fields[worldFieldIndex + 2].setAccessible(true);
+				fields[worldFieldIndex + 3].setAccessible(true);
+
+				fakePlayer.openContainer = event.entityPlayer.openContainer;
+				if (fields[worldFieldIndex + 1].get(datasource) instanceof Integer
+					&& fields[worldFieldIndex + 2].get(datasource) instanceof Integer
+					&& fields[worldFieldIndex + 3].get(datasource) instanceof Integer) {
+					System.out.println("possible coords");
+					if (Math.pow(	Math.pow(	(fields[worldFieldIndex + 1].getInt(datasource) >> 3)
+														- event.entityPlayer.posX,
+												2)
+											+ Math.pow(	(fields[worldFieldIndex + 2].getInt(datasource) >> 3)
+																- event.entityPlayer.posY,
+														2)
+											+ Math.pow(	(fields[worldFieldIndex + 3].getInt(datasource) >> 3)
+																- event.entityPlayer.posZ,
+														2),
+									.5) <= 4) {
+						fakePlayer.posX = fields[worldFieldIndex + 1].getInt(datasource);
+						fakePlayer.posY = fields[worldFieldIndex + 2].getInt(datasource);
+						fakePlayer.posZ = fields[worldFieldIndex + 3].getInt(datasource);
+						checked = true;
+					}
 				}
-			} else {
+			}
+			if (!checked) {
 				// do this in case the worldobj is the only thing keeping us
 				// from interacting
 				fakePlayer.posX = event.entityPlayer.posX * 8;
