@@ -44,7 +44,6 @@ import slimevoidlib.util.helpers.SlimevoidHelper;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
-import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -329,7 +328,7 @@ public class BlockLittleChunk extends BlockContainer {
 			}
 		}
 		if (denyPlacement) {
-			entityplayer.addChatMessage(LanguageRegistry.instance().getStringLocalization(placementMessage));
+			entityplayer.addChatMessage(placementMessage);
 			return false;
 		}
 		return true;
