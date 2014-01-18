@@ -116,4 +116,13 @@ public class ClientProxy extends CommonProxy {
 			PacketDispatcher.sendPacketToServer(packet.getPacket());
 		}
 	}
+
+	@Override
+	public World getRealWorld(ILittleWorld littleWorld, int realDimension) {
+		if (!((World) littleWorld).isRemote) {
+			return super.getRealWorld(	littleWorld,
+										realDimension);
+		}
+		return FMLClientHandler.instance().getClient().theWorld;
+	}
 }

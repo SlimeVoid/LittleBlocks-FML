@@ -29,6 +29,7 @@ import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.ForgeDirection;
 import slimevoid.littleblocks.api.ILittleWorld;
+import slimevoid.littleblocks.core.LittleBlocks;
 import slimevoid.littleblocks.core.LoggerLittleBlocks;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
@@ -44,53 +45,19 @@ public class LittleWorld extends World implements ILittleWorld {
 	protected int				ticksInWorld		= 0;
 	protected static final int	MAX_TICKS_IN_WORLD	= 5;
 
-	private World				realWorld;
+	private int					realWorld;
 
 	@SideOnly(Side.CLIENT)
 	public LittleWorld(World world, WorldProvider worldprovider, String worldName) {
 		super(world.getSaveHandler(), worldName, worldprovider, new WorldSettings(world.getWorldInfo().getSeed(), world.getWorldInfo().getGameType(), world.getWorldInfo().isMapFeaturesEnabled(), world.getWorldInfo().isHardcoreModeEnabled(), world.getWorldInfo().getTerrainType()), null, null);
-		this.realWorld = world;
+		this.realWorld = world.provider.dimensionId;
 		this.isRemote = true;
-		LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(	this.getRealWorld().isRemote,
-																									"LittleWorld["
-																											+ world.toString()
-																											+ "].("
-																											+ world.getWorldInfo().getSeed()
-																											+ ", "
-																											+ world.getWorldInfo().getGameType()
-																											+ ", "
-																											+ world.getWorldInfo().isMapFeaturesEnabled()
-																											+ ", "
-																											+ world.getWorldInfo().isHardcoreModeEnabled()
-																											+ ", "
-																											+ world.getWorldInfo().getTerrainType()
-																											+ ").realWorld["
-																											+ this.getRealWorld().toString()
-																											+ "]",
-																									LoggerLittleBlocks.LogLevel.DEBUG);
 	}
 
 	public LittleWorld(World world, WorldProvider worldprovider) {
 		super(world.getSaveHandler(), "LittleBlocksWorld", new WorldSettings(world.getWorldInfo().getSeed(), world.getWorldInfo().getGameType(), world.getWorldInfo().isMapFeaturesEnabled(), world.getWorldInfo().isHardcoreModeEnabled(), world.getWorldInfo().getTerrainType()), worldprovider, null, null);
-		this.realWorld = world;
+		this.realWorld = world.provider.dimensionId;
 		this.isRemote = false;
-		LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(	this.getRealWorld().isRemote,
-																									"LittleWorld["
-																											+ world.toString()
-																											+ "].("
-																											+ world.getWorldInfo().getSeed()
-																											+ ", "
-																											+ world.getWorldInfo().getGameType()
-																											+ ", "
-																											+ world.getWorldInfo().isMapFeaturesEnabled()
-																											+ ", "
-																											+ world.getWorldInfo().isHardcoreModeEnabled()
-																											+ ", "
-																											+ world.getWorldInfo().getTerrainType()
-																											+ ").realWorld["
-																											+ this.getRealWorld().toString()
-																											+ "]",
-																									LoggerLittleBlocks.LogLevel.DEBUG);
 	}
 
 	@Override
@@ -300,7 +267,7 @@ public class LittleWorld extends World implements ILittleWorld {
 	@SideOnly(Side.CLIENT)
 	@Override
 	public float getBrightness(int x, int y, int z, int l) {
-		if (realWorld != null) {
+		if (this.getRealWorld() != null) {
 			return this.getRealWorld().getBrightness(	x >> 3,
 														y >> 3,
 														z >> 3,
@@ -1286,7 +1253,8 @@ public class LittleWorld extends World implements ILittleWorld {
 
 	@Override
 	public World getRealWorld() {
-		return this.realWorld;
+		return LittleBlocks.proxy.getRealWorld(	this,
+												this.realWorld);
 	}
 
 	@Override

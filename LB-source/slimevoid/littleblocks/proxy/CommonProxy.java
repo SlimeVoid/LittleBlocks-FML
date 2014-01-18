@@ -146,4 +146,9 @@ public class CommonProxy implements ILBCommonProxy {
 		return FMLCommonHandler.instance().getSide() == Side.CLIENT
 				|| (world != null && world.isRemote);
 	}
+
+	@Override
+	public World getRealWorld(ILittleWorld littleWorld, int realDimension) {
+		return DimensionManager.getWorld(realDimension);
+	}
 }
