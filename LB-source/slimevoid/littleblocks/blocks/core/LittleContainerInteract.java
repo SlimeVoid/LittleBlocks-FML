@@ -20,13 +20,15 @@ public class LittleContainerInteract {
 	@ForgeSubscribe
 	public void onInteractEvent(PlayerOpenContainerEvent event) {
 		if (!event.canInteractWith) {
-			Field fields[] = event.entityPlayer.openContainer.getClass().getDeclaredFields();
-			GenericCanInteract(	event,
-								fields,
-								event.entityPlayer.openContainer);
-
+			try {
+				Field fields[] = event.entityPlayer.openContainer.getClass().getDeclaredFields();
+				GenericCanInteract(	event,
+									fields,
+									event.entityPlayer.openContainer);
+			} catch (StackOverflowError s) {
+				s.printStackTrace();
+			}
 		}
-
 	}
 
 	private void GenericCanInteract(PlayerOpenContainerEvent event, Field fields[], Object datasource) {
