@@ -15,6 +15,7 @@ import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
 import slimevoid.littleblocks.items.ItemLittleBlocksWand;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 import slimevoidlib.util.BlockRemover;
+import slimevoidlib.util.helpers.ReflectionHelper;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 
@@ -23,12 +24,6 @@ public class LBCore {
 	public static void registerItems() {
 		ConfigurationLib.littleChunk = new BlockLittleChunk(ConfigurationLib.littleChunkID, TileEntityLittleChunk.class, Material.wood, 2F, true).setUnlocalizedName(BlockLib.LITTLECHUNK);
 		ConfigurationLib.littleBlocksWand = new ItemLittleBlocksWand(ConfigurationLib.littleBlocksWandID).setUnlocalizedName(ItemLib.WAND);
-		BlockRemover.removeVanillaBlock(Block.pistonBase,
-										false);
-		BlockRemover.removeVanillaBlock(Block.pistonStickyBase,
-										false);
-		new BlockLBPistonBase(Block.pistonStickyBase.blockID, true).setUnlocalizedName("pistonStickyBase");
-		new BlockLBPistonBase(Block.pistonBase.blockID, false).setUnlocalizedName("pistonBase");
 	}
 
 	public static void registerNames() {
@@ -66,5 +61,18 @@ public class LBCore {
 		GameRegistry.registerTileEntity(TileEntityLittleChunk.class,
 										BlockLib.LITTLEBLOCKS);
 		BlockUtil.registerPlacementInfo();
+	}
+
+	public static void registerPistonOverride() {
+		BlockRemover.removeVanillaBlock(Block.pistonBase,
+										false);
+		BlockRemover.removeVanillaBlock(Block.pistonStickyBase,
+										false);
+		Block newPistonSticky = new BlockLBPistonBase(Block.pistonStickyBase.blockID, true).setUnlocalizedName("pistonStickyBase");
+		Block newPistonBase = new BlockLBPistonBase(Block.pistonBase.blockID, false).setUnlocalizedName("pistonBase");
+		ReflectionHelper.getInstance(Block.class).setFinalStaticFieldAtIndex(	ConfigurationLib.pistonStickyIndex,
+																				newPistonSticky);
+		ReflectionHelper.getInstance(Block.class).setFinalStaticFieldAtIndex(	ConfigurationLib.pistonBaseIndex,
+																				newPistonBase);
 	}
 }

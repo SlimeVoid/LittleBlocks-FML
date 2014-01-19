@@ -39,6 +39,10 @@ public class ConfigurationLib {
 	public static int						renderType;
 	public static int						littleBlocksSize		= 8;
 
+	private static String					CATEGORY_OVERRIDES		= "overrides";
+	public static int						pistonStickyIndex		= 50;
+	public static int						pistonBaseIndex			= 54;
+
 	private static List<Integer>			disallowedDimensionIds	= new ArrayList<Integer>();
 
 	@SideOnly(Side.CLIENT)
@@ -115,6 +119,13 @@ public class ConfigurationLib {
 		for (int disallowedId : disallowedIds) {
 			disallowedDimensionIds.add(disallowedId);
 		}
+
+		pistonStickyIndex = configuration.get(	CATEGORY_OVERRIDES,
+												"pistonStickyIndex",
+												pistonStickyIndex).getInt();
+		pistonBaseIndex = configuration.get(CATEGORY_OVERRIDES,
+											"pistonBaseIndex",
+											pistonBaseIndex).getInt();
 
 		configuration.save();
 

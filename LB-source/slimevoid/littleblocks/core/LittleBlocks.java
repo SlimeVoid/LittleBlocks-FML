@@ -27,9 +27,11 @@ import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
 		clientPacketHandlerSpec = @SidedPacketHandler(
 				channels = { CoreLib.MOD_CHANNEL },
 				packetHandler = ClientPacketHandler.class),
-		serverPacketHandlerSpec = @SidedPacketHandler(channels = {
-				CoreLib.MOD_CHANNEL,
-				PacketLib.CHANNEL_COMMAND_BLOCK }, packetHandler = CommonPacketHandler.class),
+		serverPacketHandlerSpec = @SidedPacketHandler(
+				channels = {
+						CoreLib.MOD_CHANNEL,
+						PacketLib.CHANNEL_COMMAND_BLOCK },
+				packetHandler = CommonPacketHandler.class),
 		connectionHandler = ConnectionHandler.class)
 public class LittleBlocks {
 	@SidedProxy(
@@ -53,5 +55,6 @@ public class LittleBlocks {
 
 	@EventHandler
 	public void LittleBlocksPostInit(FMLPostInitializationEvent event) {
+		LBCore.registerPistonOverride();
 	}
 }
