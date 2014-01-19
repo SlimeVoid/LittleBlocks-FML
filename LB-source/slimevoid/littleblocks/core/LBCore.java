@@ -58,8 +58,8 @@ public class LBCore {
 											256,
 											1,
 											false);
-		GameRegistry.registerTileEntity(TileEntityLittleChunk.class,
-										BlockLib.LITTLEBLOCKS);
+		GameRegistry.registerTileEntity(TileEntityLittleChunk.class, BlockLib.LITTLEBLOCKS);
+		GameRegistry.registerTileEntity(TileEntityLittleChunk.class, BlockLib.LITTLEBLOCKS_COMPATIBILITY);
 		BlockUtil.registerPlacementInfo();
 	}
 
