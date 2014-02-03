@@ -15,40 +15,40 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 
 public class PlayerInteractInterrupt {
 
-	@ForgeSubscribe
-	public void onPlayerInteract(PlayerInteractEvent event) {
-		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
-			World world = FMLClientHandler.instance().getClient().theWorld;
-			if (world != null && world.isRemote
-				&& world.getBlockId(event.x,
-									event.y,
-									event.z) == ConfigurationLib.littleChunkID) {
-				if (event.action == Action.RIGHT_CLICK_BLOCK) {
-					// this.onRightClick(event, world);
-					// event.setCanceled(true);
-				}
-			}
-		}
-	}
+    @ForgeSubscribe
+    public void onPlayerInteract(PlayerInteractEvent event) {
+        if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+            World world = FMLClientHandler.instance().getClient().theWorld;
+            if (world != null && world.isRemote
+                && world.getBlockId(event.x,
+                                    event.y,
+                                    event.z) == ConfigurationLib.littleChunkID) {
+                if (event.action == Action.RIGHT_CLICK_BLOCK) {
+                    // this.onRightClick(event, world);
+                    // event.setCanceled(true);
+                }
+            }
+        }
+    }
 
-	private void onRightClick(PlayerInteractEvent event, World world) {
-		World littleWorld = (World) LittleBlocks.proxy.getLittleWorld(	world,
-																		false);
-		EntityPlayer entityplayer = event.entityPlayer;
-		int x = (event.x << 3) + BlockLittleChunk.xSelected;
-		int y = (event.y << 3) + BlockLittleChunk.ySelected;
-		int z = (event.z << 3) + BlockLittleChunk.zSelected;
-		int side = BlockLittleChunk.side;
-		if (BlockUtil.getLittleController().onPlayerRightClick(	entityplayer,
-																littleWorld,
-																entityplayer.inventory.getCurrentItem(),
-																x,
-																y,
-																z,
-																side,
-																BlockLittleChunk.hitVec)) {
-			event.entityPlayer.swingItem();
-		}
-	}
+    private void onRightClick(PlayerInteractEvent event, World world) {
+        World littleWorld = (World) LittleBlocks.proxy.getLittleWorld(world,
+                                                                      false);
+        EntityPlayer entityplayer = event.entityPlayer;
+        int x = (event.x << 3) + BlockLittleChunk.xSelected;
+        int y = (event.y << 3) + BlockLittleChunk.ySelected;
+        int z = (event.z << 3) + BlockLittleChunk.zSelected;
+        int side = BlockLittleChunk.side;
+        if (BlockUtil.getLittleController().onPlayerRightClick(entityplayer,
+                                                               littleWorld,
+                                                               entityplayer.inventory.getCurrentItem(),
+                                                               x,
+                                                               y,
+                                                               z,
+                                                               side,
+                                                               BlockLittleChunk.hitVec)) {
+            event.entityPlayer.swingItem();
+        }
+    }
 
 }

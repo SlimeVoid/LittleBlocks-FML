@@ -13,30 +13,30 @@ import cpw.mods.fml.relauncher.Side;
 
 public class BlockLittleChunkShiftRightClick {
 
-	@ForgeSubscribe
-	public void onShiftRightClickEvent(PlayerInteractEvent event) {
-		EntityPlayer entityplayer = event.entityPlayer;
-		if (entityplayer.isSneaking()) {
-			if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
-				World world = FMLClientHandler.instance().getClient().theWorld;
-				int x = event.x, y = event.y, z = event.z;
-				if (world.getBlockId(	x,
-										y,
-										z) == ConfigurationLib.littleChunkID) {
-					BlockLittleChunk littleChunk = ((BlockLittleChunk) Block.blocksList[ConfigurationLib.littleChunkID]);
-					if (littleChunk.onBlockActivated(	world,
-														x,
-														y,
-														z,
-														entityplayer,
-														event.face,
-														(float) BlockLittleChunk.hitVec.xCoord,
-														(float) BlockLittleChunk.hitVec.yCoord,
-														(float) BlockLittleChunk.hitVec.zCoord)) {
-						event.setCanceled(true);
-					}
-				}
-			}
-		}
-	}
+    @ForgeSubscribe
+    public void onShiftRightClickEvent(PlayerInteractEvent event) {
+        EntityPlayer entityplayer = event.entityPlayer;
+        if (entityplayer.isSneaking()) {
+            if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+                World world = FMLClientHandler.instance().getClient().theWorld;
+                int x = event.x, y = event.y, z = event.z;
+                if (world.getBlockId(x,
+                                     y,
+                                     z) == ConfigurationLib.littleChunkID) {
+                    BlockLittleChunk littleChunk = ((BlockLittleChunk) Block.blocksList[ConfigurationLib.littleChunkID]);
+                    if (littleChunk.onBlockActivated(world,
+                                                     x,
+                                                     y,
+                                                     z,
+                                                     entityplayer,
+                                                     event.face,
+                                                     (float) BlockLittleChunk.hitVec.xCoord,
+                                                     (float) BlockLittleChunk.hitVec.yCoord,
+                                                     (float) BlockLittleChunk.hitVec.zCoord)) {
+                        event.setCanceled(true);
+                    }
+                }
+            }
+        }
+    }
 }

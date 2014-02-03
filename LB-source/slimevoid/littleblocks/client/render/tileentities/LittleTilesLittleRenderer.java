@@ -32,89 +32,89 @@ import slimevoid.littleblocks.core.lib.ConfigurationLib;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 
 public class LittleTilesLittleRenderer {
-	private TileEntityRenderer										tileEntityRenderer;
-	private Set<String>												textures	= new HashSet<String>();
-	private HashMap<String, HashMap<Integer, LittleTileToRender>>	texturedTilesToRender;
-	private List<LittleTileToRender>								tilesToRender;
-	private World													littleWorld;
+    private TileEntityRenderer                                    tileEntityRenderer;
+    private Set<String>                                           textures = new HashSet<String>();
+    private HashMap<String, HashMap<Integer, LittleTileToRender>> texturedTilesToRender;
+    private List<LittleTileToRender>                              tilesToRender;
+    private World                                                 littleWorld;
 
-	public LittleTilesLittleRenderer(TileEntityRenderer tileEntityRenderer, World world) {
-		this.tileEntityRenderer = tileEntityRenderer;
-		this.texturedTilesToRender = new HashMap<String, HashMap<Integer, LittleTileToRender>>();
-		this.tilesToRender = new ArrayList<LittleTileToRender>();
-		this.littleWorld = world;
-	}
+    public LittleTilesLittleRenderer(TileEntityRenderer tileEntityRenderer, World world) {
+        this.tileEntityRenderer = tileEntityRenderer;
+        this.texturedTilesToRender = new HashMap<String, HashMap<Integer, LittleTileToRender>>();
+        this.tilesToRender = new ArrayList<LittleTileToRender>();
+        this.littleWorld = world;
+    }
 
-	public void addLittleTileToRender(TileEntity tileentity) {
-		LittleTileToRender render = new LittleTileToRender(tileentity);
-		if (!tilesToRender.contains(render)) {
-			tilesToRender.add(render);
-		}
-	}
+    public void addLittleTileToRender(TileEntity tileentity) {
+        LittleTileToRender render = new LittleTileToRender(tileentity);
+        if (!tilesToRender.contains(render)) {
+            tilesToRender.add(render);
+        }
+    }
 
-	public void addLittleTileToRender(TileEntity tileentity, String textureFile) {
-		LittleTileToRender render = new LittleTileToRender(tileentity);
-		if (this.texturedTilesToRender.containsKey(textureFile)) {
-			HashMap<Integer, LittleTileToRender> littleTilesToRender = this.texturedTilesToRender.get(textureFile);
-			int nextInt = littleTilesToRender.size();
-			littleTilesToRender.put(nextInt,
-									render);
-		} else {
-			this.textures.add(textureFile);
-			HashMap<Integer, LittleTileToRender> littleTilesToRender = new HashMap<Integer, LittleTileToRender>();
-			littleTilesToRender.put(0,
-									render);
-			this.texturedTilesToRender.put(	textureFile,
-											littleTilesToRender);
-		}
-	}
+    public void addLittleTileToRender(TileEntity tileentity, String textureFile) {
+        LittleTileToRender render = new LittleTileToRender(tileentity);
+        if (this.texturedTilesToRender.containsKey(textureFile)) {
+            HashMap<Integer, LittleTileToRender> littleTilesToRender = this.texturedTilesToRender.get(textureFile);
+            int nextInt = littleTilesToRender.size();
+            littleTilesToRender.put(nextInt,
+                                    render);
+        } else {
+            this.textures.add(textureFile);
+            HashMap<Integer, LittleTileToRender> littleTilesToRender = new HashMap<Integer, LittleTileToRender>();
+            littleTilesToRender.put(0,
+                                    render);
+            this.texturedTilesToRender.put(textureFile,
+                                           littleTilesToRender);
+        }
+    }
 
-	public void renderLittleTiles(TileEntityLittleChunk tileentity, double x, double y, double z, float f) {
-		GL11.glPushMatrix();
+    public void renderLittleTiles(TileEntityLittleChunk tileentity, double x, double y, double z, float f) {
+        GL11.glPushMatrix();
 
-		GL11.glTranslated(	x,
-							y,
-							z);
-		GL11.glTranslated(	-tileentity.xCoord,
-							-tileentity.yCoord,
-							-tileentity.zCoord);
-		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-		float scale = 1F / ConfigurationLib.littleBlocksSize;
-		GL11.glScaled(	scale,
-						scale,
-						scale);
+        GL11.glTranslated(x,
+                          y,
+                          z);
+        GL11.glTranslated(-tileentity.xCoord,
+                          -tileentity.yCoord,
+                          -tileentity.zCoord);
+        GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+        float scale = 1F / ConfigurationLib.littleBlocksSize;
+        GL11.glScaled(scale,
+                      scale,
+                      scale);
 
-		RenderHelper.disableStandardItemLighting();
-		GL11.glBlendFunc(	770,
-							771);
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glDisable(GL11.GL_CULL_FACE);
-		if (Minecraft.isAmbientOcclusionEnabled()) {
-			GL11.glShadeModel(GL11.GL_SMOOTH);
-		} else {
-			GL11.glShadeModel(GL11.GL_FLAT);
-		}
-		for (LittleTileToRender tileToRender : this.tilesToRender) {
-			TileEntitySpecialRenderer renderer = TileEntityRenderer.instance.getSpecialRendererForEntity(tileToRender.tileentity);
-			boolean flag = renderer != null;
-			if (flag) renderer.onWorldChange(this.littleWorld);
-			if (flag) {
-				renderer.renderTileEntityAt(tileToRender.tileentity,
-											tileToRender.x,
-											tileToRender.y,
-											tileToRender.z,
-											f);
-			} else {
-				this.tileEntityRenderer.renderTileEntityAt(	tileToRender.tileentity,
-															tileToRender.x,
-															tileToRender.y,
-															tileToRender.z,
-															f);
-			}
-			if (flag) renderer.onWorldChange(((ILittleWorld) this.littleWorld).getRealWorld());
-		}
+        RenderHelper.disableStandardItemLighting();
+        GL11.glBlendFunc(770,
+                         771);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_CULL_FACE);
+        if (Minecraft.isAmbientOcclusionEnabled()) {
+            GL11.glShadeModel(GL11.GL_SMOOTH);
+        } else {
+            GL11.glShadeModel(GL11.GL_FLAT);
+        }
+        for (LittleTileToRender tileToRender : this.tilesToRender) {
+            TileEntitySpecialRenderer renderer = TileEntityRenderer.instance.getSpecialRendererForEntity(tileToRender.tileentity);
+            boolean flag = renderer != null;
+            if (flag) renderer.onWorldChange(this.littleWorld);
+            if (flag) {
+                renderer.renderTileEntityAt(tileToRender.tileentity,
+                                            tileToRender.x,
+                                            tileToRender.y,
+                                            tileToRender.z,
+                                            f);
+            } else {
+                this.tileEntityRenderer.renderTileEntityAt(tileToRender.tileentity,
+                                                           tileToRender.x,
+                                                           tileToRender.y,
+                                                           tileToRender.z,
+                                                           f);
+            }
+            if (flag) renderer.onWorldChange(((ILittleWorld) this.littleWorld).getRealWorld());
+        }
 
-		GL11.glDisable(GL12.GL_RESCALE_NORMAL);
-		GL11.glPopMatrix();
-	}
+        GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+        GL11.glPopMatrix();
+    }
 }

@@ -14,41 +14,41 @@ import cpw.mods.fml.common.TickType;
 
 public class KeyBindingHandler extends KeyHandler {
 
-	private Minecraft			mc;
-	private static KeyBinding	switchAction	= new KeyBinding("LittleBlocks Wand-Action Change", Keyboard.KEY_O);
+    private Minecraft         mc;
+    private static KeyBinding switchAction = new KeyBinding("LittleBlocks Wand-Action Change", Keyboard.KEY_O);
 
-	public KeyBindingHandler() {
-		super(new KeyBinding[] { switchAction }, new boolean[] { false });
-		this.mc = FMLClientHandler.instance().getClient();
-	}
+    public KeyBindingHandler() {
+        super(new KeyBinding[] { switchAction }, new boolean[] { false });
+        this.mc = FMLClientHandler.instance().getClient();
+    }
 
-	@Override
-	public String getLabel() {
-		return "LittleBlocks Wand-Action Change";
-	}
+    @Override
+    public String getLabel() {
+        return "LittleBlocks Wand-Action Change";
+    }
 
-	private static boolean	keyHasBeenPressed	= false;
+    private static boolean keyHasBeenPressed = false;
 
-	@Override
-	public void keyDown(EnumSet<TickType> types, KeyBinding kb, boolean tickEnd, boolean isRepeat) {
-		if (this.mc.currentScreen == null) {
-			keyHasBeenPressed = true;
-		}
-	}
+    @Override
+    public void keyDown(EnumSet<TickType> types, KeyBinding kb, boolean tickEnd, boolean isRepeat) {
+        if (this.mc.currentScreen == null) {
+            keyHasBeenPressed = true;
+        }
+    }
 
-	@Override
-	public void keyUp(EnumSet<TickType> types, KeyBinding kb, boolean tickEnd) {
-		if (keyHasBeenPressed) {
-			keyHasBeenPressed = false;
-			if (kb.equals(switchAction)) {
-				PacketLib.wandModeSwitched();
-			}
-		}
-	}
+    @Override
+    public void keyUp(EnumSet<TickType> types, KeyBinding kb, boolean tickEnd) {
+        if (keyHasBeenPressed) {
+            keyHasBeenPressed = false;
+            if (kb.equals(switchAction)) {
+                PacketLib.wandModeSwitched();
+            }
+        }
+    }
 
-	@Override
-	public EnumSet<TickType> ticks() {
-		return EnumSet.of(TickType.CLIENT);
-	}
+    @Override
+    public EnumSet<TickType> ticks() {
+        return EnumSet.of(TickType.CLIENT);
+    }
 
 }

@@ -10,11 +10,11 @@ import slimevoidlib.network.PacketUpdate;
 
 public class ClientPacketLittleWandSwitchExecutor implements IPacketExecutor {
 
-	@Override
-	public void execute(PacketUpdate packet, World world, EntityPlayer entityplayer) {
-		if (packet instanceof PacketLittleNotify
-			&& packet.getCommand().equals(CommandLib.WAND_SWITCH)) {
-			EnumWandAction.setNextWandAction();
-		}
-	}
+    @Override
+    public void execute(PacketUpdate packet, World world, EntityPlayer entityplayer) {
+        if (packet instanceof PacketLittleNotify
+            && packet.getCommand().equals(CommandLib.WAND_SWITCH)) {
+            EnumWandAction.setNextWandAction();
+        }
+    }
 }

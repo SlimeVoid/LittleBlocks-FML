@@ -11,15 +11,15 @@ import slimevoidlib.network.PacketUpdate;
 
 public class ClientLittleCollectionExecutor implements IPacketExecutor {
 
-	@Override
-	public void execute(PacketUpdate packet, World world, EntityPlayer entityplayer) {
-		if (packet instanceof PacketLittleBlocksCollection
-			&& packet.getCommand().equals(CommandLib.ENTITY_COLLECTION)) {
-			Entity entity = ((PacketLittleBlocksCollection) packet).getEntity(world);
-			if (entity instanceof EntityItemLittleBlocksCollection) {
-				((EntityItemLittleBlocksCollection) entity).setCollection(((PacketLittleBlocksCollection) packet).itemstackCollection);
-			}
-		}
-	}
+    @Override
+    public void execute(PacketUpdate packet, World world, EntityPlayer entityplayer) {
+        if (packet instanceof PacketLittleBlocksCollection
+            && packet.getCommand().equals(CommandLib.ENTITY_COLLECTION)) {
+            Entity entity = ((PacketLittleBlocksCollection) packet).getEntity(world);
+            if (entity instanceof EntityItemLittleBlocksCollection) {
+                ((EntityItemLittleBlocksCollection) entity).setCollection(((PacketLittleBlocksCollection) packet).itemstackCollection);
+            }
+        }
+    }
 
 }

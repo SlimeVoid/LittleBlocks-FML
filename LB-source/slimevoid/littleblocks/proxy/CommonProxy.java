@@ -35,120 +35,120 @@ import cpw.mods.fml.relauncher.Side;
 
 public class CommonProxy implements ILBCommonProxy {
 
-	@Override
-	public void preInit() {
-		CommonPacketHandler.init();
-		PacketLib.registerPacketHandlers();
-		ForgeDummyContainer.fullBoundingBoxLadders = true;
-	}
+    @Override
+    public void preInit() {
+        CommonPacketHandler.init();
+        PacketLib.registerPacketHandlers();
+        ForgeDummyContainer.fullBoundingBoxLadders = true;
+    }
 
-	@Override
-	public void registerRenderInformation() {
-	}
+    @Override
+    public void registerRenderInformation() {
+    }
 
-	@Override
-	public void registerTileEntitySpecialRenderer(Class<? extends TileEntity> clazz) {
-	}
+    @Override
+    public void registerTileEntitySpecialRenderer(Class<? extends TileEntity> clazz) {
+    }
 
-	@Override
-	public String getMinecraftDir() {
-		return "./";
-	}
+    @Override
+    public String getMinecraftDir() {
+        return "./";
+    }
 
-	@Override
-	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-		return null;
-	}
+    @Override
+    public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+        return null;
+    }
 
-	@Override
-	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-		return null;
-	}
+    @Override
+    public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+        return null;
+    }
 
-	@Override
-	public void onPacketData(INetworkManager manager, Packet250CustomPayload packet, Player player) {
-	}
+    @Override
+    public void onPacketData(INetworkManager manager, Packet250CustomPayload packet, Player player) {
+    }
 
-	@Override
-	public void registerTickHandlers() {
-		TickRegistry.registerTickHandler(	new LittleWorldServerTickHandler(),
-											Side.SERVER);
-	}
+    @Override
+    public void registerTickHandlers() {
+        TickRegistry.registerTickHandler(new LittleWorldServerTickHandler(),
+                                         Side.SERVER);
+    }
 
-	@Override
-	public void registerEventHandlers() {
-		MinecraftForge.EVENT_BUS.register(new WorldServerLoadEvent());
-		MinecraftForge.EVENT_BUS.register(new WorldServerUnloadEvent());
-		MinecraftForge.EVENT_BUS.register(new LittleBlocksCollectionPickup());
-		MinecraftForge.EVENT_BUS.register(new LittleContainerInteract());
-		// MinecraftForge.EVENT_BUS.register(new PlayerInteractInterrupt());
-		// MinecraftForge.EVENT_BUS.register(new LittleLadderHandler());
-		// MinecraftForge.EVENT_BUS.register(new PistonOrientation());
-	}
+    @Override
+    public void registerEventHandlers() {
+        MinecraftForge.EVENT_BUS.register(new WorldServerLoadEvent());
+        MinecraftForge.EVENT_BUS.register(new WorldServerUnloadEvent());
+        MinecraftForge.EVENT_BUS.register(new LittleBlocksCollectionPickup());
+        MinecraftForge.EVENT_BUS.register(new LittleContainerInteract());
+        // MinecraftForge.EVENT_BUS.register(new PlayerInteractInterrupt());
+        // MinecraftForge.EVENT_BUS.register(new LittleLadderHandler());
+        // MinecraftForge.EVENT_BUS.register(new PistonOrientation());
+    }
 
-	@Override
-	public IPacketHandling getPacketHandler() {
-		return null;
-	}
+    @Override
+    public IPacketHandling getPacketHandler() {
+        return null;
+    }
 
-	@Override
-	public ILittleWorld getLittleWorld(IBlockAccess iblockaccess, boolean needsRefresh) {
-		World world = (World) iblockaccess;
-		if (world != null) {
-			int dimension = world.provider.dimensionId;
-			if (ConfigurationLib.littleWorldServer.containsKey(dimension)) {
-				World littleWorld = DimensionManager.getWorld(ConfigurationLib.littleWorldServer.get(dimension));
-				if (littleWorld == null) {
-					throw new NullPointerException("A LittleWorld does not exist for reference world - "
-													+ world.getWorldInfo().getWorldName());
-				}
-				if (littleWorld instanceof ILittleWorld) {
-					return (ILittleWorld) littleWorld;
-				}
-			}
-		}
-		return null;
-	}
+    @Override
+    public ILittleWorld getLittleWorld(IBlockAccess iblockaccess, boolean needsRefresh) {
+        World world = (World) iblockaccess;
+        if (world != null) {
+            int dimension = world.provider.dimensionId;
+            if (ConfigurationLib.littleWorldServer.containsKey(dimension)) {
+                World littleWorld = DimensionManager.getWorld(ConfigurationLib.littleWorldServer.get(dimension));
+                if (littleWorld == null) {
+                    throw new NullPointerException("A LittleWorld does not exist for reference world - "
+                                                   + world.getWorldInfo().getWorldName());
+                }
+                if (littleWorld instanceof ILittleWorld) {
+                    return (ILittleWorld) littleWorld;
+                }
+            }
+        }
+        return null;
+    }
 
-	@Override
-	public void registerConfigurationProperties(File configFile) {
-		ConfigurationLib.CommonConfig(configFile);
-	}
+    @Override
+    public void registerConfigurationProperties(File configFile) {
+        ConfigurationLib.CommonConfig(configFile);
+    }
 
-	@Override
-	public void playerLoggedIn(Player player, NetHandler netHandler, INetworkManager manager) {
-		// System.out.println("LoggedIn");
-	}
+    @Override
+    public void playerLoggedIn(Player player, NetHandler netHandler, INetworkManager manager) {
+        // System.out.println("LoggedIn");
+    }
 
-	@Override
-	public String connectionReceived(NetLoginHandler netHandler, INetworkManager manager) {
-		return null;
-	}
+    @Override
+    public String connectionReceived(NetLoginHandler netHandler, INetworkManager manager) {
+        return null;
+    }
 
-	@Override
-	public void connectionOpened(NetHandler netClientHandler, String server, int port, INetworkManager manager) {
-	}
+    @Override
+    public void connectionOpened(NetHandler netClientHandler, String server, int port, INetworkManager manager) {
+    }
 
-	@Override
-	public void connectionOpened(NetHandler netClientHandler, MinecraftServer server, INetworkManager manager) {
-	}
+    @Override
+    public void connectionOpened(NetHandler netClientHandler, MinecraftServer server, INetworkManager manager) {
+    }
 
-	@Override
-	public void connectionClosed(INetworkManager manager) {
-	}
+    @Override
+    public void connectionClosed(INetworkManager manager) {
+    }
 
-	@Override
-	public void clientLoggedIn(NetHandler clientHandler, INetworkManager manager, Packet1Login login) {
-	}
+    @Override
+    public void clientLoggedIn(NetHandler clientHandler, INetworkManager manager, Packet1Login login) {
+    }
 
-	@Override
-	public boolean isClient(World world) {
-		return FMLCommonHandler.instance().getSide() == Side.CLIENT
-				|| (world != null && world.isRemote);
-	}
+    @Override
+    public boolean isClient(World world) {
+        return FMLCommonHandler.instance().getSide() == Side.CLIENT
+               || (world != null && world.isRemote);
+    }
 
-	@Override
-	public World getRealWorld(ILittleWorld littleWorld, int realDimension) {
-		return DimensionManager.getWorld(realDimension);
-	}
+    @Override
+    public World getRealWorld(ILittleWorld littleWorld, int realDimension) {
+        return DimensionManager.getWorld(realDimension);
+    }
 }

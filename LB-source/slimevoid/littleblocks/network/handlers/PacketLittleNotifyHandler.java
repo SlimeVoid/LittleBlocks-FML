@@ -6,9 +6,9 @@ import slimevoidlib.network.handlers.SubPacketHandler;
 
 public class PacketLittleNotifyHandler extends SubPacketHandler {
 
-	@Override
-	protected PacketUpdate createNewPacket() {
-		return new PacketLittleNotify();
-	}
+    @Override
+    protected PacketUpdate createNewPacket() {
+        return new PacketLittleNotify();
+    }
 
 }

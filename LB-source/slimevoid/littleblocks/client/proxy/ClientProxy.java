@@ -43,86 +43,86 @@ import cpw.mods.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class ClientProxy extends CommonProxy {
 
-	@Override
-	public void preInit() {
-		super.preInit();
-		ClientPacketHandler.init();
-		PacketLib.registerClientPacketHandlers();
-	}
+    @Override
+    public void preInit() {
+        super.preInit();
+        ClientPacketHandler.init();
+        PacketLib.registerClientPacketHandlers();
+    }
 
-	@Override
-	public String getMinecraftDir() {
-		return Minecraft.getMinecraft().mcDataDir.toString();
-	}
+    @Override
+    public String getMinecraftDir() {
+        return Minecraft.getMinecraft().mcDataDir.toString();
+    }
 
-	@Override
-	public void registerRenderInformation() {
-		MinecraftForge.EVENT_BUS.register(new DrawCopierHighlight());
-		RenderingRegistry.registerBlockHandler(new LittleBlocksRenderer());
-		RenderingRegistry.registerEntityRenderingHandler(	EntityItemLittleBlocksCollection.class,
-															new LittleBlocksCollectionRenderer());
-		this.registerTileEntitySpecialRenderer(TileEntityLittleChunk.class);
-	}
+    @Override
+    public void registerRenderInformation() {
+        MinecraftForge.EVENT_BUS.register(new DrawCopierHighlight());
+        RenderingRegistry.registerBlockHandler(new LittleBlocksRenderer());
+        RenderingRegistry.registerEntityRenderingHandler(EntityItemLittleBlocksCollection.class,
+                                                         new LittleBlocksCollectionRenderer());
+        this.registerTileEntitySpecialRenderer(TileEntityLittleChunk.class);
+    }
 
-	@Override
-	public void registerTileEntitySpecialRenderer(Class<? extends TileEntity> clazz) {
-		ClientRegistry.bindTileEntitySpecialRenderer(	clazz,
-														new TileEntityLittleBlocksRenderer());
-	}
+    @Override
+    public void registerTileEntitySpecialRenderer(Class<? extends TileEntity> clazz) {
+        ClientRegistry.bindTileEntitySpecialRenderer(clazz,
+                                                     new TileEntityLittleBlocksRenderer());
+    }
 
-	@Override
-	public void registerTickHandlers() {
-		TickRegistry.registerTickHandler(	new LittleWorldTickHandler(),
-											Side.CLIENT);
-		KeyBindingRegistry.registerKeyBinding(new KeyBindingHandler());
-		super.registerTickHandlers();
-	}
+    @Override
+    public void registerTickHandlers() {
+        TickRegistry.registerTickHandler(new LittleWorldTickHandler(),
+                                         Side.CLIENT);
+        KeyBindingRegistry.registerKeyBinding(new KeyBindingHandler());
+        super.registerTickHandlers();
+    }
 
-	@Override
-	public void registerEventHandlers() {
-		super.registerEventHandlers();
-		MinecraftForge.EVENT_BUS.register(new WorldLoadEvent());
-		MinecraftForge.EVENT_BUS.register(new BlockLittleChunkShiftRightClick());
-		MinecraftForge.EVENT_BUS.register(new BlockLittleChunkBucketEvent());
-	}
+    @Override
+    public void registerEventHandlers() {
+        super.registerEventHandlers();
+        MinecraftForge.EVENT_BUS.register(new WorldLoadEvent());
+        MinecraftForge.EVENT_BUS.register(new BlockLittleChunkShiftRightClick());
+        MinecraftForge.EVENT_BUS.register(new BlockLittleChunkBucketEvent());
+    }
 
-	public ILittleWorld getLittleWorld(IBlockAccess iblockaccess, boolean needsRefresh) {
-		World world = (World) iblockaccess;
-		if (world != null) {
-			if (world.isRemote) {
-				return ConfigurationLib.littleWorldClient;
-			} else {
-				return super.getLittleWorld(world,
-											needsRefresh);
-			}
-		}
-		return null;
-	}
+    public ILittleWorld getLittleWorld(IBlockAccess iblockaccess, boolean needsRefresh) {
+        World world = (World) iblockaccess;
+        if (world != null) {
+            if (world.isRemote) {
+                return ConfigurationLib.littleWorldClient;
+            } else {
+                return super.getLittleWorld(world,
+                                            needsRefresh);
+            }
+        }
+        return null;
+    }
 
-	@Override
-	public void registerConfigurationProperties(File configFile) {
-		super.registerConfigurationProperties(configFile);
-		ConfigurationLib.ClientConfig(configFile);
-	}
+    @Override
+    public void registerConfigurationProperties(File configFile) {
+        super.registerConfigurationProperties(configFile);
+        ConfigurationLib.ClientConfig(configFile);
+    }
 
-	@Override
-	public void clientLoggedIn(NetHandler clientHandler, INetworkManager manager, Packet1Login login) {
-		BlockUtil.setLittleController(	new LittlePlayerController(FMLClientHandler.instance().getClient(), (NetClientHandler) clientHandler),
-										login.gameType);
-		World world = ((NetClientHandler) clientHandler).getPlayer().worldObj;
-		if (world != null) {
-			PacketLittleBlocksSettings packet = new PacketLittleBlocksSettings();
-			packet.setCommand(CommandLib.FETCH);
-			PacketDispatcher.sendPacketToServer(packet.getPacket());
-		}
-	}
+    @Override
+    public void clientLoggedIn(NetHandler clientHandler, INetworkManager manager, Packet1Login login) {
+        BlockUtil.setLittleController(new LittlePlayerController(FMLClientHandler.instance().getClient(), (NetClientHandler) clientHandler),
+                                      login.gameType);
+        World world = ((NetClientHandler) clientHandler).getPlayer().worldObj;
+        if (world != null) {
+            PacketLittleBlocksSettings packet = new PacketLittleBlocksSettings();
+            packet.setCommand(CommandLib.FETCH);
+            PacketDispatcher.sendPacketToServer(packet.getPacket());
+        }
+    }
 
-	@Override
-	public World getRealWorld(ILittleWorld littleWorld, int realDimension) {
-		if (!((World) littleWorld).isRemote) {
-			return super.getRealWorld(	littleWorld,
-										realDimension);
-		}
-		return FMLClientHandler.instance().getClient().theWorld;
-	}
+    @Override
+    public World getRealWorld(ILittleWorld littleWorld, int realDimension) {
+        if (!((World) littleWorld).isRemote) {
+            return super.getRealWorld(littleWorld,
+                                      realDimension);
+        }
+        return FMLClientHandler.instance().getClient().theWorld;
+    }
 }

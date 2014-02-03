@@ -6,7 +6,7 @@ import slimevoidlib.ICommonProxy;
 
 public interface ILBCommonProxy extends ICommonProxy {
 
-	ILittleWorld getLittleWorld(IBlockAccess world, boolean needsRefresh);
+    ILittleWorld getLittleWorld(IBlockAccess world, boolean needsRefresh);
 
-	World getRealWorld(ILittleWorld littleWorld, int realDimension);
+    World getRealWorld(ILittleWorld littleWorld, int realDimension);
 }
