@@ -1,4 +1,4 @@
-package slimevoid.littleblocks.blocks.core;
+package slimevoid.littleblocks.blocks.events;
 
 import static net.minecraftforge.event.Event.Result.ALLOW;
 import static net.minecraftforge.event.Event.Result.DENY;
@@ -9,7 +9,7 @@ import net.minecraftforge.event.entity.player.FillBucketEvent;
 import slimevoid.littleblocks.blocks.BlockLittleChunk;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
 
-public class BlockLittleChunkBucketEvent {
+public class LittleChunkBucketEvent {
 
     @ForgeSubscribe
     public void onBucketEvent(FillBucketEvent event) {

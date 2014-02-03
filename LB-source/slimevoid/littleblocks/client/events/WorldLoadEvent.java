@@ -1,4 +1,4 @@
-package slimevoid.littleblocks.events;
+package slimevoid.littleblocks.client.events;
 
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.world.WorldProvider;

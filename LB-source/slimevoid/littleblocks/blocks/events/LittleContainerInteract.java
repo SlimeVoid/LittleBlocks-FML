@@ -1,4 +1,4 @@
-package slimevoid.littleblocks.blocks.core;
+package slimevoid.littleblocks.blocks.events;
 
 import java.lang.reflect.Field;
 

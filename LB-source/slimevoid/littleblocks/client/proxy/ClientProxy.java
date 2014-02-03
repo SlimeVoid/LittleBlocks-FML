@@ -12,8 +12,10 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import slimevoid.littleblocks.api.ILittleWorld;
-import slimevoid.littleblocks.blocks.core.BlockLittleChunkBucketEvent;
-import slimevoid.littleblocks.blocks.core.BlockLittleChunkShiftRightClick;
+import slimevoid.littleblocks.blocks.events.LittleChunkBucketEvent;
+import slimevoid.littleblocks.blocks.events.LittleChunkShiftRightClick;
+import slimevoid.littleblocks.client.events.RenderLittleChunkHighlight;
+import slimevoid.littleblocks.client.events.WorldLoadEvent;
 import slimevoid.littleblocks.client.handlers.DrawCopierHighlight;
 import slimevoid.littleblocks.client.handlers.KeyBindingHandler;
 import slimevoid.littleblocks.client.network.ClientPacketHandler;
@@ -24,7 +26,6 @@ import slimevoid.littleblocks.core.lib.BlockUtil;
 import slimevoid.littleblocks.core.lib.CommandLib;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
 import slimevoid.littleblocks.core.lib.PacketLib;
-import slimevoid.littleblocks.events.WorldLoadEvent;
 import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
 import slimevoid.littleblocks.network.packets.PacketLittleBlocksSettings;
 import slimevoid.littleblocks.proxy.CommonProxy;
@@ -81,9 +82,10 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void registerEventHandlers() {
         super.registerEventHandlers();
+        MinecraftForge.EVENT_BUS.register(new RenderLittleChunkHighlight());
         MinecraftForge.EVENT_BUS.register(new WorldLoadEvent());
-        MinecraftForge.EVENT_BUS.register(new BlockLittleChunkShiftRightClick());
-        MinecraftForge.EVENT_BUS.register(new BlockLittleChunkBucketEvent());
+        MinecraftForge.EVENT_BUS.register(new LittleChunkShiftRightClick());
+        MinecraftForge.EVENT_BUS.register(new LittleChunkBucketEvent());
     }
 
     public ILittleWorld getLittleWorld(IBlockAccess iblockaccess, boolean needsRefresh) {

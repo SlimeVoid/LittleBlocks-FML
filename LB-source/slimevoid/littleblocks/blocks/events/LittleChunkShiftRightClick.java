@@ -1,4 +1,4 @@
-package slimevoid.littleblocks.blocks.core;
+package slimevoid.littleblocks.blocks.events;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,7 +11,7 @@ import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 
-public class BlockLittleChunkShiftRightClick {
+public class LittleChunkShiftRightClick {
 
     @ForgeSubscribe
     public void onShiftRightClickEvent(PlayerInteractEvent event) {

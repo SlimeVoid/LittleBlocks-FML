@@ -31,7 +31,6 @@ import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 import slimevoid.littleblocks.world.ItemInLittleWorldManager;
 import slimevoid.littleblocks.world.LittlePlayerController;
 import slimevoidlib.data.Logger;
-import slimevoidlib.util.helpers.SlimevoidHelper;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
@@ -235,7 +234,6 @@ public class BlockUtil {
                                                                 + "Height limit for building is "
                                                                 + world.getHeight()),
                                                 (Player) entityplayer);
-            flag = true;
         } else {
             // double dist = this.getBlockReachDistance() + 1;
             // dist *= dist;
@@ -244,20 +242,19 @@ public class BlockUtil {
                                            y >> 3,
                                            z >> 3,
                                            entityplayer)) {
-                getLittleItemManager((EntityPlayerMP) entityplayer,
-                                     world).activateBlockOrUseItem(entityplayer,
-                                                                   world,
-                                                                   itemstack,
-                                                                   x,
-                                                                   y,
-                                                                   z,
-                                                                   side,
-                                                                   hitX,
-                                                                   hitY,
-                                                                   hitZ);
+                flag = getLittleItemManager((EntityPlayerMP) entityplayer,
+                                            world).activateBlockOrUseItem(entityplayer,
+                                                                          world,
+                                                                          itemstack,
+                                                                          x,
+                                                                          y,
+                                                                          z,
+                                                                          side,
+                                                                          hitX,
+                                                                          hitY,
+                                                                          hitZ);
             }
 
-            flag = true;
         }
 
         if (flag) {
@@ -344,10 +341,5 @@ public class BlockUtil {
                                   x,
                                   y,
                                   z);
-    }
-
-    public static boolean isPistonExtending() {
-        return SlimevoidHelper.isReflectedClass(BlockPistonBase.class,
-                                                3);
     }
 }

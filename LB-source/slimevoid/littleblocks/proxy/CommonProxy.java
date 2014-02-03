@@ -17,7 +17,7 @@ import net.minecraftforge.common.ForgeDummyContainer;
 import net.minecraftforge.common.MinecraftForge;
 import slimevoid.littleblocks.api.ILBCommonProxy;
 import slimevoid.littleblocks.api.ILittleWorld;
-import slimevoid.littleblocks.blocks.core.LittleContainerInteract;
+import slimevoid.littleblocks.blocks.events.LittleContainerInteract;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
 import slimevoid.littleblocks.core.lib.PacketLib;
 import slimevoid.littleblocks.events.WorldServerLoadEvent;

@@ -70,7 +70,7 @@ public class BlockLittleChunk extends BlockContainer {
     public BlockLittleChunk(int id, Class<? extends TileEntity> clazz, Material material, float hardness, boolean selfNotify) {
         super(id, material);
         this.clazz = clazz;
-        setHardness(hardness);
+        this.setHardness(hardness);
         if (selfNotify) {
             // TODO :: setRequiresSelfNotify();
         }
@@ -134,8 +134,9 @@ public class BlockLittleChunk extends BlockContainer {
                                              ySelected,
                                              zSelected);
             if (pickedID > 0) {
-                int xx = (x << 3) + xSelected, yy = (y << 3) + ySelected, zz = (z << 3)
-                                                                               + zSelected;
+                int xx = (x << 3) + xSelected;
+                int yy = (y << 3) + ySelected;
+                int zz = (z << 3) + zSelected;
                 return Block.blocksList[pickedID].getDamageValue((World) tilelb.getLittleWorld(),
                                                                  xx,
                                                                  yy,
@@ -189,12 +190,12 @@ public class BlockLittleChunk extends BlockContainer {
                                                                             z1);
                                     if (blockId > 0
                                         && Block.blocksList[blockId] != null) {
-                                        ItemStack itemToDrop = dropLittleBlockAsNormalBlock(world,
-                                                                                            x,
-                                                                                            y,
-                                                                                            z,
-                                                                                            blockId,
-                                                                                            contentMeta);
+                                        ItemStack itemToDrop = this.dropLittleBlockAsNormalBlock(world,
+                                                                                                 x,
+                                                                                                 y,
+                                                                                                 z,
+                                                                                                 blockId,
+                                                                                                 contentMeta);
                                         if (itemToDrop != null) {
                                             collection.addItemToDrop(itemToDrop);
                                         }
@@ -251,8 +252,8 @@ public class BlockLittleChunk extends BlockContainer {
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int localSide, float hitX, float hitY, float hitZ) {
         // System.out.println("Activated");
         if (world.isRemote) {
-            if (canPlayerPlaceBlockOrUseItem(world,
-                                             entityplayer)) {
+            if (this.canPlayerPlaceBlockOrUseItem(world,
+                                                  entityplayer)) {
                 try {
                     BlockUtil.getLittleController().onPlayerRightClickFirst(entityplayer,
                                                                             (World) LittleBlocks.proxy.getLittleWorld(world,
@@ -346,8 +347,8 @@ public class BlockLittleChunk extends BlockContainer {
             && entityplayer.getHeldItem().getItem() instanceof ItemLittleBlocksWand) {
             return;
         }
-        if (canPlayerPlaceBlockOrUseItem(world,
-                                         entityplayer)) {
+        if (this.canPlayerPlaceBlockOrUseItem(world,
+                                              entityplayer)) {
             try {
                 BlockUtil.onServerBlockActivated(world,
                                                  entityplayer,
@@ -460,12 +461,12 @@ public class BlockLittleChunk extends BlockContainer {
     private void setBlockBoundsBasedOnSelection(World world, int x, int y, int z) {
         float m = ConfigurationLib.littleBlocksSize;
         if (xSelected == -10) {
-            setBlockBounds(0f,
-                           0f,
-                           0f,
-                           0f,
-                           0f,
-                           0f);
+            this.setBlockBounds(0f,
+                                0f,
+                                0f,
+                                0f,
+                                0f,
+                                0f);
         } else {
             TileEntityLittleChunk tile = (TileEntityLittleChunk) world.getBlockTileEntity(x,
                                                                                           y,
@@ -475,12 +476,12 @@ public class BlockLittleChunk extends BlockContainer {
                                           zSelected);
             // System.out.println("Content: " + content);
             if (content == -1) {
-                setBlockBounds(xSelected / m,
-                               ySelected / m,
-                               zSelected / m,
-                               (xSelected + 1) / m,
-                               (ySelected + 1) / m,
-                               (zSelected + 1) / m);
+                this.setBlockBounds(xSelected / m,
+                                    ySelected / m,
+                                    zSelected / m,
+                                    (xSelected + 1) / m,
+                                    (ySelected + 1) / m,
+                                    (zSelected + 1) / m);
             } else {
                 Block block = Block.blocksList[content];
                 if (block != null) {
@@ -497,18 +498,18 @@ public class BlockLittleChunk extends BlockContainer {
                                                          (y << 3) + ySelected,
                                                          (z << 3) + zSelected);
                     }
-                    setBlockBounds((float) (xSelected + block.getBlockBoundsMinX())
-                                           / m,
-                                   (float) (ySelected + block.getBlockBoundsMinY())
-                                           / m,
-                                   (float) (zSelected + block.getBlockBoundsMinZ())
-                                           / m,
-                                   (float) (xSelected + block.getBlockBoundsMaxX())
-                                           / m,
-                                   (float) (ySelected + block.getBlockBoundsMaxY())
-                                           / m,
-                                   (float) (zSelected + block.getBlockBoundsMaxZ())
-                                           / m);
+                    this.setBlockBounds((float) (xSelected + block.getBlockBoundsMinX())
+                                                / m,
+                                        (float) (ySelected + block.getBlockBoundsMinY())
+                                                / m,
+                                        (float) (zSelected + block.getBlockBoundsMinZ())
+                                                / m,
+                                        (float) (xSelected + block.getBlockBoundsMaxX())
+                                                / m,
+                                        (float) (ySelected + block.getBlockBoundsMaxY())
+                                                / m,
+                                        (float) (zSelected + block.getBlockBoundsMaxZ())
+                                                / m);
                 }
             }
         }
@@ -696,10 +697,10 @@ public class BlockLittleChunk extends BlockContainer {
                         }
                     }
                 }
-                setBlockBoundsBasedOnSelection(world,
-                                               x,
-                                               y,
-                                               z);
+                this.setBlockBoundsBasedOnSelection(world,
+                                                    x,
+                                                    y,
+                                                    z);
                 return new MovingObjectPosition(x, y, z, (byte) min.sideHit,
                 /** ((Vec3) min.hitVec).addVector(x, y, z) **/
                 hitVec = min.hitVec.myVec3LocalPool.getVecFromPool((min.hitVec.xCoord * 8) % 1,
@@ -714,10 +715,10 @@ public class BlockLittleChunk extends BlockContainer {
         zSelected = -10;
         side = -1;
         hitVec = null;
-        setBlockBoundsBasedOnSelection(world,
-                                       x,
-                                       y,
-                                       z);
+        this.setBlockBoundsBasedOnSelection(world,
+                                            x,
+                                            y,
+                                            z);
 
         return null;
     }
@@ -735,24 +736,24 @@ public class BlockLittleChunk extends BlockContainer {
                                                      bound.minZ);
         Vec3 maxZ = player.getIntermediateWithZValue(view,
                                                      bound.maxZ);
-        if (!isVecInsideYZBounds(bound,
-                                 minX)) {
+        if (!this.isVecInsideYZBounds(bound,
+                                      minX)) {
             minX = null;
         }
-        if (!isVecInsideYZBounds(bound,
-                                 maxX)) {
+        if (!this.isVecInsideYZBounds(bound,
+                                      maxX)) {
             maxX = null;
         }
-        if (!isVecInsideXZBounds(bound,
-                                 minY)) {
+        if (!this.isVecInsideXZBounds(bound,
+                                      minY)) {
             minY = null;
         }
-        if (!isVecInsideXZBounds(bound,
-                                 maxY)) {
+        if (!this.isVecInsideXZBounds(bound,
+                                      maxY)) {
             maxY = null;
         }
-        if (!isVecInsideXYBounds(bound,
-                                 minZ)) {
+        if (!this.isVecInsideXYBounds(bound,
+                                      minZ)) {
             minZ = null;
         }
         if (!isVecInsideXYBounds(bound,
