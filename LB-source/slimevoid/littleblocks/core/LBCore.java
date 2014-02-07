@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import slimevoid.littleblocks.blocks.BlockLBDoor;
 import slimevoid.littleblocks.blocks.BlockLBPistonBase;
 import slimevoid.littleblocks.blocks.BlockLittleChunk;
 import slimevoid.littleblocks.core.lib.BlockLib;
@@ -74,5 +75,18 @@ public class LBCore {
                                                                              newPistonSticky);
         ReflectionHelper.getInstance(Block.class).setFinalStaticFieldAtIndex(ConfigurationLib.pistonBaseIndex,
                                                                              newPistonBase);
+    }
+
+    public static void registerDoorOverride() {
+        BlockRemover.removeVanillaBlock(Block.doorWood,
+                                        false);
+        BlockRemover.removeVanillaBlock(Block.doorIron,
+                                        false);
+        Block newDoorWood = new BlockLBDoor(64, Material.wood).setHardness(3.0F).setStepSound(Block.soundWoodFootstep).setUnlocalizedName("doorWood").setTextureName("door_wood");
+        Block newDoorIron = new BlockLBDoor(71, Material.iron).setHardness(5.0F).setStepSound(Block.soundMetalFootstep).setUnlocalizedName("doorIron").setTextureName("door_iron");
+        ReflectionHelper.getInstance(Block.class).setFinalStaticFieldAtIndex(ConfigurationLib.doorWoodIndex,
+                                                                             newDoorWood);
+        ReflectionHelper.getInstance(Block.class).setFinalStaticFieldAtIndex(ConfigurationLib.doorIronIndex,
+                                                                             newDoorIron);
     }
 }

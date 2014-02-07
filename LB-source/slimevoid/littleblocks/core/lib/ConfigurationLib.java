@@ -42,6 +42,8 @@ public class ConfigurationLib {
     private static String                   CATEGORY_OVERRIDES     = "overrides";
     public static int                       pistonStickyIndex      = 50;
     public static int                       pistonBaseIndex        = 54;
+    public static int                       doorWoodIndex          = 85;
+    public static int                       doorIronIndex          = 92;
 
     private static List<Integer>            disallowedDimensionIds = new ArrayList<Integer>();
 
@@ -126,6 +128,13 @@ public class ConfigurationLib {
         pistonBaseIndex = configuration.get(CATEGORY_OVERRIDES,
                                             "pistonBaseIndex",
                                             pistonBaseIndex).getInt();
+
+        doorWoodIndex = configuration.get(CATEGORY_OVERRIDES,
+                                          "doorWoodIndex",
+                                          doorWoodIndex).getInt();
+        doorIronIndex = configuration.get(CATEGORY_OVERRIDES,
+                                          "doorIronIndex",
+                                          doorIronIndex).getInt();
 
         configuration.save();
 

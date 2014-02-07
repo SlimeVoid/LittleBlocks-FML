@@ -56,5 +56,6 @@ public class LittleBlocks {
     @EventHandler
     public void LittleBlocksPostInit(FMLPostInitializationEvent event) {
         LBCore.registerPistonOverride();
+        LBCore.registerDoorOverride();
     }
 }
