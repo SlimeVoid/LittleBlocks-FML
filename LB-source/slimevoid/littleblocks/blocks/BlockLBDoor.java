@@ -7,23 +7,23 @@ import net.minecraft.world.World;
 
 public class BlockLBDoor extends BlockDoor {
 
-    public BlockLBDoor(int par1, Material par2Material) {
-        super(par1, par2Material);
+    public BlockLBDoor(int blockID, Material material) {
+        super(blockID, material);
         this.disableStats();
     }
 
     @Override
-    public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4) {
-        return par3 >= par1World.getHeight() ? false : par1World.doesBlockHaveSolidTopSurface(par2,
-                                                                                              par3 - 1,
-                                                                                              par4)
-                                                       && Block.bedrock.canPlaceBlockAt(par1World,
-                                                                                        par2,
-                                                                                        par3,
-                                                                                        par4)
-                                                       && Block.bedrock.canPlaceBlockAt(par1World,
-                                                                                        par2,
-                                                                                        par3 + 1,
-                                                                                        par4);
+    public boolean canPlaceBlockAt(World world, int x, int y, int z) {
+        return y >= world.getHeight() ? false : world.doesBlockHaveSolidTopSurface(x,
+                                                                                   y - 1,
+                                                                                   z)
+                                                && Block.bedrock.canPlaceBlockAt(world,
+                                                                                 x,
+                                                                                 y,
+                                                                                 z)
+                                                && Block.bedrock.canPlaceBlockAt(world,
+                                                                                 x,
+                                                                                 y + 1,
+                                                                                 z);
     }
 }
