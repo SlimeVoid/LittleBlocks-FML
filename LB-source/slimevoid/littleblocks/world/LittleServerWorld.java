@@ -225,9 +225,6 @@ public class LittleServerWorld extends LittleWorld {
         super.tickBlocksAndAmbiance();
     }
 
-    public void updateLittleEntities() {
-    }
-
     @Override
     public void updateEntities() {
         super.updateEntities();
@@ -394,9 +391,9 @@ public class LittleServerWorld extends LittleWorld {
                 pendingTicks = this.pendingTickListEntriesTreeSet.iterator();
             } else {
                 pendingTicks = this.pendingTickListEntriesThisTick.iterator();
-                if (!this.pendingTickListEntriesThisTick.isEmpty()) {
-                    System.out.println(this.pendingTickListEntriesThisTick.size());
-                }
+                // if (!this.pendingTickListEntriesThisTick.isEmpty()) {
+                // System.out.println(this.pendingTickListEntriesThisTick.size());
+                // }
             }
             while (pendingTicks.hasNext()) {
                 NextTickListEntry nextTick = pendingTicks.next();

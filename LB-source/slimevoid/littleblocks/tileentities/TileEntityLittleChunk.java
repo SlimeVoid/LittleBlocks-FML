@@ -1,6 +1,7 @@
 package slimevoid.littleblocks.tileentities;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -272,6 +273,10 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
     // }
     // }
     // }
+
+    public int getSavedLightValue(int x, int y, int z) {
+        return 0;
+    }
 
     public void setLightValue(int x, int y, int z, int value) {
         if (x >= size | y >= size | z >= size) {
@@ -572,9 +577,9 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
         ChunkPosition chunkposition = new ChunkPosition(x, y, z);
 
         tile.setWorldObj((World) this.getLittleWorld());
-        tile.xCoord = (xCoord << 3) + x;
-        tile.yCoord = (yCoord << 3) + y;
-        tile.zCoord = (zCoord << 3) + z;
+        tile.xCoord = (this.xCoord << 3) + x;
+        tile.yCoord = (this.yCoord << 3) + y;
+        tile.zCoord = (this.zCoord << 3) + z;
         Block block = Block.blocksList[this.getBlockID(x,
                                                        y,
                                                        z)];
@@ -606,6 +611,10 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
         if (tileentity != null && tileentity.isInvalid()) {
             this.chunkTileEntityMap.remove(chunkposition);
         }
+    }
+
+    public Collection<TileEntity> getTileEntityList() {
+        return this.chunkTileEntityMap.values();
     }
 
     @Override

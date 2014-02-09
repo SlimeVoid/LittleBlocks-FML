@@ -15,6 +15,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.Facing;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
@@ -26,14 +27,18 @@ import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraftforge.common.FakePlayer;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.ForgeDirection;
 import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.core.LittleBlocks;
 import slimevoid.littleblocks.core.LoggerLittleBlocks;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
+import slimevoid.littleblocks.core.lib.CoreLib;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
+import slimevoidlib.core.SlimevoidCore;
 import slimevoidlib.data.Logger;
+import slimevoidlib.data.Logger.LogLevel;
 
 import com.google.common.collect.ImmutableSetMultimap;
 
@@ -50,12 +55,14 @@ public class LittleWorld extends World implements ILittleWorld {
     @SideOnly(Side.CLIENT)
     public LittleWorld(World world, WorldProvider worldprovider, String worldName) {
         super(world.getSaveHandler(), worldName, worldprovider, new WorldSettings(world.getWorldInfo().getSeed(), world.getWorldInfo().getGameType(), world.getWorldInfo().isMapFeaturesEnabled(), world.getWorldInfo().isHardcoreModeEnabled(), world.getWorldInfo().getTerrainType()), null, null);
+        this.lightUpdateBlockList = new int[32768];
         this.realWorld = world.provider.dimensionId;
         this.isRemote = true;
     }
 
     public LittleWorld(World world, WorldProvider worldprovider) {
         super(world.getSaveHandler(), "LittleBlocksWorld", new WorldSettings(world.getWorldInfo().getSeed(), world.getWorldInfo().getGameType(), world.getWorldInfo().isMapFeaturesEnabled(), world.getWorldInfo().isHardcoreModeEnabled(), world.getWorldInfo().getTerrainType()), worldprovider, null, null);
+        this.lightUpdateBlockList = new int[32768];
         this.realWorld = world.provider.dimensionId;
         this.isRemote = false;
     }
@@ -139,6 +146,22 @@ public class LittleWorld extends World implements ILittleWorld {
                 try {
                     tileentity.updateEntity();
                 } catch (Throwable t) {
+                    SlimevoidCore.console(CoreLib.MOD_ID,
+                                          t.getLocalizedMessage(),
+                                          LogLevel.WARNING.ordinal());
+                    LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(this.getRealWorld().isRemote,
+                                                                                                             "updateEntities("
+                                                                                                                     + tileentity.toString()
+                                                                                                                     + ", "
+                                                                                                                     + tileentity.xCoord
+                                                                                                                     + ", "
+                                                                                                                     + tileentity.yCoord
+                                                                                                                     + ", "
+                                                                                                                     + tileentity.zCoord
+                                                                                                                     + ").["
+                                                                                                                     + t.getLocalizedMessage()
+                                                                                                                     + "]",
+                                                                                                             LoggerLittleBlocks.LogLevel.DEBUG);
                 }
             }
 
@@ -176,16 +199,14 @@ public class LittleWorld extends World implements ILittleWorld {
                         this.loadedTiles.add(tileentity);
                     }
                 } else {
-                    if (this.chunkExists(tileentity.xCoord >> 4,
-                                         tileentity.zCoord >> 4)) {
-                        Chunk var15 = this.getChunkFromChunkCoords(tileentity.xCoord >> 4,
-                                                                   tileentity.zCoord >> 4);
-
-                        if (var15 != null) {
-                            var15.cleanChunkBlockTileEntity(tileentity.xCoord & 15,
-                                                            tileentity.yCoord,
-                                                            tileentity.zCoord & 15);
-                        }
+                    TileEntity tileentitylb = this.getRealWorld().getBlockTileEntity(tileentity.xCoord >> 3,
+                                                                                     tileentity.yCoord >> 3,
+                                                                                     tileentity.zCoord >> 3);
+                    if (tileentitylb != null
+                        && tileentitylb instanceof TileEntityLittleChunk) {
+                        ((TileEntityLittleChunk) tileentitylb).cleanChunkBlockTileEntity(tileentity.xCoord & 7,
+                                                                                         tileentity.yCoord & 7,
+                                                                                         tileentity.zCoord & 7);
                     }
                 }
             }
@@ -1230,14 +1251,21 @@ public class LittleWorld extends World implements ILittleWorld {
 
     @Override
     public EntityPlayer getClosestPlayer(double x, double y, double z, double distance) {
-        return this.getRealWorld().getClosestPlayer(x
-                                                            / ConfigurationLib.littleBlocksSize,
-                                                    y
-                                                            / ConfigurationLib.littleBlocksSize,
-                                                    z
-                                                            / ConfigurationLib.littleBlocksSize,
-                                                    distance
-                                                            / ConfigurationLib.littleBlocksSize);
+        int blockX = MathHelper.floor_double(x);
+        int blockY = MathHelper.floor_double(y);
+        int blockZ = MathHelper.floor_double(z);
+        EntityPlayer entityplayer = this.getRealWorld().getClosestPlayer(blockX >> 3,
+                                                                         blockY >> 3,
+                                                                         blockZ >> 3,
+                                                                         distance);
+        if (entityplayer != null) {
+            FakePlayer player = new FakePlayer(this, entityplayer.username);
+            player.posX = MathHelper.floor_double(entityplayer.posX) << 3;
+            player.posY = MathHelper.floor_double(entityplayer.posY) << 3;
+            player.posZ = MathHelper.floor_double(entityplayer.posZ) << 3;
+            return player;
+        }
+        return null;
     }
 
     @Override
@@ -1321,12 +1349,354 @@ public class LittleWorld extends World implements ILittleWorld {
         }
     }
 
+    private int computeLightValue(int par1, int par2, int par3, EnumSkyBlock par4EnumSkyBlock) {
+        if (par4EnumSkyBlock == EnumSkyBlock.Sky
+            && this.canBlockSeeTheSky(par1,
+                                      par2,
+                                      par3)) {
+            return 15;
+        } else {
+            int l = this.getBlockId(par1,
+                                    par2,
+                                    par3);
+            Block block = Block.blocksList[l];
+            int blockLight = (block == null ? 0 : block.getLightValue(this,
+                                                                      par1,
+                                                                      par2,
+                                                                      par3));
+            int i1 = par4EnumSkyBlock == EnumSkyBlock.Sky ? 0 : blockLight;
+            int j1 = (block == null ? 0 : block.getLightOpacity(this,
+                                                                par1,
+                                                                par2,
+                                                                par3));
+
+            if (j1 >= 15 && blockLight > 0) {
+                j1 = 1;
+            }
+
+            if (j1 < 1) {
+                j1 = 1;
+            }
+
+            if (j1 >= 15) {
+                return 0;
+            } else if (i1 >= 14) {
+                return i1;
+            } else {
+                for (int k1 = 0; k1 < 6; ++k1) {
+                    int l1 = par1 + Facing.offsetsXForSide[k1];
+                    int i2 = par2 + Facing.offsetsYForSide[k1];
+                    int j2 = par3 + Facing.offsetsZForSide[k1];
+                    int k2 = this.getSavedLightValue(par4EnumSkyBlock,
+                                                     l1,
+                                                     i2,
+                                                     j2) - j1;
+
+                    if (k2 > i1) {
+                        i1 = k2;
+                    }
+
+                    if (i1 >= 14) {
+                        return i1;
+                    }
+                }
+
+                return i1;
+            }
+        }
+    }
+
+    int[] lightUpdateBlockList;
+
+    public int getSavedLightValue(EnumSkyBlock enumskyblock, int x, int y, int z) {
+        if (x < 0xfe363c80 || z < 0xfe363c80 || x >= 0x1c9c380
+            || z >= 0x1c9c380) {
+            LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(this.getRealWorld().isRemote,
+                                                                                                     "getBlockMetadata("
+                                                                                                             + x
+                                                                                                             + ", "
+                                                                                                             + y
+                                                                                                             + ", "
+                                                                                                             + z
+                                                                                                             + ").[Out of bounds]",
+                                                                                                     LoggerLittleBlocks.LogLevel.DEBUG);
+            return 0;
+        }
+        if (y < 0) {
+            LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(this.getRealWorld().isRemote,
+                                                                                                     "getBlockMetadata("
+                                                                                                             + x
+                                                                                                             + ", "
+                                                                                                             + y
+                                                                                                             + ", "
+                                                                                                             + z
+                                                                                                             + ").[y < 0]",
+                                                                                                     LoggerLittleBlocks.LogLevel.DEBUG);
+            return 0;
+        }
+        if (y >= this.getHeight()) {
+            LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(this.getRealWorld().isRemote,
+                                                                                                     "getBlockMetadata("
+                                                                                                             + x
+                                                                                                             + ", "
+                                                                                                             + y
+                                                                                                             + ", "
+                                                                                                             + z
+                                                                                                             + ").[y >= "
+                                                                                                             + this.getHeight()
+                                                                                                             + "]",
+                                                                                                     LoggerLittleBlocks.LogLevel.DEBUG);
+            return 0;
+        } else {
+            int id = this.getRealWorld().getChunkFromChunkCoords(x >> 7,
+                                                                 z >> 7).getBlockID((x & 0x7f) >> 3,
+                                                                                    y >> 3,
+                                                                                    (z & 0x7f) >> 3);
+            int metadata = this.getRealWorld().getChunkFromChunkCoords(x >> 7,
+                                                                       z >> 7).getBlockMetadata((x & 0x7f) >> 3,
+                                                                                                y >> 3,
+                                                                                                (z & 0x7f) >> 3);
+            if (id == ConfigurationLib.littleChunkID) {
+                TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getRealWorld().getBlockTileEntity(x >> 3,
+                                                                                                            y >> 3,
+                                                                                                            z >> 3);
+                return tile.getSavedLightValue(x & 7,
+                                               y & 7,
+                                               z & 7);
+            } else {
+                return enumskyblock.defaultLightValue;
+            }
+        }
+    }
+
     @Override
-    public void updateLightByType(EnumSkyBlock enumSkyBlock, int x, int y, int z) {
-        this.getRealWorld().updateLightByType(enumSkyBlock,
-                                              x >> 3,
-                                              y >> 3,
-                                              z >> 3);
+    public void updateLightByType(EnumSkyBlock enumskyblock, int x, int y, int z) {
+        // this.getRealWorld().updateLightByType(enumSkyBlock,
+        // x >> 3,
+        // y >> 3,
+        // z >> 3);
+        if (this.doChunksNearChunkExist(x,
+                                        y,
+                                        z,
+                                        17)) {
+            int lightCount = 0;
+            int changeCount = 0;
+            int savedLight = this.getSavedLightValue(enumskyblock,
+                                                     x,
+                                                     y,
+                                                     z);
+            int computedLight = this.computeLightValue(x,
+                                                       y,
+                                                       z,
+                                                       enumskyblock);
+            int l1;
+            int i2;
+            int j2;
+            int k2;
+            int l2;
+            int i3;
+            int j3;
+            int k3;
+            int l3;
+
+            if (computedLight > savedLight) {
+                this.lightUpdateBlockList[changeCount++] = 133152;
+            } else if (computedLight < savedLight) {
+                this.lightUpdateBlockList[changeCount++] = 133152 | savedLight << 18;
+
+                while (lightCount < changeCount) {
+                    l1 = this.lightUpdateBlockList[lightCount++];
+                    i2 = (l1 & 63) - 32 + x;
+                    j2 = (l1 >> 6 & 63) - 32 + y;
+                    k2 = (l1 >> 12 & 63) - 32 + z;
+                    l2 = l1 >> 18 & 15;
+                    i3 = this.getSavedLightValue(enumskyblock,
+                                                 i2,
+                                                 j2,
+                                                 k2);
+
+                    if (i3 == l2) {
+                        this.setLightValue(enumskyblock,
+                                           i2,
+                                           j2,
+                                           k2,
+                                           0);
+
+                        if (l2 > 0) {
+                            j3 = MathHelper.abs_int(i2 - x);
+                            l3 = MathHelper.abs_int(j2 - y);
+                            k3 = MathHelper.abs_int(k2 - z);
+
+                            if (j3 + l3 + k3 < 17) {
+                                for (int i4 = 0; i4 < 6; ++i4) {
+                                    int j4 = i2 + Facing.offsetsXForSide[i4];
+                                    int k4 = j2 + Facing.offsetsYForSide[i4];
+                                    int l4 = k2 + Facing.offsetsZForSide[i4];
+                                    Block block = Block.blocksList[getBlockId(j4,
+                                                                              k4,
+                                                                              l4)];
+                                    int blockOpacity = (block == null ? 0 : block.getLightOpacity(this,
+                                                                                                  j4,
+                                                                                                  k4,
+                                                                                                  l4));
+                                    int i5 = Math.max(1,
+                                                      blockOpacity);
+                                    i3 = this.getSavedLightValue(enumskyblock,
+                                                                 j4,
+                                                                 k4,
+                                                                 l4);
+
+                                    if (i3 == l2 - i5
+                                        && changeCount < this.lightUpdateBlockList.length) {
+                                        this.lightUpdateBlockList[changeCount++] = j4
+                                                                                   - x
+                                                                                   + 32
+                                                                                   | k4
+                                                                                     - y
+                                                                                     + 32 << 6
+                                                                                   | l4
+                                                                                     - z
+                                                                                     + 32 << 12
+                                                                                   | l2
+                                                                                     - i5 << 18;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                lightCount = 0;
+            }
+
+            while (lightCount < changeCount) {
+                l1 = this.lightUpdateBlockList[lightCount++];
+                i2 = (l1 & 63) - 32 + x;
+                j2 = (l1 >> 6 & 63) - 32 + y;
+                k2 = (l1 >> 12 & 63) - 32 + z;
+                l2 = this.getSavedLightValue(enumskyblock,
+                                             i2,
+                                             j2,
+                                             k2);
+                i3 = this.computeLightValue(i2,
+                                            j2,
+                                            k2,
+                                            enumskyblock);
+
+                if (i3 != l2) {
+                    this.setLightValue(enumskyblock,
+                                       i2,
+                                       j2,
+                                       k2,
+                                       i3);
+
+                    if (i3 > l2) {
+                        j3 = Math.abs(i2 - x);
+                        l3 = Math.abs(j2 - y);
+                        k3 = Math.abs(k2 - z);
+                        boolean flag = changeCount < this.lightUpdateBlockList.length - 6;
+
+                        if (j3 + l3 + k3 < 17 && flag) {
+                            if (this.getSavedLightValue(enumskyblock,
+                                                        i2 - 1,
+                                                        j2,
+                                                        k2) < i3) {
+                                this.lightUpdateBlockList[changeCount++] = i2
+                                                                           - 1
+                                                                           - x
+                                                                           + 32
+                                                                           + (j2
+                                                                              - y
+                                                                              + 32 << 6)
+                                                                           + (k2
+                                                                              - z
+                                                                              + 32 << 12);
+                            }
+
+                            if (this.getSavedLightValue(enumskyblock,
+                                                        i2 + 1,
+                                                        j2,
+                                                        k2) < i3) {
+                                this.lightUpdateBlockList[changeCount++] = i2
+                                                                           + 1
+                                                                           - x
+                                                                           + 32
+                                                                           + (j2
+                                                                              - y
+                                                                              + 32 << 6)
+                                                                           + (k2
+                                                                              - z
+                                                                              + 32 << 12);
+                            }
+
+                            if (this.getSavedLightValue(enumskyblock,
+                                                        i2,
+                                                        j2 - 1,
+                                                        k2) < i3) {
+                                this.lightUpdateBlockList[changeCount++] = i2
+                                                                           - x
+                                                                           + 32
+                                                                           + (j2
+                                                                              - 1
+                                                                              - y
+                                                                              + 32 << 6)
+                                                                           + (k2
+                                                                              - z
+                                                                              + 32 << 12);
+                            }
+
+                            if (this.getSavedLightValue(enumskyblock,
+                                                        i2,
+                                                        j2 + 1,
+                                                        k2) < i3) {
+                                this.lightUpdateBlockList[changeCount++] = i2
+                                                                           - x
+                                                                           + 32
+                                                                           + (j2
+                                                                              + 1
+                                                                              - y
+                                                                              + 32 << 6)
+                                                                           + (k2
+                                                                              - z
+                                                                              + 32 << 12);
+                            }
+
+                            if (this.getSavedLightValue(enumskyblock,
+                                                        i2,
+                                                        j2,
+                                                        k2 - 1) < i3) {
+                                this.lightUpdateBlockList[changeCount++] = i2
+                                                                           - x
+                                                                           + 32
+                                                                           + (j2
+                                                                              - y
+                                                                              + 32 << 6)
+                                                                           + (k2
+                                                                              - 1
+                                                                              - z
+                                                                              + 32 << 12);
+                            }
+
+                            if (this.getSavedLightValue(enumskyblock,
+                                                        i2,
+                                                        j2,
+                                                        k2 + 1) < i3) {
+                                this.lightUpdateBlockList[changeCount++] = i2
+                                                                           - x
+                                                                           + 32
+                                                                           + (j2
+                                                                              - y
+                                                                              + 32 << 6)
+                                                                           + (k2
+                                                                              + 1
+                                                                              - z
+                                                                              + 32 << 12);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @Override
