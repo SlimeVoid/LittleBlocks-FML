@@ -94,10 +94,9 @@ public class BlockUtil {
     }
 
     public static boolean isBlockAllowedToTick(Block littleBlock) {
-        if (littleBlock != null) {
-            if (disallowedBlocksToTick.contains(littleBlock.getClass())) {
-                return false;
-            }
+        if (littleBlock != null
+            && disallowedBlocksToTick.contains(littleBlock.getClass())) {
+            return false;
         }
         return true;
     }

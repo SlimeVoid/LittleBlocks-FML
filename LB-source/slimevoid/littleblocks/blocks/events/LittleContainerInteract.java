@@ -120,7 +120,6 @@ public class LittleContainerInteract {
                 if (fields[worldFieldIndex + 1].get(datasource) instanceof Integer
                     && fields[worldFieldIndex + 2].get(datasource) instanceof Integer
                     && fields[worldFieldIndex + 3].get(datasource) instanceof Integer) {
-                    System.out.println("possible coords");
                     if (Math.pow(Math.pow((fields[worldFieldIndex + 1].getInt(datasource) >> 3)
                                                   - event.entityPlayer.posX,
                                           2)

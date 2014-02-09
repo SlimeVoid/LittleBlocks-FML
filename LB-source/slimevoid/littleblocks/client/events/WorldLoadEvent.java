@@ -24,10 +24,10 @@ public class WorldLoadEvent {
 
             ConfigurationLib.littleWorldClient = new LittleWorldClient(world, world.getSaveHandler(), "LittleWorldClient", provider, new WorldSettings(world.getWorldInfo().getSeed(), world.getWorldInfo().getGameType(), world.getWorldInfo().isMapFeaturesEnabled(), world.getWorldInfo().isHardcoreModeEnabled(), world.getWorldInfo().getTerrainType()), world.difficultySetting, null, null);
 
-            System.out.println("World Loaded: "
-                               + world.getWorldInfo().getWorldName()
-                               + " | Dimension: " + dimension
-                               + " | LittleDimension: default");
+            // System.out.println("World Loaded: "
+            // + world.getWorldInfo().getWorldName()
+            // + " | Dimension: " + dimension
+            // + " | LittleDimension: default");
         }
     }
 

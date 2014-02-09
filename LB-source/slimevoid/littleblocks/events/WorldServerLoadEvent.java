@@ -22,9 +22,9 @@ public class WorldServerLoadEvent {
             && !(event.world instanceof ILittleWorld)) {
             WorldServer world = (WorldServer) event.world;
             int dimension = world.provider.dimensionId;
-            System.out.println("Loading WorldServer: "
-                               + world.getWorldInfo().getWorldName()
-                               + " | Dimension: " + dimension);
+            // System.out.println("Loading WorldServer: "
+            // + world.getWorldInfo().getWorldName()
+            // + " | Dimension: " + dimension);
 
             int littleDimension = ConfigurationLib.getLittleServerDimension(dimension);
 
@@ -33,7 +33,7 @@ public class WorldServerLoadEvent {
                                       littleDimension);
         }
         if (event.world instanceof ILittleWorld) {
-            System.out.println("ENOUGH WORLD INCEPTION ALREADY!!!!	");
+            // System.out.println("ENOUGH WORLD INCEPTION ALREADY!!!!	");
             WorldServer littleWorldServer = (WorldServer) event.world;
             Chunk chunk = new Chunk(littleWorldServer, new byte[] { 0 }, 0, 0);
             MinecraftForge.EVENT_BUS.post(new ChunkDataEvent.Load(chunk, new NBTTagCompound()));
@@ -57,10 +57,10 @@ public class WorldServerLoadEvent {
             Chunk chunk = new Chunk(littleWorldServer, new byte[] { 0 }, 0, 0);
             MinecraftForge.EVENT_BUS.post(new ChunkDataEvent.Load(chunk, new NBTTagCompound()));
 
-            System.out.println("WorldServer Loaded: "
-                               + world.getWorldInfo().getWorldName()
-                               + " | Dimension: " + dimension
-                               + " | LittleDimension: " + littleDimension);
+            // System.out.println("WorldServer Loaded: "
+            // + world.getWorldInfo().getWorldName()
+            // + " | Dimension: " + dimension
+            // + " | LittleDimension: " + littleDimension);
         }
     }
 
