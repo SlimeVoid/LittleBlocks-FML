@@ -1,11 +1,16 @@
 package slimevoid.littleblocks.client.render.tileentities;
 
-import net.minecraft.block.Block;
+import java.util.Collection;
+
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
+
+import slimevoid.littleblocks.core.lib.ConfigurationLib;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
-import cpw.mods.fml.common.FMLCommonHandler;
 
 public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 
@@ -20,44 +25,42 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 
     private void renderTileEntityLittleBlocks(TileEntityLittleChunk tileentitylittleblocks, double x, double y, double z, float f) {
 
-        if (tileentitylittleblocks == null || tileentitylittleblocks.isEmpty()) {
+        if (tileentitylittleblocks == null
+            || tileentitylittleblocks.getTileEntityList().isEmpty()) {
             return;
         }
 
-        LittleTilesLittleRenderer littleTiles = new LittleTilesLittleRenderer(this.tileEntityRenderer, (World) tileentitylittleblocks.getLittleWorld());
+        Collection<TileEntity> tilesToRender = tileentitylittleblocks.getTileEntityList();
 
-        int[][][] content = tileentitylittleblocks.getContents();
+        this.tileEntityRenderer.setWorld((World) tileentitylittleblocks.getLittleWorld());
 
-        for (int x1 = 0; x1 < content.length; x1++) {
-            for (int y1 = 0; y1 < content[x1].length; y1++) {
-                for (int z1 = 0; z1 < content[x1][y1].length; z1++) {
-                    int blockId = content[x1][y1][z1];
-                    if (blockId > 0) {
-                        Block littleBlock = Block.blocksList[blockId];
-                        if (littleBlock != null) {
-                            if (littleBlock.hasTileEntity(tileentitylittleblocks.getBlockMetadata(x1,
-                                                                                                  y1,
-                                                                                                  z1))) {
-                                TileEntity tileentity = tileentitylittleblocks.getLittleWorld().getBlockTileEntity(((tileentitylittleblocks.xCoord << 3) + x1),
-                                                                                                                   ((tileentitylittleblocks.yCoord << 3) + y1),
-                                                                                                                   ((tileentitylittleblocks.zCoord << 3) + z1));
-                                if (tileentity != null) {
-                                    littleTiles.addLittleTileToRender(tileentity);
-                                } else {
-                                    FMLCommonHandler.instance().getFMLLogger().warning("Attempted to render a tile for ["
-                                                                                       + littleBlock
-                                                                                       + "] that was null!");
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+        GL11.glPushMatrix();
+
+        GL11.glTranslated(x,
+                          y,
+                          z);
+        GL11.glTranslated(-tileentitylittleblocks.xCoord,
+                          -tileentitylittleblocks.yCoord,
+                          -tileentitylittleblocks.zCoord);
+        GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+
+        float scale = 1F / ConfigurationLib.littleBlocksSize;
+
+        GL11.glScalef(scale,
+                      scale,
+                      scale);
+
+        for (TileEntity tileentity : tilesToRender) {
+            this.tileEntityRenderer.renderTileEntityAt(tileentity,
+                                                       tileentity.xCoord,
+                                                       tileentity.yCoord,
+                                                       tileentity.zCoord,
+                                                       f);
         }
-        littleTiles.renderLittleTiles(tileentitylittleblocks,
-                                      x,
-                                      y,
-                                      z,
-                                      f);
+
+        GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+        GL11.glPopMatrix();
+
+        this.tileEntityRenderer.setWorld(tileentitylittleblocks.getWorldObj());
     }
 }
