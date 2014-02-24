@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.logging.Level;
 
 import net.minecraft.block.Block;
@@ -955,6 +956,39 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 
         this.setBlockIDs(newContent);
         this.setMetadatas(newMetadata);
+    }
+
+    public void updateTick(Random rand) {
+        this.littleUpdateTick(rand);
+    }
+
+    public void littleUpdateTick(Random rand) {
+        for (int x = 0; x < this.content.length; x++) {
+            for (int y = 0; y < this.content[x].length; y++) {
+                for (int z = 0; z < this.content[x][y].length; z++) {
+                    Block littleBlock = content[x][y][z] != 0 ? Block.blocksList[content[x][y][z]] : null;
+                    if (littleBlock != null && littleBlock.getTickRandomly()) {
+                        littleBlock.updateTick((World) this.getLittleWorld(),
+                                               this.getX(x),
+                                               this.getY(y),
+                                               this.getZ(z),
+                                               rand);
+                    }
+                }
+            }
+        }
+    }
+
+    private int getX(int x) {
+        return (this.xCoord << 3) + x;
+    }
+
+    private int getY(int y) {
+        return (this.yCoord << 3) + y;
+    }
+
+    private int getZ(int z) {
+        return (this.zCoord << 3) + z;
     }
 
 }
