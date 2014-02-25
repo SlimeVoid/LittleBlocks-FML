@@ -40,6 +40,8 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
     private int                            lightmap[][][]     = new int[size][size][size];
     private boolean                        isLit              = false;
     private Map<ChunkPosition, TileEntity> chunkTileEntityMap = new HashMap<ChunkPosition, TileEntity>();
+    private int                            tickRefCount       = 0;
+    protected int                          updateLCG          = (new Random()).nextInt();
 
     @Override
     public void setWorldObj(World par1World) {
@@ -505,6 +507,9 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
                                                                                       + z);
                     }
                 }
+                if (Block.blocksList[lastId].getTickRandomly()) {
+                    --this.tickRefCount;
+                }
             }
             if (content[x][y][z] != id) {
                 return false;
@@ -538,6 +543,9 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
                             tileentity.updateContainingBlockInfo();
                             tileentity.blockMetadata = metadata;
                         }
+                    }
+                    if (Block.blocksList[id].getTickRandomly()) {
+                        ++this.tickRefCount;
                     }
                 }
                 this.onInventoryChanged();
@@ -700,13 +708,16 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
     @Override
     public void readFromNBT(NBTTagCompound nbttagcompound) {
         super.readFromNBT(nbttagcompound);
+        int data = 0;
         NBTTagList list = nbttagcompound.getTagList("Content");
         for (int x = 0; x < this.content.length; x++) {
             for (int y = 0; y < this.content[x].length; y++) {
                 for (int z = 0; z < this.content[x][y].length; z++) {
-                    this.content[x][y][z] = ((NBTTagInt) list.tagAt((x << 6)
-                                                                    + (y << 3)
-                                                                    + z)).data;
+                    data = ((NBTTagInt) list.tagAt((x << 6) + (y << 3) + z)).data;
+                    this.content[x][y][z] = data;
+                    if (this.getTicksRandomly(data)) {
+                        ++this.tickRefCount;
+                    }
                 }
             }
         }
@@ -745,6 +756,15 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
                 }
             }
         }
+    }
+
+    private boolean getTicksRandomly(int blockId) {
+        return blockId != 0 && Block.blocksList[blockId] != null
+               && Block.blocksList[blockId].getTickRandomly();
+    }
+
+    public boolean getNeedsRandomTick() {
+        return this.tickRefCount > 0;
     }
 
     @Override
@@ -958,27 +978,6 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
         this.setMetadatas(newMetadata);
     }
 
-    public void updateTick(Random rand) {
-        this.littleUpdateTick(rand);
-    }
-
-    public void littleUpdateTick(Random rand) {
-        for (int x = 0; x < this.content.length; x++) {
-            for (int y = 0; y < this.content[x].length; y++) {
-                for (int z = 0; z < this.content[x][y].length; z++) {
-                    Block littleBlock = content[x][y][z] != 0 ? Block.blocksList[content[x][y][z]] : null;
-                    if (littleBlock != null && littleBlock.getTickRandomly()) {
-                        littleBlock.updateTick((World) this.getLittleWorld(),
-                                               this.getX(x),
-                                               this.getY(y),
-                                               this.getZ(z),
-                                               rand);
-                    }
-                }
-            }
-        }
-    }
-
     private int getX(int x) {
         return (this.xCoord << 3) + x;
     }
@@ -991,4 +990,22 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
         return (this.zCoord << 3) + z;
     }
 
+    public void littleUpdateTick(ILittleWorld littleWorld) {
+        this.updateLCG = this.updateLCG * 3 + 1013904223;
+        int baseCoord = this.updateLCG >> 2;
+        int x = (baseCoord & 15) % 8;
+        int y = (baseCoord >> 8 & 15) % 8;
+        int z = (baseCoord >> 16 & 15) % 8;
+        int blockId = this.content[x][y][z];
+        Block block = Block.blocksList[blockId];
+
+        if (block != null && block.getTickRandomly()) {
+            // System.out.println("Ticking: " + block);
+            block.updateTick((World) littleWorld,
+                             this.getX(x),
+                             this.getY(y),
+                             this.getZ(z),
+                             ((World) littleWorld).rand);
+        }
+    }
 }

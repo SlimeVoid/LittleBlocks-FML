@@ -20,6 +20,7 @@ import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.blocks.events.LittleContainerInteract;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
 import slimevoid.littleblocks.core.lib.PacketLib;
+import slimevoid.littleblocks.events.LittleChunkEvent;
 import slimevoid.littleblocks.events.WorldServerLoadEvent;
 import slimevoid.littleblocks.events.WorldServerUnloadEvent;
 import slimevoid.littleblocks.items.LittleBlocksCollectionPickup;
@@ -81,6 +82,7 @@ public class CommonProxy implements ILBCommonProxy {
         MinecraftForge.EVENT_BUS.register(new WorldServerUnloadEvent());
         MinecraftForge.EVENT_BUS.register(new LittleBlocksCollectionPickup());
         MinecraftForge.EVENT_BUS.register(new LittleContainerInteract());
+        MinecraftForge.EVENT_BUS.register(new LittleChunkEvent());
         // MinecraftForge.EVENT_BUS.register(new PlayerInteractInterrupt());
         // MinecraftForge.EVENT_BUS.register(new LittleLadderHandler());
         // MinecraftForge.EVENT_BUS.register(new PistonOrientation());

@@ -76,19 +76,6 @@ public class BlockLittleChunk extends BlockContainer {
         }
         this.stepSound = Block.wood.stepSound;
         this.setCreativeTab(CreativeTabs.tabDecorations);
-
-        this.setTickRandomly(true);
-    }
-
-    @Override
-    public void updateTick(World world, int x, int y, int z, Random rand) {
-        TileEntity tileentity = world.getBlockTileEntity(x,
-                                                         y,
-                                                         z);
-        if (tileentity != null && tileentity instanceof TileEntityLittleChunk) {
-            TileEntityLittleChunk tile = (TileEntityLittleChunk) tileentity;
-            tile.updateTick(rand);
-        }
     }
 
     @Override

@@ -13,6 +13,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
+import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
@@ -462,5 +463,10 @@ public class LittleWorldClient extends World implements ILittleWorld {
         return this.getLittleWorld().isOutSideLittleWorld(x,
                                                           y,
                                                           z);
+    }
+
+    @Override
+    public void activeChunkPosition(ChunkPosition chunkposition) {
+        this.getLittleWorld().activeChunkPosition(chunkposition);
     }
 }

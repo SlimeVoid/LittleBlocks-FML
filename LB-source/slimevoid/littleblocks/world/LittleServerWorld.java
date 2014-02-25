@@ -15,9 +15,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.packet.Packet60Explosion;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.NextTickListEntry;
 import net.minecraft.world.World;
@@ -27,6 +29,7 @@ import net.minecraft.world.chunk.Chunk;
 import slimevoid.littleblocks.core.LoggerLittleBlocks;
 import slimevoid.littleblocks.core.lib.BlockUtil;
 import slimevoid.littleblocks.core.lib.PacketLib;
+import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 import slimevoid.littleblocks.world.events.LittleBlockEvent;
 import slimevoid.littleblocks.world.events.LittleBlockEventList;
 import slimevoidlib.data.Logger;
@@ -151,6 +154,7 @@ public class LittleServerWorld extends LittleWorld {
                             Block littleBlock = Block.blocksList[blockId];
                             if (BlockUtil.isBlockAllowedToTick(littleBlock)) {
                                 // System.out.println("Allowed to Tick");
+                                System.out.println("Ticking: " + littleBlock);
                                 littleBlock.updateTick(this,
                                                        nextTick.xCoord,
                                                        nextTick.yCoord,
@@ -220,9 +224,44 @@ public class LittleServerWorld extends LittleWorld {
 
     protected Set<ChunkCoordIntPair> doneChunks = new HashSet<ChunkCoordIntPair>();
 
+    protected void tickRealChunks() {
+        Iterator iterator = this.activeChunkSet.iterator();
+        while (iterator.hasNext()) {
+            ChunkCoordIntPair chunkcoordintpair = (ChunkCoordIntPair) iterator.next();
+            int k = chunkcoordintpair.chunkXPos * 16;
+            int l = chunkcoordintpair.chunkZPos * 16;
+            Chunk chunk = this.getChunkFromChunkCoords(chunkcoordintpair.chunkXPos,
+                                                       chunkcoordintpair.chunkZPos);
+
+            for (Object i : chunk.chunkTileEntityMap.values()) {
+                TileEntity tile = (TileEntity) i;
+
+                if (tile != null && tile instanceof TileEntityLittleChunk) {
+                    TileEntityLittleChunk littleChunk = (TileEntityLittleChunk) tile;
+                    if (littleChunk.getNeedsRandomTick()) {
+                        littleChunk.littleUpdateTick(this);
+                    }
+                }
+            }
+        }
+    }
+
+    protected void tickLittleChunks() {
+        for (ChunkPosition pos : this.activeChunkPosition) {
+            TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getRealWorld().getBlockTileEntity(pos.x,
+                                                                                                        pos.y,
+                                                                                                        pos.z);
+            if (tile != null && tile.getNeedsRandomTick()) {
+                tile.littleUpdateTick(this);
+            }
+        }
+    }
+
     @Override
     protected void tickBlocksAndAmbiance() {
         super.tickBlocksAndAmbiance();
+        // this.tickRealChunks();
+        this.tickLittleChunks();
     }
 
     @Override

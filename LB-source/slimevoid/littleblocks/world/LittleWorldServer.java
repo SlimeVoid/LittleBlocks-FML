@@ -15,6 +15,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.IProgressUpdate;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
+import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.MinecraftException;
@@ -557,4 +558,9 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
     //
     // }
     //
+
+    @Override
+    public void activeChunkPosition(ChunkPosition chunkposition) {
+        this.getLittleWorld().activeChunkPosition(chunkposition);
+    }
 }

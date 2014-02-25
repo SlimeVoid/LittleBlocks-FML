@@ -20,6 +20,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
@@ -47,8 +48,9 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class LittleWorld extends World implements ILittleWorld {
 
-    protected int              ticksInWorld       = 0;
-    protected static final int MAX_TICKS_IN_WORLD = 5;
+    protected int              ticksInWorld        = 0;
+    protected static final int MAX_TICKS_IN_WORLD  = 5;
+    public Set<ChunkPosition>  activeChunkPosition = new HashSet<ChunkPosition>();
 
     private int                realWorld;
 
@@ -89,6 +91,7 @@ public class LittleWorld extends World implements ILittleWorld {
 
     @Override
     protected void tickBlocksAndAmbiance() {
+        this.setActivePlayerChunksAndCheckLight();
     }
 
     @Override
@@ -98,30 +101,7 @@ public class LittleWorld extends World implements ILittleWorld {
 
     @Override
     protected void setActivePlayerChunksAndCheckLight() {
-        this.activeChunkSet.clear();
-        this.activeChunkSet.addAll(this.getPersistentChunks().keySet());
-
-        // this.theProfiler.startSection("buildList");
-        int playerIndex;
-        EntityPlayer entityplayer;
-        int x;
-        int z;
-
-        for (playerIndex = 0; playerIndex < this.getRealWorld().playerEntities.size(); playerIndex++) {
-
-            entityplayer = (EntityPlayer) this.getRealWorld().playerEntities.get(playerIndex);
-            x = MathHelper.floor_double(entityplayer.posX / 16.0D);
-            z = MathHelper.floor_double(entityplayer.posZ / 16.0D);
-            byte b0 = 7;
-
-            for (int max = -b0; max <= b0; ++max) {
-                for (int i1 = -b0; i1 <= b0; ++i1) {
-                    this.activeChunkSet.add(new ChunkCoordIntPair(max + x, i1
-                                                                           + z));
-                }
-            }
-        }
-        // this.theProfiler.endSection();
+        this.activeChunkSet = this.getRealWorld().activeChunkSet;
     }
 
     public List<TileEntity>  loadedTiles = new ArrayList<TileEntity>();
@@ -1833,5 +1813,14 @@ public class LittleWorld extends World implements ILittleWorld {
                                                                                 y >> 3,
                                                                                 (z & 0x7f) >> 3);
         return id != ConfigurationLib.littleChunkID;
+    }
+
+    @Override
+    public void activeChunkPosition(ChunkPosition chunkposition) {
+        if (this.activeChunkPosition.contains(chunkposition)) {
+            this.activeChunkPosition.remove(chunkposition);
+        } else {
+            this.activeChunkPosition.add(chunkposition);
+        }
     }
 }
