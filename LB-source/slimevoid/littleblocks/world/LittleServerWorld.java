@@ -247,6 +247,7 @@ public class LittleServerWorld extends LittleWorld {
     }
 
     protected void tickLittleChunks() {
+        Set<ChunkPosition> done = new HashSet<ChunkPosition>();
         for (ChunkPosition pos : this.activeChunkPosition) {
             TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getRealWorld().getBlockTileEntity(pos.x,
                                                                                                         pos.y,
@@ -254,6 +255,12 @@ public class LittleServerWorld extends LittleWorld {
             if (tile != null && tile.getNeedsRandomTick()) {
                 tile.littleUpdateTick(this);
             }
+            if (tile == null) {
+                done.add(pos);
+            }
+        }
+        if (done.size() > 0) {
+            this.activeChunkPosition.removeAll(done);
         }
     }
 

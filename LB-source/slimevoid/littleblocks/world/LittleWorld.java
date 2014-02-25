@@ -1816,10 +1816,11 @@ public class LittleWorld extends World implements ILittleWorld {
     }
 
     @Override
-    public void activeChunkPosition(ChunkPosition chunkposition) {
+    public void activeChunkPosition(ChunkPosition chunkposition, boolean forced) {
         if (this.activeChunkPosition.contains(chunkposition)) {
             this.activeChunkPosition.remove(chunkposition);
-        } else {
+        }
+        if (forced) {
             this.activeChunkPosition.add(chunkposition);
         }
     }

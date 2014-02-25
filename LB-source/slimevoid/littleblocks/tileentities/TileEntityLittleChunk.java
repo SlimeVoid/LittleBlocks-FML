@@ -49,7 +49,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
         this.setTileEntityWorldObjs();
     }
 
-    public TileEntityLittleChunk() {
+    public void updateContainingBlockInfo() {
         for (int x = 0; x < this.content.length; x++) {
             for (int y = 0; y < this.content[x].length; y++) {
                 for (int z = 0; z < this.content[x][y].length; z++) {
@@ -65,6 +65,8 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
                 }
             }
         }
+        this.getLittleWorld().activeChunkPosition(new ChunkPosition(this.xCoord, this.yCoord, this.zCoord),
+                                                  true);
     }
 
     public boolean isEmpty() {
@@ -992,20 +994,21 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
 
     public void littleUpdateTick(ILittleWorld littleWorld) {
         this.updateLCG = this.updateLCG * 3 + 1013904223;
-        int baseCoord = this.updateLCG >> 2;
-        int x = (baseCoord & 15) % 8;
-        int y = (baseCoord >> 8 & 15) % 8;
-        int z = (baseCoord >> 16 & 15) % 8;
-        int blockId = this.content[x][y][z];
-        Block block = Block.blocksList[blockId];
+        if (this.updateLCG % 4 == 0) {
+            int baseCoord = this.updateLCG >> 2;
+            int x = (baseCoord & 15) % 8;
+            int y = (baseCoord >> 8 & 15) % 8;
+            int z = (baseCoord >> 16 & 15) % 8;
+            int blockId = this.content[x][y][z];
+            Block block = Block.blocksList[blockId];
 
-        if (block != null && block.getTickRandomly()) {
-            // System.out.println("Ticking: " + block);
-            block.updateTick((World) littleWorld,
-                             this.getX(x),
-                             this.getY(y),
-                             this.getZ(z),
-                             ((World) littleWorld).rand);
+            if (block != null && block.getTickRandomly()) {
+                block.updateTick((World) littleWorld,
+                                 this.getX(x),
+                                 this.getY(y),
+                                 this.getZ(z),
+                                 ((World) littleWorld).rand);
+            }
         }
     }
 }

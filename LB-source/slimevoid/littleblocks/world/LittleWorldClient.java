@@ -466,7 +466,8 @@ public class LittleWorldClient extends World implements ILittleWorld {
     }
 
     @Override
-    public void activeChunkPosition(ChunkPosition chunkposition) {
-        this.getLittleWorld().activeChunkPosition(chunkposition);
+    public void activeChunkPosition(ChunkPosition chunkposition, boolean forced) {
+        this.getLittleWorld().activeChunkPosition(chunkposition,
+                                                  forced);
     }
 }

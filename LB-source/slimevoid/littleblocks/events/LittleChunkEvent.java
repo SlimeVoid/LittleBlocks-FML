@@ -19,7 +19,8 @@ public class LittleChunkEvent {
             if (tileentity instanceof TileEntityLittleChunk) {
                 ChunkPosition chunkpos = new ChunkPosition(tileentity.xCoord, tileentity.yCoord, tileentity.zCoord);
                 LittleBlocks.proxy.getLittleWorld(event.world,
-                                                  false).activeChunkPosition(chunkpos);
+                                                  false).activeChunkPosition(chunkpos,
+                                                                             true);
             }
         }
     }
@@ -32,7 +33,8 @@ public class LittleChunkEvent {
             if (tileentity instanceof TileEntityLittleChunk) {
                 ChunkPosition chunkpos = new ChunkPosition(tileentity.xCoord, tileentity.yCoord, tileentity.zCoord);
                 LittleBlocks.proxy.getLittleWorld(event.world,
-                                                  false).activeChunkPosition(chunkpos);
+                                                  false).activeChunkPosition(chunkpos,
+                                                                             false);
             }
         }
     }

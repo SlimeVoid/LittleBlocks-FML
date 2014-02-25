@@ -16,5 +16,5 @@ public interface ILittleWorld extends IBlockAccess {
 
     public boolean isOutSideLittleWorld(int x, int y, int z);
 
-    public void activeChunkPosition(ChunkPosition chunkposition);
+    public void activeChunkPosition(ChunkPosition chunkposition, boolean forced);
 }
