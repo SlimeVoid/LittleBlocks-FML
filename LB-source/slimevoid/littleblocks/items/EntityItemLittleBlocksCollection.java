@@ -30,10 +30,16 @@ public class EntityItemLittleBlocksCollection extends EntityItem {
         super(world, x, y, z, itemStack);
     }
 
-    public void dropItems(EntityPlayer entityplayer) {
+    public int dropItems(EntityPlayer entityplayer) {
+        int i = 0;
         for (ItemStack itemstack : this.itemstackCollection.values()) {
             entityplayer.inventory.addItemStackToInventory(itemstack);
+            this.playSound("random.pop",
+                           0.2F,
+                           ((this.rand.nextFloat() - this.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+            ++i;
         }
+        return i;
     }
 
     @Override

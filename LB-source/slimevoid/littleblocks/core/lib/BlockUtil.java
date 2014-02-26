@@ -189,7 +189,7 @@ public class BlockUtil {
 
     public static boolean isLittleChunk(World world, int x, int y, int z) {
         if (world instanceof ILittleWorld) {
-            return ((ILittleWorld) world).getRealWorld().getBlockId(x >> 3,
+            return ((ILittleWorld) world).getParentWorld().getBlockId(x >> 3,
                                                                     y >> 3,
                                                                     z >> 3) == ConfigurationLib.littleChunkID;
         }
@@ -236,7 +236,7 @@ public class BlockUtil {
         } else {
             // double dist = this.getBlockReachDistance() + 1;
             // dist *= dist;
-            if (!mcServer.isBlockProtected(((ILittleWorld) world).getRealWorld(),
+            if (!mcServer.isBlockProtected(((ILittleWorld) world).getParentWorld(),
                                            x >> 3,
                                            y >> 3,
                                            z >> 3,
@@ -321,7 +321,7 @@ public class BlockUtil {
                                                         y,
                                                         z)];
         if (block != null && block instanceof BlockPistonBase) {
-            int newData = BlockPistonBase.determineOrientation(((ILittleWorld) world).getRealWorld(),
+            int newData = BlockPistonBase.determineOrientation(((ILittleWorld) world).getParentWorld(),
                                                                x >> 3,
                                                                y >> 3,
                                                                z >> 3,

@@ -63,17 +63,6 @@ public class PacketLib {
         PacketLittleBlocksHandler clientLittleBlocksHandler = new PacketLittleBlocksHandler();
         clientLittleBlocksHandler.registerPacketHandler(CommandLib.UPDATE_CLIENT,
                                                         new ClientBlockChangeExecutor());
-        /*
-         * clientLittleBlocksHandler.registerPacketHandler(CommandLib.BLOCK_ADDED
-         * , new ClientBlockAddedExecutor());
-         * clientLittleBlocksHandler.registerPacketHandler
-         * (CommandLib.BREAK_BLOCK, new ClientBreakBlockExecutor());
-         * clientLittleBlocksHandler
-         * .registerPacketHandler(CommandLib.METADATA_MODIFIED, new
-         * ClientMetadataUpdateExecutor());
-         * clientLittleBlocksHandler.registerPacketHandler
-         * (CommandLib.TILE_ENTITY_UPDATE, new ClientLittleTileEntityUpdate());
-         */
 
         ClientPacketHandler.registerPacketHandler(PacketIds.UPDATE,
                                                   clientLittleBlocksHandler);

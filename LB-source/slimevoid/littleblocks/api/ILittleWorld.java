@@ -6,11 +6,7 @@ import net.minecraft.world.World;
 
 public interface ILittleWorld extends IBlockAccess {
 
-    public World getRealWorld();
-
-    public void idModified(int lastId, int xCoord, int yCoord, int zCoord, int side, int littleX, int littleY, int littleZ, int id, int metadata);
-
-    public void metadataModified(int xCoord, int yCoord, int zCoord, int side, int littleX, int littleY, int littleZ, int blockId, int metadata);
+    public World getParentWorld();
 
     boolean isOutdated(World world);
 

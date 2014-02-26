@@ -12,7 +12,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class WorldLoadEvent {
+public class WorldClientEvent {
 
     @ForgeSubscribe
     public void onWorldLoad(Load event) {
@@ -23,11 +23,6 @@ public class WorldLoadEvent {
             WorldProvider provider = WorldProvider.getProviderForDimension(dimension);
 
             ConfigurationLib.littleWorldClient = new LittleWorldClient(world, world.getSaveHandler(), "LittleWorldClient", provider, new WorldSettings(world.getWorldInfo().getSeed(), world.getWorldInfo().getGameType(), world.getWorldInfo().isMapFeaturesEnabled(), world.getWorldInfo().isHardcoreModeEnabled(), world.getWorldInfo().getTerrainType()), world.difficultySetting, null, null);
-
-            // System.out.println("World Loaded: "
-            // + world.getWorldInfo().getWorldName()
-            // + " | Dimension: " + dimension
-            // + " | LittleDimension: default");
         }
     }
 

@@ -47,39 +47,12 @@ public class LittleWorldClient extends World implements ILittleWorld {
     }
 
     @Override
-    public World getRealWorld() {
-        return this.getLittleWorld().getRealWorld();
+    public World getParentWorld() {
+        return this.getLittleWorld().getParentWorld();
     }
 
     public LittleWorld getLittleWorld() {
         return this.littleWorld;
-    }
-
-    @Override
-    public void idModified(int lastId, int xCoord, int yCoord, int zCoord, int side, int littleX, int littleY, int littleZ, int id, int metadata) {
-        this.getLittleWorld().idModified(lastId,
-                                         xCoord,
-                                         yCoord,
-                                         zCoord,
-                                         side,
-                                         littleX,
-                                         littleY,
-                                         littleZ,
-                                         id,
-                                         metadata);
-    }
-
-    @Override
-    public void metadataModified(int xCoord, int yCoord, int zCoord, int side, int littleX, int littleY, int littleZ, int id, int metadata) {
-        this.getLittleWorld().metadataModified(xCoord,
-                                               yCoord,
-                                               zCoord,
-                                               side,
-                                               littleX,
-                                               littleY,
-                                               littleZ,
-                                               id,
-                                               metadata);
     }
 
     @Override
@@ -192,13 +165,6 @@ public class LittleWorldClient extends World implements ILittleWorld {
     public int getHeight() {
         return this.getLittleWorld().getHeight();
     }
-
-    // @Override
-    // public boolean setBlock(int x, int y, int z, int blockID, int newmeta,
-    // int update, boolean newTile) {
-    // return this.getLittleWorld().setBlock(x, y, z, blockID, newmeta, update,
-    // newTile);
-    // }
 
     @Override
     public boolean setBlock(int x, int y, int z, int blockID, int newmeta, int update) {

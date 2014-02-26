@@ -71,9 +71,6 @@ public class BlockLittleChunk extends BlockContainer {
         super(id, material);
         this.clazz = clazz;
         this.setHardness(hardness);
-        if (selfNotify) {
-            // TODO :: setRequiresSelfNotify();
-        }
         this.stepSound = Block.wood.stepSound;
         this.setCreativeTab(CreativeTabs.tabDecorations);
     }
@@ -306,10 +303,6 @@ public class BlockLittleChunk extends BlockContainer {
                         placementMessage = MessageLib.DENY_PLACEMENT;
                     }
                 }
-                /*
-                 * if (block.getRenderType() == 1) { denyPlacement = true;
-                 * placementMessage = MessageLib.DENY_PLACEMENT; }
-                 */
             }
             if (item != null) {
                 if (item instanceof ItemBlock) {
@@ -376,13 +369,10 @@ public class BlockLittleChunk extends BlockContainer {
         }
     }
 
-    // public void onServerBlockClicked(World world, int x, int y, int z, int
-    // side, EntityPlayer entityplayer, int xSelected, int ySelected, int
-    // zSelected) {
     public void onServerBlockClicked(World world, int x, int y, int z, int side, EntityPlayer entityplayer) {
         if (entityplayer instanceof EntityPlayerMP) {
             EntityPlayerMP player = (EntityPlayerMP) entityplayer;
-            if (!FMLCommonHandler.instance().getMinecraftServerInstance().isBlockProtected(((ILittleWorld) world).getRealWorld(),
+            if (!FMLCommonHandler.instance().getMinecraftServerInstance().isBlockProtected(((ILittleWorld) world).getParentWorld(),
                                                                                            x >> 3,
                                                                                            y >> 3,
                                                                                            z >> 3,

@@ -4,8 +4,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import slimevoid.littleblocks.core.lib.CommandLib;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
@@ -16,30 +14,14 @@ import slimevoidlib.network.PacketUpdate;
 
 public class PacketLittleBlocks extends PacketUpdate {
 
-    // private int sender;
-    private NBTTagCompound tileEntityData;
-
     @Override
     public void writeData(DataOutputStream data) throws IOException {
         super.writeData(data);
-        // data.writeInt(sender);
-        writeTileEntityData(data);
-    }
-
-    private void writeTileEntityData(DataOutputStream data) throws IOException {
-        writeNBTTagCompound(this.tileEntityData,
-                            data);
     }
 
     @Override
     public void readData(DataInputStream data) throws IOException {
         super.readData(data);
-        // sender = data.readInt();
-        readTileEntityData(data);
-    }
-
-    private void readTileEntityData(DataInputStream data) throws IOException {
-        this.tileEntityData = readNBTTagCompound(data);
     }
 
     public PacketLittleBlocks() {
@@ -60,8 +42,6 @@ public class PacketLittleBlocks extends PacketUpdate {
         this.setMetadata(world.getBlockMetadata(x,
                                                 y,
                                                 z));
-        this.payload.setBoolPayload(0,
-                                    false);
     }
 
     @Override
@@ -85,21 +65,5 @@ public class PacketLittleBlocks extends PacketUpdate {
 
     public int getMetadata() {
         return this.payload.getIntPayload(0);
-    }
-
-    public void setTileEntityData(TileEntity tileData) {
-        NBTTagCompound tileTag = new NBTTagCompound();
-        tileData.writeToNBT(tileTag);
-        this.tileEntityData = tileTag;
-        this.payload.setBoolPayload(0,
-                                    true);
-    }
-
-    public NBTTagCompound getTileEntityData() {
-        return this.tileEntityData;
-    }
-
-    public boolean hasTileEntity() {
-        return this.payload.getBoolPayload(0);
     }
 }

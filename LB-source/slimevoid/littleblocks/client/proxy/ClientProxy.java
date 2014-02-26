@@ -15,7 +15,7 @@ import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.blocks.events.LittleChunkBucketEvent;
 import slimevoid.littleblocks.blocks.events.LittleChunkShiftRightClick;
 import slimevoid.littleblocks.client.events.RenderLittleChunkHighlight;
-import slimevoid.littleblocks.client.events.WorldLoadEvent;
+import slimevoid.littleblocks.client.events.WorldClientEvent;
 import slimevoid.littleblocks.client.handlers.DrawCopierHighlight;
 import slimevoid.littleblocks.client.handlers.KeyBindingHandler;
 import slimevoid.littleblocks.client.network.ClientPacketHandler;
@@ -83,7 +83,7 @@ public class ClientProxy extends CommonProxy {
     public void registerEventHandlers() {
         super.registerEventHandlers();
         MinecraftForge.EVENT_BUS.register(new RenderLittleChunkHighlight());
-        MinecraftForge.EVENT_BUS.register(new WorldLoadEvent());
+        MinecraftForge.EVENT_BUS.register(new WorldClientEvent());
         MinecraftForge.EVENT_BUS.register(new LittleChunkShiftRightClick());
         MinecraftForge.EVENT_BUS.register(new LittleChunkBucketEvent());
     }
@@ -120,9 +120,9 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
-    public World getRealWorld(ILittleWorld littleWorld, int realDimension) {
+    public World getParentWorld(ILittleWorld littleWorld, int realDimension) {
         if (!((World) littleWorld).isRemote) {
-            return super.getRealWorld(littleWorld,
+            return super.getParentWorld(littleWorld,
                                       realDimension);
         }
         return FMLClientHandler.instance().getClient().theWorld;

@@ -1,10 +1,11 @@
-package slimevoid.littleblocks.items;
+package slimevoid.littleblocks.events;
 
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.event.Event.Result;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
+import slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 public class LittleBlocksCollectionPickup {
 
@@ -13,9 +14,14 @@ public class LittleBlocksCollectionPickup {
         EntityItem item = event.item;
         EntityPlayer entityplayer = event.entityPlayer;
         if (item instanceof EntityItemLittleBlocksCollection) {
-            ((EntityItemLittleBlocksCollection) item).dropItems(entityplayer);
-            event.setResult(Result.ALLOW);
+            GameRegistry.onPickupNotification(event.entityPlayer,
+                                              event.item);
+
+            int size = ((EntityItemLittleBlocksCollection) item).dropItems(entityplayer);
+            entityplayer.onItemPickup(event.item,
+                                      size);
             event.item.setDead();
+            event.setCanceled(true);
         }
     }
 }

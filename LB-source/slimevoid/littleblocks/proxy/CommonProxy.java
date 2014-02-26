@@ -20,10 +20,9 @@ import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.blocks.events.LittleContainerInteract;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
 import slimevoid.littleblocks.core.lib.PacketLib;
+import slimevoid.littleblocks.events.LittleBlocksCollectionPickup;
 import slimevoid.littleblocks.events.LittleChunkEvent;
-import slimevoid.littleblocks.events.WorldServerLoadEvent;
-import slimevoid.littleblocks.events.WorldServerUnloadEvent;
-import slimevoid.littleblocks.items.LittleBlocksCollectionPickup;
+import slimevoid.littleblocks.events.WorldServerEvent;
 import slimevoid.littleblocks.network.CommonPacketHandler;
 import slimevoid.littleblocks.tickhandlers.LittleWorldServerTickHandler;
 import slimevoidlib.IPacketHandling;
@@ -31,8 +30,6 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
-
-// import slimevoid.littleblocks.blocks.core.LittleContainerInteract;
 
 public class CommonProxy implements ILBCommonProxy {
 
@@ -78,14 +75,10 @@ public class CommonProxy implements ILBCommonProxy {
 
     @Override
     public void registerEventHandlers() {
-        MinecraftForge.EVENT_BUS.register(new WorldServerLoadEvent());
-        MinecraftForge.EVENT_BUS.register(new WorldServerUnloadEvent());
+        MinecraftForge.EVENT_BUS.register(new LittleChunkEvent());
+        MinecraftForge.EVENT_BUS.register(new WorldServerEvent());
         MinecraftForge.EVENT_BUS.register(new LittleBlocksCollectionPickup());
         MinecraftForge.EVENT_BUS.register(new LittleContainerInteract());
-        MinecraftForge.EVENT_BUS.register(new LittleChunkEvent());
-        // MinecraftForge.EVENT_BUS.register(new PlayerInteractInterrupt());
-        // MinecraftForge.EVENT_BUS.register(new LittleLadderHandler());
-        // MinecraftForge.EVENT_BUS.register(new PistonOrientation());
     }
 
     @Override
@@ -150,7 +143,7 @@ public class CommonProxy implements ILBCommonProxy {
     }
 
     @Override
-    public World getRealWorld(ILittleWorld littleWorld, int realDimension) {
+    public World getParentWorld(ILittleWorld littleWorld, int realDimension) {
         return DimensionManager.getWorld(realDimension);
     }
 }

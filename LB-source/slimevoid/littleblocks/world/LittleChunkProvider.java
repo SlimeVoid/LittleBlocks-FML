@@ -16,7 +16,7 @@ public class LittleChunkProvider implements IChunkProvider {
     private World littleWorld;
 
     public LittleChunkProvider(ILittleWorld littleWorld) {
-        this.realWorld = littleWorld.getRealWorld();
+        this.realWorld = littleWorld.getParentWorld();
         this.littleWorld = (World) littleWorld;
     }
 

@@ -6,11 +6,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.logging.Level;
 
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.nbt.NBTTagList;
@@ -28,10 +26,7 @@ import slimevoid.littleblocks.api.ILittleBlocks;
 import slimevoid.littleblocks.api.ILittleWorld;
 import slimevoid.littleblocks.core.LittleBlocks;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
-import slimevoid.littleblocks.network.packets.PacketLittleBlocks;
 import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
     public int                             size               = ConfigurationLib.littleBlocksSize;
@@ -41,12 +36,11 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
     private boolean                        isLit              = false;
     private Map<ChunkPosition, TileEntity> chunkTileEntityMap = new HashMap<ChunkPosition, TileEntity>();
     private int                            tickRefCount       = 0;
-    protected int                          updateLCG          = (new Random()).nextInt();
 
     @Override
-    public void setWorldObj(World par1World) {
-        this.worldObj = par1World;
-        this.setTileEntityWorldObjs();
+    public void setWorldObj(World world) {
+        this.worldObj = world;
+        this.setLittleWorldObjs();
     }
 
     public void updateContainingBlockInfo() {
@@ -258,26 +252,6 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
             return lightmap[x][y][z];
         }
     }
-
-    // public void updateTick(Random rand) {
-    // for (int xx = 0; xx < ConfigurationLib.littleBlocksSize; xx++) {
-    // for (int yy = 0; yy < ConfigurationLib.littleBlocksSize; yy++) {
-    // for (int zz = 0; zz < ConfigurationLib.littleBlocksSize; zz++) {
-    // Block littleBlock = Block.blocksList[this.content[xx][yy][zz]];
-    // if (littleBlock != null && littleBlock.getTickRandomly()) {
-    // int x = (this.xCoord << 3) + xx, y = (this.yCoord << 3)
-    // + yy, z = (this.zCoord << 3)
-    // + zz;
-    // littleBlock.updateTick( (World) this.getLittleWorld(),
-    // x,
-    // y,
-    // z,
-    // rand);
-    // }
-    // }
-    // }
-    // }
-    // }
 
     public int getSavedLightValue(int x, int y, int z) {
         return 0;
@@ -560,7 +534,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
         this.content = content;
     }
 
-    private void setTileEntityWorldObjs() {
+    protected void setLittleWorldObjs() {
         ILittleWorld littleWorld = this.getLittleWorld();
         Iterator tiles = this.chunkTileEntityMap.values().iterator();
         while (tiles.hasNext()) {
@@ -640,9 +614,6 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
     public TileEntity getChunkBlockTileEntity(int x, int y, int z) {
         ChunkPosition chunkposition = new ChunkPosition(x, y, z);
         TileEntity tileentity = (TileEntity) this.chunkTileEntityMap.get(chunkposition);
-        // TileEntity tileentity = this.getTileEntityFromList( x,
-        // y,
-        // z);
 
         if (tileentity != null && tileentity.isInvalid()) {
             this.chunkTileEntityMap.remove(chunkposition);
@@ -876,78 +847,6 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
         return this.metadatas;
     }
 
-    @SideOnly(Side.CLIENT)
-    public void setTiles(List<NBTTagCompound> tileentities) {
-        for (int i = 0; i < tileentities.size(); i++) {
-            TileEntity tile = TileEntity.createAndLoadEntity(tileentities.get(i));
-            if (tile != null) {
-                this.addTileEntity(tile);
-            }
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void handleBlockAdded(World world, EntityPlayer entityplayer, PacketLittleBlocks packetLB) {
-        int id = packetLB.getBlockID(), meta = packetLB.getMetadata(), x = packetLB.xPosition, y = packetLB.yPosition, z = packetLB.zPosition;
-        // System.out.println("X| " + x + " Y| " + y + " Z| " + z + " ID| " + id
-        // + " META| " + meta);
-        // this.setBlockIDWithMetadata(x & 7,
-        // y & 7,
-        // z & 7,
-        // id,
-        // meta);
-        this.content[x & 7][y & 7][z & 7] = id;
-        this.metadatas[x & 7][y & 7][z & 7] = meta;
-        /*
-         * Block.blocksList[id].onBlockAdded( (World) this.getLittleWorld(), x,
-         * y, z);
-         */
-        // this.onInventoryChanged();
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void handleBreakBlock(World world, EntityPlayer entityplayer, PacketLittleBlocks packetLB) {
-        // this.setBlockID(packetLB.xPosition & 7,
-        // packetLB.yPosition & 7,
-        // packetLB.zPosition & 7,
-        // 0);
-        this.content[packetLB.xPosition & 7][packetLB.yPosition & 7][packetLB.zPosition & 7] = 0;
-        /*
-         * Block.blocksList[packetLB.getBlockID()].breakBlock( (World)
-         * this.getLittleWorld(), packetLB.xPosition, packetLB.yPosition,
-         * packetLB.zPosition, packetLB.side, packetLB.getMetadata());
-         */
-        // this.onInventoryChanged();
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void handleUpdateMetadata(World world, EntityPlayer entityplayer, PacketLittleBlocks packetLB) {
-        int id = packetLB.getBlockID(), meta = packetLB.getMetadata(), x = packetLB.xPosition, y = packetLB.yPosition, z = packetLB.zPosition;
-        // System.out.println("X| " + x + " Y| " + y + " Z| " + z + " ID| " + id
-        // + " META| " + meta);
-        // this.setBlockMetadata( x & 7,
-        // y & 7,
-        // z & 7,
-        // meta);
-        this.metadatas[x & 7][y & 7][z & 7] = meta;
-        // this.onInventoryChanged();
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void handleLittleTilePacket(World world, PacketLittleBlocks packetLB) {
-        int x = packetLB.xPosition, y = packetLB.yPosition, z = packetLB.zPosition;
-        TileEntity littleTile = TileEntity.createAndLoadEntity(packetLB.getTileEntityData());
-        if (littleTile != null) {
-            // this.setChunkBlockTileEntity( x & 7,
-            // y & 7,
-            // z & 7,
-            // littleTile);
-            this.chunkTileEntityMap.put(new ChunkPosition(x & 7, y & 7, z & 7),
-                                        littleTile);
-        }
-        // this.onInventoryChanged();
-    }
-
     public void rotateContents(ForgeDirection axis) {
         int max = ConfigurationLib.littleBlocksSize - 1;
         int[][][] newContent = new int[ConfigurationLib.littleBlocksSize][ConfigurationLib.littleBlocksSize][ConfigurationLib.littleBlocksSize];
@@ -992,23 +891,21 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
         return (this.zCoord << 3) + z;
     }
 
-    public void littleUpdateTick(ILittleWorld littleWorld) {
-        this.updateLCG = this.updateLCG * 3 + 1013904223;
-        if (this.updateLCG % 4 == 0) {
-            int baseCoord = this.updateLCG >> 2;
-            int x = (baseCoord & 15) % 8;
-            int y = (baseCoord >> 8 & 15) % 8;
-            int z = (baseCoord >> 16 & 15) % 8;
-            int blockId = this.content[x][y][z];
-            Block block = Block.blocksList[blockId];
+    public void littleUpdateTick(ILittleWorld littleWorld, int updateLCG) {
+        int baseCoord = updateLCG >> 2;
+        int x = (baseCoord & 15) % 8;
+        int y = (baseCoord >> 8 & 15) % 8;
+        int z = (baseCoord >> 16 & 15) % 8;
+        // System.out.println("X: " + x + " | Y: " + y + " | Z: " + z);
+        int blockId = this.content[x][y][z];
+        Block block = Block.blocksList[blockId];
 
-            if (block != null && block.getTickRandomly()) {
-                block.updateTick((World) littleWorld,
-                                 this.getX(x),
-                                 this.getY(y),
-                                 this.getZ(z),
-                                 ((World) littleWorld).rand);
-            }
+        if (block != null && block.getTickRandomly()) {
+            block.updateTick((World) littleWorld,
+                             this.getX(x),
+                             this.getY(y),
+                             this.getZ(z),
+                             ((World) littleWorld).rand);
         }
     }
 }

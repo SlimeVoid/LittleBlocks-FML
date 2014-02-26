@@ -4,7 +4,6 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.world.IBlockAccess;
 import slimevoid.littleblocks.blocks.BlockLittleChunk;
-import slimevoid.littleblocks.core.LBCore;
 import slimevoid.littleblocks.core.lib.ConfigurationLib;
 import slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
@@ -19,7 +18,6 @@ public class LittleBlocksRenderer implements ISimpleBlockRenderingHandler {
     @Override
     public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
         if (block.blockID == ConfigurationLib.littleChunkID) {
-            // if (!LBCore.optifine) {
             TileEntityLittleChunk tile = (TileEntityLittleChunk) world.getBlockTileEntity(x,
                                                                                           y,
                                                                                           z);
@@ -59,7 +57,6 @@ public class LittleBlocksRenderer implements ISimpleBlockRenderingHandler {
                                             x,
                                             y,
                                             z);
-            // }
             return true;
         }
         return false;
