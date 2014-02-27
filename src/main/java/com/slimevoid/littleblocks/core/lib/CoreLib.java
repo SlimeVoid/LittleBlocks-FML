@@ -12,8 +12,8 @@ public class CoreLib {
     public static final String MOD_VERSION        = "2.2.3.0";
     public static final String MOD_DEPENDENCIES   = "required-after:SlimevoidLib";
     public static final String MOD_CHANNEL        = "LITTLEBLOCKS";
-    public static final String CLIENT_PROXY       = "slimevoid.littleblocks.client.proxy.ClientProxy";
-    public static final String COMMON_PROXY       = "slimevoid.littleblocks.proxy.CommonProxy";
+    public static final String CLIENT_PROXY       = "com.slimevoid.littleblocks.client.proxy.ClientProxy";
+    public static final String COMMON_PROXY       = "com.slimevoid.littleblocks.proxy.CommonProxy";
     @SideOnly(Side.CLIENT)
     public static boolean      OPTIFINE_INSTALLED = FMLClientHandler.instance().hasOptifine();
 }
