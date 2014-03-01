@@ -2,6 +2,8 @@ package com.slimevoid.littleblocks.network.packets.executors;
 
 import java.util.List;
 
+import com.slimevoid.library.IPacketExecutor;
+import com.slimevoid.library.network.PacketUpdate;
 import com.slimevoid.littleblocks.core.lib.CommandLib;
 import com.slimevoid.littleblocks.core.lib.ConfigurationLib;
 import com.slimevoid.littleblocks.items.wand.EnumWandAction;
@@ -11,8 +13,6 @@ import com.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import slimevoidlib.IPacketExecutor;
-import slimevoidlib.network.PacketUpdate;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
 

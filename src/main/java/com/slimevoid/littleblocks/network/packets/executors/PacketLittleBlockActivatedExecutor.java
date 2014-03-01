@@ -1,5 +1,7 @@
 package com.slimevoid.littleblocks.network.packets.executors;
 
+import com.slimevoid.library.IPacketExecutor;
+import com.slimevoid.library.network.PacketUpdate;
 import com.slimevoid.littleblocks.blocks.BlockLittleChunk;
 import com.slimevoid.littleblocks.core.LittleBlocks;
 import com.slimevoid.littleblocks.core.lib.CommandLib;
@@ -8,8 +10,6 @@ import com.slimevoid.littleblocks.network.packets.PacketLittleBlock;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-import slimevoidlib.IPacketExecutor;
-import slimevoidlib.network.PacketUpdate;
 
 public class PacketLittleBlockActivatedExecutor implements IPacketExecutor {
 

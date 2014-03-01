@@ -1,5 +1,6 @@
 package com.slimevoid.littleblocks.client.render.entities;
 
+import com.slimevoid.library.data.Logger.LogLevel;
 import com.slimevoid.littleblocks.blocks.BlockLittleChunk;
 import com.slimevoid.littleblocks.core.LittleBlocks;
 import com.slimevoid.littleblocks.core.LoggerLittleBlocks;
@@ -11,7 +12,6 @@ import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.client.particle.EntityDiggingFX;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
-import slimevoidlib.data.Logger.LogLevel;
 import cpw.mods.fml.client.FMLClientHandler;
 
 public class LittleBlockDiggingFX extends EntityDiggingFX {

@@ -3,6 +3,8 @@ package com.slimevoid.littleblocks.core.lib;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 
+import com.slimevoid.library.network.PacketIds;
+import com.slimevoid.library.util.helpers.SlimevoidHelper;
 import com.slimevoid.littleblocks.api.ILittleWorld;
 import com.slimevoid.littleblocks.client.network.ClientPacketHandler;
 import com.slimevoid.littleblocks.client.network.packets.executors.ClientBlockChangeExecutor;
@@ -35,8 +37,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityCommandBlock;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.world.World;
-import slimevoidlib.network.PacketIds;
-import slimevoidlib.util.helpers.SlimevoidHelper;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;

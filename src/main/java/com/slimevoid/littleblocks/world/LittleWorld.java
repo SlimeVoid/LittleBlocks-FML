@@ -31,11 +31,11 @@ import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.common.FakePlayer;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.ForgeDirection;
-import slimevoidlib.core.SlimevoidCore;
-import slimevoidlib.data.Logger;
-import slimevoidlib.data.Logger.LogLevel;
 
 import com.google.common.collect.ImmutableSetMultimap;
+import com.slimevoid.library.core.SlimevoidCore;
+import com.slimevoid.library.data.Logger;
+import com.slimevoid.library.data.Logger.LogLevel;
 import com.slimevoid.littleblocks.api.ILittleWorld;
 import com.slimevoid.littleblocks.core.LittleBlocks;
 import com.slimevoid.littleblocks.core.LoggerLittleBlocks;

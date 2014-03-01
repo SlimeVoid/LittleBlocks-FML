@@ -5,14 +5,14 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 
+import com.slimevoid.library.nbt.NBTHelper;
+import com.slimevoid.library.network.PacketEntity;
 import com.slimevoid.littleblocks.core.lib.CommandLib;
 import com.slimevoid.littleblocks.core.lib.CoreLib;
 import com.slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import slimevoidlib.nbt.NBTHelper;
-import slimevoidlib.network.PacketEntity;
 
 public class PacketLittleBlocksCollection extends PacketEntity {
     public HashMap<Integer, ItemStack> itemstackCollection = new HashMap<Integer, ItemStack>();

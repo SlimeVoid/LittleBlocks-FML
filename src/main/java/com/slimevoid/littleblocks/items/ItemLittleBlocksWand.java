@@ -4,6 +4,7 @@ import static net.minecraftforge.common.ForgeDirection.UP;
 
 import java.util.HashMap;
 
+import com.slimevoid.library.data.ReadWriteLock;
 import com.slimevoid.littleblocks.blocks.BlockLittleChunk;
 import com.slimevoid.littleblocks.core.LoggerLittleBlocks;
 import com.slimevoid.littleblocks.core.lib.CommandLib;
@@ -24,7 +25,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
-import slimevoidlib.data.ReadWriteLock;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;

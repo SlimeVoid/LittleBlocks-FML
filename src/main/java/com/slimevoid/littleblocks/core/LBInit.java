@@ -11,12 +11,11 @@
  */
 package com.slimevoid.littleblocks.core;
 
+import com.slimevoid.library.core.SlimevoidCore;
 import com.slimevoid.littleblocks.api.util.LittleBlocksHelper;
 import com.slimevoid.littleblocks.core.lib.ConfigurationLib;
 import com.slimevoid.littleblocks.core.lib.CoreLib;
 import com.slimevoid.littleblocks.items.wand.EnumWandAction;
-
-import slimevoidlib.core.SlimevoidCore;
 
 public class LBInit {
     private static boolean initialized = false;

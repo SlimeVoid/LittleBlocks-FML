@@ -1,5 +1,7 @@
 package com.slimevoid.littleblocks.core;
 
+import com.slimevoid.library.util.BlockRemover;
+import com.slimevoid.library.util.helpers.ReflectionHelper;
 import com.slimevoid.littleblocks.blocks.BlockLBDoor;
 import com.slimevoid.littleblocks.blocks.BlockLBPistonBase;
 import com.slimevoid.littleblocks.blocks.BlockLittleChunk;
@@ -16,8 +18,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import slimevoidlib.util.BlockRemover;
-import slimevoidlib.util.helpers.ReflectionHelper;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 

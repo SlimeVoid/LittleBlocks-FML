@@ -2,6 +2,7 @@ package com.slimevoid.littleblocks.proxy;
 
 import java.io.File;
 
+import com.slimevoid.library.IPacketHandling;
 import com.slimevoid.littleblocks.api.ILBCommonProxy;
 import com.slimevoid.littleblocks.api.ILittleWorld;
 import com.slimevoid.littleblocks.blocks.events.LittleContainerInteract;
@@ -26,7 +27,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeDummyContainer;
 import net.minecraftforge.common.MinecraftForge;
-import slimevoidlib.IPacketHandling;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.common.registry.TickRegistry;

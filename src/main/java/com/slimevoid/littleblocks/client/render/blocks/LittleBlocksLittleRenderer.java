@@ -22,11 +22,10 @@ import net.minecraft.world.IBlockAccess;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import com.slimevoid.library.data.Logger.LogLevel;
 import com.slimevoid.littleblocks.core.LoggerLittleBlocks;
 import com.slimevoid.littleblocks.core.lib.ConfigurationLib;
 import com.slimevoid.littleblocks.core.lib.CoreLib;
-
-import slimevoidlib.data.Logger.LogLevel;
 
 public class LittleBlocksLittleRenderer {
     private RenderBlocks              renderBlocks;

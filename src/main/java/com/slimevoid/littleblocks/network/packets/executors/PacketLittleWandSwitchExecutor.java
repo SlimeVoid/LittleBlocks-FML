@@ -1,13 +1,13 @@
 package com.slimevoid.littleblocks.network.packets.executors;
 
+import com.slimevoid.library.IPacketExecutor;
+import com.slimevoid.library.network.PacketUpdate;
 import com.slimevoid.littleblocks.core.lib.CommandLib;
 import com.slimevoid.littleblocks.items.wand.EnumWandAction;
 import com.slimevoid.littleblocks.network.packets.PacketLittleNotify;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-import slimevoidlib.IPacketExecutor;
-import slimevoidlib.network.PacketUpdate;
 
 public class PacketLittleWandSwitchExecutor implements IPacketExecutor {
 

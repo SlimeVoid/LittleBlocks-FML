@@ -1,5 +1,8 @@
 package com.slimevoid.littleblocks.api.util;
 
+import com.slimevoid.library.ICommonProxy;
+import com.slimevoid.library.ISlimevoidHelper;
+import com.slimevoid.library.util.helpers.SlimevoidHelper;
 import com.slimevoid.littleblocks.api.ILBCommonProxy;
 import com.slimevoid.littleblocks.api.ILittleBlocks;
 import com.slimevoid.littleblocks.api.ILittleWorld;
@@ -12,9 +15,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import slimevoidlib.ICommonProxy;
-import slimevoidlib.ISlimevoidHelper;
-import slimevoidlib.util.helpers.SlimevoidHelper;
 
 public class LittleBlocksHelper implements ISlimevoidHelper {
 
