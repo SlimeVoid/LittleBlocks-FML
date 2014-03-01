@@ -6,8 +6,8 @@ set packagedir=%programdir%\Packages
 set forgedir=%programdir%\Forge
 set fmldir=%forgedir%\fml
 set mcpdir=%forgedir%\mcp
-set littleblocks=%repodir%\LittleBlocks-FML
-set slimelib=%repodir%\SlimevoidLibrary
+set littleblocks=%repodir%\LittleBlocks-FML\src\main
+set slimelib=%repodir%\SlimevoidLibrary\src\main\java
 cd %mcpdir%
 
 if not exist %slimelib% GOTO :LBFAIL
@@ -29,8 +29,8 @@ if exist "%mcpdir%\src-work" GOTO :COPYLB
 GOTO :LBFAIL
 
 :COPYLB
-xcopy "%slimelib%\SV-common\*.*" "%mcpdir%\src\minecraft\" /S
-xcopy "%littleblocks%\LB-source\*.*" "%mcpdir%\src\minecraft\" /S
+xcopy "%slimelib%\*.*" "%mcpdir%\src\minecraft\" /S
+xcopy "%littleblocks%\java\*.*" "%mcpdir%\src\minecraft\" /S
 pause
 call %mcpdir%\recompile.bat
 call %mcpdir%\reobfuscate.bat
@@ -43,9 +43,9 @@ if exist "%packagedir%\LittleBlocks" (
 del "%packagedir%\LittleBlocks\*.*" /S /Q
 rmdir "%packagedir%\LittleBlocks" /S /Q
 )
-mkdir "%packagedir%\LittleBlocks\slimevoid\littleblocks"
-xcopy "%mcpdir%\reobf\minecraft\slimevoid\littleblocks\*.*" "%packagedir%\LittleBlocks\slimevoid\littleblocks\" /S
-xcopy "%littleblocks%\LB-resources\*.*" "%packagedir%\LittleBlocks\" /S
+mkdir "%packagedir%\LittleBlocks\com\slimevoid\littleblocks"
+xcopy "%mcpdir%\reobf\minecraft\com\slimevoid\littleblocks\*.*" "%packagedir%\LittleBlocks\com\slimevoid\littleblocks\" /S
+xcopy "%littleblocks%\resources\*.*" "%packagedir%\LittleBlocks\" /S
 echo "LittleBlocks Packaged Successfully
 pause
 ren "%mcpdir%\src" src-old
