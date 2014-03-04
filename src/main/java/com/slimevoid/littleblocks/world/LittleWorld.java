@@ -12,6 +12,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
@@ -28,9 +29,9 @@ import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraftforge.common.FakePlayer;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import com.google.common.collect.ImmutableSetMultimap;
 import com.slimevoid.library.core.SlimevoidCore;
@@ -56,14 +57,14 @@ public class LittleWorld extends World implements ILittleWorld {
 
     @SideOnly(Side.CLIENT)
     public LittleWorld(World world, WorldProvider worldprovider, String worldName) {
-        super(world.getSaveHandler(), worldName, worldprovider, new WorldSettings(world.getWorldInfo().getSeed(), world.getWorldInfo().getGameType(), world.getWorldInfo().isMapFeaturesEnabled(), world.getWorldInfo().isHardcoreModeEnabled(), world.getWorldInfo().getTerrainType()), null, null);
+        super(world.getSaveHandler(), worldName, worldprovider, new WorldSettings(world.getWorldInfo().getSeed(), world.getWorldInfo().getGameType(), world.getWorldInfo().isMapFeaturesEnabled(), world.getWorldInfo().isHardcoreModeEnabled(), world.getWorldInfo().getTerrainType()), null);
         this.lightUpdateBlockList = new int[32768];
         this.parentDimension = world.provider.dimensionId;
         this.isRemote = true;
     }
 
     public LittleWorld(World world, WorldProvider worldprovider) {
-        super(world.getSaveHandler(), "LittleBlocksWorld", new WorldSettings(world.getWorldInfo().getSeed(), world.getWorldInfo().getGameType(), world.getWorldInfo().isMapFeaturesEnabled(), world.getWorldInfo().isHardcoreModeEnabled(), world.getWorldInfo().getTerrainType()), worldprovider, null, null);
+        super(world.getSaveHandler(), "LittleBlocksWorld", new WorldSettings(world.getWorldInfo().getSeed(), world.getWorldInfo().getGameType(), world.getWorldInfo().isMapFeaturesEnabled(), world.getWorldInfo().isHardcoreModeEnabled(), world.getWorldInfo().getTerrainType()), worldprovider, null);
         this.lightUpdateBlockList = new int[32768];
         this.parentDimension = world.provider.dimensionId;
         this.isRemote = false;
@@ -76,7 +77,7 @@ public class LittleWorld extends World implements ILittleWorld {
         if (this.getGameRules().getGameRuleBooleanValue("doDaylightCycle")) {
             this.setWorldTime(this.getWorldTime() + 1L);
         }
-        this.tickBlocksAndAmbiance();
+        this.func_147456_g()/*tickBlocksAndAmbiance()*/;
     }
 
     /**
@@ -90,7 +91,7 @@ public class LittleWorld extends World implements ILittleWorld {
     private final Set previousActiveChunkSet = new HashSet();
 
     @Override
-    protected void tickBlocksAndAmbiance() {
+    protected void func_147456_g()/*tickBlocksAndAmbiance()*/ {
         this.setActivePlayerChunksAndCheckLight();
     }
 
@@ -101,7 +102,28 @@ public class LittleWorld extends World implements ILittleWorld {
 
     @Override
     protected void setActivePlayerChunksAndCheckLight() {
-        this.activeChunkSet = this.getParentWorld().activeChunkSet;
+        this.activeChunkSet.clear();
+        this.activeChunkSet.addAll(this.getParentWorld().getPersistentChunks().keySet());
+        int i;
+        EntityPlayer entityplayer;
+        int j;
+        int k;
+
+        for (i = 0; i < this.getParentWorld().playerEntities.size(); ++i)
+        {
+            entityplayer = (EntityPlayer)this.getParentWorld().playerEntities.get(i);
+            j = MathHelper.floor_double(entityplayer.posX / 16.0D);
+            k = MathHelper.floor_double(entityplayer.posZ / 16.0D);
+            byte b0 = 7;
+
+            for (int l = -b0; l <= b0; ++l)
+            {
+                for (int i1 = -b0; i1 <= b0; ++i1)
+                {
+                    this.activeChunkSet.add(new ChunkCoordIntPair(l + j, i1 + k));
+                }
+            }
+        }
     }
 
     public List<TileEntity>  loadedTiles = new ArrayList<TileEntity>();
@@ -148,7 +170,7 @@ public class LittleWorld extends World implements ILittleWorld {
             if (tileentity.isInvalid()) {
                 loadedTile.remove();
 
-                TileEntity tileentitylb = this.getParentWorld().getBlockTileEntity(tileentity.xCoord >> 3,
+                TileEntity tileentitylb = this.getParentWorld().getTileEntity(tileentity.xCoord >> 3,
                                                                                    tileentity.yCoord >> 3,
                                                                                    tileentity.zCoord >> 3);
                 if (tileentitylb != null
@@ -179,7 +201,7 @@ public class LittleWorld extends World implements ILittleWorld {
                         this.loadedTiles.add(tileentity);
                     }
                 } else {
-                    TileEntity tileentitylb = this.getParentWorld().getBlockTileEntity(tileentity.xCoord >> 3,
+                    TileEntity tileentitylb = this.getParentWorld().getTileEntity(tileentity.xCoord >> 3,
                                                                                        tileentity.yCoord >> 3,
                                                                                        tileentity.zCoord >> 3);
                     if (tileentitylb != null
@@ -267,12 +289,11 @@ public class LittleWorld extends World implements ILittleWorld {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public float getBrightness(int x, int y, int z, int l) {
+    public float getLightBrightness(int x, int y, int z) {
         if (this.getParentWorld() != null) {
-            return this.getParentWorld().getBrightness(x >> 3,
+            return this.getParentWorld().getLightBrightness(x >> 3,
                                                        y >> 3,
-                                                       z >> 3,
-                                                       l);
+                                                       z >> 3);
         } else {
             LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(this.getParentWorld().isRemote,
                                                                                                      "getBrightness().[null]",
@@ -289,9 +310,9 @@ public class LittleWorld extends World implements ILittleWorld {
                 if (y >= this.getHeight()) {
                     Chunk chunk = this.getParentWorld().getChunkFromChunkCoords(x >> 7,
                                                                                 z >> 7);
-                    if (chunk.getBlockID((x & 0x7f) >> 3,
+                    if (chunk.getBlock((x & 0x7f) >> 3,
                                          y >> 3,
-                                         (z & 0x7f) >> 3) != ConfigurationLib.littleChunkID
+                                         (z & 0x7f) >> 3) != ConfigurationLib.littleChunk
                         && this.isAirBlock(x,
                                            y,
                                            z)) {
@@ -300,19 +321,19 @@ public class LittleWorld extends World implements ILittleWorld {
                                                             y >> 3,
                                                             z >> 3,
                                                             MathHelper.floor_double(value / 8));
-                    } else if (chunk.getBlockID((x & 0x7f) >> 3,
+                    } else if (chunk.getBlock((x & 0x7f) >> 3,
                                                 y >> 3,
-                                                (z & 0x7f) >> 3) != ConfigurationLib.littleChunkID) {
+                                                (z & 0x7f) >> 3) != ConfigurationLib.littleChunk) {
                         return;
                     }
-                    TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getParentWorld().getBlockTileEntity(x >> 3,
+                    TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getParentWorld().getTileEntity(x >> 3,
                                                                                                                   y >> 3,
                                                                                                                   z >> 3);
                     tile.setLightValue(x & 7,
                                        y & 7,
                                        z & 7,
                                        value);
-                    this.markBlockForRenderUpdate(x >> 3,
+                    this.markBlockForUpdate(x >> 3,
                                                   y >> 3,
                                                   z >> 3);
                 }
@@ -423,12 +444,12 @@ public class LittleWorld extends World implements ILittleWorld {
                                                                                                      LoggerLittleBlocks.LogLevel.DEBUG);
             return false;
         } else {
-            int id = this.getParentWorld().getChunkFromChunkCoords(x >> 7,
-                                                                   z >> 7).getBlockID((x & 0x7f) >> 3,
+            Block id = this.getParentWorld().getChunkFromChunkCoords(x >> 7,
+                                                                   z >> 7).getBlock((x & 0x7f) >> 3,
                                                                                       y >> 3,
                                                                                       (z & 0x7f) >> 3);
-            if (id == ConfigurationLib.littleChunkID) {
-                TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getParentWorld().getBlockTileEntity(x >> 3,
+            if (id.equals(ConfigurationLib.littleChunk)) {
+                TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getParentWorld().getTileEntity(x >> 3,
                                                                                                               y >> 3,
                                                                                                               z >> 3);
                 int littleBlockId = tile.getBlockID(x & 7,
@@ -442,7 +463,7 @@ public class LittleWorld extends World implements ILittleWorld {
     }
 
     @Override
-    public int getBlockId(int x, int y, int z) {
+    public Block getBlock(int x, int y, int z) {
         if (x < 0xfe363c80 || z < 0xfe363c80 || x >= 0x1c9c380
             || z >= 0x1c9c380) {
             LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(this.getParentWorld().isRemote,
@@ -454,7 +475,7 @@ public class LittleWorld extends World implements ILittleWorld {
                                                                                                              + z
                                                                                                              + ").[Out of bounds]",
                                                                                                      LoggerLittleBlocks.LogLevel.DEBUG);
-            return 0;
+            return Blocks.air;
         }
         if (y < 0) {
             LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(this.getParentWorld().isRemote,
@@ -466,7 +487,7 @@ public class LittleWorld extends World implements ILittleWorld {
                                                                                                              + z
                                                                                                              + ").[y < 0]",
                                                                                                      LoggerLittleBlocks.LogLevel.DEBUG);
-            return 0;
+            return Blocks.air;
         }
         if (y >= this.getHeight()) {
             LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(this.getParentWorld().isRemote,
@@ -480,20 +501,20 @@ public class LittleWorld extends World implements ILittleWorld {
                                                                                                              + this.getHeight()
                                                                                                              + "]",
                                                                                                      LoggerLittleBlocks.LogLevel.DEBUG);
-            return 0;
+            return Blocks.air;
         } else {
-            int id = this.getParentWorld().getChunkFromChunkCoords(x >> 7,
-                                                                   z >> 7).getBlockID((x & 0x7f) >> 3,
+            Block id = this.getParentWorld().getChunkFromChunkCoords(x >> 7,
+                                                                   z >> 7).getBlock((x & 0x7f) >> 3,
                                                                                       y >> 3,
                                                                                       (z & 0x7f) >> 3);
-            if (id == ConfigurationLib.littleChunkID) {
-                TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getParentWorld().getBlockTileEntity(x >> 3,
+            if (id.equals(ConfigurationLib.littleChunk)) {
+                TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getParentWorld().getTileEntity(x >> 3,
                                                                                                               y >> 3,
                                                                                                               z >> 3);
                 int littleBlockId = tile.getBlockID(x & 7,
                                                     y & 7,
                                                     z & 7);
-                return littleBlockId;
+                return Block.getBlockById(littleBlockId);
             } else {
                 return id;
             }
@@ -511,7 +532,7 @@ public class LittleWorld extends World implements ILittleWorld {
         entity.worldObj = this.getParentWorld();
         LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(this.getParentWorld().isRemote,
                                                                                                  "spawnEntityInWorld("
-                                                                                                         + entity.entityId
+                                                                                                         + entity.getEntityId()
                                                                                                          + ").["
                                                                                                          + entity.posX
                                                                                                          + ", "
@@ -564,16 +585,16 @@ public class LittleWorld extends World implements ILittleWorld {
                                                                                                      LoggerLittleBlocks.LogLevel.DEBUG);
             return 0;
         } else {
-            int id = this.getParentWorld().getChunkFromChunkCoords(x >> 7,
-                                                                   z >> 7).getBlockID((x & 0x7f) >> 3,
+            Block id = this.getParentWorld().getChunkFromChunkCoords(x >> 7,
+                                                                   z >> 7).getBlock((x & 0x7f) >> 3,
                                                                                       y >> 3,
                                                                                       (z & 0x7f) >> 3);
             int metadata = this.getParentWorld().getChunkFromChunkCoords(x >> 7,
                                                                          z >> 7).getBlockMetadata((x & 0x7f) >> 3,
                                                                                                   y >> 3,
                                                                                                   (z & 0x7f) >> 3);
-            if (id == ConfigurationLib.littleChunkID) {
-                TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getParentWorld().getBlockTileEntity(x >> 3,
+            if (id.equals(ConfigurationLib.littleChunk)) {
+                TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getParentWorld().getTileEntity(x >> 3,
                                                                                                               y >> 3,
                                                                                                               z >> 3);
                 int littleMetaData = tile.getBlockMetadata(x & 7,
@@ -591,17 +612,8 @@ public class LittleWorld extends World implements ILittleWorld {
         return super.getHeight() * ConfigurationLib.littleBlocksSize;
     }
 
-    public boolean setBlock(int x, int y, int z, int blockID, int newmeta, int update, boolean newTile) {
-        return this.setBlock(x,
-                             y,
-                             z,
-                             blockID,
-                             newmeta,
-                             update);
-    }
-
     @Override
-    public boolean setBlock(int x, int y, int z, int blockID, int newmeta, int update) {
+    public boolean setBlock(int x, int y, int z, Block blockID, int newmeta, int update) {
         if (x >= 0xfe363c80 && z >= 0xfe363c80 & x < 0x1c9c380 && z < 0x1c9c380) {
             if (y < 0) {
                 LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(this.getParentWorld().isRemote,
@@ -642,30 +654,30 @@ public class LittleWorld extends World implements ILittleWorld {
             } else {
                 Chunk chunk = this.getParentWorld().getChunkFromChunkCoords(x >> 7,
                                                                             z >> 7);
-                if (chunk.getBlockID((x & 0x7f) >> 3,
+                if (chunk.getBlock((x & 0x7f) >> 3,
                                      y >> 3,
-                                     (z & 0x7f) >> 3) != ConfigurationLib.littleChunkID
+                                     (z & 0x7f) >> 3) != ConfigurationLib.littleChunk
                     && this.isAirBlock(x,
                                        y,
                                        z)) {
                     this.getParentWorld().setBlock(x >> 3,
                                                    y >> 3,
                                                    z >> 3,
-                                                   ConfigurationLib.littleChunkID);
-                } else if (chunk.getBlockID((x & 0x7f) >> 3,
+                                                   ConfigurationLib.littleChunk);
+                } else if (chunk.getBlock((x & 0x7f) >> 3,
                                             y >> 3,
-                                            (z & 0x7f) >> 3) != ConfigurationLib.littleChunkID) {
+                                            (z & 0x7f) >> 3) != ConfigurationLib.littleChunk) {
                     return false;
                 }
-                TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getParentWorld().getBlockTileEntity(x >> 3,
+                TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getParentWorld().getTileEntity(x >> 3,
                                                                                                               y >> 3,
                                                                                                               z >> 3);
-                int originalId = 0;
+                Block originalId = Blocks.air;
 
                 if ((update & 1) != 0) {
-                    originalId = tile.getBlockID(x & 7,
+                    originalId = Block.getBlockById(tile.getBlockID(x & 7,
                                                  y & 7,
-                                                 z & 7);
+                                                 z & 7));
                 }
 
                 tile.checkForLittleBlock(x & 7,
@@ -674,10 +686,10 @@ public class LittleWorld extends World implements ILittleWorld {
                 boolean flag = tile.setBlockIDWithMetadata(x & 7,
                                                            y & 7,
                                                            z & 7,
-                                                           blockID,
+                                                           Block.getIdFromBlock(blockID),
                                                            newmeta);
 
-                this.updateAllLightTypes(x,
+                this.func_147451_t/*updateAllLightTypes*/(x,
                                          y,
                                          z);
 
@@ -694,10 +706,10 @@ public class LittleWorld extends World implements ILittleWorld {
                                                y,
                                                z,
                                                originalId);
-                        Block block = Block.blocksList[blockID];
+                        Block block = blockID;
 
                         if (block != null && block.hasComparatorInputOverride()) {
-                            this.func_96440_m(x,
+                            this.func_147453_f(x,
                                               y,
                                               z,
                                               blockID);
@@ -769,22 +781,22 @@ public class LittleWorld extends World implements ILittleWorld {
             } else {
                 Chunk chunk = this.getParentWorld().getChunkFromChunkCoords(x >> 7,
                                                                             z >> 7);
-                if (chunk.getBlockID((x & 0x7f) >> 3,
+                if (chunk.getBlock((x & 0x7f) >> 3,
                                      y >> 3,
-                                     (z & 0x7f) >> 3) != ConfigurationLib.littleChunkID
+                                     (z & 0x7f) >> 3) != ConfigurationLib.littleChunk
                     && this.isAirBlock(x,
                                        y,
                                        z)) {
                     this.getParentWorld().setBlock(x >> 3,
                                                    y >> 3,
                                                    z >> 3,
-                                                   ConfigurationLib.littleChunkID);
-                } else if (chunk.getBlockID((x & 0x7f) >> 3,
+                                                   ConfigurationLib.littleChunk);
+                } else if (chunk.getBlock((x & 0x7f) >> 3,
                                             y >> 3,
-                                            (z & 0x7f) >> 3) != ConfigurationLib.littleChunkID) {
+                                            (z & 0x7f) >> 3) != ConfigurationLib.littleChunk) {
                     return false;
                 }
-                TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getParentWorld().getBlockTileEntity(x >> 3,
+                TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getParentWorld().getTileEntity(x >> 3,
                                                                                                               y >> 3,
                                                                                                               z >> 3);
                 boolean flag = tile.setBlockMetadata(x & 7,
@@ -793,9 +805,9 @@ public class LittleWorld extends World implements ILittleWorld {
                                                      metadata);
 
                 if (flag) {
-                    int blockId = tile.getBlockID(x & 7,
+                    Block block = Block.getBlockById(tile.getBlockID(x & 7,
                                                   y & 7,
-                                                  z & 7);
+                                                  z & 7));
 
                     if ((update & 2) != 0
                         && (!this.getParentWorld().isRemote || (update & 4) == 0)) {
@@ -808,14 +820,13 @@ public class LittleWorld extends World implements ILittleWorld {
                         this.notifyBlockChange(x,
                                                y,
                                                z,
-                                               blockId);
-                        Block block = Block.blocksList[blockId];
+                                               block);
 
                         if (block != null && block.hasComparatorInputOverride()) {
-                            this.func_96440_m(x,
+                            this.func_147453_f(x,
                                               y,
                                               z,
-                                              blockId);
+                                              block);
                         }
                     }
                 }
@@ -848,7 +859,7 @@ public class LittleWorld extends World implements ILittleWorld {
     }
 
     @Override
-    public void notifyBlocksOfNeighborChange(int x, int y, int z, int blockId) {
+    public void notifyBlocksOfNeighborChange(int x, int y, int z, Block block) {
         LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(this.getParentWorld().isRemote,
                                                                                                  "notifyBlocksOfNeighborChange("
                                                                                                          + x
@@ -857,42 +868,42 @@ public class LittleWorld extends World implements ILittleWorld {
                                                                                                          + ", "
                                                                                                          + z
                                                                                                          + ", "
-                                                                                                         + blockId
+                                                                                                         + block
                                                                                                          + ")",
                                                                                                  LoggerLittleBlocks.LogLevel.DEBUG);
         this.notifyBlockOfNeighborChange(x - 1,
                                          y,
                                          z,
-                                         blockId);
+                                         block);
         this.notifyBlockOfNeighborChange(x + 1,
                                          y,
                                          z,
-                                         blockId);
+                                         block);
         this.notifyBlockOfNeighborChange(x,
                                          y - 1,
                                          z,
-                                         blockId);
+                                         block);
         this.notifyBlockOfNeighborChange(x,
                                          y + 1,
                                          z,
-                                         blockId);
+                                         block);
         this.notifyBlockOfNeighborChange(x,
                                          y,
                                          z - 1,
-                                         blockId);
+                                         block);
         this.notifyBlockOfNeighborChange(x,
                                          y,
                                          z + 1,
-                                         blockId);
+                                         block);
     }
 
     @Override
-    public void notifyBlockOfNeighborChange(int x, int y, int z, int blockId) {
+    public void notifyBlockOfNeighborChange(int x, int y, int z, Block blockId) {
         World world;
-        int id = this.getParentWorld().getBlockId(x >> 3,
+        Block id = this.getParentWorld().getBlock(x >> 3,
                                                   y >> 3,
                                                   z >> 3);
-        if (id == ConfigurationLib.littleChunkID) {
+        if (id == ConfigurationLib.littleChunk) {
             world = this;
         } else {
             x >>= 3;
@@ -901,9 +912,9 @@ public class LittleWorld extends World implements ILittleWorld {
             world = this.getParentWorld();
         }
         if (!world.isRemote) {
-            Block block = Block.blocksList[world.getBlockId(x,
+            Block block = world.getBlock(x, 
                                                             y,
-                                                            z)];
+                                                            z);
             if (block != null) {
                 try {
                     block.onNeighborBlockChange(world,
@@ -943,11 +954,11 @@ public class LittleWorld extends World implements ILittleWorld {
     }
 
     @Override
-    public TileEntity getBlockTileEntity(int x, int y, int z) {
+    public TileEntity getTileEntity(int x, int y, int z) {
         if (x < 0xfe363c80 || z < 0xfe363c80 || x >= 0x1c9c380
             || z >= 0x1c9c380) {
             LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(this.getParentWorld().isRemote,
-                                                                                                     "getBlockTileEntity("
+                                                                                                     "getTileEntity("
                                                                                                              + x
                                                                                                              + ", "
                                                                                                              + y
@@ -974,9 +985,9 @@ public class LittleWorld extends World implements ILittleWorld {
         } else {
             Chunk chunk = this.getParentWorld().getChunkFromChunkCoords(x >> 7,
                                                                         z >> 7);
-            if (chunk.getBlockID((x & 0x7f) >> 3,
+            if (chunk.getBlock((x & 0x7f) >> 3,
                                  y >> 3,
-                                 (z & 0x7f) >> 3) == ConfigurationLib.littleChunkID) {
+                                 (z & 0x7f) >> 3) == ConfigurationLib.littleChunk) {
                 TileEntity tileentity = null;
                 int l;
                 TileEntity tileentity1;
@@ -995,7 +1006,7 @@ public class LittleWorld extends World implements ILittleWorld {
                 }
 
                 if (tileentity == null) {
-                    TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getParentWorld().getBlockTileEntity(x >> 3,
+                    TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getParentWorld().getTileEntity(x >> 3,
                                                                                                                   y >> 3,
                                                                                                                   z >> 3);
                     tileentity = tile.getChunkBlockTileEntity(x & 7,
@@ -1018,7 +1029,7 @@ public class LittleWorld extends World implements ILittleWorld {
 
                 return tileentity;
             } else {
-                return this.getParentWorld().getBlockTileEntity(x >> 3,
+                return this.getParentWorld().getTileEntity(x >> 3,
                                                                 y >> 3,
                                                                 z >> 3);
             }
@@ -1026,12 +1037,12 @@ public class LittleWorld extends World implements ILittleWorld {
     }
 
     @Override
-    public void setBlockTileEntity(int x, int y, int z, TileEntity tileentity) {
+    public void setTileEntity(int x, int y, int z, TileEntity tileentity) {
         Chunk chunk = this.getParentWorld().getChunkFromChunkCoords(x >> 7,
                                                                     z >> 7);
-        if (chunk.getBlockID((x & 0x7f) >> 3,
+        if (chunk.getBlock((x & 0x7f) >> 3,
                              y >> 3,
-                             (z & 0x7f) >> 3) == ConfigurationLib.littleChunkID) {
+                             (z & 0x7f) >> 3) == ConfigurationLib.littleChunk) {
             if (tileentity == null || tileentity.isInvalid()) {
                 return;
             }
@@ -1052,7 +1063,7 @@ public class LittleWorld extends World implements ILittleWorld {
                     loadedTiles.add(tileentity);
                 }
             }
-            TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getParentWorld().getBlockTileEntity(x >> 3,
+            TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getParentWorld().getTileEntity(x >> 3,
                                                                                                           y >> 3,
                                                                                                           z >> 3);
             if (tile != null) {
@@ -1061,12 +1072,12 @@ public class LittleWorld extends World implements ILittleWorld {
                                              z & 7,
                                              tileentity);
             }
-            this.func_96440_m(x,
+            this.func_147453_f(x,
                               y,
                               z,
-                              0);
+                              getBlock(x, y, z));
         } else {
-            this.getParentWorld().setBlockTileEntity(x >> 3,
+            this.getParentWorld().setTileEntity(x >> 3,
                                                      y >> 3,
                                                      z >> 3,
                                                      tileentity);
@@ -1074,7 +1085,7 @@ public class LittleWorld extends World implements ILittleWorld {
     }
 
     @Override
-    public void addTileEntity(Collection par1Collection) {
+    public void func_147448_a/*addTileEntity*/(Collection par1Collection) {
         List dest = scanningTiles ? addedTiles : loadedTiles;
         for (Object entity : par1Collection) {
             if (((TileEntity) entity).canUpdate()) {
@@ -1092,12 +1103,12 @@ public class LittleWorld extends World implements ILittleWorld {
     }
 
     @Override
-    public void markTileEntityForDespawn(TileEntity par1TileEntity) {
+    public void func_147457_a/*markTileEntityForDespawn*/(TileEntity par1TileEntity) {
         this.tileRemoval.add(par1TileEntity);
     }
 
     @Override
-    public void removeBlockTileEntity(int x, int y, int z) {
+    public void removeTileEntity(int x, int y, int z) {
         if (x < 0xfe363c80 || z < 0xfe363c80 || x >= 0x1c9c380
             || z >= 0x1c9c380) {
             return;
@@ -1110,10 +1121,10 @@ public class LittleWorld extends World implements ILittleWorld {
         } else {
             Chunk chunk = this.getParentWorld().getChunkFromChunkCoords(x >> 7,
                                                                         z >> 7);
-            if (chunk.getBlockID((x & 0x7f) >> 3,
+            if (chunk.getBlock((x & 0x7f) >> 3,
                                  y >> 3,
-                                 (z & 0x7f) >> 3) == ConfigurationLib.littleChunkID) {
-                TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getParentWorld().getBlockTileEntity(x >> 3,
+                                 (z & 0x7f) >> 3) == ConfigurationLib.littleChunk) {
+                TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getParentWorld().getTileEntity(x >> 3,
                                                                                                               y >> 3,
                                                                                                               z >> 3);
                 tile.removeChunkBlockTileEntity(x & 7,
@@ -1124,7 +1135,7 @@ public class LittleWorld extends World implements ILittleWorld {
     }
 
     @Override
-    public boolean isBlockSolidOnSide(int x, int y, int z, ForgeDirection side, boolean _default) {
+    public boolean isSideSolid(int x, int y, int z, ForgeDirection side, boolean _default) {
         if (x < 0xfe363c80 || z < 0xfe363c80 || x >= 0x1c9c380
             || z >= 0x1c9c380) {
             return _default;
@@ -1136,14 +1147,14 @@ public class LittleWorld extends World implements ILittleWorld {
             return _default;
         }
 
-        Block block = Block.blocksList[this.getBlockId(x,
+        Block block = this.getBlock(x,
                                                        y,
-                                                       z)];
+                                                       z);
         if (block == null) {
             return false;
         }
 
-        return block.isBlockSolidOnSide(this,
+        return block.isSideSolid(this,
                                         x,
                                         y,
                                         z,
@@ -1195,7 +1206,7 @@ public class LittleWorld extends World implements ILittleWorld {
     }
 
     @Override
-    public MovingObjectPosition rayTraceBlocks_do_do(Vec3 Vec3, Vec3 Vec31, boolean flag, boolean flag1) {
+    public MovingObjectPosition func_147447_a/*rayTraceBlocks_do_do*/(Vec3 Vec3, Vec3 Vec31, boolean flag, boolean flag1, boolean flag2) {
         Vec3.xCoord *= ConfigurationLib.littleBlocksSize;
         Vec3.yCoord *= ConfigurationLib.littleBlocksSize;
         Vec3.zCoord *= ConfigurationLib.littleBlocksSize;
@@ -1203,10 +1214,11 @@ public class LittleWorld extends World implements ILittleWorld {
         Vec31.xCoord *= ConfigurationLib.littleBlocksSize;
         Vec31.yCoord *= ConfigurationLib.littleBlocksSize;
         Vec31.zCoord *= ConfigurationLib.littleBlocksSize;
-        return super.rayTraceBlocks_do_do(Vec3,
+        return super.func_147447_a/*rayTraceBlocks_do_do*/(Vec3,
                                           Vec31,
                                           flag,
-                                          flag1);
+                                          flag1,
+                                          flag2);
     }
 
     @Override
@@ -1231,20 +1243,6 @@ public class LittleWorld extends World implements ILittleWorld {
 
     @Override
     public EntityPlayer getClosestPlayer(double x, double y, double z, double distance) {
-        int blockX = MathHelper.floor_double(x);
-        int blockY = MathHelper.floor_double(y);
-        int blockZ = MathHelper.floor_double(z);
-        EntityPlayer entityplayer = this.getParentWorld().getClosestPlayer(blockX >> 3,
-                                                                           blockY >> 3,
-                                                                           blockZ >> 3,
-                                                                           distance);
-        if (entityplayer != null) {
-            FakePlayer player = new FakePlayer(this, entityplayer.username);
-            player.posX = MathHelper.floor_double(entityplayer.posX) << 3;
-            player.posY = MathHelper.floor_double(entityplayer.posY) << 3;
-            player.posZ = MathHelper.floor_double(entityplayer.posZ) << 3;
-            return player;
-        }
         return null;
     }
 
@@ -1265,13 +1263,6 @@ public class LittleWorld extends World implements ILittleWorld {
     @Override
     public void markBlockForUpdate(int x, int y, int z) {
         this.getParentWorld().markBlockForUpdate(x >> 3,
-                                                 y >> 3,
-                                                 z >> 3);
-    }
-
-    @Override
-    public void markBlockForRenderUpdate(int x, int y, int z) {
-        this.getParentWorld().markBlockForRenderUpdate(x >> 3,
                                                        y >> 3,
                                                        z >> 3);
     }
@@ -1286,12 +1277,13 @@ public class LittleWorld extends World implements ILittleWorld {
                                                             z2 >> 3);
     }
 
+    @Override
     public void markTileEntityChunkModified(int x, int y, int z, TileEntity tileentity) {
-        TileEntity tile = this.getParentWorld().getBlockTileEntity(x >> 3,
+        TileEntity tile = this.getParentWorld().getTileEntity(x >> 3,
                                                                    y >> 3,
                                                                    z >> 3);
         if (tile != null && tile instanceof TileEntityLittleChunk) {
-            tile.onInventoryChanged();
+            tile.markDirty();
         }
     }
 
@@ -1302,10 +1294,9 @@ public class LittleWorld extends World implements ILittleWorld {
                                       par3)) {
             return 15;
         } else {
-            int l = this.getBlockId(par1,
-                                    par2,
-                                    par3);
-            Block block = Block.blocksList[l];
+            Block block = this.getBlock(par1,
+                                          par2,
+                                          par3);
             int blockLight = (block == null ? 0 : block.getLightValue(this,
                                                                       par1,
                                                                       par2,
@@ -1394,16 +1385,16 @@ public class LittleWorld extends World implements ILittleWorld {
                                                                                                      LoggerLittleBlocks.LogLevel.DEBUG);
             return 0;
         } else {
-            int id = this.getParentWorld().getChunkFromChunkCoords(x >> 7,
-                                                                   z >> 7).getBlockID((x & 0x7f) >> 3,
+            Block id = this.getParentWorld().getChunkFromChunkCoords(x >> 7,
+                                                                   z >> 7).getBlock((x & 0x7f) >> 3,
                                                                                       y >> 3,
                                                                                       (z & 0x7f) >> 3);
             int metadata = this.getParentWorld().getChunkFromChunkCoords(x >> 7,
                                                                          z >> 7).getBlockMetadata((x & 0x7f) >> 3,
                                                                                                   y >> 3,
                                                                                                   (z & 0x7f) >> 3);
-            if (id == ConfigurationLib.littleChunkID) {
-                TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getParentWorld().getBlockTileEntity(x >> 3,
+            if (id == ConfigurationLib.littleChunk) {
+                TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getParentWorld().getTileEntity(x >> 3,
                                                                                                               y >> 3,
                                                                                                               z >> 3);
                 return tile.getSavedLightValue(x & 7,
@@ -1415,8 +1406,9 @@ public class LittleWorld extends World implements ILittleWorld {
         }
     }
 
+    // TODO :: Lighting
     @Override
-    public void updateLightByType(EnumSkyBlock enumskyblock, int x, int y, int z) {
+    public boolean updateLightByType(EnumSkyBlock enumskyblock, int x, int y, int z) {
         // this.getRealWorld().updateLightByType(enumSkyBlock,
         // x >> 3,
         // y >> 3,
@@ -1478,9 +1470,9 @@ public class LittleWorld extends World implements ILittleWorld {
                                     int j4 = i2 + Facing.offsetsXForSide[i4];
                                     int k4 = j2 + Facing.offsetsYForSide[i4];
                                     int l4 = k2 + Facing.offsetsZForSide[i4];
-                                    Block block = Block.blocksList[getBlockId(j4,
+                                    Block block = this.getBlock(j4,
                                                                               k4,
-                                                                              l4)];
+                                                                              l4);
                                     int blockOpacity = (block == null ? 0 : block.getLightOpacity(this,
                                                                                                   j4,
                                                                                                   k4,
@@ -1643,6 +1635,7 @@ public class LittleWorld extends World implements ILittleWorld {
                 }
             }
         }
+        return false;
     }
 
     @Override
@@ -1725,12 +1718,10 @@ public class LittleWorld extends World implements ILittleWorld {
     }
 
     @Override
-    public boolean canPlaceEntityOnSide(int blockId, int x, int y, int z, boolean flag, int side, Entity entityPlacing, ItemStack itemstack) {
-        int blockIdAt = this.getBlockId(x,
+    public boolean canPlaceEntityOnSide(Block block, int x, int y, int z, boolean flag, int side, Entity entityPlacing, ItemStack itemstack) {
+        Block blockAt = this.getBlock(x,
                                         y,
                                         z);
-        Block blockAt = Block.blocksList[blockIdAt];
-        Block block = Block.blocksList[blockId];
         AxisAlignedBB axisalignedbb = block.getCollisionBoundingBoxFromPool(this,
                                                                             x,
                                                                             y,
@@ -1746,13 +1737,13 @@ public class LittleWorld extends World implements ILittleWorld {
             return false;
         } else {
             if (blockAt != null
-                && (blockAt == Block.waterMoving || blockAt == Block.waterStill
-                    || blockAt == Block.lavaMoving
-                    || blockAt == Block.lavaStill || blockAt == Block.fire || blockAt.blockMaterial.isReplaceable())) {
+                && (blockAt == Blocks.flowing_water || blockAt == Blocks.water
+                    || blockAt == Blocks.flowing_lava
+                    || blockAt == Blocks.lava || blockAt == Blocks.fire || blockAt.getMaterial().isReplaceable())) {
                 blockAt = null;
             }
 
-            if (blockAt != null && blockAt.isBlockReplaceable(this,
+            if (blockAt != null && blockAt.isReplaceable(this,
                                                               x,
                                                               y,
                                                               z)) {
@@ -1760,25 +1751,24 @@ public class LittleWorld extends World implements ILittleWorld {
             }
 
             return blockAt != null
-                   && blockAt.blockMaterial == Material.circuits
-                   && block == Block.anvil ? true : blockId > 0
+                   && blockAt.getMaterial() == Material.circuits
+                   && block == Blocks.anvil ? true : block != Blocks.air
                                                     && blockAt == null
                                                     && block.canPlaceBlockOnSide(this,
                                                                                  x,
                                                                                  y,
                                                                                  z,
-                                                                                 side,
-                                                                                 itemstack);
+                                                                                 side);
         }
     }
 
     @Override
     public boolean isOutSideLittleWorld(int x, int y, int z) {
-        int id = this.getParentWorld().getChunkFromChunkCoords(x >> 7,
-                                                               z >> 7).getBlockID((x & 0x7f) >> 3,
+        Block id = this.getParentWorld().getChunkFromChunkCoords(x >> 7,
+                                                               z >> 7).getBlock((x & 0x7f) >> 3,
                                                                                   y >> 3,
                                                                                   (z & 0x7f) >> 3);
-        return id != ConfigurationLib.littleChunkID;
+        return id != ConfigurationLib.littleChunk;
     }
 
     @Override

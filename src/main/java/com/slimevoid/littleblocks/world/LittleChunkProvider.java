@@ -2,14 +2,15 @@ package com.slimevoid.littleblocks.world;
 
 import java.util.List;
 
-import com.slimevoid.littleblocks.api.ILittleWorld;
-
+import net.minecraft.block.Block;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.IProgressUpdate;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
+
+import com.slimevoid.littleblocks.api.ILittleWorld;
 
 public class LittleChunkProvider implements IChunkProvider {
     private World realWorld;
@@ -36,7 +37,7 @@ public class LittleChunkProvider implements IChunkProvider {
      */
     @Override
     public Chunk provideChunk(int x, int y) {
-        byte[] bytes = new byte[32768];
+        Block[] bytes = new Block[32768];
         Chunk chunk = new Chunk(this.littleWorld, bytes, x, y);
         return chunk;
     }
@@ -97,7 +98,7 @@ public class LittleChunkProvider implements IChunkProvider {
      * not found returns null.
      */
     @Override
-    public ChunkPosition findClosestStructure(World par1World, String par2Str, int par3, int par4, int par5) {
+    public ChunkPosition func_147416_a/*findClosestStructure*/(World par1World, String par2Str, int par3, int par4, int par5) {
         return null;
     }
 

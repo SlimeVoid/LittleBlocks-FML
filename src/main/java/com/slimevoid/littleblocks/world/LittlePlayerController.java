@@ -1,39 +1,41 @@
 package com.slimevoid.littleblocks.world;
 
+import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.PlayerControllerMP;
+import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
+import net.minecraft.util.Vec3;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldSettings;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
+
 import com.slimevoid.littleblocks.core.LittleBlocks;
 import com.slimevoid.littleblocks.core.lib.BlockUtil;
 import com.slimevoid.littleblocks.core.lib.PacketLib;
 import com.slimevoid.littleblocks.items.ItemLittleBlocksWand;
 import com.slimevoid.littleblocks.items.wand.EnumWandAction;
 
-import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.NetClientHandler;
-import net.minecraft.client.multiplayer.PlayerControllerMP;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
-import net.minecraft.util.Vec3;
-import net.minecraft.world.EnumGameType;
-import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import cpw.mods.fml.client.FMLClientHandler;
 
 public class LittlePlayerController extends PlayerControllerMP {
 
     private Minecraft    mc;
-    private EnumGameType currentGameType;
+    private WorldSettings.GameType currentGameType;
 
-    public LittlePlayerController(Minecraft client, NetClientHandler clientHandler) {
+    public LittlePlayerController(Minecraft client, NetHandlerPlayClient clientHandler) {
         super(client, clientHandler);
-        this.currentGameType = EnumGameType.SURVIVAL;
+        this.currentGameType = WorldSettings.GameType.SURVIVAL;
         this.mc = client;
     }
 
     @Override
-    public void setGameType(EnumGameType gameType) {
+    public void setGameType(WorldSettings.GameType gameType) {
         this.currentGameType = gameType;
         this.currentGameType.configurePlayerCapabilities(this.mc.thePlayer.capabilities);
     }
@@ -123,7 +125,6 @@ public class LittlePlayerController extends PlayerControllerMP {
         float yOffset = (float) hitAt.yCoord;
         float zOffset = (float) hitAt.zCoord;
         boolean flag = false;
-        int blockId;
         if (itemstack != null && itemstack.getItem() != null
             && itemstack.getItem().onItemUseFirst(itemstack,
                                                   entityplayer,
@@ -139,16 +140,11 @@ public class LittlePlayerController extends PlayerControllerMP {
         }
 
         if (!entityplayer.isSneaking()
-            || (entityplayer.getHeldItem() == null || entityplayer.getHeldItem().getItem().shouldPassSneakingClickToBlock(world,
+            || (entityplayer.getHeldItem() == null || entityplayer.getHeldItem().getItem().doesSneakBypassUse/*shouldPassSneakingClickToBlock*/(world,
                                                                                                                           x,
                                                                                                                           y,
-                                                                                                                          z))) {
-            blockId = world.getBlockId(x,
-                                       y,
-                                       z);
-
-            if (blockId > 0
-                && Block.blocksList[blockId].onBlockActivated(world,
+                                                                                                                          z, entityplayer))) {
+            flag = world.getBlock(x, y, z).onBlockActivated(world,
                                                               x,
                                                               y,
                                                               z,
@@ -156,16 +152,14 @@ public class LittlePlayerController extends PlayerControllerMP {
                                                               side,
                                                               xOffset,
                                                               yOffset,
-                                                              zOffset)) {
-                flag = true;
-            }
+                                                              zOffset);
         }
 
         if (!flag && itemstack != null
             && itemstack.getItem() instanceof ItemBlock) {
             ItemBlock itemblock = (ItemBlock) itemstack.getItem();
 
-            if (!itemblock.canPlaceItemBlockOnSide(world,
+            if (!itemblock.func_150936_a/*canPlaceItemBlockOnSide*/(world,
                                                    x,
                                                    y,
                                                    z,
@@ -191,7 +185,7 @@ public class LittlePlayerController extends PlayerControllerMP {
         } else if (itemstack == null) {
             return false;
         } else if (this.currentGameType.isCreative()) {
-            blockId = itemstack.getItemDamage();
+            int damage = itemstack.getItemDamage();
             int stackSize = itemstack.stackSize;
             boolean placedOrUsed = itemstack.tryPlaceItemIntoWorld(entityplayer,
                                                                    world,
@@ -202,7 +196,7 @@ public class LittlePlayerController extends PlayerControllerMP {
                                                                    xOffset,
                                                                    yOffset,
                                                                    zOffset);
-            itemstack.setItemDamage(blockId);
+            itemstack.setItemDamage(damage);
             itemstack.stackSize = stackSize;
             return placedOrUsed;
         } else {
@@ -250,11 +244,11 @@ public class LittlePlayerController extends PlayerControllerMP {
                                      y,
                                      z,
                                      side);
-            int blockId = littleWorld.getBlockId(x,
+            Block blockId = littleWorld.getBlock(x,
                                                  y,
                                                  z);
-            if (blockId > 0) {
-                Block.blocksList[blockId].onBlockClicked(littleWorld,
+            if (blockId != Blocks.air) {
+                blockId.onBlockClicked(littleWorld,
                                                          x,
                                                          y,
                                                          z,
@@ -276,9 +270,9 @@ public class LittlePlayerController extends PlayerControllerMP {
         } else {
             World littleWorld = (World) LittleBlocks.proxy.getLittleWorld(this.mc.theWorld,
                                                                           false);
-            Block littleBlock = Block.blocksList[littleWorld.getBlockId(x,
+            Block littleBlock = littleWorld.getBlock(x,
                                                                         y,
-                                                                        z)];
+                                                                        z);
 
             if (littleBlock == null) {
                 return false;
@@ -287,7 +281,7 @@ public class LittlePlayerController extends PlayerControllerMP {
                                        x,
                                        y,
                                        z,
-                                       littleBlock.blockID
+                                       Block.getIdFromBlock(littleBlock)
                                                + (littleWorld.getBlockMetadata(x,
                                                                                y,
                                                                                z) << 12));
@@ -295,7 +289,7 @@ public class LittlePlayerController extends PlayerControllerMP {
                                                       y,
                                                       z);
 
-                boolean blockIsRemoved = littleBlock.removeBlockByPlayer(littleWorld,
+                boolean blockIsRemoved = littleBlock.removedByPlayer(littleWorld,
                                                                          mc.thePlayer,
                                                                          x,
                                                                          y,
@@ -322,8 +316,8 @@ public class LittlePlayerController extends PlayerControllerMP {
                     ItemStack itemstack = this.mc.thePlayer.getCurrentEquippedItem();
 
                     if (itemstack != null) {
-                        itemstack.onBlockDestroyed(littleWorld,
-                                                   littleBlock.blockID,
+                        itemstack.func_150999_a/*onBlockDestroyed*/(littleWorld,
+                                                   littleBlock,
                                                    x,
                                                    y,
                                                    z,

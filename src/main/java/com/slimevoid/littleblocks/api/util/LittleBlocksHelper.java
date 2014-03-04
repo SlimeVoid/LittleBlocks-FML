@@ -11,6 +11,7 @@ import com.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
@@ -46,16 +47,17 @@ public class LittleBlocksHelper implements ISlimevoidHelper {
         }
     }
 
-    public int getBlockId(World world, int x, int y, int z) {
+    @Override
+    public Block getBlock(World world, int x, int y, int z) {
         if (world != null) {
             return getWorld(world,
                             x,
                             y,
-                            z).getBlockId(x,
+                            z).getBlock(x,
                                           y,
                                           z);
         }
-        return 0;
+        return Blocks.air;
     }
 
     @Override
@@ -66,7 +68,7 @@ public class LittleBlocksHelper implements ISlimevoidHelper {
                                                   y,
                                                   z);
             if (newWorld != null) {
-                TileEntity tileentity = newWorld.getBlockTileEntity(x,
+                TileEntity tileentity = newWorld.getTileEntity(x,
                                                                     y,
                                                                     z);
                 return tileentity;
@@ -103,7 +105,7 @@ public class LittleBlocksHelper implements ISlimevoidHelper {
         if (world instanceof ILittleWorld) {
             return true;
         }
-        if (world.getBlockTileEntity(x >> 3,
+        if (world.getTileEntity(x >> 3,
                                      y >> 3,
                                      z >> 3) instanceof ILittleBlocks) {
             return true;
@@ -137,7 +139,7 @@ public class LittleBlocksHelper implements ISlimevoidHelper {
     @Override
     public boolean isLadder(World world, int x, int y, int z, EntityLivingBase entity) {
 
-        TileEntityLittleChunk tile = (TileEntityLittleChunk) world.getBlockTileEntity(x,
+        TileEntityLittleChunk tile = (TileEntityLittleChunk) world.getTileEntity(x,
                                                                                       y,
                                                                                       z);
         double minX = entity.boundingBox.minX + 0.001D;

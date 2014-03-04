@@ -1,23 +1,25 @@
 package com.slimevoid.littleblocks.world;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.server.management.ItemInWorldManager;
+import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
+
 import com.slimevoid.littleblocks.core.LittleBlocks;
 import com.slimevoid.littleblocks.core.lib.PacketLib;
 import com.slimevoid.littleblocks.items.ItemLittleBlocksWand;
 import com.slimevoid.littleblocks.items.wand.EnumWandAction;
 
-import net.minecraft.block.Block;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemInWorldManager;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.Event;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
+import cpw.mods.fml.common.eventhandler.Event;
 
 public class ItemInLittleWorldManager extends ItemInWorldManager {
 
@@ -50,11 +52,9 @@ public class ItemInLittleWorldManager extends ItemInWorldManager {
                                      z);
             }
         } else {
-            int blockId = this.theWorld.getBlockId(x,
-                                                   y,
-                                                   z);
-
-            Block block = Block.blocksList[blockId];
+            Block block = this.theWorld.getBlock(x,
+                                                 y,
+                                                 z);
             if (block == null) return;
 
             if (event.useBlock != Event.Result.DENY) {
@@ -85,7 +85,7 @@ public class ItemInLittleWorldManager extends ItemInWorldManager {
                 return;
             }
 
-            if (blockId > 0) {
+            if (block.getMaterial() != Material.air) {
                 this.tryHarvestBlock(x,
                                      y,
                                      z);
@@ -99,9 +99,10 @@ public class ItemInLittleWorldManager extends ItemInWorldManager {
     }
 
     public boolean tryHarvestBlock(int x, int y, int z) {
-        int blockId = this.theWorld.getBlockId(x,
-                                               y,
-                                               z);
+        Block block = this.theWorld.getBlock(x,
+                                             y,
+                                             z);
+        int blockId = Block.getIdFromBlock(block);
         int metadata = this.theWorld.getBlockMetadata(x,
                                                       y,
                                                       z);
@@ -128,14 +129,13 @@ public class ItemInLittleWorldManager extends ItemInWorldManager {
         } else {
             ItemStack playerHeldItem = this.thisPlayerMP.getCurrentEquippedItem();
             boolean canHarvest = false;
-            Block block = Block.blocksList[blockId];
             if (block != null) {
                 canHarvest = true;
             }
 
             if (playerHeldItem != null) {
-                playerHeldItem.onBlockDestroyed(this.theWorld,
-                                                blockId,
+                playerHeldItem.func_150999_a/*onBlockDestroyed*/(this.theWorld,
+                                                block,
                                                 x,
                                                 y,
                                                 z,
@@ -146,7 +146,7 @@ public class ItemInLittleWorldManager extends ItemInWorldManager {
                                               y,
                                               z);
             if (blockHarvested && canHarvest) {
-                Block.blocksList[blockId].harvestBlock(this.theWorld,
+                block.harvestBlock(this.theWorld,
                                                        this.thisPlayerMP,
                                                        x,
                                                        y,
@@ -158,9 +158,9 @@ public class ItemInLittleWorldManager extends ItemInWorldManager {
     }
 
     private boolean removeBlock(int x, int y, int z) {
-        Block littleBlock = Block.blocksList[this.theWorld.getBlockId(x,
+        Block littleBlock = this.theWorld.getBlock(x,
                                                                       y,
-                                                                      z)];
+                                                                      z);
         int metadata = this.theWorld.getBlockMetadata(x,
                                                       y,
                                                       z);
@@ -174,7 +174,7 @@ public class ItemInLittleWorldManager extends ItemInWorldManager {
                                          this.thisPlayerMP);
         }
 
-        boolean blockIsRemoved = (littleBlock != null && littleBlock.removeBlockByPlayer(theWorld,
+        boolean blockIsRemoved = (littleBlock != null && littleBlock.removedByPlayer(theWorld,
                                                                                          thisPlayerMP,
                                                                                          x,
                                                                                          y,
@@ -243,17 +243,16 @@ public class ItemInLittleWorldManager extends ItemInWorldManager {
             return true;
         }
 
-        int i1 = world.getBlockId(x,
-                                  y,
-                                  z);
-        Block block = Block.blocksList[i1];
+        Block block = world.getBlock(x,
+                                       y,
+                                       z);
         boolean result = false;
 
         if (block != null
-            && (!entityplayer.isSneaking() || (entityplayer.getHeldItem() == null || entityplayer.getHeldItem().getItem().shouldPassSneakingClickToBlock(world,
+            && (!entityplayer.isSneaking() || (entityplayer.getHeldItem() == null || entityplayer.getHeldItem().getItem().doesSneakBypassUse(world,
                                                                                                                                                          x,
                                                                                                                                                          y,
-                                                                                                                                                         z)))) {
+                                                                                                                                                         z, entityplayer)))) {
             if (event.useBlock != Event.Result.DENY) {
                 result = block.onBlockActivated(world,
                                                 x,
