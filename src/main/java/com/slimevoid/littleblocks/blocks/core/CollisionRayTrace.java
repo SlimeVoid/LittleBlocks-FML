@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
@@ -18,13 +19,13 @@ import cpw.mods.fml.common.FMLCommonHandler;
 
 public class CollisionRayTrace {
 
-    public static List<MovingObjectPosition> rayTraceLittleBlocks(BlockLittleChunk littleBlocks, Vec3 player, Vec3 view, int i, int j, int k, List<MovingObjectPosition> returns, int[][][] content, TileEntityLittleChunk tile, boolean isFluid) {
+    public static List<MovingObjectPosition> rayTraceLittleBlocks(BlockLittleChunk littleBlocks, Vec3 player, Vec3 view, int i, int j, int k, List<MovingObjectPosition> returns, TileEntityLittleChunk tile, boolean isFluid) {
         float m = ConfigurationLib.littleBlocksSize;
-        for (int x = 0; x < content.length; x++) {
-            for (int y = 0; y < content[x].length; y++) {
-                for (int z = 0; z < content[x][y].length; z++) {
-                    if (content[x][y][z] > 0) {
-                        Block block = Block.getBlockById(content[x][y][z]);
+        for (int x = 0; x < tile.size; x++) {
+            for (int y = 0; y < tile.size; y++) {
+                for (int z = 0; z < tile.size; z++) {
+                    if (tile.getBlock(x, y, z) != Blocks.air) {
+                        Block block = tile.getBlock(x, y, z);
                         if (block != null
                             && (!(block instanceof IFluidBlock) || isFluid)) {
                             try {

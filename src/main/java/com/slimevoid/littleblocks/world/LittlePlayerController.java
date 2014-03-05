@@ -1,6 +1,7 @@
 package com.slimevoid.littleblocks.world;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.network.NetHandlerPlayClient;
@@ -244,11 +245,12 @@ public class LittlePlayerController extends PlayerControllerMP {
                                      y,
                                      z,
                                      side);
-            Block blockId = littleWorld.getBlock(x,
+            Block block = littleWorld.getBlock(x,
                                                  y,
                                                  z);
-            if (blockId != Blocks.air) {
-                blockId.onBlockClicked(littleWorld,
+            boolean flag = block.getMaterial() != Material.air;
+            if (flag) {
+                block.onBlockClicked(littleWorld,
                                                          x,
                                                          y,
                                                          z,
@@ -263,9 +265,12 @@ public class LittlePlayerController extends PlayerControllerMP {
 
     @Override
     public boolean onPlayerDestroyBlock(int x, int y, int z, int side) {
-        if (this.currentGameType.isCreative()
-            && this.mc.thePlayer.getHeldItem() != null
-            && this.mc.thePlayer.getHeldItem().getItem() instanceof ItemSword) {
+        ItemStack stack = this.mc.thePlayer.getHeldItem();
+        if (stack != null
+            && stack.getItem() != null && stack.getItem().onBlockStartBreak(stack, x, y, z, this.mc.thePlayer)) {
+            return false;
+        }
+        if (this.currentGameType.isCreative() && this.mc.thePlayer.getHeldItem() != null && this.mc.thePlayer.getHeldItem().getItem() instanceof ItemSword) {
             return false;
         } else {
             World littleWorld = (World) LittleBlocks.proxy.getLittleWorld(this.mc.theWorld,
@@ -274,7 +279,7 @@ public class LittlePlayerController extends PlayerControllerMP {
                                                                         y,
                                                                         z);
 
-            if (littleBlock == null) {
+            if (littleBlock.getMaterial() == Material.air) {
                 return false;
             } else {
                 littleWorld.playAuxSFX(2001,
@@ -285,7 +290,7 @@ public class LittlePlayerController extends PlayerControllerMP {
                                                + (littleWorld.getBlockMetadata(x,
                                                                                y,
                                                                                z) << 12));
-                int i1 = littleWorld.getBlockMetadata(x,
+                int metadata = littleWorld.getBlockMetadata(x,
                                                       y,
                                                       z);
 
@@ -309,7 +314,7 @@ public class LittlePlayerController extends PlayerControllerMP {
                                                          x,
                                                          y,
                                                          z,
-                                                         i1);
+                                                         metadata);
                 }
 
                 if (!this.currentGameType.isCreative()) {

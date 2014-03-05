@@ -279,7 +279,7 @@ public class ItemLittleBlocksWand extends Item {
                                                                              z1,
                                                                              blockId,
                                                                              metadata);
-                                            TileEntity oldLittleTile = oldtile.getChunkBlockTileEntity(x1,
+                                            TileEntity oldLittleTile = oldtile.getChunkTileEntity(x1,
                                                                                                        y1,
                                                                                                        z1);
                                             if (oldLittleTile != null) {

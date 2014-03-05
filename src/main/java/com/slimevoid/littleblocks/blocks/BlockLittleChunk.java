@@ -181,12 +181,11 @@ public class BlockLittleChunk extends BlockContainer {
                                         entityplayer);
                     return false;
                 } else {
-                    int[][][] content = tile.getContents();
                     if (collection != null) {
-                        for (int x1 = 0; x1 < content.length; x1++) {
-                            for (int y1 = 0; y1 < content[x1].length; y1++) {
-                                for (int z1 = 0; z1 < content[x1][y1].length; z1++) {
-                                    Block blockId = Block.getBlockById(content[x1][y1][z1]);
+                        for (int x1 = 0; x1 < tile.size; x1++) {
+                            for (int y1 = 0; y1 < tile.size; y1++) {
+                                for (int z1 = 0; z1 < tile.size; z1++) {
+                                    Block blockId = tile.getBlock(x1, y1, z1);
                                     int contentMeta = tile.getBlockMetadata(x1,
                                                                             y1,
                                                                             z1);
@@ -535,7 +534,6 @@ public class BlockLittleChunk extends BlockContainer {
         if (tileentity != null && tileentity instanceof TileEntityLittleChunk) {
             TileEntityLittleChunk tile = (TileEntityLittleChunk) tileentity;
 
-            int[][][] content = tile.getContents();
             float m = ConfigurationLib.littleBlocksSize;
 
             AxisAlignedBB bb = AxisAlignedBB.getBoundingBox(axisalignedbb.minX
@@ -551,11 +549,11 @@ public class BlockLittleChunk extends BlockContainer {
                                                             axisalignedbb.maxZ
                                                                     * m);
             List<AxisAlignedBB> bbs = new ArrayList<AxisAlignedBB>();
-            for (int xx = 0; xx < content.length; xx++) {
-                for (int yy = 0; yy < content[xx].length; yy++) {
-                    for (int zz = 0; zz < content[xx][yy].length; zz++) {
-                        if (content[xx][yy][zz] > 0) {
-                            Block block = Block.getBlockById(content[xx][yy][zz]);
+            for (int xx = 0; xx < tile.size; xx++) {
+                for (int yy = 0; yy < tile.size; yy++) {
+                    for (int zz = 0; zz < tile.size; zz++) {
+                        if (tile.getBlock(xx, yy, zz) != Blocks.air) {
+                            Block block = tile.getBlock(xx, yy, zz);
                             if (block != null) {
                                 block.addCollisionBoxesToList((World) tile.getLittleWorld(),
                                                               (x << 3) + xx,
@@ -592,8 +590,6 @@ public class BlockLittleChunk extends BlockContainer {
             return null;
         }
 
-        int[][][] content = tile.getContents();
-
         List<MovingObjectPosition> returns = new ArrayList<MovingObjectPosition>();
 
         returns = CollisionRayTrace.rayTraceLittleBlocks(this,
@@ -603,7 +599,6 @@ public class BlockLittleChunk extends BlockContainer {
                                                          y,
                                                          z,
                                                          returns,
-                                                         content,
                                                          tile,
                                                          isFluid);
         player = player.addVector(-x,
@@ -664,7 +659,7 @@ public class BlockLittleChunk extends BlockContainer {
                     if (littleBlock != null) {
                         if (!(littleBlock.hasTileEntity(tile.getBlockMetadata(xSelected,
                                                                               ySelected,
-                                                                              zSelected)) && tile.getChunkBlockTileEntity(xSelected,
+                                                                              zSelected)) && tile.getChunkTileEntity(xSelected,
                                                                                                                           ySelected,
                                                                                                                           zSelected) == null)) {
 
@@ -838,7 +833,6 @@ public class BlockLittleChunk extends BlockContainer {
                                                                                                  y,
                                                                                                  z);
             if (tile != null) {
-                int[][][] content = tile.getContents();
                 int maX = tile.size, maY = tile.size, maZ = tile.size;
                 int startX = 0, startY = 0, startZ = 0;
 
@@ -871,8 +865,8 @@ public class BlockLittleChunk extends BlockContainer {
                 for (int xx = startX; xx < maX; xx++) {
                     for (int yy = startY; yy < maY; yy++) {
                         for (int zz = startZ; zz < maZ; zz++) {
-                            if (content[xx][yy][zz] > 0) {
-                                Block littleBlock = Block.getBlockById(content[xx][yy][zz]);
+                            if (tile.getBlock(xx, yy, zz) != Blocks.air) {
+                                Block littleBlock = tile.getBlock(xx, yy, zz);
                                 if (littleBlock != null) {
                                     return littleBlock.isProvidingWeakPower(tile.getLittleWorld(),
                                                                             (x << 3)
@@ -904,7 +898,6 @@ public class BlockLittleChunk extends BlockContainer {
                                                                                           y,
                                                                                           z);
             if (tile != null) {
-                int[][][] content = tile.getContents();
                 int maX = tile.size, maY = tile.size, maZ = tile.size;
                 int startX = 0, startY = 0, startZ = 0;
                 for (int side = 0; side < 6; side++) {
@@ -937,8 +930,8 @@ public class BlockLittleChunk extends BlockContainer {
                     for (int xx = startX; xx < maX; xx++) {
                         for (int yy = startY; yy < maY; yy++) {
                             for (int zz = startZ; zz < maZ; zz++) {
-                                if (content[xx][yy][zz] > 0) {
-                                    Block littleBlock = Block.getBlockById(content[xx][yy][zz]);
+                                if (tile.getBlock(xx, yy, zz) != Blocks.air) {
+                                    Block littleBlock = tile.getBlock(xx, yy, zz);
                                     if (littleBlock != null) {
                                         littleBlock.onNeighborBlockChange((World) tile.getLittleWorld(),
                                                                           (x << 3)

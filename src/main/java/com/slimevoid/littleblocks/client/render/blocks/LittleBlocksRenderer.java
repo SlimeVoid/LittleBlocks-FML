@@ -27,13 +27,11 @@ public class LittleBlocksRenderer implements ISimpleBlockRenderingHandler {
                 return false;
             }
 
-            int[][][] content = tile.getContents();
-
             LittleBlocksLittleRenderer littleBlocks = new LittleBlocksLittleRenderer(ConfigurationLib.getLittleRenderer(tile.getWorldObj()));
 
-            for (int x1 = 0; x1 < content.length; x1++) {
-                for (int y1 = 0; y1 < content[x1].length; y1++) {
-                    for (int z1 = 0; z1 < content[x1][y1].length; z1++) {
+            for (int x1 = 0; x1 < tile.size; x1++) {
+                for (int y1 = 0; y1 < tile.size; y1++) {
+                    for (int z1 = 0; z1 < tile.size; z1++) {
                         Block littleBlock = tile.getBlock(x1, y1, z1);
                         if (littleBlock != Blocks.air) {
                             if (littleBlock != null) {
