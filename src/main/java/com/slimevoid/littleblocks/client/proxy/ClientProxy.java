@@ -52,7 +52,7 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void registerRenderInformation() {
         MinecraftForge.EVENT_BUS.register(new DrawCopierHighlight());
-        RenderingRegistry.registerBlockHandler(new LittleBlocksRenderer());
+       RenderingRegistry.registerBlockHandler(new LittleBlocksRenderer());
         RenderingRegistry.registerEntityRenderingHandler(EntityItemLittleBlocksCollection.class,
                                                          new LittleBlocksCollectionRenderer());
         this.registerTileEntitySpecialRenderer(TileEntityLittleChunk.class);

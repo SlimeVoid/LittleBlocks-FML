@@ -182,9 +182,9 @@ public class LittleBlocksHelper implements ISlimevoidHelper {
                    + ((MathHelper.floor_double(maxZ) - z) * tile.size);
             for (int littleX = (int) minX; littleX <= maxX; littleX++) {
                 for (int littleZ = (int) minZ; littleZ <= maxZ; littleZ++) {
-                    Block block = Block.getBlockById(tile.getBlockID(littleX,
+                    Block block = tile.getBlock(littleX,
                                                   (int) minY,
-                                                  littleZ));
+                                                  littleZ);
                     if (block.getMaterial() != Material.air) {
                         int xx = (x << 3) + littleX, yy = (y << 3) + (int) minY, zz = (z << 3)
                                                                                       + littleZ;

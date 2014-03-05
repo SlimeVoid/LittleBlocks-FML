@@ -16,6 +16,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -86,13 +87,13 @@ public class BlockLittleChunk extends BlockContainer {
 
     @Override
     public int getRenderBlockPass() {
-        return 1;
+        return 0;
     }
 
     @Override
     public boolean canRenderInPass(int pass) {
         currentPass = pass;
-        return true;
+        return pass == 0 ? true : false;
     }
 
     @Override
@@ -114,11 +115,11 @@ public class BlockLittleChunk extends BlockContainer {
                                                          z);
         if (tileentity != null && tileentity instanceof TileEntityLittleChunk) {
             TileEntityLittleChunk tilelb = (TileEntityLittleChunk) tileentity;
-            int pickedID = tilelb.getBlockID(xSelected,
+            Block pickedBlock = tilelb.getBlock(xSelected,
                                              ySelected,
                                              zSelected);
-            if (pickedID > 0) {
-                return Item.getItemFromBlock(Block.getBlockById(pickedID));
+            if (pickedBlock != Blocks.air) {
+                return Item.getItemFromBlock(pickedBlock);
             }
         }
         return ConfigurationLib.littleBlocksWand;
@@ -131,10 +132,10 @@ public class BlockLittleChunk extends BlockContainer {
                                                          z);
         if (tileentity != null && tileentity instanceof TileEntityLittleChunk) {
             TileEntityLittleChunk tilelb = (TileEntityLittleChunk) tileentity;
-            Block picked = Block.getBlockById(tilelb.getBlockID(xSelected,
+            Block picked = tilelb.getBlock(xSelected,
                                              ySelected,
-                                             zSelected));
-            if (picked.getMaterial() != Material.air) {
+                                             zSelected);
+            if (picked != null && picked != Blocks.air) {
                 int xx = (x << 3) + xSelected;
                 int yy = (y << 3) + ySelected;
                 int zz = (z << 3) + zSelected;
@@ -189,7 +190,7 @@ public class BlockLittleChunk extends BlockContainer {
                                     int contentMeta = tile.getBlockMetadata(x1,
                                                                             y1,
                                                                             z1);
-                                    if (blockId.getMaterial() != Material.air) {
+                                    if (blockId != Blocks.air) {
                                         ItemStack itemToDrop = this.dropLittleBlockAsNormalBlock(world,
                                                                                                  x,
                                                                                                  y,
@@ -464,11 +465,11 @@ public class BlockLittleChunk extends BlockContainer {
             TileEntityLittleChunk tile = (TileEntityLittleChunk) world.getTileEntity(x,
                                                                                           y,
                                                                                           z);
-            int content = tile.getBlockID(xSelected,
+            Block block = tile.getBlock(xSelected,
                                           ySelected,
                                           zSelected);
             // System.out.println("Content: " + content);
-            if (content == -1) {
+            if (block == null) {
                 this.setBlockBounds(xSelected / m,
                                     ySelected / m,
                                     zSelected / m,
@@ -476,7 +477,6 @@ public class BlockLittleChunk extends BlockContainer {
                                     (ySelected + 1) / m,
                                     (zSelected + 1) / m);
             } else {
-                Block block = Block.getBlockById(content);
                 if (block != null) {
                     if (BlockStairs.func_150148_a/*isBlockStairsID*/(block)) {
                         block.setBlockBounds(0,
@@ -628,15 +628,10 @@ public class BlockLittleChunk extends BlockContainer {
             for (MovingObjectPosition ret : returns) {
                 double dist = (double) ret.hitVec.squareDistanceTo(player);
 
-                int retBlockID = tile.getBlockID(ret.blockX,
+                Block retBlock = tile.getBlock(ret.blockX,
                                                  ret.blockY,
                                                  ret.blockZ);
-                if (retBlockID > 0) {
-                    Block retBlock = Block.getBlockById(retBlockID);// .isBlockSolid(tile.worldObj,
-                                                                  // ret.blockX,
-                                                                  // ret.blockY,
-                                                                  // ret.blockZ,
-                                                                  // ret.sideHit);
+                if (retBlock != Blocks.air) {
                     isLiquid = retBlock instanceof IFluidBlock;
                     if (isLiquid && isFluid) {
                         isLiquid = !(retBlock instanceof BlockStaticLiquid && tile.getBlockMetadata(ret.blockX,
@@ -650,7 +645,7 @@ public class BlockLittleChunk extends BlockContainer {
                     min = ret;
                 }
             }
-            int littleBlockID = tile.getBlockID(xSelected,
+            Block littleBlock = tile.getBlock(xSelected,
                                                 ySelected,
                                                 zSelected);
 
@@ -660,13 +655,12 @@ public class BlockLittleChunk extends BlockContainer {
                 ySelected = (int) min.blockY;
                 zSelected = (int) min.blockZ;
                 if (isFluid) {
-                    littleBlockID = tile.getBlockID(xSelected,
+                    littleBlock = tile.getBlock(xSelected,
                                                     ySelected,
                                                     zSelected);
                 }
                 boolean rayTraced = false;
-                if (littleBlockID > 0) {
-                    Block littleBlock = Block.getBlockById(littleBlockID);
+                if (littleBlock != Blocks.air) {
                     if (littleBlock != null) {
                         if (!(littleBlock.hasTileEntity(tile.getBlockMetadata(xSelected,
                                                                               ySelected,

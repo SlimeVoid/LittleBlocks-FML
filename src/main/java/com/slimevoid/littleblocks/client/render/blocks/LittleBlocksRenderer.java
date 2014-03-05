@@ -6,6 +6,7 @@ import com.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.init.Blocks;
 import net.minecraft.world.IBlockAccess;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -33,9 +34,8 @@ public class LittleBlocksRenderer implements ISimpleBlockRenderingHandler {
             for (int x1 = 0; x1 < content.length; x1++) {
                 for (int y1 = 0; y1 < content[x1].length; y1++) {
                     for (int z1 = 0; z1 < content[x1][y1].length; z1++) {
-                        int blockId = content[x1][y1][z1];
-                        if (blockId > 0) {
-                            Block littleBlock = Block.getBlockById(blockId);
+                        Block littleBlock = tile.getBlock(x1, y1, z1);
+                        if (littleBlock != Blocks.air) {
                             if (littleBlock != null) {
                                 int[] coords = {
                                         (x << 3) + x1,

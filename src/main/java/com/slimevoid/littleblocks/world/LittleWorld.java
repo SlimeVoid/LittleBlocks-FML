@@ -444,18 +444,18 @@ public class LittleWorld extends World implements ILittleWorld {
                                                                                                      LoggerLittleBlocks.LogLevel.DEBUG);
             return false;
         } else {
-            Block id = this.getParentWorld().getChunkFromChunkCoords(x >> 7,
+            Block block = this.getParentWorld().getChunkFromChunkCoords(x >> 7,
                                                                    z >> 7).getBlock((x & 0x7f) >> 3,
                                                                                       y >> 3,
                                                                                       (z & 0x7f) >> 3);
-            if (id.equals(ConfigurationLib.littleChunk)) {
+            if (block.equals(ConfigurationLib.littleChunk)) {
                 TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getParentWorld().getTileEntity(x >> 3,
                                                                                                               y >> 3,
                                                                                                               z >> 3);
-                int littleBlockId = tile.getBlockID(x & 7,
+                Block littleBlock = tile.getBlock(x & 7,
                                                     y & 7,
                                                     z & 7);
-                return littleBlockId > 0 ? true : false;
+                return littleBlock != Blocks.air ? true : false;
             } else {
                 return false;
             }
@@ -511,10 +511,10 @@ public class LittleWorld extends World implements ILittleWorld {
                 TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getParentWorld().getTileEntity(x >> 3,
                                                                                                               y >> 3,
                                                                                                               z >> 3);
-                int littleBlockId = tile.getBlockID(x & 7,
+                Block littleBlock = tile.getBlock(x & 7,
                                                     y & 7,
                                                     z & 7);
-                return Block.getBlockById(littleBlockId);
+                return littleBlock;
             } else {
                 return id;
             }
@@ -613,7 +613,7 @@ public class LittleWorld extends World implements ILittleWorld {
     }
 
     @Override
-    public boolean setBlock(int x, int y, int z, Block blockID, int newmeta, int update) {
+    public boolean setBlock(int x, int y, int z, Block block, int newmeta, int update) {
         if (x >= 0xfe363c80 && z >= 0xfe363c80 & x < 0x1c9c380 && z < 0x1c9c380) {
             if (y < 0) {
                 LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(this.getParentWorld().isRemote,
@@ -624,7 +624,7 @@ public class LittleWorld extends World implements ILittleWorld {
                                                                                                                  + ", "
                                                                                                                  + z
                                                                                                                  + ", "
-                                                                                                                 + blockID
+                                                                                                                 + block.getLocalizedName()
                                                                                                                  + ", "
                                                                                                                  + newmeta
                                                                                                                  + ", "
@@ -641,7 +641,7 @@ public class LittleWorld extends World implements ILittleWorld {
                                                                                                                  + ", "
                                                                                                                  + z
                                                                                                                  + ", "
-                                                                                                                 + blockID
+                                                                                                                 + block.getLocalizedName()
                                                                                                                  + ", "
                                                                                                                  + newmeta
                                                                                                                  + ", "
@@ -675,9 +675,9 @@ public class LittleWorld extends World implements ILittleWorld {
                 Block originalId = Blocks.air;
 
                 if ((update & 1) != 0) {
-                    originalId = Block.getBlockById(tile.getBlockID(x & 7,
+                    originalId = tile.getBlock(x & 7,
                                                  y & 7,
-                                                 z & 7));
+                                                 z & 7);
                 }
 
                 tile.checkForLittleBlock(x & 7,
@@ -686,7 +686,7 @@ public class LittleWorld extends World implements ILittleWorld {
                 boolean flag = tile.setBlockIDWithMetadata(x & 7,
                                                            y & 7,
                                                            z & 7,
-                                                           Block.getIdFromBlock(blockID),
+                                                           block,
                                                            newmeta);
 
                 this.func_147451_t/*updateAllLightTypes*/(x,
@@ -706,13 +706,12 @@ public class LittleWorld extends World implements ILittleWorld {
                                                y,
                                                z,
                                                originalId);
-                        Block block = blockID;
 
                         if (block != null && block.hasComparatorInputOverride()) {
                             this.func_147453_f(x,
                                               y,
                                               z,
-                                              blockID);
+                                              block);
                         }
                     }
                 }
@@ -727,13 +726,13 @@ public class LittleWorld extends World implements ILittleWorld {
                                                                                                              + ", "
                                                                                                              + z
                                                                                                              + ", "
-                                                                                                             + blockID
+                                                                                                             + block.getLocalizedName()
                                                                                                              + ", "
                                                                                                              + newmeta
                                                                                                              + ", "
                                                                                                              + update
                                                                                                              + ").["
-                                                                                                             + blockID
+                                                                                                             + block.getLocalizedName()
                                                                                                              + ", "
                                                                                                              + newmeta
                                                                                                              + "]:No Change",
@@ -805,9 +804,9 @@ public class LittleWorld extends World implements ILittleWorld {
                                                      metadata);
 
                 if (flag) {
-                    Block block = Block.getBlockById(tile.getBlockID(x & 7,
+                    Block block = tile.getBlock(x & 7,
                                                   y & 7,
-                                                  z & 7));
+                                                  z & 7);
 
                     if ((update & 2) != 0
                         && (!this.getParentWorld().isRemote || (update & 4) == 0)) {

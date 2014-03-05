@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -264,10 +265,10 @@ public class ItemLittleBlocksWand extends Item {
                             for (int x1 = 0; x1 < ConfigurationLib.littleBlocksSize; x1++) {
                                 for (int y1 = 0; y1 < ConfigurationLib.littleBlocksSize; y1++) {
                                     for (int z1 = 0; z1 < ConfigurationLib.littleBlocksSize; z1++) {
-                                        if (oldtile.getBlockID(x1,
+                                        if (oldtile.getBlock(x1,
                                                                y1,
-                                                               z1) > 0) {
-                                            int blockId = oldtile.getBlockID(x1,
+                                                               z1) != Blocks.air) {
+                                            Block blockId = oldtile.getBlock(x1,
                                                                              y1,
                                                                              z1);
                                             int metadata = oldtile.getBlockMetadata(x1,

@@ -46,7 +46,7 @@ public class LittleBlocksLittleRenderer {
     public void renderLittleBlocks(IBlockAccess iblockaccess, int x, int y, int z) {
         if (this.littleBlocksToRender.size() > 0) {
             Tessellator tessellator = Tessellator.instance;
-            int mode = tessellator.draw();
+            tessellator.draw();
             GL11.glPushMatrix();
 
             double xS = -((x >> 4) << 4), yS = -((y >> 4) << 4), zS = -((z >> 4) << 4);
@@ -63,7 +63,7 @@ public class LittleBlocksLittleRenderer {
                                                                -yS,
                                                                -zS);
 
-            tessellator.startDrawing(mode);
+            tessellator.startDrawingQuads();
             for (LittleBlockToRender littleBlockToRender : this.littleBlocksToRender) {
                 try {
                     this.renderBlocks.renderBlockByRenderType(littleBlockToRender.block,
