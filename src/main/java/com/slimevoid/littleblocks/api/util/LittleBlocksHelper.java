@@ -9,6 +9,7 @@ import com.slimevoid.littleblocks.api.ILittleWorld;
 import com.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -137,7 +138,7 @@ public class LittleBlocksHelper implements ISlimevoidHelper {
      * Credits : Tarig and Unclemion
      */
     @Override
-    public boolean isLadder(World world, int x, int y, int z, EntityLivingBase entity) {
+    public boolean isLadder(IBlockAccess world, int x, int y, int z, EntityLivingBase entity) {
 
         TileEntityLittleChunk tile = (TileEntityLittleChunk) world.getTileEntity(x,
                                                                                       y,
@@ -152,7 +153,7 @@ public class LittleBlocksHelper implements ISlimevoidHelper {
 
         double maxZ = entity.boundingBox.maxZ - 0.001D;
 
-        if (world.checkChunksExist(MathHelper.floor_double(minX),
+        if (((World) world).checkChunksExist(MathHelper.floor_double(minX),
                                    MathHelper.floor_double(minY),
                                    MathHelper.floor_double(minZ),
                                    MathHelper.floor_double(maxX),
@@ -181,13 +182,13 @@ public class LittleBlocksHelper implements ISlimevoidHelper {
                    + ((MathHelper.floor_double(maxZ) - z) * tile.size);
             for (int littleX = (int) minX; littleX <= maxX; littleX++) {
                 for (int littleZ = (int) minZ; littleZ <= maxZ; littleZ++) {
-                    int blockID = tile.getBlockID(littleX,
+                    Block block = Block.getBlockById(tile.getBlockID(littleX,
                                                   (int) minY,
-                                                  littleZ);
-                    if (blockID > 0) {
+                                                  littleZ));
+                    if (block.getMaterial() != Material.air) {
                         int xx = (x << 3) + littleX, yy = (y << 3) + (int) minY, zz = (z << 3)
                                                                                       + littleZ;
-                        if (Block.blocksList[blockID].isLadder((World) tile.getLittleWorld(),
+                        if (block.isLadder((World) tile.getLittleWorld(),
                                                                xx,
                                                                yy,
                                                                zz,

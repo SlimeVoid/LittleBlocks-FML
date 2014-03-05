@@ -1,10 +1,23 @@
 package com.slimevoid.littleblocks.items;
 
-import static net.minecraftforge.common.ForgeDirection.UP;
-
 import java.util.HashMap;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.IIcon;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.IFluidBlock;
+
 import com.slimevoid.library.data.ReadWriteLock;
+import com.slimevoid.library.util.helpers.PacketHelper;
 import com.slimevoid.littleblocks.blocks.BlockLittleChunk;
 import com.slimevoid.littleblocks.core.LoggerLittleBlocks;
 import com.slimevoid.littleblocks.core.lib.CommandLib;
@@ -14,36 +27,23 @@ import com.slimevoid.littleblocks.items.wand.EnumWandAction;
 import com.slimevoid.littleblocks.network.packets.PacketLittleNotify;
 import com.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockFluid;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
-import net.minecraft.world.World;
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.network.PacketDispatcher;
-import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemLittleBlocksWand extends Item {
 
-    protected Icon[] iconList;
+    protected IIcon[] iconList;
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void registerIcons(IconRegister iconRegister) {
-        iconList = new Icon[1];
+    public void registerIcons(IIconRegister iconRegister) {
+        iconList = new IIcon[1];
         iconList[0] = iconRegister.registerIcon(IconLib.LB_WAND);
     }
 
     @Override
-    public Icon getIconFromDamage(int i) {
+    public IIcon getIconFromDamage(int i) {
         return iconList[0];
     }
 
@@ -51,7 +51,7 @@ public class ItemLittleBlocksWand extends Item {
     public static ReadWriteLock                                tileLock            = new ReadWriteLock();
 
     public ItemLittleBlocksWand(int id) {
-        super(id);
+        super();
         this.setNoRepair();
         this.setCreativeTab(CreativeTabs.tabTools);
     }
@@ -115,29 +115,29 @@ public class ItemLittleBlocksWand extends Item {
     }
 
     private boolean doRotateLB(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int l, float a, float b, float c) {
-        if (world.getBlockId(x,
+        if (world.getBlock(x,
                              y,
-                             z) == ConfigurationLib.littleChunkID) {
-            ((BlockLittleChunk) Block.blocksList[ConfigurationLib.littleChunkID]).rotateLittleChunk(world,
+                             z) == ConfigurationLib.littleChunk) {
+            ((BlockLittleChunk) ConfigurationLib.littleChunk).rotateLittleChunk(world,
                                                                                                     x,
                                                                                                     y,
                                                                                                     z,
-                                                                                                    UP);
+                                                                                                    ForgeDirection.UP);
             return true;
         }
         return false;
     }
 
     private boolean doPlaceLB(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int l, float a, float b, float c) {
-        int blockID = world.getBlockId(x,
+        Block blockID = world.getBlock(x,
                                        y,
                                        z);
-        if (blockID != ConfigurationLib.littleChunkID) {
-            if (!Block.blocksList[blockID].isBlockReplaceable(world,
+        if (blockID != ConfigurationLib.littleChunk) {
+            if (!blockID.isReplaceable(world,
                                                               x,
                                                               y,
                                                               z)
-                || Block.blocksList[blockID] instanceof BlockFluid) {
+                || blockID instanceof IFluidBlock) {
                 if (l == 0) {
                     --y;
                 }
@@ -162,36 +162,35 @@ public class ItemLittleBlocksWand extends Item {
                     ++x;
                 }
             }
-            blockID = world.getBlockId(x,
+            blockID = world.getBlock(x,
                                        y,
                                        z);
-            if (blockID == 0
-                || Block.blocksList[blockID] == null
-                || Block.blocksList[blockID].isAirBlock(world,
+            if (blockID.getMaterial() == Material.air
+                || blockID.isAir(world,
                                                         x,
                                                         y,
                                                         z)
-                || Block.blocksList[blockID].isBlockReplaceable(world,
+                || blockID.isReplaceable(world,
                                                                 x,
                                                                 y,
                                                                 z)
-                && !(Block.blocksList[world.getBlockId(x,
+                && !(world.getBlock(x,
                                                        y,
-                                                       z)] instanceof BlockFluid)) {
+                                                       z) instanceof IFluidBlock)) {
                 world.setBlock(x,
                                y,
                                z,
-                               ConfigurationLib.littleChunkID);
-                TileEntity newtile = world.getBlockTileEntity(x,
+                               ConfigurationLib.littleChunk);
+                TileEntity newtile = world.getTileEntity(x,
                                                               y,
                                                               z);
                 if (newtile != null) {
-                    newtile.onInventoryChanged();
+                    newtile.markDirty();
                     world.markBlockForUpdate(x,
                                              y,
                                              z);
                 } else {
-                    FMLCommonHandler.instance().getFMLLogger().warning("Could not initialize LittleChunk");
+                    FMLCommonHandler.instance().getFMLLogger().warn("Could not initialize LittleChunk");
                 }
             }
             return true;
@@ -201,7 +200,7 @@ public class ItemLittleBlocksWand extends Item {
 
     private boolean doCopyLB(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int l, float a, float b, float c) {
         if (((EntityPlayerMP) entityplayer).capabilities.isCreativeMode) {
-            TileEntity tileentity = world.getBlockTileEntity(x,
+            TileEntity tileentity = world.getTileEntity(x,
                                                              y,
                                                              z);
             if (tileentity != null
@@ -252,8 +251,8 @@ public class ItemLittleBlocksWand extends Item {
                         world.setBlock(xx,
                                        yy,
                                        zz,
-                                       ConfigurationLib.littleChunkID);
-                        TileEntity newtile = world.getBlockTileEntity(xx,
+                                       ConfigurationLib.littleChunk);
+                        TileEntity newtile = world.getTileEntity(xx,
                                                                       yy,
                                                                       zz);
                         if (newtile != null
@@ -292,7 +291,7 @@ public class ItemLittleBlocksWand extends Item {
                                     }
                                 }
                             }
-                            newtilelb.onInventoryChanged();
+                            newtilelb.markDirty();
                             world.markBlockForUpdate(xx,
                                                      yy,
                                                      zz);
@@ -304,8 +303,8 @@ public class ItemLittleBlocksWand extends Item {
                 }
             }
         }
-        PacketDispatcher.sendPacketToPlayer(new PacketLittleNotify(CommandLib.COPIER_MESSAGE).getPacket(),
-                                            (Player) entityplayer);
+        PacketHelper.sendToPlayer(new PacketLittleNotify(CommandLib.COPIER_MESSAGE),
+                                            (EntityPlayerMP) entityplayer);
         return false;
     }
 }

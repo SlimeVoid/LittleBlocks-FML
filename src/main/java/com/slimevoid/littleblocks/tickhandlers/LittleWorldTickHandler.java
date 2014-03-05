@@ -1,51 +1,27 @@
 package com.slimevoid.littleblocks.tickhandlers;
 
-import java.util.EnumSet;
-
-import com.slimevoid.littleblocks.core.LittleBlocks;
-
 import net.minecraft.world.World;
 import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.ITickHandler;
-import cpw.mods.fml.common.TickType;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
 
-public class LittleWorldTickHandler implements ITickHandler {
+public class LittleWorldTickHandler {
 
-    @SideOnly(Side.CLIENT)
-    public void doLittleWorldClientTick(Object... tickData) {
-        World world = FMLClientHandler.instance().getClient().theWorld;
-        if (world != null) {
-            // World littleWorld = (World) LittleBlocks.proxy.getLittleWorld(
-            // world,
-            // false);
-            // if (littleWorld != null) {
-            // littleWorld.updateEntities();
-            // littleWorld.tick();
-            // }
+    @SubscribeEvent
+    public void onClientTick(ClientTickEvent event) {
+        if (event.phase == TickEvent.Phase.START) {
+            World world = FMLClientHandler.instance().getClient().theWorld;
+            if (world != null) {
+                // World littleWorld = (World) LittleBlocks.proxy.getLittleWorld(
+                // world,
+                // false);
+                // if (littleWorld != null) {
+                // littleWorld.updateEntities();
+                // littleWorld.tick();
+                // }
+            }
         }
-    }
-
-    @Override
-    public void tickStart(EnumSet<TickType> type, Object... tickData) {
-        if (type.equals(EnumSet.of(TickType.CLIENT))) {
-            this.doLittleWorldClientTick(tickData);
-        }
-    }
-
-    @Override
-    public void tickEnd(EnumSet<TickType> type, Object... tickData) {
-    }
-
-    @Override
-    public EnumSet<TickType> ticks() {
-        return EnumSet.of(TickType.CLIENT);
-    }
-
-    @Override
-    public String getLabel() {
-        return "LittleBlocks Tick Handler";
     }
 
 }

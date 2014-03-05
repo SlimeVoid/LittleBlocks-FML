@@ -6,6 +6,7 @@ import com.slimevoid.littleblocks.core.lib.CommandLib;
 import com.slimevoid.littleblocks.core.lib.CoreLib;
 import com.slimevoid.littleblocks.core.lib.PacketLib;
 
+import net.minecraft.block.Block;
 import net.minecraft.world.World;
 
 public class PacketLittleBlocksEvents extends PacketUpdate {
@@ -26,6 +27,10 @@ public class PacketLittleBlocksEvents extends PacketUpdate {
     /** The block ID this action is set for. */
     public int getBlockId() {
         return this.payload.getIntPayload(2);
+    }
+    
+    public Block getBlock() {
+        return Block.getBlockById(this.getBlockId());
     }
 
     public PacketLittleBlocksEvents() {

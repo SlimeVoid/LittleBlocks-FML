@@ -2,23 +2,26 @@ package com.slimevoid.littleblocks.blocks.events;
 
 import java.lang.reflect.Field;
 
+import net.minecraft.inventory.IInventory;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
+
+import com.mojang.authlib.GameProfile;
 import com.slimevoid.littleblocks.api.ILittleWorld;
 import com.slimevoid.littleblocks.core.LittleBlocks;
 import com.slimevoid.littleblocks.core.lib.CoreLib;
 
-import net.minecraft.inventory.IInventory;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.common.FakePlayer;
-import net.minecraftforge.event.Event.Result;
-import net.minecraftforge.event.ForgeSubscribe;
-import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
+import cpw.mods.fml.common.eventhandler.Event.Result;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 // import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 
 public class LittleContainerInteract {
 
-    @ForgeSubscribe
+    @SubscribeEvent
     public void onInteractEvent(PlayerOpenContainerEvent event) {
         if (!event.canInteractWith) {
             try {
@@ -39,7 +42,7 @@ public class LittleContainerInteract {
                 if (fields[i].get(datasource) instanceof TileEntity) {
                     TileEntity tile = (TileEntity) fields[i].get(datasource);
                     if (tile.hasWorldObj()
-                        && tile.worldObj instanceof ILittleWorld) {
+                        && tile.getWorldObj() instanceof ILittleWorld) {
                         TileEntityCanInteract(event,
                                               tile);
                         break;
@@ -72,7 +75,7 @@ public class LittleContainerInteract {
         // last ditch effort
         if (event.getResult() != Result.ALLOW
             && event.getResult() != Result.DENY) {
-            FakePlayer fakePlayer = new FakePlayer(event.entityPlayer.worldObj, CoreLib.MOD_CHANNEL);
+            FakePlayer fakePlayer = new FakePlayer((WorldServer) event.entityPlayer.worldObj, new GameProfile(String.valueOf(event.entityPlayer.getEntityId()), CoreLib.MOD_CHANNEL));
             fakePlayer.posX = event.entityPlayer.posX * 8;
             fakePlayer.posY = (event.entityPlayer.posY + (event.entityPlayer.height * 0.9)) * 8;
             fakePlayer.posZ = event.entityPlayer.posZ * 8;
@@ -93,7 +96,7 @@ public class LittleContainerInteract {
                                                 - event.entityPlayer.posZ,
                                         2),
                      .5) <= 4) {
-            FakePlayer fakePlayer = new FakePlayer(event.entityPlayer.worldObj, CoreLib.MOD_CHANNEL);
+            FakePlayer fakePlayer = new FakePlayer((WorldServer) event.entityPlayer.worldObj, new GameProfile(String.valueOf(event.entityPlayer.getEntityId()), CoreLib.MOD_CHANNEL));
             fakePlayer.posX = (tile.xCoord);
             fakePlayer.posY = (tile.yCoord);
             fakePlayer.posZ = (tile.zCoord);
@@ -111,7 +114,7 @@ public class LittleContainerInteract {
             worldField.set(datasource,
                            LittleBlocks.proxy.getLittleWorld(world,
                                                              false));
-            FakePlayer fakePlayer = new FakePlayer(event.entityPlayer.worldObj, CoreLib.MOD_CHANNEL);
+            FakePlayer fakePlayer = new FakePlayer((WorldServer) event.entityPlayer.worldObj, new GameProfile(String.valueOf(event.entityPlayer.getEntityId()), CoreLib.MOD_CHANNEL));
             if (fields.length > worldFieldIndex + 3) {
                 fields[worldFieldIndex + 1].setAccessible(true);
                 fields[worldFieldIndex + 2].setAccessible(true);

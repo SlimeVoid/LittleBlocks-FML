@@ -11,6 +11,7 @@ import com.slimevoid.littleblocks.core.lib.CommandLib;
 import com.slimevoid.littleblocks.core.lib.ConfigurationLib;
 import com.slimevoid.littleblocks.core.lib.CoreLib;
 
+import net.minecraft.block.Block;
 import net.minecraft.world.World;
 
 public class PacketLittleBlocks extends PacketUpdate {
@@ -35,9 +36,9 @@ public class PacketLittleBlocks extends PacketUpdate {
         this.setPosition(x,
                          y,
                          z,
-                         world.getBlockId(x,
+                         Block.getIdFromBlock(world.getBlock(x,
                                           y,
-                                          z));
+                                          z)));
         this.payload = new PacketPayload(1, 0, 0, 1);
         this.setCommand(CommandLib.UPDATE_CLIENT);
         this.setMetadata(world.getBlockMetadata(x,
@@ -47,9 +48,9 @@ public class PacketLittleBlocks extends PacketUpdate {
 
     @Override
     public boolean targetExists(World world) {
-        if (world.getBlockId(this.xPosition >> 3,
+        if (world.getBlock(this.xPosition >> 3,
                              this.yPosition >> 3,
-                             this.zPosition >> 3) == ConfigurationLib.littleChunkID) {
+                             this.zPosition >> 3) == ConfigurationLib.littleChunk) {
             return true;
         }
         return false;
@@ -62,6 +63,10 @@ public class PacketLittleBlocks extends PacketUpdate {
 
     public int getBlockID() {
         return this.side;
+    }
+    
+    public Block getBlock() {
+        return Block.getBlockById(this.getBlockID());
     }
 
     public int getMetadata() {

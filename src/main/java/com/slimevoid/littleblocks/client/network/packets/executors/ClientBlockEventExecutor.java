@@ -18,7 +18,7 @@ public class ClientBlockEventExecutor implements IPacketExecutor {
                                                        false)).addBlockEvent(packetEvent.xPosition,
                                                                              packetEvent.yPosition,
                                                                              packetEvent.zPosition,
-                                                                             packetEvent.getBlockId(),
+                                                                             packetEvent.getBlock(),
                                                                              packetEvent.getInstrumentType(),
                                                                              packetEvent.getPitch());
         }

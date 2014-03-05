@@ -1,8 +1,29 @@
 package com.slimevoid.littleblocks.core.lib;
 
+import ibxm.Player;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockPistonBase;
+import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.Slot;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemHoe;
+import net.minecraft.item.ItemMonsterPlacer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.server.S2FPacketSetSlot;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldSettings;
+import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import com.slimevoid.library.data.Logger;
 import com.slimevoid.littleblocks.api.ILittleWorld;
@@ -12,29 +33,9 @@ import com.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 import com.slimevoid.littleblocks.world.ItemInLittleWorldManager;
 import com.slimevoid.littleblocks.world.LittlePlayerController;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockPistonBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.Slot;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemHoe;
-import net.minecraft.item.ItemMonsterPlacer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.Packet103SetSlot;
-import net.minecraft.network.packet.Packet3Chat;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.world.EnumGameType;
-import net.minecraft.world.World;
-import net.minecraftforge.event.Event;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.network.PacketDispatcher;
-import cpw.mods.fml.common.network.Player;
+import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -46,13 +47,18 @@ public class BlockUtil {
     private static HashMap<EntityPlayerMP, ItemInLittleWorldManager> itemInLittleWorldManagers;
 
     @SideOnly(Side.CLIENT)
-    public static void setLittleController(LittlePlayerController controller, EnumGameType gameType) {
+    public static void setLittleController(LittlePlayerController controller, WorldSettings.GameType gameType) {
         littlePlayerController = controller;
         littlePlayerController.setGameType(gameType);
     }
 
     @SideOnly(Side.CLIENT)
     public static LittlePlayerController getLittleController() {
+        if (littlePlayerController == null) {
+            EntityPlayer entityplayer = FMLClientHandler.instance().getClientPlayerEntity();
+            World world = entityplayer.worldObj;
+            setLittleController(new LittlePlayerController(FMLClientHandler.instance().getClient(), (NetHandlerPlayClient) FMLClientHandler.instance().getClientPlayHandler()), world.getWorldInfo().getGameType());
+        }
         return littlePlayerController;
     }
 
@@ -121,7 +127,7 @@ public class BlockUtil {
             if (disallowedBlocks.contains(block.getClass())) {
                 return false;
             }
-            if (disallowedBlockIDs.contains(block.blockID)) {
+            if (disallowedBlockIDs.contains(Block.getIdFromBlock(block))) {
                 return false;
             }
         }
@@ -129,11 +135,9 @@ public class BlockUtil {
     }
 
     public static void registerDisallowedItemID(Integer itemID) {
-        if (itemID > Block.blocksList.length) {
             if (!disallowedItemIDs.contains(itemID)) {
                 disallowedItemIDs.add(itemID);
             }
-        }
     }
 
     private static void registerDisallowedItem(Class<? extends Item> itemClass) {
@@ -149,7 +153,7 @@ public class BlockUtil {
             if (disallowedItems.contains(item.getClass())) {
                 return false;
             }
-            if (disallowedItemIDs.contains(item.itemID)) {
+            if (disallowedItemIDs.contains(Item.getIdFromItem(item))) {
                 return false;
             }
         }
@@ -178,21 +182,11 @@ public class BlockUtil {
         return flag;
     }
 
-    public static boolean hasTile(int itemBlockId) {
-        if (Block.blocksList[itemBlockId] != null) {
-            Block theBlock = Block.blocksList[itemBlockId];
-            if (theBlock.hasTileEntity(0)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public static boolean isLittleChunk(World world, int x, int y, int z) {
         if (world instanceof ILittleWorld) {
-            return ((ILittleWorld) world).getParentWorld().getBlockId(x >> 3,
+            return ((ILittleWorld) world).getParentWorld().getBlock(x >> 3,
                                                                     y >> 3,
-                                                                    z >> 3) == ConfigurationLib.littleChunkID;
+                                                                    z >> 3) == ConfigurationLib.littleChunk;
         }
         return false;
     }
@@ -229,11 +223,8 @@ public class BlockUtil {
             }
         } else if (y >= world.getHeight() - 1
                    && (side == 1 || y >= world.getHeight())) {
-            PacketDispatcher.sendPacketToPlayer(new Packet3Chat(""
-                                                                + EnumChatFormatting.GRAY
-                                                                + "Height limit for building is "
-                                                                + world.getHeight()),
-                                                (Player) entityplayer);
+            // TODO :: Send Player Build height message
+            flag = true;
         } else {
             // double dist = this.getBlockReachDistance() + 1;
             // dist *= dist;
@@ -242,7 +233,7 @@ public class BlockUtil {
                                            y >> 3,
                                            z >> 3,
                                            entityplayer)) {
-                flag = getLittleItemManager((EntityPlayerMP) entityplayer,
+                getLittleItemManager((EntityPlayerMP) entityplayer,
                                             world).activateBlockOrUseItem(entityplayer,
                                                                           world,
                                                                           itemstack,
@@ -253,6 +244,7 @@ public class BlockUtil {
                                                                           hitX,
                                                                           hitY,
                                                                           hitZ);
+                flag = true;
             }
 
         }
@@ -274,17 +266,16 @@ public class BlockUtil {
         }
 
         if (itemstack == null || itemstack.getMaxItemUseDuration() == 0) {
-            ((EntityPlayerMP) entityplayer).playerInventoryBeingManipulated = true;
+            ((EntityPlayerMP) entityplayer).isChangingQuantityOnly = true;
             entityplayer.inventory.mainInventory[entityplayer.inventory.currentItem] = ItemStack.copyItemStack(entityplayer.inventory.mainInventory[entityplayer.inventory.currentItem]);
             Slot slot = entityplayer.openContainer.getSlotFromInventory(entityplayer.inventory,
                                                                         entityplayer.inventory.currentItem);
             entityplayer.openContainer.detectAndSendChanges();
-            ((EntityPlayerMP) entityplayer).playerInventoryBeingManipulated = false;
+            ((EntityPlayerMP) entityplayer).isChangingQuantityOnly = false;
 
             if (!ItemStack.areItemStacksEqual(entityplayer.inventory.getCurrentItem(),
                                               stack)) {
-                PacketDispatcher.sendPacketToPlayer(new Packet103SetSlot(entityplayer.openContainer.windowId, slot.slotNumber, entityplayer.inventory.getCurrentItem()),
-                                                    (Player) entityplayer);
+                ((EntityPlayerMP) entityplayer).playerNetServerHandler.sendPacket(new S2FPacketSetSlot(entityplayer.openContainer.windowId, slot.slotNumber, entityplayer.inventory.getCurrentItem()));
             }
         }
     }
@@ -318,9 +309,9 @@ public class BlockUtil {
         if (side == 5) {
             ++x;
         }
-        Block block = Block.blocksList[world.getBlockId(x,
+        Block block = world.getBlock(x,
                                                         y,
-                                                        z)];
+                                                        z);
         if (block != null && block instanceof BlockPistonBase) {
             int newData = BlockPistonBase.determineOrientation(((ILittleWorld) world).getParentWorld(),
                                                                x >> 3,
@@ -331,7 +322,7 @@ public class BlockUtil {
             (x,
              y,
              z,
-             block.blockID,
+             block,
              newData,
              3);
         }

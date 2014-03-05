@@ -5,17 +5,18 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+
 import com.slimevoid.library.nbt.NBTHelper;
 import com.slimevoid.library.network.PacketEntity;
 import com.slimevoid.littleblocks.core.lib.CommandLib;
 import com.slimevoid.littleblocks.core.lib.CoreLib;
 import com.slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-
 public class PacketLittleBlocksCollection extends PacketEntity {
-    public HashMap<Integer, ItemStack> itemstackCollection = new HashMap<Integer, ItemStack>();
+    public HashMap<Item, ItemStack> itemstackCollection = new HashMap<Item, ItemStack>();
 
     public PacketLittleBlocksCollection() {
         super();
@@ -28,7 +29,7 @@ public class PacketLittleBlocksCollection extends PacketEntity {
                          (int) entitylb.posY,
                          (int) entitylb.posZ,
                          0);
-        this.setEntityId(entitylb.entityId);
+        this.setEntityId(entitylb.getEntityId());
         this.setCommand(CommandLib.ENTITY_COLLECTION);
         this.itemstackCollection = entitylb.getCollection();
     }
@@ -54,10 +55,10 @@ public class PacketLittleBlocksCollection extends PacketEntity {
     }
 
     public void addItemToDrop(ItemStack itemstack) {
-        if (itemstackCollection.containsKey(itemstack.getItem().itemID)) {
-            itemstackCollection.get(itemstack.getItem().itemID).stackSize++;
+        if (itemstackCollection.containsKey(itemstack.getItem())) {
+            itemstackCollection.get(itemstack.getItem()).stackSize++;
         } else {
-            itemstackCollection.put(itemstack.getItem().itemID,
+            itemstackCollection.put(itemstack.getItem(),
                                     itemstack);
         }
     }

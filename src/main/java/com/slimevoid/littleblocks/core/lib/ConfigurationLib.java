@@ -5,15 +5,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.slimevoid.littleblocks.core.LoggerLittleBlocks;
-import com.slimevoid.littleblocks.world.LittleWorldClient;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.item.Item;
 import net.minecraft.world.World;
-import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.config.Configuration;
+
+import com.slimevoid.littleblocks.core.LoggerLittleBlocks;
+import com.slimevoid.littleblocks.world.LittleWorldClient;
+
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.EntityRegistry;
@@ -73,7 +74,7 @@ public class ConfigurationLib {
 
         // Illegal blocks
         // Parse the list of illegal blocks separated by ;
-        String disallowedBlockIDs[] = configuration.get(Configuration.CATEGORY_BLOCK,
+        String disallowedBlockIDs[] = configuration.get(Configuration.CATEGORY_GENERAL,
                                                         "disallowedBlockIDs",
                                                         "").getString().split("\\;",
                                                                               -1);
@@ -82,7 +83,7 @@ public class ConfigurationLib {
                 BlockUtil.registerDisallowedBlockID(Integer.valueOf(disallowedBlockIDs[i]));
             }
         }
-        String disallowedItemIDs[] = configuration.get(Configuration.CATEGORY_ITEM,
+        String disallowedItemIDs[] = configuration.get(Configuration.CATEGORY_GENERAL,
                                                        "disallowedItemIDs",
                                                        "").getString().split("\\;",
                                                                              -1);
@@ -92,10 +93,10 @@ public class ConfigurationLib {
             }
         }
 
-        littleChunkID = configuration.get(Configuration.CATEGORY_BLOCK,
+        littleChunkID = configuration.get(Configuration.CATEGORY_GENERAL,
                                           "littleChunkID",
                                           1150).getInt();
-        littleBlocksWandID = configuration.get(Configuration.CATEGORY_ITEM,
+        littleBlocksWandID = configuration.get(Configuration.CATEGORY_GENERAL,
                                                "littleBlocksWandID",
                                                29999).getInt();
         littleBlocksCollectionID = configuration.get(Configuration.CATEGORY_GENERAL,

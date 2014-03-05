@@ -28,10 +28,9 @@ public class LittleBlockDiggingFX extends EntityDiggingFX {
         World littleWorld = (World) LittleBlocks.proxy.getLittleWorld(world,
                                                                       false);
         if (littleWorld != null) {
-            int blockID = littleWorld.getBlockId(xx,
-                                                 yy,
-                                                 zz);
-            Block littleBlock = Block.blocksList[blockID];
+            Block littleBlock = littleWorld.getBlock(xx,
+                                                       yy,
+                                                       zz);
             int littleMeta = littleWorld.getBlockMetadata(xx,
                                                           yy,
                                                           zz);
@@ -85,10 +84,9 @@ public class LittleBlockDiggingFX extends EntityDiggingFX {
         World littleWorld = (World) LittleBlocks.proxy.getLittleWorld(world,
                                                                       false);
         if (littleWorld != null) {
-            int blockID = littleWorld.getBlockId(xx,
-                                                 yy,
-                                                 zz);
-            Block littleBlock = Block.blocksList[blockID];
+            Block littleBlock = littleWorld.getBlock(xx,
+                                                       yy,
+                                                       zz);
             int littleMeta = littleWorld.getBlockMetadata(xx,
                                                           yy,
                                                           zz);

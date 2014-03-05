@@ -2,6 +2,12 @@ package com.slimevoid.littleblocks.client.proxy;
 
 import java.io.File;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
+
 import com.slimevoid.littleblocks.api.ILittleWorld;
 import com.slimevoid.littleblocks.blocks.events.LittleChunkBucketEvent;
 import com.slimevoid.littleblocks.blocks.events.LittleChunkShiftRightClick;
@@ -9,7 +15,6 @@ import com.slimevoid.littleblocks.client.events.RenderLittleChunkHighlight;
 import com.slimevoid.littleblocks.client.events.WorldClientEvent;
 import com.slimevoid.littleblocks.client.handlers.DrawCopierHighlight;
 import com.slimevoid.littleblocks.client.handlers.KeyBindingHandler;
-import com.slimevoid.littleblocks.client.network.ClientPacketHandler;
 import com.slimevoid.littleblocks.client.render.blocks.LittleBlocksRenderer;
 import com.slimevoid.littleblocks.client.render.entities.LittleBlocksCollectionRenderer;
 import com.slimevoid.littleblocks.client.render.tileentities.TileEntityLittleBlocksRenderer;
@@ -24,21 +29,9 @@ import com.slimevoid.littleblocks.tickhandlers.LittleWorldTickHandler;
 import com.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 import com.slimevoid.littleblocks.world.LittlePlayerController;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.NetClientHandler;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.NetHandler;
-import net.minecraft.network.packet.Packet1Login;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.ClientRegistry;
-import cpw.mods.fml.client.registry.KeyBindingRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
-import cpw.mods.fml.common.network.PacketDispatcher;
-import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -48,7 +41,6 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void preInit() {
         super.preInit();
-        ClientPacketHandler.init();
         PacketLib.registerClientPacketHandlers();
     }
 
@@ -74,9 +66,8 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void registerTickHandlers() {
-        TickRegistry.registerTickHandler(new LittleWorldTickHandler(),
-                                         Side.CLIENT);
-        KeyBindingRegistry.registerKeyBinding(new KeyBindingHandler());
+        MinecraftForge.EVENT_BUS.register(new LittleWorldTickHandler());
+        MinecraftForge.EVENT_BUS.register(new KeyBindingHandler());
         super.registerTickHandlers();
     }
 
@@ -106,18 +97,6 @@ public class ClientProxy extends CommonProxy {
     public void registerConfigurationProperties(File configFile) {
         super.registerConfigurationProperties(configFile);
         ConfigurationLib.ClientConfig(configFile);
-    }
-
-    @Override
-    public void clientLoggedIn(NetHandler clientHandler, INetworkManager manager, Packet1Login login) {
-        BlockUtil.setLittleController(new LittlePlayerController(FMLClientHandler.instance().getClient(), (NetClientHandler) clientHandler),
-                                      login.gameType);
-        World world = ((NetClientHandler) clientHandler).getPlayer().worldObj;
-        if (world != null) {
-            PacketLittleBlocksSettings packet = new PacketLittleBlocksSettings();
-            packet.setCommand(CommandLib.FETCH);
-            PacketDispatcher.sendPacketToServer(packet.getPacket());
-        }
     }
 
     @Override

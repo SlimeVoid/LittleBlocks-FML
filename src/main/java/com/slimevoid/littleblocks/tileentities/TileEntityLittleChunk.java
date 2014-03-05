@@ -25,6 +25,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import com.slimevoid.library.core.SlimevoidCore;
+import com.slimevoid.library.core.lib.CoreLib;
 import com.slimevoid.littleblocks.api.ILittleBlocks;
 import com.slimevoid.littleblocks.api.ILittleWorld;
 import com.slimevoid.littleblocks.core.LittleBlocks;
@@ -690,7 +692,9 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
         for (int x = 0; x < this.content.length; x++) {
             for (int y = 0; y < this.content[x].length; y++) {
                 for (int z = 0; z < this.content[x][y].length; z++) {
-                    data = ((NBTTagInt) (NBTBase) list.getCompoundTagAt((x << 6) + (y << 3) + z)).func_150287_d();
+                    NBTTagCompound tag = list.getCompoundTagAt((x << 6) + (y << 3) + z);
+                    System.out.println(tag);
+                    data = tag.getInteger("");
                     this.content[x][y][z] = data;
                     if (this.getTicksRandomly(data)) {
                         ++this.tickRefCount;
@@ -702,9 +706,10 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
         for (int x = 0; x < this.metadatas.length; x++) {
             for (int y = 0; y < this.metadatas[x].length; y++) {
                 for (int z = 0; z < this.metadatas[x][y].length; z++) {
-                    this.metadatas[x][y][z] = ((NBTTagInt) (NBTBase) list2.getCompoundTagAt((x << 6)
-                                                                       + (y << 3)
-                                                                       + z)).func_150287_d();
+                    NBTTagCompound tag = list2.getCompoundTagAt((x << 6) + (y << 3) + z);
+                    System.out.println(tag);
+                    data = tag.getInteger("");
+                    this.metadatas[x][y][z] = data;
                 }
             }
         }
@@ -779,9 +784,10 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
                 tileentity.writeToNBT(tileTag);
                 tilesTag.appendTag(tileTag);
             } catch (Exception e) {
-                FMLLog.log(e.getLocalizedMessage(),Level.SEVERE,
-                           "A TileEntity type %s has throw an exception trying to write state into a LittleWorld. It will not persist. Report this to the mod author",
-                           new Object(tileentity.getClass().getName()));
+                SlimevoidCore.console(CoreLib.MOD_ID,
+                           "A TileEntity type %s has throw an exception trying to write state into a LittleWorld. It will not persist. Report this to the mod author - " + 
+                           e.getLocalizedMessage(),
+                           2);
             }
         }
         nbttagcompound.setTag("Tiles",
@@ -862,7 +868,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
                                                         y,
                                                         z);
                     if (littleBlockID > 0) {
-                        Block littleBlock = Block.blocksList[littleBlockID];
+                        Block littleBlock = Block.getBlockById(littleBlockID);
                         int meta = this.metadatas[x][y][z];
                         if (littleBlock != null) {
                             if (littleBlock.rotateBlock((World) this.getLittleWorld(),
@@ -902,7 +908,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
         int z = (baseCoord >> 16 & 15) % 8;
         // System.out.println("X: " + x + " | Y: " + y + " | Z: " + z);
         int blockId = this.content[x][y][z];
-        Block block = Block.blocksList[blockId];
+        Block block = Block.getBlockById(blockId);
 
         if (block != null && block.getTickRandomly()) {
             block.updateTick((World) littleWorld,

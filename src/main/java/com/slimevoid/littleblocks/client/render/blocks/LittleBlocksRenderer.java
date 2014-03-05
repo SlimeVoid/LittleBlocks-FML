@@ -18,8 +18,8 @@ public class LittleBlocksRenderer implements ISimpleBlockRenderingHandler {
 
     @Override
     public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
-        if (block.blockID == ConfigurationLib.littleChunkID) {
-            TileEntityLittleChunk tile = (TileEntityLittleChunk) world.getBlockTileEntity(x,
+        if (block == ConfigurationLib.littleChunk) {
+            TileEntityLittleChunk tile = (TileEntityLittleChunk) world.getTileEntity(x,
                                                                                           y,
                                                                                           z);
             if (tile == null) {
@@ -28,14 +28,14 @@ public class LittleBlocksRenderer implements ISimpleBlockRenderingHandler {
 
             int[][][] content = tile.getContents();
 
-            LittleBlocksLittleRenderer littleBlocks = new LittleBlocksLittleRenderer(ConfigurationLib.getLittleRenderer(tile.worldObj));
+            LittleBlocksLittleRenderer littleBlocks = new LittleBlocksLittleRenderer(ConfigurationLib.getLittleRenderer(tile.getWorldObj()));
 
             for (int x1 = 0; x1 < content.length; x1++) {
                 for (int y1 = 0; y1 < content[x1].length; y1++) {
                     for (int z1 = 0; z1 < content[x1][y1].length; z1++) {
                         int blockId = content[x1][y1][z1];
                         if (blockId > 0) {
-                            Block littleBlock = Block.blocksList[blockId];
+                            Block littleBlock = Block.getBlockById(blockId);
                             if (littleBlock != null) {
                                 int[] coords = {
                                         (x << 3) + x1,
@@ -48,7 +48,7 @@ public class LittleBlocksRenderer implements ISimpleBlockRenderingHandler {
                                                                         coords[2]);
                                 }
                             } else {
-                                FMLCommonHandler.instance().getFMLLogger().warning("Attempted to render a block that was null!");
+                                FMLCommonHandler.instance().getFMLLogger().warn("Attempted to render a block that was null!");
                             }
                         }
                     }
@@ -64,7 +64,7 @@ public class LittleBlocksRenderer implements ISimpleBlockRenderingHandler {
     }
 
     @Override
-    public boolean shouldRender3DInInventory() {
+    public boolean shouldRender3DInInventory(int modelID) {
         return false;
     }
 

@@ -32,7 +32,7 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 
         Collection<TileEntity> tilesToRender = tileentitylittleblocks.getTileEntityList();
 
-        this.tileEntityRenderer.setWorld((World) tileentitylittleblocks.getLittleWorld());
+        this.field_147501_a.func_147543_a/*tileEntityRenderer.setWorld(*/((World) tileentitylittleblocks.getLittleWorld());
 
         GL11.glPushMatrix();
 
@@ -51,7 +51,7 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
                       scale);
 
         for (TileEntity tileentity : tilesToRender) {
-            this.tileEntityRenderer.renderTileEntityAt(tileentity,
+            this.field_147501_a/*tileEntityRenderer*/.renderTileEntityAt(tileentity,
                                                        tileentity.xCoord,
                                                        tileentity.yCoord,
                                                        tileentity.zCoord,
@@ -61,6 +61,6 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
         GL11.glPopMatrix();
 
-        this.tileEntityRenderer.setWorld(tileentitylittleblocks.getWorldObj());
+        this.field_147501_a.func_147543_a/*tileEntityRenderer.setWorld(*/(tileentitylittleblocks.getWorldObj());
     }
 }

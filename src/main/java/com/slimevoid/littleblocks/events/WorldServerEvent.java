@@ -1,24 +1,27 @@
 package com.slimevoid.littleblocks.events;
 
-import com.slimevoid.littleblocks.api.ILittleWorld;
-import com.slimevoid.littleblocks.core.lib.ConfigurationLib;
-import com.slimevoid.littleblocks.world.LittleWorldServer;
-
+import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.world.ChunkDataEvent;
 import net.minecraftforge.event.world.WorldEvent.Load;
 import net.minecraftforge.event.world.WorldEvent.Unload;
+
+import com.slimevoid.littleblocks.api.ILittleWorld;
+import com.slimevoid.littleblocks.core.lib.ConfigurationLib;
+import com.slimevoid.littleblocks.world.LittleWorldServer;
+
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 public class WorldServerEvent {
 
-    @ForgeSubscribe
+    @SubscribeEvent
     public void onWorldUnload(Unload event) {
         if (event.world instanceof WorldServer
             && !(event.world instanceof ILittleWorld)) {
@@ -36,7 +39,7 @@ public class WorldServerEvent {
         }
     }
 
-    @ForgeSubscribe
+    @SubscribeEvent
     public void onWorldLoad(Load event) {
         if (event.world instanceof WorldServer
             && !(event.world instanceof ILittleWorld)) {
@@ -55,7 +58,7 @@ public class WorldServerEvent {
         if (event.world instanceof ILittleWorld) {
             // System.out.println("ENOUGH WORLD INCEPTION ALREADY!!!!	");
             WorldServer littleWorldServer = (WorldServer) event.world;
-            Chunk chunk = new Chunk(littleWorldServer, new byte[] { 0 }, 0, 0);
+            Chunk chunk = new Chunk(littleWorldServer, new Block[] { Blocks.air }, 0, 0);
             MinecraftForge.EVENT_BUS.post(new ChunkDataEvent.Load(chunk, new NBTTagCompound()));
         }
     }
@@ -73,8 +76,8 @@ public class WorldServerEvent {
 
             WorldSettings worldSettings = new WorldSettings(world.getWorldInfo().getSeed(), world.getWorldInfo().getGameType(), world.getWorldInfo().isMapFeaturesEnabled(), world.getWorldInfo().isHardcoreModeEnabled(), world.getWorldInfo().getTerrainType());
 
-            LittleWorldServer littleWorldServer = new LittleWorldServer(world, FMLCommonHandler.instance().getMinecraftServerInstance(), world.getSaveHandler(), worldName, littleDimension, worldSettings, null, null);
-            Chunk chunk = new Chunk(littleWorldServer, new byte[] { 0 }, 0, 0);
+            LittleWorldServer littleWorldServer = new LittleWorldServer(world, FMLCommonHandler.instance().getMinecraftServerInstance(), world.getSaveHandler(), worldName, littleDimension, worldSettings, null);
+            Chunk chunk = new Chunk(littleWorldServer, new Block[] { Blocks.air }, 0, 0);
             MinecraftForge.EVENT_BUS.post(new ChunkDataEvent.Load(chunk, new NBTTagCompound()));
 
             // System.out.println("WorldServer Loaded: "

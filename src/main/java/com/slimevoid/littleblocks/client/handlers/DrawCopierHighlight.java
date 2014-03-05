@@ -1,14 +1,13 @@
 package com.slimevoid.littleblocks.client.handlers;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockFluid;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.event.ForgeSubscribe;
+import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.IFluidBlock;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -18,13 +17,14 @@ import com.slimevoid.littleblocks.core.lib.TextureLib;
 import com.slimevoid.littleblocks.items.ItemLittleBlocksWand;
 
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 public class DrawCopierHighlight {
 
     private static int     pulse = 0;
     private static boolean doInc = true;
 
-    @ForgeSubscribe
+    @SubscribeEvent
     public void onDrawBlockHighlightEvent(DrawBlockHighlightEvent event) {
         if (event.currentItem != null) {
             if (event.currentItem.getItem() instanceof ItemLittleBlocksWand) {
@@ -116,10 +116,10 @@ public class DrawCopierHighlight {
         default:
             break;
         }
-        int blockID = world.getBlockId(event.target.blockX + (int) xShift,
+        Block blockID = world.getBlock(event.target.blockX + (int) xShift,
                                        event.target.blockY + (int) yShift,
                                        event.target.blockZ + (int) zShift);
-        if (!(Block.blocksList[blockID] instanceof BlockFluid)) {
+        if (!(blockID instanceof IFluidBlock)) {
 
             GL11.glDepthMask(false);
             GL11.glDisable(GL11.GL_CULL_FACE);
@@ -142,7 +142,7 @@ public class DrawCopierHighlight {
                                   0,
                                   0.5f * zCorrection);
                 GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
-                renderPulsingQuad(event.context.renderEngine,
+                renderPulsingQuad(FMLClientHandler.instance().getClient().renderEngine,
                                   TextureLib.WAND_OVERLAY,
                                   0.75F);
                 GL11.glPopMatrix();
@@ -154,12 +154,11 @@ public class DrawCopierHighlight {
     }
 
     private boolean shouldDoDraw(World world, int blockX, int blockY, int blockZ) {
-        int blockID = world.getBlockId(blockX,
+        Block block = world.getBlock(blockX,
                                        blockY,
                                        blockZ);
-        return blockID == ConfigurationLib.littleChunkID
-               || Block.blocksList[blockID] == null
-               || Block.blocksList[blockID].isBlockReplaceable(world,
+        return block == ConfigurationLib.littleChunk
+               || block.isReplaceable(world,
                                                                blockX,
                                                                blockY,
                                                                blockZ);

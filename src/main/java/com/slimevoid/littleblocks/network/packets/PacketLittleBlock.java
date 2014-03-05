@@ -4,15 +4,15 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.Packet;
+import net.minecraft.world.World;
+
+import com.slimevoid.library.nbt.NBTHelper;
 import com.slimevoid.library.network.PacketIds;
 import com.slimevoid.library.network.PacketUpdate;
 import com.slimevoid.littleblocks.core.lib.CommandLib;
-import com.slimevoid.littleblocks.core.lib.ConfigurationLib;
 import com.slimevoid.littleblocks.core.lib.CoreLib;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.world.World;
 
 public class PacketLittleBlock extends PacketUpdate {
 
@@ -25,8 +25,8 @@ public class PacketLittleBlock extends PacketUpdate {
             data.writeBoolean(false);
         } else {
             data.writeBoolean(true);
-            Packet.writeItemStack(this.itemStack,
-                                  data);
+            NBTHelper.writeItemStack(
+                                  data,this.itemStack);
         }
     }
 
@@ -34,7 +34,7 @@ public class PacketLittleBlock extends PacketUpdate {
     public void readData(DataInputStream data) throws IOException {
         super.readData(data);
         if (data.readBoolean() == true) {
-            this.itemStack = Packet.readItemStack(data);
+            this.itemStack = NBTHelper.readItemStack(data);
         }
     }
 

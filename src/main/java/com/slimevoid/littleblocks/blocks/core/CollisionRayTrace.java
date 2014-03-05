@@ -2,16 +2,18 @@ package com.slimevoid.littleblocks.blocks.core;
 
 import java.util.List;
 
-import com.slimevoid.littleblocks.blocks.BlockLittleChunk;
-import com.slimevoid.littleblocks.core.lib.ConfigurationLib;
-import com.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
-
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockFluid;
+import net.minecraft.block.material.Material;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.IFluidBlock;
+
+import com.slimevoid.littleblocks.blocks.BlockLittleChunk;
+import com.slimevoid.littleblocks.core.lib.ConfigurationLib;
+import com.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 
 public class CollisionRayTrace {
@@ -22,9 +24,9 @@ public class CollisionRayTrace {
             for (int y = 0; y < content[x].length; y++) {
                 for (int z = 0; z < content[x][y].length; z++) {
                     if (content[x][y][z] > 0) {
-                        Block block = Block.blocksList[content[x][y][z]];
+                        Block block = Block.getBlockById(content[x][y][z]);
                         if (block != null
-                            && (!(block instanceof BlockFluid) || isFluid)) {
+                            && (!(block instanceof IFluidBlock) || isFluid)) {
                             try {
                                 MovingObjectPosition ret = block.collisionRayTrace((World) tile.getLittleWorld(),
                                                                                    (i << 3)
@@ -52,7 +54,7 @@ public class CollisionRayTrace {
                                     returns.add(ret);
                                 }
                             } catch (ClassCastException e) {
-                                FMLCommonHandler.instance().getFMLLogger().warning(e.getLocalizedMessage());
+                                FMLCommonHandler.instance().getFMLLogger().warn(e.getLocalizedMessage());
                             }
                         }
                     }
@@ -64,10 +66,10 @@ public class CollisionRayTrace {
 
     public static List<MovingObjectPosition> collisionRayTracerX(BlockLittleChunk littleBlocks, World world, Vec3 player, Vec3 view, int x, int y, int z, int xx, List<MovingObjectPosition> returns) {
         int m = ConfigurationLib.littleBlocksSize;
-        int block = world.getBlockId(x,
+        Block block = world.getBlock(x,
                                      y,
                                      z); // -X
-        if (block > 0 && Block.blocksList[block].isOpaqueCube()) {
+        if (block.getMaterial() != Material.air && block.isOpaqueCube()) {
             for (int yy = 0; yy < m; yy++) {
                 for (int zz = 0; zz < m; zz++) {
                     MovingObjectPosition ret = littleBlocks.rayTraceBound(AxisAlignedBB.getBoundingBox(xx
@@ -98,10 +100,10 @@ public class CollisionRayTrace {
 
     public static List<MovingObjectPosition> collisionRayTracerY(BlockLittleChunk littleBlocks, World world, Vec3 player, Vec3 view, int x, int y, int z, int yy, List<MovingObjectPosition> returns) {
         int m = ConfigurationLib.littleBlocksSize;
-        int block = world.getBlockId(x,
+        Block block = world.getBlock(x,
                                      y,
                                      z); // DOWN
-        if (block > 0 && Block.blocksList[block].isOpaqueCube()) {
+        if (block.getMaterial() != Material.air && block.isOpaqueCube()) {
             for (int xx = 0; xx < m; xx++) {
                 for (int zz = 0; zz < m; zz++) {
                     MovingObjectPosition ret = littleBlocks.rayTraceBound(AxisAlignedBB.getBoundingBox(xx
@@ -132,10 +134,10 @@ public class CollisionRayTrace {
 
     public static List<MovingObjectPosition> collisionRayTracerZ(BlockLittleChunk littleBlocks, World world, Vec3 player, Vec3 view, int x, int y, int z, int zz, List<MovingObjectPosition> returns) {
         int m = ConfigurationLib.littleBlocksSize;
-        int block = world.getBlockId(x,
+        Block block = world.getBlock(x,
                                      y,
                                      z); // -Z
-        if (block > 0 && Block.blocksList[block].isOpaqueCube()) {
+        if (block.getMaterial() != Material.air && block.isOpaqueCube()) {
             for (int yy = 0; yy < m; yy++) {
                 for (int xx = 0; xx < m; xx++) {
                     MovingObjectPosition ret = littleBlocks.rayTraceBound(AxisAlignedBB.getBoundingBox(xx

@@ -1,6 +1,17 @@
 package com.slimevoid.littleblocks.proxy;
 
+import ibxm.Player;
+
 import java.io.File;
+
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.ForgeModContainer;
+import net.minecraftforge.common.MinecraftForge;
 
 import com.slimevoid.library.IPacketHandling;
 import com.slimevoid.littleblocks.api.ILBCommonProxy;
@@ -11,34 +22,17 @@ import com.slimevoid.littleblocks.core.lib.PacketLib;
 import com.slimevoid.littleblocks.events.LittleBlocksCollectionPickup;
 import com.slimevoid.littleblocks.events.LittleChunkEvent;
 import com.slimevoid.littleblocks.events.WorldServerEvent;
-import com.slimevoid.littleblocks.network.CommonPacketHandler;
 import com.slimevoid.littleblocks.tickhandlers.LittleWorldServerTickHandler;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.NetLoginHandler;
-import net.minecraft.network.packet.NetHandler;
-import net.minecraft.network.packet.Packet1Login;
-import net.minecraft.network.packet.Packet250CustomPayload;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.common.ForgeDummyContainer;
-import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.network.Player;
-import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 
 public class CommonProxy implements ILBCommonProxy {
 
     @Override
     public void preInit() {
-        CommonPacketHandler.init();
         PacketLib.registerPacketHandlers();
-        ForgeDummyContainer.fullBoundingBoxLadders = true;
+        ForgeModContainer.fullBoundingBoxLadders = true;
     }
 
     @Override
@@ -65,13 +59,8 @@ public class CommonProxy implements ILBCommonProxy {
     }
 
     @Override
-    public void onPacketData(INetworkManager manager, Packet250CustomPayload packet, Player player) {
-    }
-
-    @Override
     public void registerTickHandlers() {
-        TickRegistry.registerTickHandler(new LittleWorldServerTickHandler(),
-                                         Side.SERVER);
+        MinecraftForge.EVENT_BUS.register(new LittleWorldServerTickHandler());
     }
 
     @Override
@@ -109,32 +98,6 @@ public class CommonProxy implements ILBCommonProxy {
     @Override
     public void registerConfigurationProperties(File configFile) {
         ConfigurationLib.CommonConfig(configFile);
-    }
-
-    @Override
-    public void playerLoggedIn(Player player, NetHandler netHandler, INetworkManager manager) {
-        // System.out.println("LoggedIn");
-    }
-
-    @Override
-    public String connectionReceived(NetLoginHandler netHandler, INetworkManager manager) {
-        return null;
-    }
-
-    @Override
-    public void connectionOpened(NetHandler netClientHandler, String server, int port, INetworkManager manager) {
-    }
-
-    @Override
-    public void connectionOpened(NetHandler netClientHandler, MinecraftServer server, INetworkManager manager) {
-    }
-
-    @Override
-    public void connectionClosed(INetworkManager manager) {
-    }
-
-    @Override
-    public void clientLoggedIn(NetHandler clientHandler, INetworkManager manager, Packet1Login login) {
     }
 
     @Override

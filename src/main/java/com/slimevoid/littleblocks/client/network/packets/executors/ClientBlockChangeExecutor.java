@@ -20,7 +20,7 @@ public class ClientBlockChangeExecutor implements IPacketExecutor {
                                                        false)).setBlock(packet.xPosition,
                                                                         packet.yPosition,
                                                                         packet.zPosition,
-                                                                        ((PacketLittleBlocks) packet).getBlockID(),
+                                                                        ((PacketLittleBlocks) packet).getBlock(),
                                                                         ((PacketLittleBlocks) packet).getMetadata(),
                                                                         3);
         }

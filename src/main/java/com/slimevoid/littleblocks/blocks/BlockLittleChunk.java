@@ -4,6 +4,33 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockContainer;
+import net.minecraft.block.BlockStairs;
+import net.minecraft.block.BlockStaticLiquid;
+import net.minecraft.block.material.Material;
+import net.minecraft.client.particle.EffectRenderer;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.IFluidBlock;
+
+import com.slimevoid.library.util.helpers.ChatHelper;
+import com.slimevoid.library.util.helpers.PacketHelper;
 import com.slimevoid.library.util.helpers.SlimevoidHelper;
 import com.slimevoid.littleblocks.api.ILittleWorld;
 import com.slimevoid.littleblocks.blocks.core.CollisionRayTrace;
@@ -19,32 +46,8 @@ import com.slimevoid.littleblocks.items.ItemLittleBlocksWand;
 import com.slimevoid.littleblocks.network.packets.PacketLittleBlocksCollection;
 import com.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
-import net.minecraft.block.BlockFluid;
-import net.minecraft.block.BlockStairs;
-import net.minecraft.block.BlockStationary;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.particle.EffectRenderer;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -62,17 +65,17 @@ public class BlockLittleChunk extends BlockContainer {
 
     private static boolean isFluid        = false;
 
-    public void registerIcons(IconRegister iconRegister) {
+    public void registerIcons(IIconRegister iconRegister) {
         this.blockIcon = iconRegister.registerIcon(IconLib.LB_CHUNK);
     }
 
     private Class<? extends TileEntity> clazz;
 
     public BlockLittleChunk(int id, Class<? extends TileEntity> clazz, Material material, float hardness, boolean selfNotify) {
-        super(id, material);
+        super(material);
         this.clazz = clazz;
         this.setHardness(hardness);
-        this.stepSound = Block.wood.stepSound;
+        this.stepSound = Block.soundTypeWood;
         this.setCreativeTab(CreativeTabs.tabDecorations);
     }
 
@@ -93,7 +96,7 @@ public class BlockLittleChunk extends BlockContainer {
     }
 
     @Override
-    public boolean isLadder(World world, int x, int y, int z, EntityLivingBase entity) {
+    public boolean isLadder(IBlockAccess world, int x, int y, int z, EntityLivingBase entity) {
         if (entity != null) {
             return SlimevoidHelper.isLadder(world,
                                             x,
@@ -105,8 +108,8 @@ public class BlockLittleChunk extends BlockContainer {
     }
 
     @Override
-    public int idPicked(World world, int x, int y, int z) {
-        TileEntity tileentity = world.getBlockTileEntity(x,
+    public Item getItem(World world, int x, int y, int z) {
+        TileEntity tileentity = world.getTileEntity(x,
                                                          y,
                                                          z);
         if (tileentity != null && tileentity instanceof TileEntityLittleChunk) {
@@ -115,27 +118,27 @@ public class BlockLittleChunk extends BlockContainer {
                                              ySelected,
                                              zSelected);
             if (pickedID > 0) {
-                return pickedID;
+                return Item.getItemFromBlock(Block.getBlockById(pickedID));
             }
         }
-        return ConfigurationLib.littleBlocksWandID;
+        return ConfigurationLib.littleBlocksWand;
     }
 
     @Override
     public int getDamageValue(World world, int x, int y, int z) {
-        TileEntity tileentity = world.getBlockTileEntity(x,
+        TileEntity tileentity = world.getTileEntity(x,
                                                          y,
                                                          z);
         if (tileentity != null && tileentity instanceof TileEntityLittleChunk) {
             TileEntityLittleChunk tilelb = (TileEntityLittleChunk) tileentity;
-            int pickedID = tilelb.getBlockID(xSelected,
+            Block picked = Block.getBlockById(tilelb.getBlockID(xSelected,
                                              ySelected,
-                                             zSelected);
-            if (pickedID > 0) {
+                                             zSelected));
+            if (picked.getMaterial() != Material.air) {
                 int xx = (x << 3) + xSelected;
                 int yy = (y << 3) + ySelected;
                 int zz = (z << 3) + zSelected;
-                return Block.blocksList[pickedID].getDamageValue((World) tilelb.getLittleWorld(),
+                return picked.getDamageValue((World) tilelb.getLittleWorld(),
                                                                  xx,
                                                                  yy,
                                                                  zz);
@@ -150,13 +153,13 @@ public class BlockLittleChunk extends BlockContainer {
     }
 
     @Override
-    public boolean removeBlockByPlayer(World world, EntityPlayer entityplayer, int x, int y, int z) {
-        int id = world.getBlockId(x,
+    public boolean removedByPlayer(World world, EntityPlayer entityplayer, int x, int y, int z) {
+        Block id = world.getBlock(x,
                                   y,
                                   z);
 
-        if (id == ConfigurationLib.littleChunkID) {
-            TileEntityLittleChunk tile = (TileEntityLittleChunk) world.getBlockTileEntity(x,
+        if (id == ConfigurationLib.littleChunk) {
+            TileEntityLittleChunk tile = (TileEntityLittleChunk) world.getTileEntity(x,
                                                                                           y,
                                                                                           z);
             EntityItemLittleBlocksCollection collection = new EntityItemLittleBlocksCollection(world, x, y, z, new ItemStack(ConfigurationLib.littleChunk));
@@ -182,12 +185,11 @@ public class BlockLittleChunk extends BlockContainer {
                         for (int x1 = 0; x1 < content.length; x1++) {
                             for (int y1 = 0; y1 < content[x1].length; y1++) {
                                 for (int z1 = 0; z1 < content[x1][y1].length; z1++) {
-                                    int blockId = content[x1][y1][z1];
+                                    Block blockId = Block.getBlockById(content[x1][y1][z1]);
                                     int contentMeta = tile.getBlockMetadata(x1,
                                                                             y1,
                                                                             z1);
-                                    if (blockId > 0
-                                        && Block.blocksList[blockId] != null) {
+                                    if (blockId.getMaterial() != Material.air) {
                                         ItemStack itemToDrop = this.dropLittleBlockAsNormalBlock(world,
                                                                                                  x,
                                                                                                  y,
@@ -202,8 +204,8 @@ public class BlockLittleChunk extends BlockContainer {
                             }
                         }
                         tile.clearContents();
-                        tile.onInventoryChanged();
-                        world.markBlockForRenderUpdate(x,
+                        tile.markDirty();
+                        world.markBlockForUpdate(x,
                                                        y,
                                                        z);
                     }
@@ -213,33 +215,33 @@ public class BlockLittleChunk extends BlockContainer {
                 if (!collection.isEmpty()) {
                     world.spawnEntityInWorld(collection);
                     PacketLittleBlocksCollection packet = new PacketLittleBlocksCollection(collection);
-                    PacketDispatcher.sendPacketToAllPlayers(packet.getPacket());
+                    PacketHelper.broadcastPacket(packet);
                 }
             }
         }
-        return super.removeBlockByPlayer(world,
+        return super.removedByPlayer(world,
                                          entityplayer,
                                          x,
                                          y,
                                          z);
     }
 
-    private ItemStack dropLittleBlockAsNormalBlock(World world, int x, int y, int z, int blockId, int metaData) {
-        boolean dropsBlocks = Block.blocksList[blockId].getBlockDropped(world,
+    private ItemStack dropLittleBlockAsNormalBlock(World world, int x, int y, int z, Block blockId, int metaData) {
+        boolean dropsBlocks = blockId.getDrops(world,
                                                                         x,
                                                                         y,
                                                                         z,
                                                                         metaData,
                                                                         0).size() > 0 ? true : false;
         if (dropsBlocks) {
-            int idDropped = Block.blocksList[blockId].idDropped(metaData,
+            Item idDropped = blockId.getItemDropped(metaData,
                                                                 world.rand,
                                                                 0);
-            int quantityDropped = Block.blocksList[blockId].quantityDropped(world.rand);
-            int damageDropped = Block.blocksList[blockId].damageDropped(metaData);
+            int quantityDropped = blockId.quantityDropped(world.rand);
+            int damageDropped = blockId.damageDropped(metaData);
             ItemStack itemstack = new ItemStack(idDropped, quantityDropped, damageDropped);
 
-            if (idDropped > 0 && quantityDropped > 0) {
+            if (quantityDropped > 0) {
                 return itemstack;
             }
         }
@@ -265,7 +267,7 @@ public class BlockLittleChunk extends BlockContainer {
                                                                             hitY,
                                                                             hitZ);
                 } catch (ClassCastException e) {
-                    FMLCommonHandler.instance().getFMLLogger().warning(e.getLocalizedMessage());
+                    FMLCommonHandler.instance().getFMLLogger().warn(e.getLocalizedMessage());
                     return true;
                 }
             }
@@ -290,14 +292,14 @@ public class BlockLittleChunk extends BlockContainer {
             }
             if (itemHeld instanceof ItemBlock) {
                 itemBlock = (ItemBlock) itemHeld;
-                block = Block.blocksList[itemBlock.getBlockID()];
+                block = itemBlock.field_150939_a;
             }
             if (block != null) {
                 if (!BlockUtil.isBlockAllowed(block)) {
                     denyPlacement = true;
                     placementMessage = MessageLib.DENY_PLACEMENT;
                 }
-                if (BlockUtil.hasTile(block.blockID)) {
+                if (block.hasTileEntity(0)) {
                     if (!BlockUtil.isTileEntityAllowed(block.createTileEntity(world,
                                                                               0))) {
                         denyPlacement = true;
@@ -307,9 +309,9 @@ public class BlockLittleChunk extends BlockContainer {
             }
             if (item != null) {
                 if (item instanceof ItemBlock) {
-                    int itemBlockId = ((ItemBlock) item).getBlockID();
-                    if (BlockUtil.hasTile(itemBlockId)) {
-                        if (!BlockUtil.isTileEntityAllowed(Block.blocksList[itemBlockId].createTileEntity(world,
+                    Block itemBlockId = ((ItemBlock) item).field_150939_a;
+                    if (itemBlockId.hasTileEntity(0)) {
+                        if (!BlockUtil.isTileEntityAllowed(itemBlockId.createTileEntity(world,
                                                                                                           0))) {
                             denyPlacement = true;
                             placementMessage = MessageLib.DENY_PLACEMENT;
@@ -323,7 +325,7 @@ public class BlockLittleChunk extends BlockContainer {
             }
         }
         if (denyPlacement) {
-            entityplayer.addChatMessage(placementMessage);
+            entityplayer.addChatMessage(ChatHelper.getMessage(EnumChatFormatting.BOLD, placementMessage));
             return false;
         }
         return true;
@@ -355,7 +357,7 @@ public class BlockLittleChunk extends BlockContainer {
                                                  hitY,
                                                  hitZ);
             } catch (ClassCastException e) {
-                FMLCommonHandler.instance().getFMLLogger().warning(e.getLocalizedMessage());
+                FMLCommonHandler.instance().getFMLLogger().warn(e.getLocalizedMessage());
             }
         }
     }
@@ -404,12 +406,12 @@ public class BlockLittleChunk extends BlockContainer {
     }
 
     public boolean rotateLittleChunk(World world, int x, int y, int z, ForgeDirection axis) {
-        TileEntity tileentity = world.getBlockTileEntity(x,
+        TileEntity tileentity = world.getTileEntity(x,
                                                          y,
                                                          z);
         if (tileentity != null && tileentity instanceof TileEntityLittleChunk) {
             ((TileEntityLittleChunk) tileentity).rotateContents(axis);
-            tileentity.onInventoryChanged();
+            tileentity.markDirty();
             world.markBlockForUpdate(x,
                                      y,
                                      z);
@@ -418,7 +420,7 @@ public class BlockLittleChunk extends BlockContainer {
     }
 
     public void dropLittleBlockAsItem_do(World world, int x, int y, int z, ItemStack itemStack) {
-        this.dropBlockAsItem_do(world,
+        this.dropBlockAsItem(world,
                                 x,
                                 y,
                                 z,
@@ -426,7 +428,7 @@ public class BlockLittleChunk extends BlockContainer {
     }
 
     @Override
-    public TileEntity createNewTileEntity(World par1World) {
+    public TileEntity createNewTileEntity(World world, int metadata) {
         try {
             return this.clazz.newInstance();
         } catch (Exception e) {
@@ -459,7 +461,7 @@ public class BlockLittleChunk extends BlockContainer {
                                 0f,
                                 0f);
         } else {
-            TileEntityLittleChunk tile = (TileEntityLittleChunk) world.getBlockTileEntity(x,
+            TileEntityLittleChunk tile = (TileEntityLittleChunk) world.getTileEntity(x,
                                                                                           y,
                                                                                           z);
             int content = tile.getBlockID(xSelected,
@@ -474,9 +476,9 @@ public class BlockLittleChunk extends BlockContainer {
                                     (ySelected + 1) / m,
                                     (zSelected + 1) / m);
             } else {
-                Block block = Block.blocksList[content];
+                Block block = Block.getBlockById(content);
                 if (block != null) {
-                    if (BlockStairs.isBlockStairsID(block.blockID)) {
+                    if (BlockStairs.func_150148_a/*isBlockStairsID*/(block)) {
                         block.setBlockBounds(0,
                                              0,
                                              0,
@@ -527,7 +529,7 @@ public class BlockLittleChunk extends BlockContainer {
     @SuppressWarnings("rawtypes")
     @Override
     public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB axisalignedbb, List list, Entity entity) {
-        TileEntity tileentity = world.getBlockTileEntity(x,
+        TileEntity tileentity = world.getTileEntity(x,
                                                          y,
                                                          z);
         if (tileentity != null && tileentity instanceof TileEntityLittleChunk) {
@@ -553,7 +555,7 @@ public class BlockLittleChunk extends BlockContainer {
                 for (int yy = 0; yy < content[xx].length; yy++) {
                     for (int zz = 0; zz < content[xx][yy].length; zz++) {
                         if (content[xx][yy][zz] > 0) {
-                            Block block = Block.blocksList[content[xx][yy][zz]];
+                            Block block = Block.getBlockById(content[xx][yy][zz]);
                             if (block != null) {
                                 block.addCollisionBoxesToList((World) tile.getLittleWorld(),
                                                               (x << 3) + xx,
@@ -582,7 +584,7 @@ public class BlockLittleChunk extends BlockContainer {
     @SideOnly(Side.CLIENT)
     @Override
     public MovingObjectPosition collisionRayTrace(World world, int x, int y, int z, Vec3 player, Vec3 view) {
-        TileEntityLittleChunk tile = (TileEntityLittleChunk) world.getBlockTileEntity(x,
+        TileEntityLittleChunk tile = (TileEntityLittleChunk) world.getTileEntity(x,
                                                                                       y,
                                                                                       z);
 
@@ -630,14 +632,14 @@ public class BlockLittleChunk extends BlockContainer {
                                                  ret.blockY,
                                                  ret.blockZ);
                 if (retBlockID > 0) {
-                    Block retBlock = Block.blocksList[retBlockID];// .isBlockSolid(tile.worldObj,
+                    Block retBlock = Block.getBlockById(retBlockID);// .isBlockSolid(tile.worldObj,
                                                                   // ret.blockX,
                                                                   // ret.blockY,
                                                                   // ret.blockZ,
                                                                   // ret.sideHit);
-                    isLiquid = retBlock instanceof BlockFluid;
+                    isLiquid = retBlock instanceof IFluidBlock;
                     if (isLiquid && isFluid) {
-                        isLiquid = !(retBlock instanceof BlockStationary && tile.getBlockMetadata(ret.blockX,
+                        isLiquid = !(retBlock instanceof BlockStaticLiquid && tile.getBlockMetadata(ret.blockX,
                                                                                                   ret.blockY,
                                                                                                   ret.blockZ) == 0);
                     }
@@ -664,7 +666,7 @@ public class BlockLittleChunk extends BlockContainer {
                 }
                 boolean rayTraced = false;
                 if (littleBlockID > 0) {
-                    Block littleBlock = Block.blocksList[littleBlockID];
+                    Block littleBlock = Block.getBlockById(littleBlockID);
                     if (littleBlock != null) {
                         if (!(littleBlock.hasTileEntity(tile.getBlockMetadata(xSelected,
                                                                               ySelected,
@@ -683,7 +685,7 @@ public class BlockLittleChunk extends BlockContainer {
                                                               player,
                                                               view);
                             } catch (ClassCastException e) {
-                                FMLCommonHandler.instance().getFMLLogger().warning(e.getLocalizedMessage());
+                                FMLCommonHandler.instance().getFMLLogger().warn(e.getLocalizedMessage());
                             }
                         }
                     }
@@ -838,7 +840,7 @@ public class BlockLittleChunk extends BlockContainer {
         if (weakPower > 0) {
             return weakPower;
         } else {
-            TileEntityLittleChunk tile = (TileEntityLittleChunk) iblockaccess.getBlockTileEntity(x,
+            TileEntityLittleChunk tile = (TileEntityLittleChunk) iblockaccess.getTileEntity(x,
                                                                                                  y,
                                                                                                  z);
             if (tile != null) {
@@ -876,7 +878,7 @@ public class BlockLittleChunk extends BlockContainer {
                     for (int yy = startY; yy < maY; yy++) {
                         for (int zz = startZ; zz < maZ; zz++) {
                             if (content[xx][yy][zz] > 0) {
-                                Block littleBlock = Block.blocksList[content[xx][yy][zz]];
+                                Block littleBlock = Block.getBlockById(content[xx][yy][zz]);
                                 if (littleBlock != null) {
                                     return littleBlock.isProvidingWeakPower(tile.getLittleWorld(),
                                                                             (x << 3)
@@ -897,14 +899,14 @@ public class BlockLittleChunk extends BlockContainer {
     }
 
     @Override
-    public void onNeighborBlockChange(World world, int x, int y, int z, int blockId) {
+    public void onNeighborBlockChange(World world, int x, int y, int z, Block blockId) {
         super.onNeighborBlockChange(world,
                                     x,
                                     y,
                                     z,
                                     blockId);
         if (updateEveryone) {
-            TileEntityLittleChunk tile = (TileEntityLittleChunk) world.getBlockTileEntity(x,
+            TileEntityLittleChunk tile = (TileEntityLittleChunk) world.getTileEntity(x,
                                                                                           y,
                                                                                           z);
             if (tile != null) {
@@ -942,7 +944,7 @@ public class BlockLittleChunk extends BlockContainer {
                         for (int yy = startY; yy < maY; yy++) {
                             for (int zz = startZ; zz < maZ; zz++) {
                                 if (content[xx][yy][zz] > 0) {
-                                    Block littleBlock = Block.blocksList[content[xx][yy][zz]];
+                                    Block littleBlock = Block.getBlockById(content[xx][yy][zz]);
                                     if (littleBlock != null) {
                                         littleBlock.onNeighborBlockChange((World) tile.getLittleWorld(),
                                                                           (x << 3)
@@ -969,7 +971,7 @@ public class BlockLittleChunk extends BlockContainer {
     }
 
     @Override
-    public boolean addBlockDestroyEffects(World world, int x, int y, int z, int meta, EffectRenderer effectRenderer) {
+    public boolean addDestroyEffects(World world, int x, int y, int z, int meta, EffectRenderer effectRenderer) {
         return LittleBlockDiggingFX.doBlockDestroyEffects(world,
                                                           x,
                                                           y,
@@ -980,7 +982,7 @@ public class BlockLittleChunk extends BlockContainer {
     }
 
     @Override
-    public boolean addBlockHitEffects(World world, MovingObjectPosition target, EffectRenderer effectRenderer) {
+    public boolean addHitEffects(World world, MovingObjectPosition target, EffectRenderer effectRenderer) {
         return LittleBlockDiggingFX.doBlockHitEffects(world,
                                                       target,
                                                       effectRenderer,
@@ -989,13 +991,13 @@ public class BlockLittleChunk extends BlockContainer {
 
     @Override
     public int getLightValue(IBlockAccess world, int x, int y, int z) {
-        TileEntityLittleChunk tile = (TileEntityLittleChunk) world.getBlockTileEntity(x,
+        TileEntityLittleChunk tile = (TileEntityLittleChunk) world.getTileEntity(x,
                                                                                       y,
                                                                                       z);
         try {
             if (tile != null) return tile.getLightlevel();
         } catch (ClassCastException e) {
-            FMLCommonHandler.instance().getFMLLogger().warning(e.getLocalizedMessage());
+            FMLCommonHandler.instance().getFMLLogger().warn(e.getLocalizedMessage());
             return super.getLightValue(world,
                                        x,
                                        y,

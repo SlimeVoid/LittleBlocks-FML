@@ -1,30 +1,30 @@
 package com.slimevoid.littleblocks.blocks.events;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+
 import com.slimevoid.littleblocks.blocks.BlockLittleChunk;
 import com.slimevoid.littleblocks.core.lib.ConfigurationLib;
 
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.world.World;
-import net.minecraftforge.event.ForgeSubscribe;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 
 public class LittleChunkShiftRightClick {
 
-    @ForgeSubscribe
+    @SubscribeEvent
     public void onShiftRightClickEvent(PlayerInteractEvent event) {
         EntityPlayer entityplayer = event.entityPlayer;
         if (entityplayer.isSneaking()) {
             if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
                 World world = FMLClientHandler.instance().getClient().theWorld;
                 int x = event.x, y = event.y, z = event.z;
-                if (world.getBlockId(x,
+                if (world.getBlock(x,
                                      y,
-                                     z) == ConfigurationLib.littleChunkID) {
-                    BlockLittleChunk littleChunk = ((BlockLittleChunk) Block.blocksList[ConfigurationLib.littleChunkID]);
+                                     z) == ConfigurationLib.littleChunk) {
+                    BlockLittleChunk littleChunk = ((BlockLittleChunk) ConfigurationLib.littleChunk);
                     if (littleChunk.onBlockActivated(world,
                                                      x,
                                                      y,

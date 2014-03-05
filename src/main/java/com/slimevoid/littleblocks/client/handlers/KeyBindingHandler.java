@@ -2,54 +2,32 @@ package com.slimevoid.littleblocks.client.handlers;
 
 import java.util.EnumSet;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 
 import org.lwjgl.input.Keyboard;
 
 import com.slimevoid.littleblocks.core.lib.PacketLib;
 
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.client.registry.KeyBindingRegistry.KeyHandler;
-import cpw.mods.fml.common.TickType;
+import cpw.mods.fml.client.registry.ClientRegistry;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
-public class KeyBindingHandler extends KeyHandler {
+public class KeyBindingHandler {
 
-    private Minecraft         mc;
-    private static KeyBinding switchAction = new KeyBinding("LittleBlocks Wand-Action Change", Keyboard.KEY_O);
+    public static KeyBinding LITTLEWAND_ACTION_KEY = new KeyBinding("LittleBlocks Wand-Action Change", Keyboard.KEY_O, "key.categories.misc");
 
     public KeyBindingHandler() {
-        super(new KeyBinding[] { switchAction }, new boolean[] { false });
-        this.mc = FMLClientHandler.instance().getClient();
+        ClientRegistry.registerKeyBinding(LITTLEWAND_ACTION_KEY);
     }
-
-    @Override
-    public String getLabel() {
-        return "LittleBlocks Wand-Action Change";
-    }
-
-    private static boolean keyHasBeenPressed = false;
-
-    @Override
-    public void keyDown(EnumSet<TickType> types, KeyBinding kb, boolean tickEnd, boolean isRepeat) {
-        if (this.mc.currentScreen == null) {
-            keyHasBeenPressed = true;
-        }
-    }
-
-    @Override
-    public void keyUp(EnumSet<TickType> types, KeyBinding kb, boolean tickEnd) {
-        if (keyHasBeenPressed) {
-            keyHasBeenPressed = false;
-            if (kb.equals(switchAction)) {
+    
+    @SubscribeEvent
+    public void keyInput(LivingUpdateEvent event) {
+        if (event.entityLiving instanceof EntityPlayerSP) {
+            if (LITTLEWAND_ACTION_KEY.isPressed()) {
                 PacketLib.wandModeSwitched();
             }
         }
-    }
-
-    @Override
-    public EnumSet<TickType> ticks() {
-        return EnumSet.of(TickType.CLIENT);
     }
 
 }
