@@ -1,8 +1,8 @@
 package com.slimevoid.littleblocks.core;
 
+import com.slimevoid.library.util.helpers.PacketHelper;
 import com.slimevoid.littleblocks.api.ILBCommonProxy;
 import com.slimevoid.littleblocks.core.lib.CoreLib;
-import com.slimevoid.littleblocks.core.lib.PacketLib;
 
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -30,16 +30,19 @@ public class LittleBlocks {
     public void LittleBlocksPreInit(FMLPreInitializationEvent event) {
         proxy.registerConfigurationProperties(event.getSuggestedConfigurationFile());
         proxy.preInit();
-        LBInit.initialize();
+        LBInit.preInitialize();
     }
 
     @EventHandler
     public void LittleBlocksInit(FMLInitializationEvent event) {
+        PacketHelper.registerListener(CoreLib.MOD_CHANNEL);
+        proxy.init();
+        LBInit.initialize();
     }
 
     @EventHandler
     public void LittleBlocksPostInit(FMLPostInitializationEvent event) {
-        LBCore.registerPistonOverride();
-        LBCore.registerDoorOverride();
+        proxy.postInit();
+        LBInit.postInitialize();
     }
 }

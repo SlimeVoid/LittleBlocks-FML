@@ -46,58 +46,58 @@ public class PacketLib {
     @SideOnly(Side.CLIENT)
     public static void registerClientPacketHandlers() {
         MinecraftForge.EVENT_BUS.register(new ClientNetworkEvent());
-        
+
         ClientPacketHandler handler = new ClientPacketHandler();
-        
+
         PacketLoginHandler clientLoginHandler = new PacketLoginHandler();
         clientLoginHandler.registerPacketHandler(CommandLib.SETTINGS,
                                                  new ClientPacketLittleBlocksLoginExecutor());
 
         handler.registerPacketHandler(PacketIds.LOGIN,
-                                                  clientLoginHandler);
+                                      clientLoginHandler);
 
         PacketLittleBlocksHandler clientLittleBlocksHandler = new PacketLittleBlocksHandler();
         clientLittleBlocksHandler.registerPacketHandler(CommandLib.UPDATE_CLIENT,
                                                         new ClientBlockChangeExecutor());
 
         handler.registerPacketHandler(PacketIds.UPDATE,
-                                                  clientLittleBlocksHandler);
+                                      clientLittleBlocksHandler);
 
         PacketLittleBlockCollectionHandler clientCollectionHandler = new PacketLittleBlockCollectionHandler();
         clientCollectionHandler.registerPacketHandler(CommandLib.ENTITY_COLLECTION,
                                                       new ClientLittleCollectionExecutor());
 
         handler.registerPacketHandler(PacketIds.ENTITY,
-                                                  clientCollectionHandler);
+                                      clientCollectionHandler);
 
         PacketLittleNotifyHandler clientLittleNotifyHandler = new PacketLittleNotifyHandler();
         clientLittleNotifyHandler.registerPacketHandler(CommandLib.COPIER_MESSAGE,
                                                         new ClientCopierNotifyExecutor());
 
         handler.registerPacketHandler(PacketIds.PLAYER,
-                                                  clientLittleNotifyHandler);
+                                      clientLittleNotifyHandler);
 
         PacketLittleBlockEventHandler clientLittleBlockEventHandler = new PacketLittleBlockEventHandler();
         clientLittleBlockEventHandler.registerPacketHandler(CommandLib.BLOCK_EVENT,
                                                             new ClientBlockEventExecutor());
 
         handler.registerPacketHandler(PacketLib.PACKETID_EVENT,
-                                                  clientLittleBlockEventHandler);
-        
-        PacketHelper.registerClientListener(CoreLib.MOD_CHANNEL, handler);
+                                      clientLittleBlockEventHandler);
+
+        PacketHelper.registerClientHandler(CoreLib.MOD_CHANNEL,
+                                            handler);
     }
 
     public static void registerPacketHandlers() {
         MinecraftForge.EVENT_BUS.register(new NetworkEvent());
-        
-        ServerPacketHandler handler = new ServerPacketHandler();
 
+        ServerPacketHandler handler = new ServerPacketHandler();
         PacketLittleNotifyHandler playerHandler = new PacketLittleNotifyHandler();
         playerHandler.registerPacketHandler(CommandLib.WAND_SWITCH,
                                             new PacketLittleWandSwitchExecutor());
 
         handler.registerPacketHandler(PacketIds.PLAYER,
-                                                  playerHandler);
+                                      playerHandler);
 
         PacketLittleBlockHandler littleBlockHandler = new PacketLittleBlockHandler();
         littleBlockHandler.registerPacketHandler(CommandLib.BLOCK_ACTIVATED,
@@ -106,9 +106,10 @@ public class PacketLib {
                                                  new PacketLittleBlockClickedExecutor());
 
         handler.registerPacketHandler(PacketIds.TILE,
-                                                  littleBlockHandler);
-        
-        PacketHelper.registerListener(CoreLib.MOD_CHANNEL, handler);
+                                      littleBlockHandler);
+
+        PacketHelper.registerServerHandler(CoreLib.MOD_CHANNEL,
+                                      handler);
     }
 
     @SideOnly(Side.CLIENT)
@@ -140,7 +141,7 @@ public class PacketLib {
     public static void sendBlockChange(World world, EntityPlayer entityplayer, int x, int y, int z) {
         PacketLittleBlocks changePacket = new PacketLittleBlocks(x, y, z, world);
         PacketHelper.sendToPlayer(changePacket,
-                                            (EntityPlayerMP) entityplayer);
+                                  (EntityPlayerMP) entityplayer);
     }
 
     @SideOnly(Side.CLIENT)
@@ -153,53 +154,62 @@ public class PacketLib {
         PacketLittleNotify wandPacket = new PacketLittleNotify(CommandLib.WAND_SWITCH);
         wandPacket.side = actionID;
         PacketHelper.sendToPlayer(wandPacket,
-                                            (EntityPlayerMP) entityplayer);
+                                  (EntityPlayerMP) entityplayer);
     }
 
-//    public static void tryMinecraftPacket(INetworkManager manager, Packet250CustomPayload packet, Player player) {
-//        if (packet.channel.equals(CHANNEL_COMMAND_BLOCK)) {
-//            if (!FMLCommonHandler.instance().getMinecraftServerInstance().isCommandBlockEnabled()) {
-//                ((EntityPlayer) player).sendChatToPlayer(ChatMessageComponent.createFromTranslationKey(MessageLib.COMMAND_BLOCK_DISABLED));
-//            } else if (((EntityPlayer) player).canCommandSenderUseCommand(2,
-//                                                                          "")
-//                       && ((EntityPlayer) player).capabilities.isCreativeMode) {
-//                try {
-//                    DataInputStream data = new DataInputStream(new ByteArrayInputStream(packet.data));
-//                    int i = data.readInt();
-//                    int j = data.readInt();
-//                    int k = data.readInt();
-//                    String s = Packet.readString(data,
-//                                                 256);
-//                    TileEntity realTileEntity = ((EntityPlayer) player).worldObj.getBlockTileEntity(i,
-//                                                                                                    j,
-//                                                                                                    k);
-//                    boolean littleCommand = s.startsWith(LITTLEWORLD);
-//                    if (realTileEntity == null || littleCommand) {
-//                        TileEntity tileentity = SlimevoidHelper.getBlockTileEntity(((EntityPlayer) player).worldObj,
-//                                                                                   i,
-//                                                                                   j,
-//                                                                                   k);
-//
-//                        if (tileentity != null
-//                            && tileentity instanceof TileEntityCommandBlock
-//                            && tileentity.worldObj instanceof ILittleWorld) {
-//                            if (littleCommand) {
-//                                s = s.substring(LITTLEWORLD.length());
-//                            }
-//                            ((TileEntityCommandBlock) tileentity).setCommand(s);
-//                            tileentity.worldObj.markBlockForUpdate(i,
-//                                                                   j,
-//                                                                   k);
-//                            ((EntityPlayer) player).sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions(MessageLib.COMMAND_BLOCK_SUCCESS,
-//                                                                                                                                 new Object[] { s }));
-//                        }
-//                    }
-//                } catch (Exception exception3) {
-//                    exception3.printStackTrace();
-//                }
-//            } else {
-//                ((EntityPlayer) player).sendChatToPlayer(ChatMessageComponent.createFromTranslationKey(MessageLib.COMMAND_BLOCK_NOT_ALLOWED));
-//            }
-//        }
-//    }
+    // public static void tryMinecraftPacket(INetworkManager manager,
+    // Packet250CustomPayload packet, Player player) {
+    // if (packet.channel.equals(CHANNEL_COMMAND_BLOCK)) {
+    // if
+    // (!FMLCommonHandler.instance().getMinecraftServerInstance().isCommandBlockEnabled())
+    // {
+    // ((EntityPlayer)
+    // player).sendChatToPlayer(ChatMessageComponent.createFromTranslationKey(MessageLib.COMMAND_BLOCK_DISABLED));
+    // } else if (((EntityPlayer) player).canCommandSenderUseCommand(2,
+    // "")
+    // && ((EntityPlayer) player).capabilities.isCreativeMode) {
+    // try {
+    // DataInputStream data = new DataInputStream(new
+    // ByteArrayInputStream(packet.data));
+    // int i = data.readInt();
+    // int j = data.readInt();
+    // int k = data.readInt();
+    // String s = Packet.readString(data,
+    // 256);
+    // TileEntity realTileEntity = ((EntityPlayer)
+    // player).worldObj.getBlockTileEntity(i,
+    // j,
+    // k);
+    // boolean littleCommand = s.startsWith(LITTLEWORLD);
+    // if (realTileEntity == null || littleCommand) {
+    // TileEntity tileentity =
+    // SlimevoidHelper.getBlockTileEntity(((EntityPlayer) player).worldObj,
+    // i,
+    // j,
+    // k);
+    //
+    // if (tileentity != null
+    // && tileentity instanceof TileEntityCommandBlock
+    // && tileentity.worldObj instanceof ILittleWorld) {
+    // if (littleCommand) {
+    // s = s.substring(LITTLEWORLD.length());
+    // }
+    // ((TileEntityCommandBlock) tileentity).setCommand(s);
+    // tileentity.worldObj.markBlockForUpdate(i,
+    // j,
+    // k);
+    // ((EntityPlayer)
+    // player).sendChatToPlayer(ChatMessageComponent.createFromTranslationWithSubstitutions(MessageLib.COMMAND_BLOCK_SUCCESS,
+    // new Object[] { s }));
+    // }
+    // }
+    // } catch (Exception exception3) {
+    // exception3.printStackTrace();
+    // }
+    // } else {
+    // ((EntityPlayer)
+    // player).sendChatToPlayer(ChatMessageComponent.createFromTranslationKey(MessageLib.COMMAND_BLOCK_NOT_ALLOWED));
+    // }
+    // }
+    // }
 }

@@ -18,16 +18,12 @@ import com.slimevoid.littleblocks.client.handlers.KeyBindingHandler;
 import com.slimevoid.littleblocks.client.render.blocks.LittleBlocksRenderer;
 import com.slimevoid.littleblocks.client.render.entities.LittleBlocksCollectionRenderer;
 import com.slimevoid.littleblocks.client.render.tileentities.TileEntityLittleBlocksRenderer;
-import com.slimevoid.littleblocks.core.lib.BlockUtil;
-import com.slimevoid.littleblocks.core.lib.CommandLib;
 import com.slimevoid.littleblocks.core.lib.ConfigurationLib;
 import com.slimevoid.littleblocks.core.lib.PacketLib;
 import com.slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
-import com.slimevoid.littleblocks.network.packets.PacketLittleBlocksSettings;
 import com.slimevoid.littleblocks.proxy.CommonProxy;
 import com.slimevoid.littleblocks.tickhandlers.LittleWorldTickHandler;
 import com.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
-import com.slimevoid.littleblocks.world.LittlePlayerController;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.ClientRegistry;
@@ -39,8 +35,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class ClientProxy extends CommonProxy {
 
     @Override
-    public void preInit() {
-        super.preInit();
+    public void init() {
+        super.init();
         PacketLib.registerClientPacketHandlers();
     }
 
@@ -52,7 +48,7 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void registerRenderInformation() {
         MinecraftForge.EVENT_BUS.register(new DrawCopierHighlight());
-       RenderingRegistry.registerBlockHandler(new LittleBlocksRenderer());
+        RenderingRegistry.registerBlockHandler(new LittleBlocksRenderer());
         RenderingRegistry.registerEntityRenderingHandler(EntityItemLittleBlocksCollection.class,
                                                          new LittleBlocksCollectionRenderer());
         this.registerTileEntitySpecialRenderer(TileEntityLittleChunk.class);
@@ -103,7 +99,7 @@ public class ClientProxy extends CommonProxy {
     public World getParentWorld(ILittleWorld littleWorld, int realDimension) {
         if (!((World) littleWorld).isRemote) {
             return super.getParentWorld(littleWorld,
-                                      realDimension);
+                                        realDimension);
         }
         return FMLClientHandler.instance().getClient().theWorld;
     }

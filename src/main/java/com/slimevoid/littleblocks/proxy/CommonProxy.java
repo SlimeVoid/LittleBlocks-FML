@@ -1,11 +1,8 @@
 package com.slimevoid.littleblocks.proxy;
 
-import ibxm.Player;
-
 import java.io.File;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -31,8 +28,17 @@ public class CommonProxy implements ILBCommonProxy {
 
     @Override
     public void preInit() {
-        PacketLib.registerPacketHandlers();
         ForgeModContainer.fullBoundingBoxLadders = true;
+    }
+
+    @Override
+    public void init() {
+        PacketLib.registerPacketHandlers();
+    }
+
+    @Override
+    public void postInit() {
+
     }
 
     @Override

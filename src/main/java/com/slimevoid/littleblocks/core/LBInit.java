@@ -20,15 +20,7 @@ import com.slimevoid.littleblocks.items.wand.EnumWandAction;
 public class LBInit {
     private static boolean initialized = false;
 
-    public static void initialize() {
-        if (initialized) {
-            return;
-        }
-        initialized = true;
-        load();
-    }
-
-    public static void load() {
+    public static void preInitialize() {
         SlimevoidCore.console(CoreLib.MOD_ID,
                               "Registering names...");
         LBCore.registerNames();
@@ -40,7 +32,9 @@ public class LBInit {
         SlimevoidCore.console(CoreLib.MOD_ID,
                               "Registering blocks...");
         LBCore.registerBlocks();
+    }
 
+    public static void initialize() {
         SlimevoidCore.console(CoreLib.MOD_ID,
                               "Registering event handlers...");
         LittleBlocks.proxy.registerEventHandlers();
@@ -65,5 +59,14 @@ public class LBInit {
         SlimevoidCore.console(CoreLib.MOD_ID,
                               "Registering Little Wand...");
         EnumWandAction.registerWandActions();
+    }
+
+    public static void postInitialize() {
+        if (initialized) {
+            return;
+        }
+        initialized = true;
+        LBCore.registerPistonOverride();
+        LBCore.registerDoorOverride();
     }
 }
