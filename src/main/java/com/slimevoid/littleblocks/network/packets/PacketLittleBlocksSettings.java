@@ -1,13 +1,13 @@
 package com.slimevoid.littleblocks.network.packets;
 
-import com.slimevoid.library.network.PacketIds;
-import com.slimevoid.library.network.PacketPayload;
-import com.slimevoid.library.network.PacketUpdate;
-import com.slimevoid.littleblocks.core.lib.CoreLib;
-
 import net.minecraft.world.World;
 
-public class PacketLittleBlocksSettings extends PacketUpdate {
+import com.slimevoid.library.network.PacketIds;
+import com.slimevoid.library.network.PacketPayload;
+import com.slimevoid.library.network.SlimevoidPayload;
+import com.slimevoid.littleblocks.core.lib.CoreLib;
+
+public class PacketLittleBlocksSettings extends SlimevoidPayload {
 
     public PacketLittleBlocksSettings() {
         super(PacketIds.LOGIN);

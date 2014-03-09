@@ -10,7 +10,6 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.MinecraftForge;
 
-import com.slimevoid.library.IPacketHandling;
 import com.slimevoid.littleblocks.api.ILBCommonProxy;
 import com.slimevoid.littleblocks.api.ILittleWorld;
 import com.slimevoid.littleblocks.blocks.events.LittleContainerInteract;
@@ -75,11 +74,6 @@ public class CommonProxy implements ILBCommonProxy {
         MinecraftForge.EVENT_BUS.register(new WorldServerEvent());
         MinecraftForge.EVENT_BUS.register(new LittleBlocksCollectionPickup());
         MinecraftForge.EVENT_BUS.register(new LittleContainerInteract());
-    }
-
-    @Override
-    public IPacketHandling getPacketHandler() {
-        return null;
     }
 
     @Override

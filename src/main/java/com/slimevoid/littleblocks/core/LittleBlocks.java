@@ -3,6 +3,7 @@ package com.slimevoid.littleblocks.core;
 import com.slimevoid.library.util.helpers.PacketHelper;
 import com.slimevoid.littleblocks.api.ILBCommonProxy;
 import com.slimevoid.littleblocks.core.lib.CoreLib;
+import com.slimevoid.littleblocks.core.lib.PacketLib;
 
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -35,8 +36,9 @@ public class LittleBlocks {
 
     @EventHandler
     public void LittleBlocksInit(FMLInitializationEvent event) {
-        PacketHelper.registerListener(CoreLib.MOD_CHANNEL);
         proxy.init();
+        PacketHelper.registerHandler(CoreLib.MOD_CHANNEL,
+                                     PacketLib.handler);
         LBInit.initialize();
     }
 

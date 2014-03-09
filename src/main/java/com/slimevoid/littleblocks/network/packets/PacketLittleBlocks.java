@@ -1,29 +1,29 @@
 package com.slimevoid.littleblocks.network.packets;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+import net.minecraft.block.Block;
+import net.minecraft.world.World;
 
 import com.slimevoid.library.network.PacketIds;
 import com.slimevoid.library.network.PacketPayload;
-import com.slimevoid.library.network.PacketUpdate;
+import com.slimevoid.library.network.SlimevoidPayload;
 import com.slimevoid.littleblocks.core.lib.CommandLib;
 import com.slimevoid.littleblocks.core.lib.ConfigurationLib;
 import com.slimevoid.littleblocks.core.lib.CoreLib;
 
-import net.minecraft.block.Block;
-import net.minecraft.world.World;
-
-public class PacketLittleBlocks extends PacketUpdate {
+public class PacketLittleBlocks extends SlimevoidPayload {
 
     @Override
-    public void writeData(DataOutputStream data) throws IOException {
-        super.writeData(data);
+    public void writeData(ChannelHandlerContext ctx, ByteBuf data) {
+        super.writeData(ctx,
+                        data);
     }
 
     @Override
-    public void readData(DataInputStream data) throws IOException {
-        super.readData(data);
+    public void readData(ChannelHandlerContext ctx, ByteBuf data) {
+        super.readData(ctx,
+                       data);
     }
 
     public PacketLittleBlocks() {
@@ -37,8 +37,8 @@ public class PacketLittleBlocks extends PacketUpdate {
                          y,
                          z,
                          Block.getIdFromBlock(world.getBlock(x,
-                                          y,
-                                          z)));
+                                                             y,
+                                                             z)));
         this.payload = new PacketPayload(1, 0, 0, 1);
         this.setCommand(CommandLib.UPDATE_CLIENT);
         this.setMetadata(world.getBlockMetadata(x,
@@ -49,8 +49,8 @@ public class PacketLittleBlocks extends PacketUpdate {
     @Override
     public boolean targetExists(World world) {
         if (world.getBlock(this.xPosition >> 3,
-                             this.yPosition >> 3,
-                             this.zPosition >> 3) == ConfigurationLib.littleChunk) {
+                           this.yPosition >> 3,
+                           this.zPosition >> 3) == ConfigurationLib.littleChunk) {
             return true;
         }
         return false;
@@ -64,7 +64,7 @@ public class PacketLittleBlocks extends PacketUpdate {
     public int getBlockID() {
         return this.side;
     }
-    
+
     public Block getBlock() {
         return Block.getBlockById(this.getBlockID());
     }

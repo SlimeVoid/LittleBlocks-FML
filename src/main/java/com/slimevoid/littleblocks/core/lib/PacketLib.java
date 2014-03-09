@@ -7,8 +7,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 
 import com.slimevoid.library.network.PacketIds;
-import com.slimevoid.library.network.handlers.ClientPacketHandler;
-import com.slimevoid.library.network.handlers.ServerPacketHandler;
+import com.slimevoid.library.network.handlers.PacketPipeline;
 import com.slimevoid.library.util.helpers.PacketHelper;
 import com.slimevoid.littleblocks.client.network.ClientNetworkEvent;
 import com.slimevoid.littleblocks.client.network.packets.executors.ClientBlockChangeExecutor;
@@ -36,62 +35,38 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class PacketLib {
 
-    public final static String CHANNEL_COMMAND_BLOCK = "MC|AdvCdm";
-    public final static String LITTLEWORLD           = "LW:";
-    public final static int    PACKETID_EVENT        = PacketIds.PLAYER + 100;
-    public final static int    BLOCK_CLICK           = 0;
-    public final static int    DIG_ONGOING           = 1;
-    public final static int    DIG_BROKEN            = 2;
+    public final static String   CHANNEL_COMMAND_BLOCK = "MC|AdvCdm";
+    public final static String   LITTLEWORLD           = "LW:";
+    public final static int      PACKETID_EVENT        = PacketIds.PLAYER + 100;
+    public final static int      BLOCK_CLICK           = 0;
+    public final static int      DIG_ONGOING           = 1;
+    public final static int      DIG_BROKEN            = 2;
+
+    public static PacketPipeline handler               = new PacketPipeline();
 
     @SideOnly(Side.CLIENT)
     public static void registerClientPacketHandlers() {
         MinecraftForge.EVENT_BUS.register(new ClientNetworkEvent());
 
-        ClientPacketHandler handler = new ClientPacketHandler();
+        handler.getPacketHandler(PacketIds.LOGIN).registerClientPacketHandler(CommandLib.SETTINGS,
+                                                                              new ClientPacketLittleBlocksLoginExecutor());
 
-        PacketLoginHandler clientLoginHandler = new PacketLoginHandler();
-        clientLoginHandler.registerPacketHandler(CommandLib.SETTINGS,
-                                                 new ClientPacketLittleBlocksLoginExecutor());
+        handler.getPacketHandler(PacketIds.UPDATE).registerClientPacketHandler(CommandLib.UPDATE_CLIENT,
+                                                                               new ClientBlockChangeExecutor());
 
-        handler.registerPacketHandler(PacketIds.LOGIN,
-                                      clientLoginHandler);
+        handler.getPacketHandler(PacketIds.ENTITY).registerClientPacketHandler(CommandLib.ENTITY_COLLECTION,
+                                                                               new ClientLittleCollectionExecutor());
 
-        PacketLittleBlocksHandler clientLittleBlocksHandler = new PacketLittleBlocksHandler();
-        clientLittleBlocksHandler.registerPacketHandler(CommandLib.UPDATE_CLIENT,
-                                                        new ClientBlockChangeExecutor());
+        handler.getPacketHandler(PacketIds.PLAYER).registerClientPacketHandler(CommandLib.COPIER_MESSAGE,
+                                                                               new ClientCopierNotifyExecutor());
 
-        handler.registerPacketHandler(PacketIds.UPDATE,
-                                      clientLittleBlocksHandler);
-
-        PacketLittleBlockCollectionHandler clientCollectionHandler = new PacketLittleBlockCollectionHandler();
-        clientCollectionHandler.registerPacketHandler(CommandLib.ENTITY_COLLECTION,
-                                                      new ClientLittleCollectionExecutor());
-
-        handler.registerPacketHandler(PacketIds.ENTITY,
-                                      clientCollectionHandler);
-
-        PacketLittleNotifyHandler clientLittleNotifyHandler = new PacketLittleNotifyHandler();
-        clientLittleNotifyHandler.registerPacketHandler(CommandLib.COPIER_MESSAGE,
-                                                        new ClientCopierNotifyExecutor());
-
-        handler.registerPacketHandler(PacketIds.PLAYER,
-                                      clientLittleNotifyHandler);
-
-        PacketLittleBlockEventHandler clientLittleBlockEventHandler = new PacketLittleBlockEventHandler();
-        clientLittleBlockEventHandler.registerPacketHandler(CommandLib.BLOCK_EVENT,
-                                                            new ClientBlockEventExecutor());
-
-        handler.registerPacketHandler(PacketLib.PACKETID_EVENT,
-                                      clientLittleBlockEventHandler);
-
-        PacketHelper.registerClientHandler(CoreLib.MOD_CHANNEL,
-                                            handler);
+        handler.getPacketHandler(PACKETID_EVENT).registerClientPacketHandler(CommandLib.BLOCK_EVENT,
+                                                                             new ClientBlockEventExecutor());
     }
 
     public static void registerPacketHandlers() {
         MinecraftForge.EVENT_BUS.register(new NetworkEvent());
 
-        ServerPacketHandler handler = new ServerPacketHandler();
         PacketLittleNotifyHandler playerHandler = new PacketLittleNotifyHandler();
         playerHandler.registerPacketHandler(CommandLib.WAND_SWITCH,
                                             new PacketLittleWandSwitchExecutor());
@@ -105,11 +80,20 @@ public class PacketLib {
         littleBlockHandler.registerPacketHandler(CommandLib.BLOCK_CLICKED,
                                                  new PacketLittleBlockClickedExecutor());
 
+        handler.registerPacketHandler(PacketIds.LOGIN,
+                                      new PacketLoginHandler());
+
         handler.registerPacketHandler(PacketIds.TILE,
                                       littleBlockHandler);
 
-        PacketHelper.registerServerHandler(CoreLib.MOD_CHANNEL,
-                                      handler);
+        handler.registerPacketHandler(PacketIds.ENTITY,
+                                      new PacketLittleBlockCollectionHandler());
+
+        handler.registerPacketHandler(PACKETID_EVENT,
+                                      new PacketLittleBlockEventHandler());
+
+        handler.registerPacketHandler(PacketIds.UPDATE,
+                                      new PacketLittleBlocksHandler());
     }
 
     @SideOnly(Side.CLIENT)

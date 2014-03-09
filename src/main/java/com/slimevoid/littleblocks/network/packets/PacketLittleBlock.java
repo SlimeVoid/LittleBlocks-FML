@@ -1,38 +1,37 @@
 package com.slimevoid.littleblocks.network.packets;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.Packet;
 import net.minecraft.world.World;
 
 import com.slimevoid.library.nbt.NBTHelper;
 import com.slimevoid.library.network.PacketIds;
-import com.slimevoid.library.network.PacketUpdate;
+import com.slimevoid.library.network.SlimevoidPayload;
 import com.slimevoid.littleblocks.core.lib.CommandLib;
 import com.slimevoid.littleblocks.core.lib.CoreLib;
 
-public class PacketLittleBlock extends PacketUpdate {
+public class PacketLittleBlock extends SlimevoidPayload {
 
     private ItemStack itemStack;
 
     @Override
-    public void writeData(DataOutputStream data) throws IOException {
-        super.writeData(data);
+    public void writeData(ChannelHandlerContext ctx, ByteBuf data) {
+        super.writeData(ctx,
+                        data);
         if (this.itemStack == null) {
             data.writeBoolean(false);
         } else {
             data.writeBoolean(true);
-            NBTHelper.writeItemStack(
-                                  data,this.itemStack);
+            NBTHelper.writeItemStack(data,
+                                     this.itemStack);
         }
     }
 
     @Override
-    public void readData(DataInputStream data) throws IOException {
-        super.readData(data);
+    public void readData(ChannelHandlerContext ctx, ByteBuf data) {
+        super.readData(ctx,
+                       data);
         if (data.readBoolean() == true) {
             this.itemStack = NBTHelper.readItemStack(data);
         }

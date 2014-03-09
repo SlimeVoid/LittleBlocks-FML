@@ -1,8 +1,8 @@
 package com.slimevoid.littleblocks.network.packets;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+
 import java.util.HashMap;
 
 import net.minecraft.item.Item;
@@ -35,8 +35,9 @@ public class PacketLittleBlocksCollection extends PacketEntity {
     }
 
     @Override
-    public void readData(DataInputStream data) throws IOException {
-        super.readData(data);
+    public void readData(ChannelHandlerContext ctx, ByteBuf data) {
+        super.readData(ctx,
+                       data);
         int stacks = data.readInt();
         for (int i = 0; i < stacks; i++) {
             this.addItemToDrop(ItemStack.loadItemStackFromNBT(NBTHelper.readNBTTagCompound(data)));
@@ -44,8 +45,9 @@ public class PacketLittleBlocksCollection extends PacketEntity {
     }
 
     @Override
-    public void writeData(DataOutputStream data) throws IOException {
-        super.writeData(data);
+    public void writeData(ChannelHandlerContext ctx, ByteBuf data) {
+        super.writeData(ctx,
+                        data);
         data.writeInt(itemstackCollection.size());
         for (ItemStack itemstack : itemstackCollection.values()) {
             NBTTagCompound nbttagcompound = new NBTTagCompound();
