@@ -7,11 +7,11 @@ import net.minecraft.world.World;
 
 import com.slimevoid.library.nbt.NBTHelper;
 import com.slimevoid.library.network.PacketIds;
-import com.slimevoid.library.network.SlimevoidPayload;
+import com.slimevoid.library.network.PacketUpdate;
 import com.slimevoid.littleblocks.core.lib.CommandLib;
 import com.slimevoid.littleblocks.core.lib.CoreLib;
 
-public class PacketLittleBlock extends SlimevoidPayload {
+public class PacketLittleBlock extends PacketUpdate {
 
     private ItemStack itemStack;
 

@@ -48,19 +48,19 @@ public class PacketLib {
     public static void registerClientPacketHandlers() {
         MinecraftForge.EVENT_BUS.register(new ClientNetworkEvent());
 
-        handler.getPacketHandler(PacketIds.LOGIN).registerClientPacketHandler(CommandLib.SETTINGS,
+        handler.getPacketHandler(PacketIds.LOGIN).registerClientExecutor(CommandLib.SETTINGS,
                                                                               new ClientPacketLittleBlocksLoginExecutor());
 
-        handler.getPacketHandler(PacketIds.UPDATE).registerClientPacketHandler(CommandLib.UPDATE_CLIENT,
+        handler.getPacketHandler(PacketIds.UPDATE).registerClientExecutor(CommandLib.UPDATE_CLIENT,
                                                                                new ClientBlockChangeExecutor());
 
-        handler.getPacketHandler(PacketIds.ENTITY).registerClientPacketHandler(CommandLib.ENTITY_COLLECTION,
+        handler.getPacketHandler(PacketIds.ENTITY).registerClientExecutor(CommandLib.ENTITY_COLLECTION,
                                                                                new ClientLittleCollectionExecutor());
 
-        handler.getPacketHandler(PacketIds.PLAYER).registerClientPacketHandler(CommandLib.COPIER_MESSAGE,
+        handler.getPacketHandler(PacketIds.PLAYER).registerClientExecutor(CommandLib.COPIER_MESSAGE,
                                                                                new ClientCopierNotifyExecutor());
 
-        handler.getPacketHandler(PACKETID_EVENT).registerClientPacketHandler(CommandLib.BLOCK_EVENT,
+        handler.getPacketHandler(PACKETID_EVENT).registerClientExecutor(CommandLib.BLOCK_EVENT,
                                                                              new ClientBlockEventExecutor());
     }
 
@@ -68,16 +68,16 @@ public class PacketLib {
         MinecraftForge.EVENT_BUS.register(new NetworkEvent());
 
         PacketLittleNotifyHandler playerHandler = new PacketLittleNotifyHandler();
-        playerHandler.registerPacketHandler(CommandLib.WAND_SWITCH,
+        playerHandler.registerServerExecutor(CommandLib.WAND_SWITCH,
                                             new PacketLittleWandSwitchExecutor());
 
         handler.registerPacketHandler(PacketIds.PLAYER,
                                       playerHandler);
 
         PacketLittleBlockHandler littleBlockHandler = new PacketLittleBlockHandler();
-        littleBlockHandler.registerPacketHandler(CommandLib.BLOCK_ACTIVATED,
+        littleBlockHandler.registerServerExecutor(CommandLib.BLOCK_ACTIVATED,
                                                  new PacketLittleBlockActivatedExecutor());
-        littleBlockHandler.registerPacketHandler(CommandLib.BLOCK_CLICKED,
+        littleBlockHandler.registerServerExecutor(CommandLib.BLOCK_CLICKED,
                                                  new PacketLittleBlockClickedExecutor());
 
         handler.registerPacketHandler(PacketIds.LOGIN,

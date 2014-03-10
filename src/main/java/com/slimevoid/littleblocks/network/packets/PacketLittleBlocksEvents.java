@@ -4,12 +4,12 @@ import net.minecraft.block.Block;
 import net.minecraft.world.World;
 
 import com.slimevoid.library.network.PacketPayload;
-import com.slimevoid.library.network.SlimevoidPayload;
+import com.slimevoid.library.network.PacketUpdate;
 import com.slimevoid.littleblocks.core.lib.CommandLib;
 import com.slimevoid.littleblocks.core.lib.CoreLib;
 import com.slimevoid.littleblocks.core.lib.PacketLib;
 
-public class PacketLittleBlocksEvents extends SlimevoidPayload {
+public class PacketLittleBlocksEvents extends PacketUpdate {
 
     /** 1=Double Bass, 2=Snare Drum, 3=Clicks / Sticks, 4=Bass Drum, 5=Harp */
     public int getInstrumentType() {
