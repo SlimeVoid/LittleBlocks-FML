@@ -10,6 +10,7 @@ import java.util.TreeSet;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEventData;
+import net.minecraft.block.BlockPistonBase;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
@@ -17,7 +18,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.network.play.server.S27PacketExplosion;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.ChunkCoordIntPair;
@@ -26,12 +26,11 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.NextTickListEntry;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
-import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.common.util.FakePlayer;
 
 import com.slimevoid.library.data.Logger;
+import com.slimevoid.littleblocks.blocks.BlockLBPistonBase;
 import com.slimevoid.littleblocks.core.LoggerLittleBlocks;
 import com.slimevoid.littleblocks.core.lib.BlockUtil;
 import com.slimevoid.littleblocks.core.lib.PacketLib;
@@ -98,7 +97,7 @@ public class LittleServerWorld extends LittleWorld {
             this.worldInfo.setWorldTime(this.worldInfo.getWorldTime() + 1L);
         }
         this.tickUpdates(false);
-        this.func_147456_g/*tickBlocksAndAmbiance*/();
+        this.func_147456_g/* tickBlocksAndAmbiance */();
         this.sendAndApplyBlockEvents();
     }
 
@@ -193,12 +192,12 @@ public class LittleServerWorld extends LittleWorld {
                                 metadata = -1;
                             }
 
-                            CrashReportCategory.func_147153_a/*addBlockCrashInfo*/(var9,
-                                                                  nextTick.xCoord,
-                                                                  nextTick.yCoord,
-                                                                  nextTick.zCoord,
-                                                                  blockId,
-                                                                  metadata);
+                            CrashReportCategory.func_147153_a/* addBlockCrashInfo */(var9,
+                                                                                     nextTick.xCoord,
+                                                                                     nextTick.yCoord,
+                                                                                     nextTick.zCoord,
+                                                                                     blockId,
+                                                                                     metadata);
                             throw new ReportedException(crashReport);
                         }
                     }
@@ -219,8 +218,8 @@ public class LittleServerWorld extends LittleWorld {
         Set<ChunkPosition> done = new HashSet<ChunkPosition>();
         for (ChunkPosition pos : this.activeChunkPosition) {
             TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getParentWorld().getTileEntity(pos.chunkPosX,
-                                                                                                          pos.chunkPosY,
-                                                                                                          pos.chunkPosZ);
+                                                                                                     pos.chunkPosY,
+                                                                                                     pos.chunkPosZ);
             if (tile != null && tile.getNeedsRandomTick()) {
                 this.updateLCG = this.updateLCG * 3 + 1013904223;
                 if (updateLCG % 3 == 0) {
@@ -238,7 +237,7 @@ public class LittleServerWorld extends LittleWorld {
     }
 
     @Override
-    protected void func_147456_g/*tickBlocksAndAmbiance*/() {
+    protected void func_147456_g/* tickBlocksAndAmbiance */() {
         super.func_147456_g();
         this.tickLittleChunks();
     }
@@ -287,7 +286,7 @@ public class LittleServerWorld extends LittleWorld {
             if (player.getDistanceSq(xCoord,
                                      yCoord,
                                      zCoord) < 4096.0D) {
-                ((EntityPlayerMP)player).playerNetServerHandler.sendPacket(new S27PacketExplosion(xCoord, yCoord, zCoord, strength / 8, explosion.affectedBlockPositions, (Vec3)explosion.func_77277_b().get(player)));
+                ((EntityPlayerMP) player).playerNetServerHandler.sendPacket(new S27PacketExplosion(xCoord, yCoord, zCoord, strength / 8, explosion.affectedBlockPositions, (Vec3) explosion.func_77277_b().get(player)));
             }
         }
 
@@ -339,17 +338,25 @@ public class LittleServerWorld extends LittleWorld {
      * Called to apply a pending BlockEvent to apply to the current world.
      */
     private boolean onBlockEventReceived(BlockEventData blockEventData) {
-        Block blockId = this.getBlock(blockEventData.func_151340_a(),
-                                      blockEventData.func_151342_b(),
-                                      blockEventData.func_151341_c());
+        Block block = this.getBlock(blockEventData.func_151340_a(),
+                                    blockEventData.func_151342_b(),
+                                    blockEventData.func_151341_c());
 
-        if (blockId == blockEventData.getBlock()) {
-            return blockId.onBlockEventReceived(this,
-                                                                  blockEventData.func_151340_a(),
-                                                                  blockEventData.func_151342_b(),
-                                                                  blockEventData.func_151341_c(),
-                                                                  blockEventData.getEventID(),
-                                                                  blockEventData.getEventParameter());
+        if (block == blockEventData.getBlock()) {
+            if (block instanceof BlockPistonBase) {
+                return BlockLBPistonBase.onEventReceived(this,
+                                                         blockEventData.func_151340_a(),
+                                                         blockEventData.func_151342_b(),
+                                                         blockEventData.func_151341_c(),
+                                                         blockEventData.getEventID(),
+                                                         blockEventData.getEventParameter());
+            }
+            return block.onBlockEventReceived(this,
+                                              blockEventData.func_151340_a(),
+                                              blockEventData.func_151342_b(),
+                                              blockEventData.func_151341_c(),
+                                              blockEventData.getEventID(),
+                                              blockEventData.getEventParameter());
         } else {
             LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(this.isRemote,
                                                                                                      "FAILED:onBlockEvenReceived("
@@ -460,12 +467,13 @@ public class LittleServerWorld extends LittleWorld {
                                                      nextTickEntry.yCoord,
                                                      nextTickEntry.zCoord);
 
-                    if (nextTickId == nextTickEntry.func_151351_a() && nextTickId != Blocks.air) {
+                    if (nextTickId == nextTickEntry.func_151351_a()
+                        && nextTickId != Blocks.air) {
                         nextTickId.updateTick(this,
-                                                                nextTickEntry.xCoord,
-                                                                nextTickEntry.yCoord,
-                                                                nextTickEntry.zCoord,
-                                                                this.rand);
+                                              nextTickEntry.xCoord,
+                                              nextTickEntry.yCoord,
+                                              nextTickEntry.zCoord,
+                                              this.rand);
                     }
                 }
                 return;
@@ -496,7 +504,7 @@ public class LittleServerWorld extends LittleWorld {
      * when the chunk is loaded.
      */
     @Override
-    public void func_147446_b/*scheduleBlockUpdateFromLoad*/(int x, int y, int z, Block blockId, int tickRate, int priority) {
+    public void func_147446_b/* scheduleBlockUpdateFromLoad */(int x, int y, int z, Block blockId, int tickRate, int priority) {
         NextTickListEntry nextTick = new NextTickListEntry(x, y, z, blockId);
         nextTick.setPriority(priority);
 
@@ -510,7 +518,7 @@ public class LittleServerWorld extends LittleWorld {
             this.pendingTickListEntriesTreeSet.add(nextTick);
         }
     }
-    
+
     @Override
     public EntityPlayer getClosestPlayer(double x, double y, double z, double distance) {
         return null;
