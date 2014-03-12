@@ -6,7 +6,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
-import com.slimevoid.library.util.helpers.ReflectionHelper;
 import com.slimevoid.littleblocks.blocks.BlockLBDoor;
 import com.slimevoid.littleblocks.blocks.BlockLBPistonBase;
 import com.slimevoid.littleblocks.blocks.BlockLittleChunk;
@@ -26,7 +25,8 @@ public class LBCore {
 
     public static void registerItems() {
         ConfigurationLib.littleBlocksWand = new ItemLittleBlocksWand(ConfigurationLib.littleBlocksWandID).setUnlocalizedName(ItemLib.WAND);
-        GameRegistry.registerItem(ConfigurationLib.littleBlocksWand, ItemLib.WAND);
+        GameRegistry.registerItem(ConfigurationLib.littleBlocksWand,
+                                  ItemLib.WAND);
     }
 
     public static void registerNames() {
@@ -53,7 +53,7 @@ public class LBCore {
 
     public static void registerBlocks() {
         ConfigurationLib.littleChunk = new BlockLittleChunk(ConfigurationLib.littleChunkID, TileEntityLittleChunk.class, Material.wood, 2F, true).setBlockName(BlockLib.LITTLECHUNK);
-        
+
         GameRegistry.registerBlock(ConfigurationLib.littleChunk,
                                    BlockLib.LITTLECHUNK);
         EntityRegistry.registerModEntity(EntityItemLittleBlocksCollection.class,
@@ -66,31 +66,44 @@ public class LBCore {
         GameRegistry.registerTileEntity(TileEntityLittleChunk.class,
                                         BlockLib.LITTLEBLOCKS);
         BlockUtil.registerPlacementInfo();
+
+        // registerPistonOverride();
+        // registerDoorOverride();
     }
 
     public static void registerPistonOverride() {
-//        BlockRemover.removeVanillaBlock(Block.pistonBase,
-//                                        false);
-//        BlockRemover.removeVanillaBlock(Block.pistonStickyBase,
-//                                        false);
-//        Block newPistonSticky = new BlockLBPistonBase(Block.pistonStickyBase.blockID, true).setUnlocalizedName("pistonStickyBase");
-//        Block newPistonBase = new BlockLBPistonBase(Block.pistonBase.blockID, false).setUnlocalizedName("pistonBase");
-//        ReflectionHelper.getInstance(Block.class).setFinalStaticFieldAtIndex(ConfigurationLib.pistonStickyIndex,
-//                                                                             newPistonSticky);
-//        ReflectionHelper.getInstance(Block.class).setFinalStaticFieldAtIndex(ConfigurationLib.pistonBaseIndex,
-//                                                                             newPistonBase);
+
+        // BlockRemover.removeVanillaBlock(Block.pistonBase,
+        // false);
+        // BlockRemover.removeVanillaBlock(Block.pistonStickyBase,
+        // false);
+        Block newPistonSticky = new BlockLBPistonBase(29, true).setBlockName("pistonStickyBase");
+        Block newPistonBase = new BlockLBPistonBase(33, false).setBlockName("pistonBase");
+        GameRegistry.registerBlock(newPistonSticky,
+                                   "pistonStickyBase");
+        GameRegistry.registerBlock(newPistonBase,
+                                   "pistonBase");
+        // ReflectionHelper.getInstance(Block.class).setFinalStaticFieldAtIndex(ConfigurationLib.pistonStickyIndex,
+        // newPistonSticky);
+        // ReflectionHelper.getInstance(Block.class).setFinalStaticFieldAtIndex(ConfigurationLib.pistonBaseIndex,
+        // newPistonBase);
     }
 
     public static void registerDoorOverride() {
-//        BlockRemover.removeVanillaBlock(Block.doorWood,
-//                                        false);
-//        BlockRemover.removeVanillaBlock(Block.doorIron,
-//                                        false);
-//        Block newDoorWood = new BlockLBDoor(64, Material.wood).setHardness(3.0F).setStepSound(Block.soundWoodFootstep).setUnlocalizedName("doorWood").setTextureName("door_wood");
-//        Block newDoorIron = new BlockLBDoor(71, Material.iron).setHardness(5.0F).setStepSound(Block.soundMetalFootstep).setUnlocalizedName("doorIron").setTextureName("door_iron");
-//        ReflectionHelper.getInstance(Block.class).setFinalStaticFieldAtIndex(ConfigurationLib.doorWoodIndex,
-//                                                                             newDoorWood);
-//        ReflectionHelper.getInstance(Block.class).setFinalStaticFieldAtIndex(ConfigurationLib.doorIronIndex,
-//                                                                             newDoorIron);
+        // BlockRemover.removeVanillaBlock(Block.doorWood,
+        // false);
+        // BlockRemover.removeVanillaBlock(Block.doorIron,
+        // false);
+        Block newDoorWood = new BlockLBDoor(64, Material.wood).setHardness(3.0F).setStepSound(Block.soundTypeWood).setBlockName("doorWood").setBlockTextureName("door_wood");
+        Block newDoorIron = new BlockLBDoor(71, Material.iron).setHardness(5.0F).setStepSound(Block.soundTypeMetal).setBlockName("doorIron").setBlockTextureName("door_iron");
+        GameRegistry.registerBlock(newDoorWood,
+                                   "doorWood");
+        GameRegistry.registerBlock(newDoorIron,
+                                   "doorIron");
+
+        // ReflectionHelper.getInstance(Block.class).setFinalStaticFieldAtIndex(ConfigurationLib.doorWoodIndex,
+        // newDoorWood);
+        // ReflectionHelper.getInstance(Block.class).setFinalStaticFieldAtIndex(ConfigurationLib.doorIronIndex,
+        // newDoorIron);
     }
 }

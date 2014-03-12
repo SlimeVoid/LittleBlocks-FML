@@ -66,7 +66,5 @@ public class LBInit {
             return;
         }
         initialized = true;
-        LBCore.registerPistonOverride();
-        LBCore.registerDoorOverride();
     }
 }
