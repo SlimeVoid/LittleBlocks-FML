@@ -1,10 +1,10 @@
 package com.slimevoid.littleblocks.blocks;
 
-import com.slimevoid.littleblocks.api.ILittleWorld;
-
 import net.minecraft.block.BlockPistonBase;
 import net.minecraft.util.Facing;
 import net.minecraft.world.World;
+
+import com.slimevoid.littleblocks.api.ILittleWorld;
 
 public class BlockLBPistonBase extends BlockPistonBase {
 

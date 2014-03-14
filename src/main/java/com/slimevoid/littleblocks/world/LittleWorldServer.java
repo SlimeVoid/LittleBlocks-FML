@@ -3,8 +3,6 @@ package com.slimevoid.littleblocks.world;
 import java.util.Collection;
 import java.util.List;
 
-import com.slimevoid.littleblocks.api.ILittleWorld;
-
 import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,6 +26,8 @@ import net.minecraft.world.WorldSettings;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraftforge.common.ForgeDirection;
+
+import com.slimevoid.littleblocks.api.ILittleWorld;
 
 public class LittleWorldServer extends WorldServer implements ILittleWorld {
 

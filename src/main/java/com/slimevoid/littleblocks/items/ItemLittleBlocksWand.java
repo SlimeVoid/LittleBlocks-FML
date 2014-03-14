@@ -4,16 +4,6 @@ import static net.minecraftforge.common.ForgeDirection.UP;
 
 import java.util.HashMap;
 
-import com.slimevoid.library.data.ReadWriteLock;
-import com.slimevoid.littleblocks.blocks.BlockLittleChunk;
-import com.slimevoid.littleblocks.core.LoggerLittleBlocks;
-import com.slimevoid.littleblocks.core.lib.CommandLib;
-import com.slimevoid.littleblocks.core.lib.ConfigurationLib;
-import com.slimevoid.littleblocks.core.lib.IconLib;
-import com.slimevoid.littleblocks.items.wand.EnumWandAction;
-import com.slimevoid.littleblocks.network.packets.PacketLittleNotify;
-import com.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFluid;
 import net.minecraft.client.renderer.texture.IconRegister;
@@ -25,6 +15,17 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
+
+import com.slimevoid.library.data.ReadWriteLock;
+import com.slimevoid.littleblocks.blocks.BlockLittleChunk;
+import com.slimevoid.littleblocks.core.LoggerLittleBlocks;
+import com.slimevoid.littleblocks.core.lib.CommandLib;
+import com.slimevoid.littleblocks.core.lib.ConfigurationLib;
+import com.slimevoid.littleblocks.core.lib.IconLib;
+import com.slimevoid.littleblocks.items.wand.EnumWandAction;
+import com.slimevoid.littleblocks.network.packets.PacketLittleNotify;
+import com.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;

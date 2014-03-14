@@ -2,8 +2,6 @@ package com.slimevoid.littleblocks.tickhandlers;
 
 import java.util.EnumSet;
 
-import com.slimevoid.littleblocks.core.LittleBlocks;
-
 import net.minecraft.world.World;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.ITickHandler;

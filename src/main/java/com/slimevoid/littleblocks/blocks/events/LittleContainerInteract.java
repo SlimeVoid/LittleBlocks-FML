@@ -2,10 +2,6 @@ package com.slimevoid.littleblocks.blocks.events;
 
 import java.lang.reflect.Field;
 
-import com.slimevoid.littleblocks.api.ILittleWorld;
-import com.slimevoid.littleblocks.core.LittleBlocks;
-import com.slimevoid.littleblocks.core.lib.CoreLib;
-
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
@@ -13,6 +9,10 @@ import net.minecraftforge.common.FakePlayer;
 import net.minecraftforge.event.Event.Result;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
+
+import com.slimevoid.littleblocks.api.ILittleWorld;
+import com.slimevoid.littleblocks.core.LittleBlocks;
+import com.slimevoid.littleblocks.core.lib.CoreLib;
 
 // import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 

@@ -8,14 +8,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 
-import com.slimevoid.library.data.Logger;
-import com.slimevoid.littleblocks.core.LoggerLittleBlocks;
-import com.slimevoid.littleblocks.core.lib.BlockUtil;
-import com.slimevoid.littleblocks.core.lib.PacketLib;
-import com.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
-import com.slimevoid.littleblocks.world.events.LittleBlockEvent;
-import com.slimevoid.littleblocks.world.events.LittleBlockEventList;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEventData;
 import net.minecraft.crash.CrashReport;
@@ -34,6 +26,14 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.chunk.Chunk;
+
+import com.slimevoid.library.data.Logger;
+import com.slimevoid.littleblocks.core.LoggerLittleBlocks;
+import com.slimevoid.littleblocks.core.lib.BlockUtil;
+import com.slimevoid.littleblocks.core.lib.PacketLib;
+import com.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
+import com.slimevoid.littleblocks.world.events.LittleBlockEvent;
+import com.slimevoid.littleblocks.world.events.LittleBlockEventList;
 
 public class LittleServerWorld extends LittleWorld {
 

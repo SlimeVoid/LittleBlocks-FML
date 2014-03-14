@@ -1,18 +1,17 @@
 package com.slimevoid.littleblocks.client.render.entities;
 
+import net.minecraft.block.Block;
+import net.minecraft.client.particle.EffectRenderer;
+import net.minecraft.client.particle.EntityDiggingFX;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.world.World;
+
 import com.slimevoid.library.data.Logger.LogLevel;
 import com.slimevoid.littleblocks.blocks.BlockLittleChunk;
 import com.slimevoid.littleblocks.core.LittleBlocks;
 import com.slimevoid.littleblocks.core.LoggerLittleBlocks;
 import com.slimevoid.littleblocks.core.lib.ConfigurationLib;
 import com.slimevoid.littleblocks.core.lib.CoreLib;
-
-import net.minecraft.block.Block;
-import net.minecraft.client.particle.EffectRenderer;
-import net.minecraft.client.particle.EntityDiggingFX;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.world.World;
-import cpw.mods.fml.client.FMLClientHandler;
 
 public class LittleBlockDiggingFX extends EntityDiggingFX {
 

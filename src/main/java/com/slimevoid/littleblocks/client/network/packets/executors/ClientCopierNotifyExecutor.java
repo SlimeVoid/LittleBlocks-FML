@@ -1,5 +1,8 @@
 package com.slimevoid.littleblocks.client.network.packets.executors;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
+
 import com.slimevoid.library.IPacketExecutor;
 import com.slimevoid.library.network.PacketUpdate;
 import com.slimevoid.littleblocks.core.lib.CommandLib;
@@ -7,8 +10,6 @@ import com.slimevoid.littleblocks.core.lib.MessageLib;
 import com.slimevoid.littleblocks.network.packets.PacketLittleNotify;
 
 import cpw.mods.fml.common.registry.LanguageRegistry;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.world.World;
 
 public class ClientCopierNotifyExecutor implements IPacketExecutor {
 

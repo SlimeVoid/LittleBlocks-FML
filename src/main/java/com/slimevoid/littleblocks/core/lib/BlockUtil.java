@@ -4,14 +4,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.slimevoid.library.data.Logger;
-import com.slimevoid.littleblocks.api.ILittleWorld;
-import com.slimevoid.littleblocks.core.LBCore;
-import com.slimevoid.littleblocks.core.LoggerLittleBlocks;
-import com.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
-import com.slimevoid.littleblocks.world.ItemInLittleWorldManager;
-import com.slimevoid.littleblocks.world.LittlePlayerController;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPistonBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -32,6 +24,15 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.Event;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+
+import com.slimevoid.library.data.Logger;
+import com.slimevoid.littleblocks.api.ILittleWorld;
+import com.slimevoid.littleblocks.core.LBCore;
+import com.slimevoid.littleblocks.core.LoggerLittleBlocks;
+import com.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
+import com.slimevoid.littleblocks.world.ItemInLittleWorldManager;
+import com.slimevoid.littleblocks.world.LittlePlayerController;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;

@@ -2,16 +2,17 @@ package com.slimevoid.littleblocks.blocks.core;
 
 import java.util.List;
 
-import com.slimevoid.littleblocks.blocks.BlockLittleChunk;
-import com.slimevoid.littleblocks.core.lib.ConfigurationLib;
-import com.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFluid;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+
+import com.slimevoid.littleblocks.blocks.BlockLittleChunk;
+import com.slimevoid.littleblocks.core.lib.ConfigurationLib;
+import com.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 
 public class CollisionRayTrace {

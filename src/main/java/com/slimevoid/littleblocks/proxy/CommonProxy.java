@@ -2,18 +2,6 @@ package com.slimevoid.littleblocks.proxy;
 
 import java.io.File;
 
-import com.slimevoid.library.IPacketHandling;
-import com.slimevoid.littleblocks.api.ILBCommonProxy;
-import com.slimevoid.littleblocks.api.ILittleWorld;
-import com.slimevoid.littleblocks.blocks.events.LittleContainerInteract;
-import com.slimevoid.littleblocks.core.lib.ConfigurationLib;
-import com.slimevoid.littleblocks.core.lib.PacketLib;
-import com.slimevoid.littleblocks.events.LittleBlocksCollectionPickup;
-import com.slimevoid.littleblocks.events.LittleChunkEvent;
-import com.slimevoid.littleblocks.events.WorldServerEvent;
-import com.slimevoid.littleblocks.network.CommonPacketHandler;
-import com.slimevoid.littleblocks.tickhandlers.LittleWorldServerTickHandler;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.NetLoginHandler;
@@ -27,6 +15,18 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeDummyContainer;
 import net.minecraftforge.common.MinecraftForge;
+
+import com.slimevoid.library.IPacketHandling;
+import com.slimevoid.littleblocks.api.ILBCommonProxy;
+import com.slimevoid.littleblocks.api.ILittleWorld;
+import com.slimevoid.littleblocks.blocks.events.LittleContainerInteract;
+import com.slimevoid.littleblocks.core.lib.ConfigurationLib;
+import com.slimevoid.littleblocks.core.lib.PacketLib;
+import com.slimevoid.littleblocks.events.LittleChunkEvent;
+import com.slimevoid.littleblocks.events.WorldServerEvent;
+import com.slimevoid.littleblocks.network.CommonPacketHandler;
+import com.slimevoid.littleblocks.tickhandlers.LittleWorldServerTickHandler;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.common.registry.TickRegistry;
@@ -78,7 +78,6 @@ public class CommonProxy implements ILBCommonProxy {
     public void registerEventHandlers() {
         MinecraftForge.EVENT_BUS.register(new LittleChunkEvent());
         MinecraftForge.EVENT_BUS.register(new WorldServerEvent());
-        MinecraftForge.EVENT_BUS.register(new LittleBlocksCollectionPickup());
         MinecraftForge.EVENT_BUS.register(new LittleContainerInteract());
     }
 

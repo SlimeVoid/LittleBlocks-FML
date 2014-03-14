@@ -1,11 +1,5 @@
 package com.slimevoid.littleblocks.world;
 
-import com.slimevoid.littleblocks.core.LittleBlocks;
-import com.slimevoid.littleblocks.core.lib.BlockUtil;
-import com.slimevoid.littleblocks.core.lib.PacketLib;
-import com.slimevoid.littleblocks.items.ItemLittleBlocksWand;
-import com.slimevoid.littleblocks.items.wand.EnumWandAction;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.NetClientHandler;
@@ -19,6 +13,13 @@ import net.minecraft.world.EnumGameType;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
+
+import com.slimevoid.littleblocks.core.LittleBlocks;
+import com.slimevoid.littleblocks.core.lib.BlockUtil;
+import com.slimevoid.littleblocks.core.lib.PacketLib;
+import com.slimevoid.littleblocks.items.ItemLittleBlocksWand;
+import com.slimevoid.littleblocks.items.wand.EnumWandAction;
+
 import cpw.mods.fml.client.FMLClientHandler;
 
 public class LittlePlayerController extends PlayerControllerMP {

@@ -1,9 +1,5 @@
 package com.slimevoid.littleblocks.events;
 
-import com.slimevoid.littleblocks.api.ILittleWorld;
-import com.slimevoid.littleblocks.core.lib.ConfigurationLib;
-import com.slimevoid.littleblocks.world.LittleWorldServer;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
@@ -14,6 +10,11 @@ import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.world.ChunkDataEvent;
 import net.minecraftforge.event.world.WorldEvent.Load;
 import net.minecraftforge.event.world.WorldEvent.Unload;
+
+import com.slimevoid.littleblocks.api.ILittleWorld;
+import com.slimevoid.littleblocks.core.lib.ConfigurationLib;
+import com.slimevoid.littleblocks.world.LittleWorldServer;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 
 public class WorldServerEvent {

@@ -4,21 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import com.slimevoid.library.util.helpers.SlimevoidHelper;
-import com.slimevoid.littleblocks.api.ILittleWorld;
-import com.slimevoid.littleblocks.blocks.core.CollisionRayTrace;
-import com.slimevoid.littleblocks.client.render.entities.LittleBlockDiggingFX;
-import com.slimevoid.littleblocks.core.LittleBlocks;
-import com.slimevoid.littleblocks.core.lib.BlockUtil;
-import com.slimevoid.littleblocks.core.lib.ConfigurationLib;
-import com.slimevoid.littleblocks.core.lib.IconLib;
-import com.slimevoid.littleblocks.core.lib.MessageLib;
-import com.slimevoid.littleblocks.core.lib.PacketLib;
-import com.slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
-import com.slimevoid.littleblocks.items.ItemLittleBlocksWand;
-import com.slimevoid.littleblocks.network.packets.PacketLittleBlocksCollection;
-import com.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockFluid;
@@ -42,9 +27,22 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
-import cpw.mods.fml.client.FMLClientHandler;
+
+import com.slimevoid.library.util.helpers.ItemHelper;
+import com.slimevoid.library.util.helpers.SlimevoidHelper;
+import com.slimevoid.littleblocks.api.ILittleWorld;
+import com.slimevoid.littleblocks.blocks.core.CollisionRayTrace;
+import com.slimevoid.littleblocks.client.render.entities.LittleBlockDiggingFX;
+import com.slimevoid.littleblocks.core.LittleBlocks;
+import com.slimevoid.littleblocks.core.lib.BlockUtil;
+import com.slimevoid.littleblocks.core.lib.ConfigurationLib;
+import com.slimevoid.littleblocks.core.lib.IconLib;
+import com.slimevoid.littleblocks.core.lib.MessageLib;
+import com.slimevoid.littleblocks.core.lib.PacketLib;
+import com.slimevoid.littleblocks.items.ItemLittleBlocksWand;
+import com.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
+
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -159,17 +157,8 @@ public class BlockLittleChunk extends BlockContainer {
             TileEntityLittleChunk tile = (TileEntityLittleChunk) world.getBlockTileEntity(x,
                                                                                           y,
                                                                                           z);
-            EntityItemLittleBlocksCollection collection = new EntityItemLittleBlocksCollection(world, x, y, z, new ItemStack(ConfigurationLib.littleChunk));
             if (!tile.isEmpty()) {
-                if (FMLCommonHandler.instance().getSide() == Side.CLIENT
-                    && FMLClientHandler.instance().getClient().playerController.isInCreativeMode()) {
-                    this.onBlockClicked(world,
-                                        x,
-                                        y,
-                                        z,
-                                        entityplayer);
-                    return false;
-                } else if (entityplayer.capabilities.isCreativeMode) {
+                if (entityplayer.capabilities.isCreativeMode) {
                     this.onBlockClicked(world,
                                         x,
                                         y,
@@ -177,43 +166,17 @@ public class BlockLittleChunk extends BlockContainer {
                                         entityplayer);
                     return false;
                 } else {
-                    int[][][] content = tile.getContents();
-                    if (collection != null) {
-                        for (int x1 = 0; x1 < content.length; x1++) {
-                            for (int y1 = 0; y1 < content[x1].length; y1++) {
-                                for (int z1 = 0; z1 < content[x1][y1].length; z1++) {
-                                    int blockId = content[x1][y1][z1];
-                                    int contentMeta = tile.getBlockMetadata(x1,
-                                                                            y1,
-                                                                            z1);
-                                    if (blockId > 0
-                                        && Block.blocksList[blockId] != null) {
-                                        ItemStack itemToDrop = this.dropLittleBlockAsNormalBlock(world,
-                                                                                                 x,
-                                                                                                 y,
-                                                                                                 z,
-                                                                                                 blockId,
-                                                                                                 contentMeta);
-                                        if (itemToDrop != null) {
-                                            collection.addItemToDrop(itemToDrop);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        tile.clearContents();
-                        tile.onInventoryChanged();
-                        world.markBlockForRenderUpdate(x,
-                                                       y,
-                                                       z);
-                    }
-                }
-            }
-            if (!world.isRemote) {
-                if (!collection.isEmpty()) {
-                    world.spawnEntityInWorld(collection);
-                    PacketLittleBlocksCollection packet = new PacketLittleBlocksCollection(collection);
-                    PacketDispatcher.sendPacketToAllPlayers(packet.getPacket());
+                    this.spawnCollection(world,
+                                         entityplayer,
+                                         x,
+                                         y,
+                                         z,
+                                         tile);
+                    tile.clearContents();
+                    tile.onInventoryChanged();
+                    world.markBlockForRenderUpdate(x,
+                                                   y,
+                                                   z);
                 }
             }
         }
@@ -224,7 +187,35 @@ public class BlockLittleChunk extends BlockContainer {
                                          z);
     }
 
-    private ItemStack dropLittleBlockAsNormalBlock(World world, int x, int y, int z, int blockId, int metaData) {
+    public void spawnCollection(World world, EntityPlayer entityplayer, int x, int y, int z, TileEntityLittleChunk tile) {
+        if (!world.isRemote) {
+            int[][][] content = tile.getContents();
+            for (int x1 = 0; x1 < content.length; x1++) {
+                for (int y1 = 0; y1 < content[x1].length; y1++) {
+                    for (int z1 = 0; z1 < content[x1][y1].length; z1++) {
+                        int blockId = content[x1][y1][z1];
+                        int contentMeta = tile.getBlockMetadata(x1,
+                                                                y1,
+                                                                z1);
+                        if (blockId > 0 && Block.blocksList[blockId] != null) {
+                            ItemStack itemToDrop = getLittleItemStack(world,
+                                                                      x,
+                                                                      y,
+                                                                      z,
+                                                                      blockId,
+                                                                      contentMeta);
+                            if (itemToDrop != null) {
+                                ItemHelper.dropItemAtPlayer(entityplayer,
+                                                            itemToDrop);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private static ItemStack getLittleItemStack(World world, int x, int y, int z, int blockId, int metaData) {
         boolean dropsBlocks = Block.blocksList[blockId].getBlockDropped(world,
                                                                         x,
                                                                         y,
@@ -415,14 +406,6 @@ public class BlockLittleChunk extends BlockContainer {
                                      z);
         }
         return false;
-    }
-
-    public void dropLittleBlockAsItem_do(World world, int x, int y, int z, ItemStack itemStack) {
-        this.dropBlockAsItem_do(world,
-                                x,
-                                y,
-                                z,
-                                itemStack);
     }
 
     @Override

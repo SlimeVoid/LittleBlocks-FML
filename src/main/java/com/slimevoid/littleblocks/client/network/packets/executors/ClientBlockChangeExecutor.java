@@ -1,13 +1,13 @@
 package com.slimevoid.littleblocks.client.network.packets.executors;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
+
 import com.slimevoid.library.IPacketExecutor;
 import com.slimevoid.library.network.PacketUpdate;
 import com.slimevoid.littleblocks.core.LittleBlocks;
 import com.slimevoid.littleblocks.core.lib.CommandLib;
 import com.slimevoid.littleblocks.network.packets.PacketLittleBlocks;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.world.World;
 
 public class ClientBlockChangeExecutor implements IPacketExecutor {
 

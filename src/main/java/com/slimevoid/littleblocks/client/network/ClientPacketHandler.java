@@ -5,12 +5,13 @@ import java.io.DataInputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.minecraft.network.INetworkManager;
+import net.minecraft.network.packet.Packet250CustomPayload;
+
 import com.slimevoid.library.data.Logger;
 import com.slimevoid.library.network.handlers.SubPacketHandler;
 import com.slimevoid.littleblocks.core.LoggerLittleBlocks;
 
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet250CustomPayload;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
 

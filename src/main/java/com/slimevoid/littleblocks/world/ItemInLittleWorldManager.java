@@ -1,9 +1,6 @@
 package com.slimevoid.littleblocks.world;
 
-import com.slimevoid.littleblocks.core.LittleBlocks;
-import com.slimevoid.littleblocks.core.lib.PacketLib;
-import com.slimevoid.littleblocks.items.ItemLittleBlocksWand;
-import com.slimevoid.littleblocks.items.wand.EnumWandAction;
+import java.util.ArrayList;
 
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -12,12 +9,19 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemInWorldManager;
 import net.minecraft.item.ItemStack;
+import net.minecraft.stats.StatList;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
+
+import com.slimevoid.library.util.helpers.ItemHelper;
+import com.slimevoid.littleblocks.core.LittleBlocks;
+import com.slimevoid.littleblocks.core.lib.PacketLib;
+import com.slimevoid.littleblocks.items.ItemLittleBlocksWand;
+import com.slimevoid.littleblocks.items.wand.EnumWandAction;
 
 public class ItemInLittleWorldManager extends ItemInWorldManager {
 
@@ -146,15 +150,53 @@ public class ItemInLittleWorldManager extends ItemInWorldManager {
                                               y,
                                               z);
             if (blockHarvested && canHarvest) {
-                Block.blocksList[blockId].harvestBlock(this.theWorld,
-                                                       this.thisPlayerMP,
-                                                       x,
-                                                       y,
-                                                       z,
-                                                       metadata);
+                this.harvestBlock(x,
+                                  y,
+                                  z,
+                                  Block.blocksList[blockId],
+                                  metadata);
             }
         }
         return blockHarvested;
+    }
+
+    private void harvestBlock(int x, int y, int z, Block block, int metadata) {
+        this.thisPlayerMP.addStat(StatList.mineBlockStatArray[block.blockID],
+                                  1);
+        this.thisPlayerMP.addExhaustion(0.025F);
+        ArrayList<ItemStack> items = new ArrayList<ItemStack>();
+        ItemStack itemstack = this.createStackedBlock(block,
+                                                      metadata);
+
+        if (itemstack != null) {
+            items.add(itemstack);
+        }
+        ForgeEventFactory.fireBlockHarvesting(items,
+                                              this.theWorld,
+                                              block,
+                                              x,
+                                              y,
+                                              z,
+                                              metadata,
+                                              0,
+                                              1.0f,
+                                              true,
+                                              this.thisPlayerMP);
+        for (ItemStack is : items) {
+            ItemHelper.dropItemAtPlayer(this.thisPlayerMP,
+                                        is);
+        }
+    }
+
+    private ItemStack createStackedBlock(Block block, int metadata) {
+        int damage = 0;
+
+        if (block.blockID >= 0 && block.blockID < Item.itemsList.length
+            && Item.itemsList[block.blockID].getHasSubtypes()) {
+            damage = metadata;
+        }
+
+        return new ItemStack(block.blockID, 1, damage);
     }
 
     private boolean removeBlock(int x, int y, int z) {
@@ -179,7 +221,6 @@ public class ItemInLittleWorldManager extends ItemInWorldManager {
                                                                                          x,
                                                                                          y,
                                                                                          z));
-        ;
 
         if (this.thisPlayerMP.getHeldItem() != null
             && this.thisPlayerMP.getHeldItem().getItem() instanceof ItemLittleBlocksWand) {
@@ -189,12 +230,17 @@ public class ItemInLittleWorldManager extends ItemInWorldManager {
                                             z);
                 if (!blockIsRemoved) {
                     int fortune = EnchantmentHelper.getFortuneModifier(this.thisPlayerMP);
-                    littleBlock.dropBlockAsItem(this.theWorld,
-                                                x,
-                                                y,
-                                                z,
-                                                metadata,
-                                                fortune);
+                    ArrayList<ItemStack> items = littleBlock.getBlockDropped(this.theWorld,
+                                                                             x,
+                                                                             y,
+                                                                             z,
+                                                                             metadata,
+                                                                             fortune);
+
+                    for (ItemStack item : items) {
+                        ItemHelper.dropItemAtPlayer(this.thisPlayerMP,
+                                                    item);
+                    }
                 }
                 blockIsRemoved = true;
             }

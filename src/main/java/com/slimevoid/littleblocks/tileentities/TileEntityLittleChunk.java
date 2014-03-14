@@ -8,11 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
-import com.slimevoid.littleblocks.api.ILittleBlocks;
-import com.slimevoid.littleblocks.api.ILittleWorld;
-import com.slimevoid.littleblocks.core.LittleBlocks;
-import com.slimevoid.littleblocks.core.lib.ConfigurationLib;
-
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagInt;
@@ -27,6 +22,12 @@ import net.minecraft.world.NextTickListEntry;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.ForgeDirection;
+
+import com.slimevoid.littleblocks.api.ILittleBlocks;
+import com.slimevoid.littleblocks.api.ILittleWorld;
+import com.slimevoid.littleblocks.core.LittleBlocks;
+import com.slimevoid.littleblocks.core.lib.ConfigurationLib;
+
 import cpw.mods.fml.common.FMLLog;
 
 public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {

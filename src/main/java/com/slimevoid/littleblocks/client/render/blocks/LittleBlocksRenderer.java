@@ -1,12 +1,13 @@
 package com.slimevoid.littleblocks.client.render.blocks;
 
+import net.minecraft.block.Block;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.world.IBlockAccess;
+
 import com.slimevoid.littleblocks.blocks.BlockLittleChunk;
 import com.slimevoid.littleblocks.core.lib.ConfigurationLib;
 import com.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.world.IBlockAccess;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 

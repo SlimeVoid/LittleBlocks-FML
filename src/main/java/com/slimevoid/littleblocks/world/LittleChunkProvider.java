@@ -2,14 +2,14 @@ package com.slimevoid.littleblocks.world;
 
 import java.util.List;
 
-import com.slimevoid.littleblocks.api.ILittleWorld;
-
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.IProgressUpdate;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
+
+import com.slimevoid.littleblocks.api.ILittleWorld;
 
 public class LittleChunkProvider implements IChunkProvider {
     private World realWorld;

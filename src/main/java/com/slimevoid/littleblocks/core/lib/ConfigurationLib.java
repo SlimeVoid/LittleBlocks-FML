@@ -5,15 +5,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.slimevoid.littleblocks.core.LoggerLittleBlocks;
-import com.slimevoid.littleblocks.world.LittleWorldClient;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.item.Item;
 import net.minecraft.world.World;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.DimensionManager;
+
+import com.slimevoid.littleblocks.core.LoggerLittleBlocks;
+import com.slimevoid.littleblocks.world.LittleWorldClient;
+
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.EntityRegistry;
@@ -50,6 +51,7 @@ public class ConfigurationLib {
 
     @SideOnly(Side.CLIENT)
     public static RenderBlocks              littleRenderer;
+    public static boolean                   zeroSpawnVelocity      = false;
 
     public static Configuration getConfiguration() {
         return configuration;
@@ -101,6 +103,9 @@ public class ConfigurationLib {
         littleBlocksCollectionID = configuration.get(Configuration.CATEGORY_GENERAL,
                                                      "littleBlocksCollectionID",
                                                      EntityRegistry.findGlobalUniqueEntityId()).getInt();
+        zeroSpawnVelocity = configuration.get(Configuration.CATEGORY_GENERAL,
+                                              "zeroSpawnVelocity",
+                                              false).getBoolean(false);
         littleBlocksClip = configuration.get(Configuration.CATEGORY_GENERAL,
                                              "littleBlocksClip",
                                              true).getBoolean(true);

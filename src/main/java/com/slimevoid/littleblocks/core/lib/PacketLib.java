@@ -3,6 +3,16 @@ package com.slimevoid.littleblocks.core.lib;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.INetworkManager;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityCommandBlock;
+import net.minecraft.util.ChatMessageComponent;
+import net.minecraft.world.World;
+
 import com.slimevoid.library.network.PacketIds;
 import com.slimevoid.library.util.helpers.SlimevoidHelper;
 import com.slimevoid.littleblocks.api.ILittleWorld;
@@ -10,10 +20,8 @@ import com.slimevoid.littleblocks.client.network.ClientPacketHandler;
 import com.slimevoid.littleblocks.client.network.packets.executors.ClientBlockChangeExecutor;
 import com.slimevoid.littleblocks.client.network.packets.executors.ClientBlockEventExecutor;
 import com.slimevoid.littleblocks.client.network.packets.executors.ClientCopierNotifyExecutor;
-import com.slimevoid.littleblocks.client.network.packets.executors.ClientLittleCollectionExecutor;
 import com.slimevoid.littleblocks.client.network.packets.executors.ClientPacketLittleBlocksLoginExecutor;
 import com.slimevoid.littleblocks.network.CommonPacketHandler;
-import com.slimevoid.littleblocks.network.handlers.PacketLittleBlockCollectionHandler;
 import com.slimevoid.littleblocks.network.handlers.PacketLittleBlockEventHandler;
 import com.slimevoid.littleblocks.network.handlers.PacketLittleBlockHandler;
 import com.slimevoid.littleblocks.network.handlers.PacketLittleBlocksHandler;
@@ -28,15 +36,6 @@ import com.slimevoid.littleblocks.network.packets.executors.PacketLittleBlockCli
 import com.slimevoid.littleblocks.network.packets.executors.PacketLittleBlocksLoginExecutor;
 import com.slimevoid.littleblocks.network.packets.executors.PacketLittleWandSwitchExecutor;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.Packet250CustomPayload;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityCommandBlock;
-import net.minecraft.util.ChatMessageComponent;
-import net.minecraft.world.World;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
@@ -67,13 +66,6 @@ public class PacketLib {
 
         ClientPacketHandler.registerPacketHandler(PacketIds.UPDATE,
                                                   clientLittleBlocksHandler);
-
-        PacketLittleBlockCollectionHandler clientCollectionHandler = new PacketLittleBlockCollectionHandler();
-        clientCollectionHandler.registerPacketHandler(CommandLib.ENTITY_COLLECTION,
-                                                      new ClientLittleCollectionExecutor());
-
-        ClientPacketHandler.registerPacketHandler(PacketIds.ENTITY,
-                                                  clientCollectionHandler);
 
         PacketLittleNotifyHandler clientLittleNotifyHandler = new PacketLittleNotifyHandler();
         clientLittleNotifyHandler.registerPacketHandler(CommandLib.COPIER_MESSAGE,

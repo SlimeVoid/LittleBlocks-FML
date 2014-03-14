@@ -1,12 +1,12 @@
 package com.slimevoid.littleblocks.network.packets;
 
+import net.minecraft.world.World;
+
 import com.slimevoid.library.network.PacketPayload;
 import com.slimevoid.library.network.PacketUpdate;
 import com.slimevoid.littleblocks.core.lib.CommandLib;
 import com.slimevoid.littleblocks.core.lib.CoreLib;
 import com.slimevoid.littleblocks.core.lib.PacketLib;
-
-import net.minecraft.world.World;
 
 public class PacketLittleBlocksEvents extends PacketUpdate {
 

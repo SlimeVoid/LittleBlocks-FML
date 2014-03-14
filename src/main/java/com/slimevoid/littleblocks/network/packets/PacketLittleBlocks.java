@@ -4,14 +4,14 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import net.minecraft.world.World;
+
 import com.slimevoid.library.network.PacketIds;
 import com.slimevoid.library.network.PacketPayload;
 import com.slimevoid.library.network.PacketUpdate;
 import com.slimevoid.littleblocks.core.lib.CommandLib;
 import com.slimevoid.littleblocks.core.lib.ConfigurationLib;
 import com.slimevoid.littleblocks.core.lib.CoreLib;
-
-import net.minecraft.world.World;
 
 public class PacketLittleBlocks extends PacketUpdate {
 

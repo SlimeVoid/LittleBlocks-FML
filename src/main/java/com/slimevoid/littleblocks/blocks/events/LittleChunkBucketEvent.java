@@ -2,14 +2,13 @@ package com.slimevoid.littleblocks.blocks.events;
 
 import static net.minecraftforge.event.Event.Result.ALLOW;
 import static net.minecraftforge.event.Event.Result.DENY;
-
-import com.slimevoid.littleblocks.blocks.BlockLittleChunk;
-import com.slimevoid.littleblocks.core.lib.ConfigurationLib;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
+
+import com.slimevoid.littleblocks.blocks.BlockLittleChunk;
+import com.slimevoid.littleblocks.core.lib.ConfigurationLib;
 
 public class LittleChunkBucketEvent {
 

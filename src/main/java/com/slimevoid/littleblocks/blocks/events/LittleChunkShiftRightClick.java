@@ -1,13 +1,14 @@
 package com.slimevoid.littleblocks.blocks.events;
 
-import com.slimevoid.littleblocks.blocks.BlockLittleChunk;
-import com.slimevoid.littleblocks.core.lib.ConfigurationLib;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+
+import com.slimevoid.littleblocks.blocks.BlockLittleChunk;
+import com.slimevoid.littleblocks.core.lib.ConfigurationLib;
+
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;

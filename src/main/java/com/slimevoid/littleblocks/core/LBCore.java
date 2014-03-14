@@ -1,5 +1,10 @@
 package com.slimevoid.littleblocks.core;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+
 import com.slimevoid.library.util.BlockRemover;
 import com.slimevoid.library.util.helpers.ReflectionHelper;
 import com.slimevoid.littleblocks.blocks.BlockLBDoor;
@@ -10,15 +15,9 @@ import com.slimevoid.littleblocks.core.lib.BlockUtil;
 import com.slimevoid.littleblocks.core.lib.ConfigurationLib;
 import com.slimevoid.littleblocks.core.lib.ItemLib;
 import com.slimevoid.littleblocks.core.lib.LocalizationLib;
-import com.slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
 import com.slimevoid.littleblocks.items.ItemLittleBlocksWand;
 import com.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 public class LBCore {
@@ -53,13 +52,6 @@ public class LBCore {
     public static void registerBlocks() {
         GameRegistry.registerBlock(ConfigurationLib.littleChunk,
                                    BlockLib.LITTLECHUNK);
-        EntityRegistry.registerModEntity(EntityItemLittleBlocksCollection.class,
-                                         "LittleBlocksCollection",
-                                         ConfigurationLib.littleBlocksCollectionID,
-                                         LittleBlocks.instance,
-                                         256,
-                                         1,
-                                         false);
         GameRegistry.registerTileEntity(TileEntityLittleChunk.class,
                                         BlockLib.LITTLEBLOCKS);
         BlockUtil.registerPlacementInfo();
