@@ -25,14 +25,15 @@ public class LittleContainerInteract {
                 Field fields[] = event.entityPlayer.openContainer.getClass().getDeclaredFields();
                 GenericCanInteract(event,
                                    fields,
-                                   event.entityPlayer.openContainer);
+                                   event.entityPlayer.openContainer,
+                                   null);
             } catch (StackOverflowError s) {
                 s.printStackTrace();
             }
         }
     }
 
-    private void GenericCanInteract(PlayerOpenContainerEvent event, Field fields[], Object datasource) {
+    private void GenericCanInteract(PlayerOpenContainerEvent event, Field fields[], Object datasource, Object parent) {
         for (int i = 0; i < fields.length && event.getResult() != Result.ALLOW; i++) {
             try {
                 fields[i].setAccessible(true);
@@ -55,10 +56,13 @@ public class LittleContainerInteract {
                                      datasource);
                     break;
 
-                } else if (fields[i].get(datasource) instanceof IInventory) {
+                } else if (fields[i].get(datasource) instanceof IInventory
+                           && fields[i].get(datasource) != parent) {
+
                     GenericCanInteract(event,
                                        fields[i].get(datasource).getClass().getDeclaredFields(),
-                                       fields[i].get(datasource));
+                                       fields[i].get(datasource),
+                                       datasource);
 
                 }
             } catch (IllegalArgumentException e) {
