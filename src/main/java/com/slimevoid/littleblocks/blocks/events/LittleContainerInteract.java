@@ -26,14 +26,16 @@ public class LittleContainerInteract {
                 GenericCanInteract(event,
                                    fields,
                                    event.entityPlayer.openContainer,
-                                   null);
+                                   null,
+                                   0);
             } catch (StackOverflowError s) {
                 s.printStackTrace();
             }
         }
     }
 
-    private void GenericCanInteract(PlayerOpenContainerEvent event, Field fields[], Object datasource, Object parent) {
+    private void GenericCanInteract(PlayerOpenContainerEvent event, Field fields[], Object datasource, Object parent, int lvl) {
+        if (lvl > 20) return;
         for (int i = 0; i < fields.length && event.getResult() != Result.ALLOW; i++) {
             try {
                 fields[i].setAccessible(true);
@@ -62,7 +64,8 @@ public class LittleContainerInteract {
                     GenericCanInteract(event,
                                        fields[i].get(datasource).getClass().getDeclaredFields(),
                                        fields[i].get(datasource),
-                                       datasource);
+                                       datasource,
+                                       lvl + 1);
 
                 }
             } catch (IllegalArgumentException e) {
