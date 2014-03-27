@@ -6,9 +6,9 @@ import com.slimevoid.littleblocks.network.packets.PacketLittleNotify;
 
 public class PacketLittleNotifyHandler extends SubPacketHandler {
 
-    @Override
-    protected PacketUpdate createNewPacket() {
-        return new PacketLittleNotify();
-    }
+	@Override
+	protected PacketUpdate createNewPacket() {
+		return new PacketLittleNotify();
+	}
 
 }

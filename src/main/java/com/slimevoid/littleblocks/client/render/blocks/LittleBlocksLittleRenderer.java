@@ -28,62 +28,59 @@ import com.slimevoid.littleblocks.core.lib.ConfigurationLib;
 import com.slimevoid.littleblocks.core.lib.CoreLib;
 
 public class LittleBlocksLittleRenderer {
-    private RenderBlocks              renderBlocks;
-    private List<LittleBlockToRender> littleBlocksToRender;
+	private RenderBlocks renderBlocks;
+	private List<LittleBlockToRender> littleBlocksToRender;
 
-    public LittleBlocksLittleRenderer(RenderBlocks renderBlocks) {
-        this.renderBlocks = renderBlocks;
-        this.littleBlocksToRender = new ArrayList<LittleBlockToRender>();
-    }
+	public LittleBlocksLittleRenderer(RenderBlocks renderBlocks) {
+		this.renderBlocks = renderBlocks;
+		this.littleBlocksToRender = new ArrayList<LittleBlockToRender>();
+	}
 
-    public void addLittleBlockToRender(Block block, int x, int y, int z) {
-        LittleBlockToRender render = new LittleBlockToRender(block, x, y, z);
-        if (!this.littleBlocksToRender.contains(render)) {
-            this.littleBlocksToRender.add(render);
-        }
-    }
+	public void addLittleBlockToRender(Block block, int x, int y, int z) {
+		LittleBlockToRender render = new LittleBlockToRender(block, x, y, z);
+		if (!this.littleBlocksToRender.contains(render)) {
+			this.littleBlocksToRender.add(render);
+		}
+	}
 
-    public void renderLittleBlocks(IBlockAccess iblockaccess, int x, int y, int z) {
-        if (this.littleBlocksToRender.size() > 0) {
-            Tessellator tessellator = Tessellator.instance;
-            tessellator.draw();
-            GL11.glPushMatrix();
+	public void renderLittleBlocks(IBlockAccess iblockaccess, int x, int y,
+			int z) {
+		if (this.littleBlocksToRender.size() > 0) {
+			Tessellator tessellator = Tessellator.instance;
+			tessellator.draw();
+			GL11.glPushMatrix();
 
-            double xS = -((x >> 4) << 4), yS = -((y >> 4) << 4), zS = -((z >> 4) << 4);
+			double xS = -((x >> 4) << 4), yS = -((y >> 4) << 4), zS = -((z >> 4) << 4);
 
-            if (!CoreLib.OPTIFINE_INSTALLED) GL11.glTranslated(xS,
-                                                               yS,
-                                                               zS);
-            GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-            float scale = 1 / (float) ConfigurationLib.littleBlocksSize;
-            GL11.glScalef(scale,
-                          scale,
-                          scale);
-            if (!CoreLib.OPTIFINE_INSTALLED) GL11.glTranslated(-xS,
-                                                               -yS,
-                                                               -zS);
+			if (!CoreLib.OPTIFINE_INSTALLED)
+				GL11.glTranslated(xS, yS, zS);
+			GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+			float scale = 1 / (float) ConfigurationLib.littleBlocksSize;
+			GL11.glScalef(scale, scale, scale);
+			if (!CoreLib.OPTIFINE_INSTALLED)
+				GL11.glTranslated(-xS, -yS, -zS);
 
-            tessellator.startDrawingQuads();
-            for (LittleBlockToRender littleBlockToRender : this.littleBlocksToRender) {
-                try {
-                    this.renderBlocks.renderBlockByRenderType(littleBlockToRender.block,
-                                                              littleBlockToRender.x,
-                                                              littleBlockToRender.y,
-                                                              littleBlockToRender.z);
-                } catch (IllegalArgumentException e) {
-                    LoggerLittleBlocks.getInstance("LittleBlocksMod").write(true,
-                                                                            "Issue when rendering block ["
-                                                                                    + littleBlockToRender.block.getLocalizedName()
-                                                                                    + "] failed with error ["
-                                                                                    + e.getLocalizedMessage()
-                                                                                    + "]",
-                                                                            LogLevel.DEBUG);
-                }
-            }
-            tessellator.draw();
-            GL11.glDisable(GL12.GL_RESCALE_NORMAL);
-            GL11.glPopMatrix();
-            tessellator.startDrawingQuads();
-        }
-    }
+			tessellator.startDrawingQuads();
+			for (LittleBlockToRender littleBlockToRender : this.littleBlocksToRender) {
+				try {
+					this.renderBlocks.renderBlockByRenderType(
+							littleBlockToRender.block, littleBlockToRender.x,
+							littleBlockToRender.y, littleBlockToRender.z);
+				} catch (IllegalArgumentException e) {
+					LoggerLittleBlocks.getInstance("LittleBlocksMod").write(
+							true,
+							"Issue when rendering block ["
+									+ littleBlockToRender.block
+											.getLocalizedName()
+									+ "] failed with error ["
+									+ e.getLocalizedMessage() + "]",
+							LogLevel.DEBUG);
+				}
+			}
+			tessellator.draw();
+			GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+			GL11.glPopMatrix();
+			tessellator.startDrawingQuads();
+		}
+	}
 }

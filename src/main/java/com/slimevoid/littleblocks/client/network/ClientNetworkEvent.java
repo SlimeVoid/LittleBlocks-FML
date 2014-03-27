@@ -13,12 +13,15 @@ import cpw.mods.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
 
 public class ClientNetworkEvent {
 
-    @SubscribeEvent
-    public void onClientJoined(ClientConnectedToServerEvent event) {
-        EntityPlayer entityplayer = FMLClientHandler.instance().getClientPlayerEntity();
-        World world = entityplayer.worldObj;
-        BlockUtil.setLittleController(new LittlePlayerController(FMLClientHandler.instance().getClient(), (NetHandlerPlayClient) event.handler),
-                                      world.getWorldInfo().getGameType());
-    }
+	@SubscribeEvent
+	public void onClientJoined(ClientConnectedToServerEvent event) {
+		EntityPlayer entityplayer = FMLClientHandler.instance()
+				.getClientPlayerEntity();
+		World world = entityplayer.worldObj;
+		BlockUtil.setLittleController(new LittlePlayerController(
+				FMLClientHandler.instance().getClient(),
+				(NetHandlerPlayClient) event.handler), world.getWorldInfo()
+				.getGameType());
+	}
 
 }

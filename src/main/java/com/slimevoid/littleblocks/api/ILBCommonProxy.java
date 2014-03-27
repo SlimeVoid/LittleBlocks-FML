@@ -9,7 +9,7 @@ import net.minecraft.world.World;
 
 public interface ILBCommonProxy extends ICommonProxy {
 
-    ILittleWorld getLittleWorld(IBlockAccess world, boolean needsRefresh);
+	ILittleWorld getLittleWorld(IBlockAccess world, boolean needsRefresh);
 
-    World getParentWorld(ILittleWorld littleWorld, int realDimension);
+	World getParentWorld(ILittleWorld littleWorld, int realDimension);
 }

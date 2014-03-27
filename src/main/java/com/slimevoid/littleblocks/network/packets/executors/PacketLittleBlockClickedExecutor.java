@@ -13,17 +13,16 @@ import com.slimevoid.littleblocks.network.packets.PacketLittleBlock;
 
 public class PacketLittleBlockClickedExecutor implements IPacketExecutor {
 
-    @Override
-    public void execute(PacketUpdate packet, World world, EntityPlayer entityplayer) {
-        if (packet instanceof PacketLittleBlock
-            && packet.getCommand().equals(CommandLib.BLOCK_CLICKED)) {
-            ((BlockLittleChunk) ConfigurationLib.littleChunk).onServerBlockClicked((World) LittleBlocks.proxy.getLittleWorld(world,
-                                                                                                                             false),
-                                                                                   packet.xPosition,
-                                                                                   packet.yPosition,
-                                                                                   packet.zPosition,
-                                                                                   packet.side,
-                                                                                   entityplayer);
-        }
-    }
+	@Override
+	public void execute(PacketUpdate packet, World world,
+			EntityPlayer entityplayer) {
+		if (packet instanceof PacketLittleBlock
+				&& packet.getCommand().equals(CommandLib.BLOCK_CLICKED)) {
+			((BlockLittleChunk) ConfigurationLib.littleChunk)
+					.onServerBlockClicked((World) LittleBlocks.proxy
+							.getLittleWorld(world, false), packet.xPosition,
+							packet.yPosition, packet.zPosition, packet.side,
+							entityplayer);
+		}
+	}
 }

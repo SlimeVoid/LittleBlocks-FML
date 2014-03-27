@@ -5,11 +5,11 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 public class RenderLittleChunkHighlight {
 
-    @SubscribeEvent
-    public void onRenderHelmetOverlay(RenderGameOverlayEvent event) {
-        if (event.type == RenderGameOverlayEvent.ElementType.HELMET) {
-            // System.out.println("Rendering Helmet!");
-        }
-    }
+	@SubscribeEvent
+	public void onRenderHelmetOverlay(RenderGameOverlayEvent event) {
+		if (event.type == RenderGameOverlayEvent.ElementType.HELMET) {
+			// System.out.println("Rendering Helmet!");
+		}
+	}
 
 }

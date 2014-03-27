@@ -6,11 +6,11 @@ import net.minecraft.world.World;
 
 public interface ILittleWorld extends IBlockAccess {
 
-    public World getParentWorld();
+	public World getParentWorld();
 
-    boolean isOutdated(World world);
+	boolean isOutdated(World world);
 
-    public boolean isOutSideLittleWorld(int x, int y, int z);
+	public boolean isOutSideLittleWorld(int x, int y, int z);
 
-    public void activeChunkPosition(ChunkPosition chunkposition, boolean forced);
+	public void activeChunkPosition(ChunkPosition chunkposition, boolean forced);
 }

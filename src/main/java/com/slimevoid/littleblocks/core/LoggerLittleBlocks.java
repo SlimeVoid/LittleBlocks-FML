@@ -4,20 +4,20 @@ import com.slimevoid.library.data.Logger;
 
 public class LoggerLittleBlocks extends Logger {
 
-    private static LoggerLittleBlocks instance;
+	private static LoggerLittleBlocks instance;
 
-    @Override
-    protected String getLoggerName() {
-        return "LittleBlocksMod";
-    }
+	@Override
+	protected String getLoggerName() {
+		return "LittleBlocksMod";
+	}
 
-    public static Logger getInstance(String name) {
-        if (instance == null) {
-            instance = new LoggerLittleBlocks();
-        }
+	public static Logger getInstance(String name) {
+		if (instance == null) {
+			instance = new LoggerLittleBlocks();
+		}
 
-        instance.setName(name);
+		instance.setName(name);
 
-        return instance;
-    }
+		return instance;
+	}
 }

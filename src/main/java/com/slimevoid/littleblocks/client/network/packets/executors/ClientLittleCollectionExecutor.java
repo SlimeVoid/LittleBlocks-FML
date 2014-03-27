@@ -12,15 +12,19 @@ import com.slimevoid.littleblocks.network.packets.PacketLittleBlocksCollection;
 
 public class ClientLittleCollectionExecutor implements IPacketExecutor {
 
-    @Override
-    public void execute(PacketUpdate packet, World world, EntityPlayer entityplayer) {
-        if (packet instanceof PacketLittleBlocksCollection
-            && packet.getCommand().equals(CommandLib.ENTITY_COLLECTION)) {
-            Entity entity = world.getEntityByID(((PacketLittleBlocksCollection) packet).getEntityId());
-            if (entity instanceof EntityItemLittleBlocksCollection) {
-                ((EntityItemLittleBlocksCollection) entity).setCollection(((PacketLittleBlocksCollection) packet).itemstackCollection);
-            }
-        }
-    }
+	@Override
+	public void execute(PacketUpdate packet, World world,
+			EntityPlayer entityplayer) {
+		if (packet instanceof PacketLittleBlocksCollection
+				&& packet.getCommand().equals(CommandLib.ENTITY_COLLECTION)) {
+			Entity entity = world
+					.getEntityByID(((PacketLittleBlocksCollection) packet)
+							.getEntityId());
+			if (entity instanceof EntityItemLittleBlocksCollection) {
+				((EntityItemLittleBlocksCollection) entity)
+						.setCollection(((PacketLittleBlocksCollection) packet).itemstackCollection);
+			}
+		}
+	}
 
 }
