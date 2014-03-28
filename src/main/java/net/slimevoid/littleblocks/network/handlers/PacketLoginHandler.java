@@ -6,9 +6,9 @@ import net.slimevoid.littleblocks.network.packets.PacketLittleBlocksSettings;
 
 public class PacketLoginHandler extends SubPacketHandler {
 
-	@Override
-	protected PacketUpdate createNewPacket() {
-		return new PacketLittleBlocksSettings();
-	}
+    @Override
+    protected PacketUpdate createNewPacket() {
+        return new PacketLittleBlocksSettings();
+    }
 
 }

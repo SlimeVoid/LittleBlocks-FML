@@ -8,21 +8,21 @@ import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
 
 public class LittleWorldTickHandler {
 
-	@SubscribeEvent
-	public void onClientTick(ClientTickEvent event) {
-		if (event.phase == TickEvent.Phase.START) {
-			World world = FMLClientHandler.instance().getClient().theWorld;
-			if (world != null) {
-				// World littleWorld = (World)
-				// LittleBlocks.proxy.getLittleWorld(
-				// world,
-				// false);
-				// if (littleWorld != null) {
-				// littleWorld.updateEntities();
-				// littleWorld.tick();
-				// }
-			}
-		}
-	}
+    @SubscribeEvent
+    public void onClientTick(ClientTickEvent event) {
+        if (event.phase == TickEvent.Phase.START) {
+            World world = FMLClientHandler.instance().getClient().theWorld;
+            if (world != null) {
+                // World littleWorld = (World)
+                // LittleBlocks.proxy.getLittleWorld(
+                // world,
+                // false);
+                // if (littleWorld != null) {
+                // littleWorld.updateEntities();
+                // littleWorld.tick();
+                // }
+            }
+        }
+    }
 
 }

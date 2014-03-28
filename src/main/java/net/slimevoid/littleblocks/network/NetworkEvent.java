@@ -18,22 +18,24 @@ import cpw.mods.fml.common.network.FMLNetworkEvent.ServerConnectionFromClientEve
 
 public class NetworkEvent {
 
-	@SubscribeEvent
-	public void onClientJoined(ServerConnectionFromClientEvent event) {
-		EntityPlayer entityplayer = ((NetHandlerPlayServer) event.handler).playerEntity;
-		World world = entityplayer.worldObj;
-		EnumWandAction.getWandActionForPlayer(entityplayer);
-		PacketLittleBlocksSettings packet = new PacketLittleBlocksSettings();
-		packet.setCommand(CommandLib.SETTINGS);
-		packet.setClipMode(ConfigurationLib.littleBlocksClip);
-		PacketHelper.sendToPlayer(packet, (EntityPlayerMP) entityplayer);
-		List<TileEntity> tileEntities = world.loadedTileEntityList;
-		for (TileEntity tileentity : tileEntities) {
-			if (tileentity instanceof TileEntityLittleChunk) {
-				world.markBlockForUpdate(tileentity.xCoord,
-						tileentity.yCoord + 1, tileentity.zCoord);
-			}
-		}
-	}
+    @SubscribeEvent
+    public void onClientJoined(ServerConnectionFromClientEvent event) {
+        EntityPlayer entityplayer = ((NetHandlerPlayServer) event.handler).playerEntity;
+        World world = entityplayer.worldObj;
+        EnumWandAction.getWandActionForPlayer(entityplayer);
+        PacketLittleBlocksSettings packet = new PacketLittleBlocksSettings();
+        packet.setCommand(CommandLib.SETTINGS);
+        packet.setClipMode(ConfigurationLib.littleBlocksClip);
+        PacketHelper.sendToPlayer(packet,
+                                  (EntityPlayerMP) entityplayer);
+        List<TileEntity> tileEntities = world.loadedTileEntityList;
+        for (TileEntity tileentity : tileEntities) {
+            if (tileentity instanceof TileEntityLittleChunk) {
+                world.markBlockForUpdate(tileentity.xCoord,
+                                         tileentity.yCoord + 1,
+                                         tileentity.zCoord);
+            }
+        }
+    }
 
 }

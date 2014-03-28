@@ -6,9 +6,9 @@ import net.slimevoid.littleblocks.network.packets.PacketLittleBlocksEvents;
 
 public class PacketLittleBlockEventHandler extends SubPacketHandler {
 
-	@Override
-	protected PacketUpdate createNewPacket() {
-		return new PacketLittleBlocksEvents();
-	}
+    @Override
+    protected PacketUpdate createNewPacket() {
+        return new PacketLittleBlocksEvents();
+    }
 
 }

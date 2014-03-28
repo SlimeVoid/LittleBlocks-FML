@@ -4,15 +4,15 @@ import java.util.ArrayList;
 
 @SuppressWarnings("rawtypes")
 public class LittleBlockEventList extends ArrayList {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
-	private LittleBlockEventList() {
-	}
+    private LittleBlockEventList() {
+    }
 
-	public LittleBlockEventList(LittleBlockEvent serverBlockEvent) {
-		this();
-	}
+    public LittleBlockEventList(LittleBlockEvent serverBlockEvent) {
+        this();
+    }
 }
