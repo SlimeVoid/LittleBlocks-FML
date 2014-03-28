@@ -325,8 +325,9 @@ public class BlockLittleChunk extends BlockContainer {
             }
         }
         if (denyPlacement) {
-            entityplayer.addChatMessage(ChatHelper.getMessage(EnumChatFormatting.BOLD,
-                                                              placementMessage));
+            ChatHelper.addColouredMessageToPlayer(entityplayer,
+                                                  EnumChatFormatting.BOLD,
+                                                  placementMessage);
             return false;
         }
         return true;

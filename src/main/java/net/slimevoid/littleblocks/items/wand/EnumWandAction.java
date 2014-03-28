@@ -4,9 +4,7 @@ import java.util.HashMap;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumChatFormatting;
-
 import net.slimevoid.library.util.helpers.ChatHelper;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -70,9 +68,10 @@ public enum EnumWandAction {
         EnumWandAction nextAction = getAction(nextActionID);
         setWandActionForPlayer(entityplayer,
                                nextAction);
-        entityplayer.addChatMessage(ChatHelper.getMessage(EnumChatFormatting.RED,
-                                                          "Little Wand now in "
-                                                                  + nextAction.actionDescription));
+        ChatHelper.addColouredMessageToPlayer(entityplayer,
+                                              EnumChatFormatting.RED,
+                                              "Little Wand now in "
+                                                      + nextAction.actionDescription);
     }
 
     @SideOnly(Side.CLIENT)

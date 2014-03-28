@@ -19,8 +19,9 @@ public class ClientCopierNotifyExecutor implements IPacketExecutor {
             && packet.getCommand().equals(CommandLib.COPIER_MESSAGE)) {
             String message = LanguageRegistry.instance().getStringLocalization(MessageLib.DENY_COPY);
             if (message.equals("")) message = LanguageRegistry.instance().getStringLocalization(MessageLib.DENY_WAND);
-            entityplayer.addChatMessage(ChatHelper.getMessage(EnumChatFormatting.BLUE,
-                                                              message));
+            ChatHelper.addColouredMessageToPlayer(entityplayer,
+                                                  EnumChatFormatting.BLUE,
+                                                  message);
         }
     }
 
