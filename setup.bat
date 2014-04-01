@@ -1,13 +1,13 @@
 @echo off
-set slimevoid=%CD%\..\SlimevoidLibrary
+set slimevoid=2.0.4.5
 
-if exist "%slimevoid%\build\libs" goto :SETUP
-goto :FAIL
+rem if exist "%slimevoid%\build\libs" goto :SETUP
+rem goto :FAIL
 
 :SETUP
-call %CD%\gradlew.bat clean
-call %CD%\gradlew.bat setupDecompWorkspace
-call %CD%\gradlew.bat eclipse
+call %CD%\gradlew.bat -PSV=%slimevoid% clean
+call %CD%\gradlew.bat -PSV=%slimevoid% setupDecompWorkspace
+call %CD%\gradlew.bat -PSV=%slimevoid% eclipse
 goto :COMPLETE
 
 :FAIL

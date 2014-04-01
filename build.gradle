@@ -1,6 +1,6 @@
 buildscript {
-    def slimeVersion = "2.0.4.5"
-    def slimePath = "../SlimevoidLibrary/build/libs/SlimevoidLib-" + slimeVersion + ".jar"
+    def slimeVersion="2.0.4.5"
+    def slimeJar="${rootProject.projectDir}/../SlimevoidLibrary/repo/net/slimevoid/SlimevoidLibrary/${slimeVersion}/SlimevoidLibrary-${slimeVersion}.jar"
     repositories {
         mavenCentral()
         maven {
@@ -14,21 +14,20 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.1-SNAPSHOT'
-        classpath files(slimePath)
+        classpath files(slimeJar)
     }
 }
 
 apply plugin: 'forge'
 
+def slimeVersion="2.0.4.5"
+def slimeJar="${rootProject.projectDir}/../SlimevoidLibrary/repo/net/slimevoid/SlimevoidLibrary/${slimeVersion}/SlimevoidLibrary-${slimeVersion}.jar"
 version = "2.2.4.0"
-group = "net.slimevoid.LittleBlocks" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = "net.slimevoid"
 archivesBaseName = "LittleBlocks"
 
-def slimeVersion = "2.0.4.5"
-def slimePath = "../SlimevoidLibrary/build/libs/SlimevoidLib-" + slimeVersion + ".jar"
-
 dependencies {
-    compile files(slimePath)
+    compile files(slimeJar)
 }
 minecraft {
     version = "1.7.2-10.12.0.1024"
