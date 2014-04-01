@@ -1,4 +1,6 @@
 buildscript {
+    def slimeVersion = "2.0.4.5"
+    def slimePath = "../SlimevoidLibrary/build/libs/SlimevoidLib-" + slimeVersion + ".jar"
     repositories {
         mavenCentral()
         maven {
@@ -12,6 +14,7 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.1-SNAPSHOT'
+        classpath files(slimePath)
     }
 }
 
