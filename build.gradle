@@ -1,7 +1,5 @@
 buildscript {
-    def slimeVersion="2.0.4.5"
-    def slimeJar="${rootProject.projectDir}/../SlimevoidLibrary/repo/net/slimevoid/SlimevoidLibrary/${slimeVersion}/SlimevoidLibrary-${slimeVersion}.jar"
-    repositories {
+	repositories {
         mavenCentral()
         maven {
             name = "forge"
@@ -14,20 +12,24 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.1-SNAPSHOT'
-        classpath files(slimeJar)
     }
+}
+
+repositories {
+	maven {
+		name 'slimevoid'
+		url 'http://hyda.slimevoid.net/maven/repos'
+	}
 }
 
 apply plugin: 'forge'
 
-def slimeVersion="2.0.4.5"
-def slimeJar="${rootProject.projectDir}/../SlimevoidLibrary/repo/net/slimevoid/SlimevoidLibrary/${slimeVersion}/SlimevoidLibrary-${slimeVersion}.jar"
 version = "2.2.4.0"
 group = "net.slimevoid"
 archivesBaseName = "LittleBlocks"
 
 dependencies {
-    compile files(slimeJar)
+    compile 'net.slimevoid:SlimevoidLibrary:2.0.4.5'
 }
 minecraft {
     version = "1.7.2-10.12.0.1024"
