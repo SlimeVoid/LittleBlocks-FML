@@ -1,13 +1,13 @@
 buildscript {
-	repositories {
+    repositories {
         mavenCentral()
         maven {
-            name = "forge"
-            url = "http://files.minecraftforge.net/maven"
+            name = 'forge'
+            url = 'http://files.minecraftforge.net/maven'
         }
         maven {
-            name = "sonatype"
-            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+            name = 'sonatype'
+            url = 'https://oss.sonatype.org/content/repositories/snapshots/'
         }
     }
     dependencies {
@@ -22,18 +22,34 @@ repositories {
 	}
 }
 
-apply plugin: 'forge'
+configurations {
+	deployJars
+}
 
-version = "2.2.4.0"
-group = "net.slimevoid"
-archivesBaseName = "LittleBlocks"
+apply plugin: 'maven'
+apply plugin: 'forge'
+apply plugin: 'eclipse'
+
+def slimevoidVersion = '2.0.4.5'
+def mc = '1.7.2-10.12.0.1024'
+def pack = 'littleblocks'
+def github = 'LittleBlocks-FML'
+version = '2.2.4.0'
+group = 'net.slimevoid'
+archivesBaseName = 'LittleBlocks'
 
 dependencies {
-    compile 'net.slimevoid:SlimevoidLibrary:2.0.4.5'
+    compile 'net.slimevoid:SlimevoidLibrary:' + slimevoidVersion
 }
+
 minecraft {
-    version = "1.7.2-10.12.0.1024"
+    version = mc
+    assetDir = 'eclipse/assets'
+    
+    replaceIn 'net/slimevoid/' + pack + '/core/lib/CoreLib.java'
+    replace '@VERSION@', project.version
 }
+
 processResources {
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
@@ -46,5 +62,65 @@ processResources {
     // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
+    }
+}
+
+dependencies {
+    deployJars 'org.apache.maven.wagon:wagon-ssh:2.2'
+}
+
+uploadArchives {
+    repositories.mavenDeployer {
+    	configuration = configurations.deployJars
+        if (project.hasProperty("slimevoidUsername")) {
+            repository(url: 'scp://hyda.slimevoid.net/home/maven/www/repos') {
+                authentication(userName: slimevoidUsername, password: slimevoidPassword)
+            }
+        } else {
+            repository(url: 'file://localhost/' + project.file('build/repo').getAbsolutePath())
+        }
+        pom {
+            groupId = project.group
+            version = project.version
+            artifactId = project.archivesBaseName
+        }
+        pom.project {
+            name project.archivesBaseName
+            packaging 'jar'
+            description archivesBaseName
+            url 'https://github.com/Slimevoid/' + github
+
+            scm {
+                url 'https://github.com/Slimevoid/' + github
+                connection 'scm:git:git://github.com/Slimevoid/' + github + '.git'
+                developerConnection 'scm:git:git@Slimevoid/' + github + '.git'
+            }
+
+            issueManagement {
+                system 'github'
+                url 'https://github.com/Slimevoid/' + github + '/issues'
+            }
+
+            licenses {
+                license {
+                    name 'Lesser General Public Licence'
+                    url 'https://raw.github.com/Slimevoid/' + github + '/master/LICENSE'
+                    distribution 'repo'
+                }
+            }
+
+            developers {
+                developer {
+                    id 'Eurymachus'
+                    name 'Eurymachus'
+                    roles { role 'developer' }
+                }
+                developer {
+                    id 'Slimevoid'
+                    name 'Slimevoid Dev Team'
+                    roles { role 'developer' }
+                }
+            }
+        }
     }
 }

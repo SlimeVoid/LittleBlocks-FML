@@ -1,6 +1,7 @@
 # gradle stuff
 build
 .gradle
+upload.bat
 
 # eclipse stuff
 .classpath
