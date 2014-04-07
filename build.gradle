@@ -31,7 +31,7 @@ def slimevoidVersion = '2.0.4.5'
 def mc = '1.7.2-10.12.0.1024'
 def pack = 'littleblocks'
 def github = 'LittleBlocks-FML'
-version = '2.2.4.0'
+version = '2.2.4.1'
 group = 'net.slimevoid'
 archivesBaseName = 'LittleBlocks'
 
