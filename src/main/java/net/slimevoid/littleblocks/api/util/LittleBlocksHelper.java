@@ -1,12 +1,5 @@
 package net.slimevoid.littleblocks.api.util;
 
-import net.slimevoid.library.ICommonProxy;
-import net.slimevoid.library.ISlimevoidHelper;
-import net.slimevoid.library.util.helpers.SlimevoidHelper;
-import net.slimevoid.littleblocks.api.ILBCommonProxy;
-import net.slimevoid.littleblocks.api.ILittleBlocks;
-import net.slimevoid.littleblocks.api.ILittleWorld;
-import net.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLivingBase;
@@ -16,6 +9,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.slimevoid.library.ICommonProxy;
+import net.slimevoid.library.ISlimevoidHelper;
+import net.slimevoid.library.util.helpers.SlimevoidHelper;
+import net.slimevoid.littleblocks.api.ILBCommonProxy;
+import net.slimevoid.littleblocks.api.ILittleBlocks;
+import net.slimevoid.littleblocks.api.ILittleWorld;
+import net.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 
 public class LittleBlocksHelper implements ISlimevoidHelper {
 
@@ -184,7 +184,7 @@ public class LittleBlocksHelper implements ISlimevoidHelper {
                     Block block = tile.getBlock(littleX,
                                                 (int) minY,
                                                 littleZ);
-                    if (block.getMaterial() != Material.air) {
+                    if (block != null && block.getMaterial() != Material.air) {
                         int xx = (x << 3) + littleX, yy = (y << 3) + (int) minY, zz = (z << 3)
                                                                                       + littleZ;
                         if (block.isLadder((World) tile.getLittleWorld(),
