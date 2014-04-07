@@ -5,6 +5,7 @@ import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.event.world.ChunkEvent.Load;
 import net.minecraftforge.event.world.ChunkEvent.Unload;
+import net.slimevoid.littleblocks.api.ILittleWorld;
 import net.slimevoid.littleblocks.core.LittleBlocks;
 import net.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -18,9 +19,10 @@ public class LittleChunkEvent {
             TileEntity tileentity = (TileEntity) obj;
             if (tileentity instanceof TileEntityLittleChunk) {
                 ChunkPosition chunkpos = new ChunkPosition(tileentity.xCoord, tileentity.yCoord, tileentity.zCoord);
-                LittleBlocks.proxy.getLittleWorld(event.world,
-                                                  false).activeChunkPosition(chunkpos,
-                                                                             true);
+                this.setActiveChunkPosition(LittleBlocks.proxy.getLittleWorld(event.world,
+                                                                              false),
+                                            chunkpos,
+                                            true);
             }
         }
     }
@@ -32,10 +34,18 @@ public class LittleChunkEvent {
             TileEntity tileentity = (TileEntity) obj;
             if (tileentity instanceof TileEntityLittleChunk) {
                 ChunkPosition chunkpos = new ChunkPosition(tileentity.xCoord, tileentity.yCoord, tileentity.zCoord);
-                LittleBlocks.proxy.getLittleWorld(event.world,
-                                                  false).activeChunkPosition(chunkpos,
-                                                                             false);
+                this.setActiveChunkPosition(LittleBlocks.proxy.getLittleWorld(event.world,
+                                                                              false),
+                                            chunkpos,
+                                            false);
             }
+        }
+    }
+
+    private void setActiveChunkPosition(ILittleWorld littleworld, ChunkPosition chunkposition, boolean forced) {
+        if (littleworld != null) {
+            littleworld.activeChunkPosition(chunkposition,
+                                            forced);
         }
     }
 
