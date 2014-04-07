@@ -7,6 +7,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import net.slimevoid.library.core.SlimevoidCore;
 import net.slimevoid.littleblocks.api.ILittleWorld;
 import net.slimevoid.littleblocks.blocks.events.LittleChunkBucketEvent;
 import net.slimevoid.littleblocks.blocks.events.LittleChunkShiftRightClick;
@@ -18,6 +19,7 @@ import net.slimevoid.littleblocks.client.render.blocks.LittleBlocksRenderer;
 import net.slimevoid.littleblocks.client.render.entities.LittleBlocksCollectionRenderer;
 import net.slimevoid.littleblocks.client.render.tileentities.TileEntityLittleBlocksRenderer;
 import net.slimevoid.littleblocks.core.lib.ConfigurationLib;
+import net.slimevoid.littleblocks.core.lib.CoreLib;
 import net.slimevoid.littleblocks.core.lib.PacketLib;
 import net.slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
 import net.slimevoid.littleblocks.proxy.CommonProxy;
@@ -84,6 +86,10 @@ public class ClientProxy extends CommonProxy {
                                             needsRefresh);
             }
         }
+        SlimevoidCore.console(CoreLib.MOD_ID,
+                              "Could not load a littleworld for world ["
+                                      + iblockaccess + "]",
+                              2);
         return null;
     }
 

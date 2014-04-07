@@ -9,10 +9,12 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.MinecraftForge;
+import net.slimevoid.library.core.SlimevoidCore;
 import net.slimevoid.littleblocks.api.ILBCommonProxy;
 import net.slimevoid.littleblocks.api.ILittleWorld;
 import net.slimevoid.littleblocks.blocks.events.LittleContainerInteract;
 import net.slimevoid.littleblocks.core.lib.ConfigurationLib;
+import net.slimevoid.littleblocks.core.lib.CoreLib;
 import net.slimevoid.littleblocks.core.lib.PacketLib;
 import net.slimevoid.littleblocks.events.LittleBlocksCollectionPickup;
 import net.slimevoid.littleblocks.events.LittleChunkEvent;
@@ -90,6 +92,10 @@ public class CommonProxy implements ILBCommonProxy {
                 }
             }
         }
+        SlimevoidCore.console(CoreLib.MOD_ID,
+                              "Could not load a littleworld for world ["
+                                      + iblockaccess + "]",
+                              2);
         return null;
     }
 
