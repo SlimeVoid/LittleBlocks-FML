@@ -86,10 +86,6 @@ public class ClientProxy extends CommonProxy {
                                             needsRefresh);
             }
         }
-        SlimevoidCore.console(CoreLib.MOD_ID,
-                              "Could not load a littleworld for world ["
-                                      + iblockaccess + "]",
-                              2);
         return null;
     }
 
