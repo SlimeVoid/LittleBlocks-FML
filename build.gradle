@@ -36,7 +36,7 @@ group = 'net.slimevoid'
 archivesBaseName = 'LittleBlocks'
 
 dependencies {
-    compile 'net.slimevoid:SlimevoidLibrary:' + slimevoidVersion
+    compile 'net.slimevoid:SlimevoidLibrary:' + slimevoidVersion + ':dev'
 }
 
 minecraft {
