@@ -1181,6 +1181,19 @@ public class LittleWorld extends World implements ILittleWorld {
     }
 
     @Override
+    public void playAuxSFXAtEntity(EntityPlayer player, int l, int x, int y, int z, int i1) {
+        this.getParentWorld().playAuxSFXAtEntity(player,
+                                                 l,
+                                                 x
+                                                         / ConfigurationLib.littleBlocksSize,
+                                                 y
+                                                         / ConfigurationLib.littleBlocksSize,
+                                                 z
+                                                         / ConfigurationLib.littleBlocksSize,
+                                                 i1);
+    }
+
+    @Override
     public void spawnParticle(String s, double x, double y, double z, double d3, double d4, double d5) {
         this.getParentWorld().spawnParticle(s,
                                             x
