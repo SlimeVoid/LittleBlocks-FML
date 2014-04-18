@@ -1159,8 +1159,10 @@ public class LittleWorld extends World implements ILittleWorld {
                                               z
                                                       / ConfigurationLib.littleBlocksSize,
                                               s,
-                                              f,
-                                              f1);
+                                              f
+                                                      / (0.8F + (0.2F * (float) Math.sqrt(ConfigurationLib.littleBlocksSize))),
+                                              f1
+                                                      / (0.8F + (0.2F / (float) Math.sqrt(ConfigurationLib.littleBlocksSize))));
     }
 
     @Override
