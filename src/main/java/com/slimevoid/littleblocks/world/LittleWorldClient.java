@@ -278,11 +278,11 @@ public class LittleWorldClient extends World implements ILittleWorld {
     }
 
     @Override
-    public void playAuxSFX(int x, int y, int z, int l, int i1) {
-        this.getLittleWorld().playAuxSFX(x,
+    public void playAuxSFX(int l, int x, int y, int z, int i1) {
+        this.getLittleWorld().playAuxSFX(l,
+                                         x,
                                          y,
                                          z,
-                                         l,
                                          i1);
     }
 
