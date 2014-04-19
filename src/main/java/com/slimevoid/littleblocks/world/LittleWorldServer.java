@@ -28,6 +28,7 @@ import net.minecraft.world.storage.ISaveHandler;
 import net.minecraftforge.common.ForgeDirection;
 
 import com.slimevoid.littleblocks.api.ILittleWorld;
+import com.slimevoid.littleblocks.core.lib.ConfigurationLib;
 
 public class LittleWorldServer extends WorldServer implements ILittleWorld {
 
@@ -36,6 +37,7 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
     public LittleWorldServer(World referenceWorld, MinecraftServer minecraftServer, ISaveHandler iSaveHandler, String par3Str, int par4, WorldSettings par5WorldSettings, Profiler par6Profiler, ILogAgent par7iLogAgent) {
         super(minecraftServer, iSaveHandler, par3Str, par4, par5WorldSettings, par6Profiler, par7iLogAgent);
         this.littleWorld = new LittleServerWorld(referenceWorld, this.provider);
+        this.provider.dimensionId = par4;
     }
 
     @Override
@@ -367,20 +369,23 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 
     @Override
     public void playAuxSFX(int l, int x, int y, int z, int i1) {
-        this.getLittleWorld().playAuxSFX(l,
-                                         x,
-                                         y,
-                                         z,
+        this.getParentWorld().playAuxSFX(l,
+                                         x / ConfigurationLib.littleBlocksSize,
+                                         y / ConfigurationLib.littleBlocksSize,
+                                         z / ConfigurationLib.littleBlocksSize,
                                          i1);
     }
 
     @Override
     public void playAuxSFXAtEntity(EntityPlayer player, int l, int x, int y, int z, int i1) {
-        this.getLittleWorld().playAuxSFXAtEntity(player,
+        this.getParentWorld().playAuxSFXAtEntity(player,
                                                  l,
-                                                 x,
-                                                 y,
-                                                 z,
+                                                 x
+                                                         / ConfigurationLib.littleBlocksSize,
+                                                 y
+                                                         / ConfigurationLib.littleBlocksSize,
+                                                 z
+                                                         / ConfigurationLib.littleBlocksSize,
                                                  i1);
     }
 

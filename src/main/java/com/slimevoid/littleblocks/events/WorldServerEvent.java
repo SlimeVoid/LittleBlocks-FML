@@ -1,6 +1,7 @@
 package com.slimevoid.littleblocks.events;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.WorldManager;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.chunk.Chunk;
@@ -53,7 +54,8 @@ public class WorldServerEvent {
                                       dimension,
                                       littleDimension);
         }
-        if (event.world instanceof ILittleWorld) {
+        if (event.world instanceof ILittleWorld
+            && event.world instanceof WorldServer) {
             // System.out.println("ENOUGH WORLD INCEPTION ALREADY!!!!	");
             WorldServer littleWorldServer = (WorldServer) event.world;
             Chunk chunk = new Chunk(littleWorldServer, new byte[] { 0 }, 0, 0);
@@ -75,6 +77,7 @@ public class WorldServerEvent {
             WorldSettings worldSettings = new WorldSettings(world.getWorldInfo().getSeed(), world.getWorldInfo().getGameType(), world.getWorldInfo().isMapFeaturesEnabled(), world.getWorldInfo().isHardcoreModeEnabled(), world.getWorldInfo().getTerrainType());
 
             LittleWorldServer littleWorldServer = new LittleWorldServer(world, FMLCommonHandler.instance().getMinecraftServerInstance(), world.getSaveHandler(), worldName, littleDimension, worldSettings, null, null);
+            littleWorldServer.addWorldAccess(new WorldManager(FMLCommonHandler.instance().getMinecraftServerInstance(), littleWorldServer));
             Chunk chunk = new Chunk(littleWorldServer, new byte[] { 0 }, 0, 0);
             MinecraftForge.EVENT_BUS.post(new ChunkDataEvent.Load(chunk, new NBTTagCompound()));
 

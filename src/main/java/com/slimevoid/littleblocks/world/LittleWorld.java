@@ -1175,24 +1175,21 @@ public class LittleWorld extends World implements ILittleWorld {
 
     @Override
     public void playAuxSFX(int l, int x, int y, int z, int i1) {
-        this.getParentWorld().playAuxSFX(l,
-                                         x / ConfigurationLib.littleBlocksSize,
-                                         y / ConfigurationLib.littleBlocksSize,
-                                         z / ConfigurationLib.littleBlocksSize,
-                                         i1);
+        super.playAuxSFX(l,
+                         x,
+                         y,
+                         z,
+                         i1);
     }
 
     @Override
     public void playAuxSFXAtEntity(EntityPlayer player, int l, int x, int y, int z, int i1) {
-        this.getParentWorld().playAuxSFXAtEntity(player,
-                                                 l,
-                                                 x
-                                                         / ConfigurationLib.littleBlocksSize,
-                                                 y
-                                                         / ConfigurationLib.littleBlocksSize,
-                                                 z
-                                                         / ConfigurationLib.littleBlocksSize,
-                                                 i1);
+        super.playAuxSFXAtEntity(player,
+                                 l,
+                                 x,
+                                 y,
+                                 z,
+                                 i1);
     }
 
     @Override

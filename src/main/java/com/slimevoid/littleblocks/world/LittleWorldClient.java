@@ -1,8 +1,11 @@
 package com.slimevoid.littleblocks.world;
 
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.List;
 
+import net.minecraft.client.multiplayer.NetClientHandler;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,25 +24,45 @@ import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.storage.ISaveHandler;
+import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.common.ForgeDirection;
 
 import com.slimevoid.littleblocks.api.ILittleWorld;
+import com.slimevoid.littleblocks.core.lib.ConfigurationLib;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class LittleWorldClient extends World implements ILittleWorld {
+public class LittleWorldClient extends WorldClient implements ILittleWorld {
 
     private final LittleWorld littleWorld;
 
-    public LittleWorldClient(World referenceWorld, ISaveHandler saveHandler, String worldName, WorldProvider provider, WorldSettings worldSettings, int difficultySetting, Profiler profiler, ILogAgent iLogAgent) {
-        super(saveHandler, worldName, provider, worldSettings, profiler, iLogAgent);
+    public LittleWorldClient(NetClientHandler foo, World referenceWorld, ISaveHandler saveHandler, String worldName, WorldProvider provider, WorldSettings worldSettings, int difficultySetting, Profiler profiler, ILogAgent iLogAgent) {
+        super(foo, worldSettings, provider.dimensionId, difficultySetting, null, null);
+
+        // super(saveHandler, worldName, provider, worldSettings, profiler,
+        // iLogAgent);
         this.isRemote = true;
         String name = referenceWorld.getWorldInfo().getWorldName()
                       + ".littleWorld";
         this.finishSetup();
         this.littleWorld = new LittleWorld(referenceWorld, provider, name);
+
+        Field fields[] = World.class.getDeclaredFields();
+        try {
+            fields[24].setAccessible(true);
+            fields[24].set(this,
+                           saveHandler);
+        } catch (IllegalArgumentException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        this.worldInfo = new WorldInfo(worldSettings, worldName);
     }
 
     @Override
@@ -260,6 +283,19 @@ public class LittleWorldClient extends World implements ILittleWorld {
     }
 
     @Override
+    public void playSound(double x, double y, double z, String s, float f, float f1, boolean test) {
+        this.getParentWorld().playSound(x / ConfigurationLib.littleBlocksSize,
+                                        y / ConfigurationLib.littleBlocksSize,
+                                        z / ConfigurationLib.littleBlocksSize,
+                                        s,
+                                        f
+                                                / (0.8F + (0.2F * (float) Math.sqrt(ConfigurationLib.littleBlocksSize))),
+                                        f1
+                                                / (0.8F + (0.2F / (float) Math.sqrt(ConfigurationLib.littleBlocksSize))),
+                                        test);
+    }
+
+    @Override
     public void playSoundEffect(double x, double y, double z, String s, float f, float f1) {
         this.getLittleWorld().playSoundEffect(x,
                                               y,
@@ -279,21 +315,21 @@ public class LittleWorldClient extends World implements ILittleWorld {
 
     @Override
     public void playAuxSFX(int l, int x, int y, int z, int i1) {
-        this.getLittleWorld().playAuxSFX(l,
-                                         x,
-                                         y,
-                                         z,
-                                         i1);
+        super.playAuxSFX(l,
+                         x,
+                         y,
+                         z,
+                         i1);
     }
 
     @Override
     public void playAuxSFXAtEntity(EntityPlayer player, int l, int x, int y, int z, int i1) {
-        this.getLittleWorld().playAuxSFXAtEntity(player,
-                                                 l,
-                                                 x,
-                                                 y,
-                                                 z,
-                                                 i1);
+        super.playAuxSFXAtEntity(player,
+                                 l,
+                                 x,
+                                 y,
+                                 z,
+                                 i1);
     }
 
     @Override
