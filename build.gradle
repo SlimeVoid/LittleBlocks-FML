@@ -11,7 +11,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.1-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
     }
 }
 
@@ -27,8 +27,8 @@ apply plugin: 'maven'
 apply plugin: 'forge'
 apply plugin: 'eclipse'
 
-def slimevoidVersion = '2.0.4.5'
-def mc = '1.7.2-10.12.0.1024'
+def slimevoidVersion = '2.0.4.6'
+def mc = '1.7.2-10.12.1.1060'
 def pack = 'littleblocks'
 def github = 'LittleBlocks-FML'
 version = '2.2.4.2'
