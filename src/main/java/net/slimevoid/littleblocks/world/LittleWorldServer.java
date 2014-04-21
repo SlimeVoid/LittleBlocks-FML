@@ -366,12 +366,12 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
     }
 
     @Override
-    public void playAuxSFX(int x, int y, int z, int l, int i1) {
-        this.getLittleWorld().playAuxSFX(x,
+    public void playAuxSFX(int soundID, int x, int y, int z, int blockIDWithMetadata) {
+        this.getLittleWorld().playAuxSFX(soundID,
+                                         x,
                                          y,
                                          z,
-                                         l,
-                                         i1);
+                                         blockIDWithMetadata);
     }
 
     @Override

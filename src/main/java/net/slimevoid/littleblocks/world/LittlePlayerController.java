@@ -17,6 +17,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.slimevoid.littleblocks.core.LittleBlocks;
 import net.slimevoid.littleblocks.core.lib.BlockUtil;
+import net.slimevoid.littleblocks.core.lib.ConfigurationLib;
 import net.slimevoid.littleblocks.core.lib.PacketLib;
 import net.slimevoid.littleblocks.items.ItemLittleBlocksWand;
 import net.slimevoid.littleblocks.items.wand.EnumWandAction;
@@ -293,10 +294,10 @@ public class LittlePlayerController extends PlayerControllerMP {
                                        x,
                                        y,
                                        z,
-                                       Block.getIdFromBlock(littleBlock)
+                                       Block.getIdFromBlock(ConfigurationLib.littleChunk/*littleBlock)
                                                + (littleWorld.getBlockMetadata(x,
                                                                                y,
-                                                                               z) << 12));
+                                                                               z) << 12*/));
                 int metadata = littleWorld.getBlockMetadata(x,
                                                             y,
                                                             z);

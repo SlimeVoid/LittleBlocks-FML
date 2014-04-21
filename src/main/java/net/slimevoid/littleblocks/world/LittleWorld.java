@@ -1181,12 +1181,12 @@ public class LittleWorld extends World implements ILittleWorld {
     }
 
     @Override
-    public void playAuxSFX(int x, int y, int z, int l, int i1) {
-        this.getParentWorld().playAuxSFX(x / ConfigurationLib.littleBlocksSize,
-                                         y / ConfigurationLib.littleBlocksSize,
-                                         z / ConfigurationLib.littleBlocksSize,
-                                         l,
-                                         i1);
+    public void playAuxSFX(int soundID, int x, int y, int z, int blockIDWithMetadata) {
+        this.getParentWorld().playAuxSFX(soundID,
+                                         x >> 3,
+                                         y >> 3,
+                                         z >> 3,
+                                         blockIDWithMetadata);
     }
 
     @Override
