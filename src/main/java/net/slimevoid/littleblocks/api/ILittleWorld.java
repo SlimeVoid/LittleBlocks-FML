@@ -8,7 +8,7 @@ public interface ILittleWorld extends IBlockAccess {
 
     public World getParentWorld();
 
-    boolean isOutdated(World world);
+    public boolean isOutdated(World world);
 
     public boolean isOutSideLittleWorld(int x, int y, int z);
 

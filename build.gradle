@@ -28,7 +28,8 @@ apply plugin: 'forge'
 apply plugin: 'eclipse'
 
 def slimevoidVersion = '2.0.4.6'
-def mc = '1.7.2-10.12.1.1060'
+def forge = '10.12.1.1060'
+def mc = '1.7.2-' + forge
 def pack = 'littleblocks'
 def github = 'LittleBlocks-FML'
 version = '2.2.4.2'
@@ -45,6 +46,10 @@ minecraft {
     
     replaceIn 'net/slimevoid/' + pack + '/core/lib/CoreLib.java'
     replace '@VERSION@', project.version
+    replace 'MOD_DEPENDENCIES', 'BLANK_DEPENDENCIES'
+    replace 'ACTUAL_DEPENDENCIES ', 'MOD_DEPENDENCIES'
+    replace '@FORGEVERSION@', forge
+    replace '@SLIMEVERSION@', slimevoidVersion
 }
 
 processResources {
