@@ -2,7 +2,6 @@ package net.slimevoid.littleblocks.client.render.blocks;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.init.Blocks;
 import net.minecraft.world.IBlockAccess;
 import net.slimevoid.littleblocks.blocks.BlockLittleChunk;
 import net.slimevoid.littleblocks.core.lib.ConfigurationLib;
@@ -34,22 +33,24 @@ public class LittleBlocksRenderer implements ISimpleBlockRenderingHandler {
                         Block littleBlock = tile.getBlock(x1,
                                                           y1,
                                                           z1);
-                        if (littleBlock != Blocks.air) {
-                            if (littleBlock != null) {
-                                int[] coords = {
-                                        (x << 3) + x1,
-                                        (y << 3) + y1,
-                                        (z << 3) + z1 };
-                                if (littleBlock.canRenderInPass(BlockLittleChunk.currentPass)) {
-                                    littleBlocks.addLittleBlockToRender(littleBlock,
-                                                                        coords[0],
-                                                                        coords[1],
-                                                                        coords[2]);
-                                }
-                            } else {
-                                FMLCommonHandler.instance().getFMLLogger().warn("Attempted to render a block that was null!");
+                        // if (littleBlock.getMaterial() != Material.air) {
+                        if (littleBlock != null) {
+                            int[] coords = {
+                                    (x << 3) + x1,
+                                    (y << 3) + y1,
+                                    (z << 3) + z1 };
+
+                            if (!littleBlock.canRenderInPass(BlockLittleChunk.currentPass)) continue;
+                            {
+                                littleBlocks.addLittleBlockToRender(littleBlock,
+                                                                    coords[0],
+                                                                    coords[1],
+                                                                    coords[2]);
                             }
+                        } else {
+                            FMLCommonHandler.instance().getFMLLogger().warn("Attempted to render a block that was null!");
                         }
+                        // }
                     }
                 }
             }
