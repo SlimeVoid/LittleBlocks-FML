@@ -31,11 +31,11 @@ public class PacketLittleBlocksEvents extends PacketUpdate {
     public PacketLittleBlocksEvents() {
         super(PacketLib.PACKETID_EVENT, new PacketPayload(3, 0, 0, 0));
         this.setChannel(CoreLib.MOD_CHANNEL);
-        this.setCommand(CommandLib.BLOCK_EVENT);
     }
 
     public PacketLittleBlocksEvents(int x, int y, int z, int blockId, int type, int pitch) {
         this();
+        this.setCommand(CommandLib.BLOCK_EVENT);
         this.setPosition(x,
                          y,
                          z,
@@ -43,6 +43,18 @@ public class PacketLittleBlocksEvents extends PacketUpdate {
         this.setInstrumentType(type);
         this.setPitch(pitch);
         this.setBlockId(blockId);
+    }
+
+    public PacketLittleBlocksEvents(int x, int y, int z, int sfxID, int auxData, boolean disableRelativeVolume) {
+        this();
+        this.setCommand(CommandLib.BLOCK_SOUND);
+        this.setPosition(x,
+                         y,
+                         z,
+                         0);
+        this.setInstrumentType(sfxID);
+        this.setBlockId(auxData);
+        this.setPitch(disableRelativeVolume ? 1 : 0);
     }
 
     /** 1=Double Bass, 2=Snare Drum, 3=Clicks / Sticks, 4=Bass Drum, 5=Harp */
@@ -69,6 +81,18 @@ public class PacketLittleBlocksEvents extends PacketUpdate {
     @Override
     public boolean targetExists(World world) {
         return false;
+    }
+
+    public boolean getRelativeVolumeDisabled() {
+        return this.getPitch() == 1;
+    }
+
+    public int getSfxID() {
+        return this.getInstrumentType();
+    }
+
+    public int getAuxData() {
+        return this.getBlockId();
     }
 
     // .addBlockEvent(xLocation, yLocation, zLocation, blockId, instrumentType,

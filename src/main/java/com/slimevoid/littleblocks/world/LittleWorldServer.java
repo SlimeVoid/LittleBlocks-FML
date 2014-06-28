@@ -29,6 +29,9 @@ import net.minecraftforge.common.ForgeDirection;
 
 import com.slimevoid.littleblocks.api.ILittleWorld;
 import com.slimevoid.littleblocks.core.lib.ConfigurationLib;
+import com.slimevoid.littleblocks.network.packets.PacketLittleBlocksEvents;
+
+import cpw.mods.fml.common.FMLCommonHandler;
 
 public class LittleWorldServer extends WorldServer implements ILittleWorld {
 
@@ -378,15 +381,16 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 
     @Override
     public void playAuxSFXAtEntity(EntityPlayer player, int l, int x, int y, int z, int i1) {
-        this.getParentWorld().playAuxSFXAtEntity(player,
-                                                 l,
-                                                 x
-                                                         / ConfigurationLib.littleBlocksSize,
-                                                 y
-                                                         / ConfigurationLib.littleBlocksSize,
-                                                 z
-                                                         / ConfigurationLib.littleBlocksSize,
-                                                 i1);
+        FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().sendToAllNearExcept(player,
+                                                                                                               (double) x
+                                                                                                                       / ConfigurationLib.littleBlocksSize,
+                                                                                                               (double) y
+                                                                                                                       / ConfigurationLib.littleBlocksSize,
+                                                                                                               (double) z
+                                                                                                                       / ConfigurationLib.littleBlocksSize,
+                                                                                                               32D,
+                                                                                                               this.getParentWorld().provider.dimensionId,
+                                                                                                               new PacketLittleBlocksEvents(x, y, z, l, i1, false).getPacket());
     }
 
     @Override

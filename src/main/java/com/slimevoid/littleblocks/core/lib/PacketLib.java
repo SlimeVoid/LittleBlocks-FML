@@ -21,6 +21,7 @@ import com.slimevoid.littleblocks.client.network.packets.executors.ClientBlockCh
 import com.slimevoid.littleblocks.client.network.packets.executors.ClientBlockEventExecutor;
 import com.slimevoid.littleblocks.client.network.packets.executors.ClientCopierNotifyExecutor;
 import com.slimevoid.littleblocks.client.network.packets.executors.ClientPacketLittleBlocksLoginExecutor;
+import com.slimevoid.littleblocks.client.network.packets.executors.ClientPacketLittleBlocksSoundExecutor;
 import com.slimevoid.littleblocks.network.CommonPacketHandler;
 import com.slimevoid.littleblocks.network.handlers.PacketLittleBlockEventHandler;
 import com.slimevoid.littleblocks.network.handlers.PacketLittleBlockHandler;
@@ -77,6 +78,8 @@ public class PacketLib {
         PacketLittleBlockEventHandler clientLittleBlockEventHandler = new PacketLittleBlockEventHandler();
         clientLittleBlockEventHandler.registerPacketHandler(CommandLib.BLOCK_EVENT,
                                                             new ClientBlockEventExecutor());
+        clientLittleBlockEventHandler.registerPacketHandler(CommandLib.BLOCK_SOUND,
+                                                            new ClientPacketLittleBlocksSoundExecutor());
 
         ClientPacketHandler.registerPacketHandler(PacketLib.PACKETID_EVENT,
                                                   clientLittleBlockEventHandler);
