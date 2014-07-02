@@ -21,7 +21,9 @@ import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.storage.ISaveHandler;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.event.world.WorldEvent;
 import net.slimevoid.littleblocks.api.ILittleWorld;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -38,6 +40,7 @@ public class LittleWorldClient extends World implements ILittleWorld {
                       + ".littleWorld";
         this.finishSetup();
         this.littleWorld = new LittleWorld(referenceWorld, provider, name);
+        MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(this));
     }
 
     @Override

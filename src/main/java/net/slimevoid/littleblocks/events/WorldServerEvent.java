@@ -9,6 +9,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.ChunkDataEvent;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.event.world.WorldEvent.Load;
 import net.minecraftforge.event.world.WorldEvent.Unload;
 import net.slimevoid.littleblocks.api.ILittleWorld;
@@ -39,10 +40,16 @@ public class WorldServerEvent {
 
     @SubscribeEvent
     public void onWorldLoad(Load event) {
-        if (event.world instanceof WorldServer
-            && !(event.world instanceof ILittleWorld)) {
+        if (event.world instanceof ILittleWorld) {
+            // System.out.println("ENOUGH WORLD INCEPTION ALREADY!!!!   ");
+            WorldServer littleWorldServer = (WorldServer) event.world;
+            Chunk chunk = new Chunk(littleWorldServer, new Block[] { Blocks.air }, 0, 0);
+            MinecraftForge.EVENT_BUS.post(new ChunkDataEvent.Load(chunk, new NBTTagCompound()));
+        } else if (event.world instanceof WorldServer) {
             WorldServer world = (WorldServer) event.world;
+
             int dimension = world.provider.dimensionId;
+
             // System.out.println("Loading WorldServer: "
             // + world.getWorldInfo().getWorldName()
             // + " | Dimension: " + dimension);
@@ -52,12 +59,6 @@ public class WorldServerEvent {
             registerLittleWorldServer(world,
                                       dimension,
                                       littleDimension);
-        }
-        if (event.world instanceof ILittleWorld) {
-            // System.out.println("ENOUGH WORLD INCEPTION ALREADY!!!!	");
-            WorldServer littleWorldServer = (WorldServer) event.world;
-            Chunk chunk = new Chunk(littleWorldServer, new Block[] { Blocks.air }, 0, 0);
-            MinecraftForge.EVENT_BUS.post(new ChunkDataEvent.Load(chunk, new NBTTagCompound()));
         }
     }
 
@@ -75,8 +76,7 @@ public class WorldServerEvent {
             WorldSettings worldSettings = new WorldSettings(world.getWorldInfo().getSeed(), world.getWorldInfo().getGameType(), world.getWorldInfo().isMapFeaturesEnabled(), world.getWorldInfo().isHardcoreModeEnabled(), world.getWorldInfo().getTerrainType());
 
             LittleWorldServer littleWorldServer = new LittleWorldServer(world, FMLCommonHandler.instance().getMinecraftServerInstance(), world.getSaveHandler(), worldName, littleDimension, worldSettings, null);
-            Chunk chunk = new Chunk(littleWorldServer, new Block[] { Blocks.air }, 0, 0);
-            MinecraftForge.EVENT_BUS.post(new ChunkDataEvent.Load(chunk, new NBTTagCompound()));
+            MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(littleWorldServer));
 
             // System.out.println("WorldServer Loaded: "
             // + world.getWorldInfo().getWorldName()
