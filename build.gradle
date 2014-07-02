@@ -32,7 +32,7 @@ def forge = '10.12.2.1121'
 def mc = '1.7.2-' + forge
 def pack = 'littleblocks'
 def github = 'LittleBlocks-FML'
-version = '2.2.4.2'
+version = '2.2.4.3'
 group = 'net.slimevoid'
 archivesBaseName = 'LittleBlocks'
 
