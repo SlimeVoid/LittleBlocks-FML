@@ -6,7 +6,7 @@ upload.bat
 # eclipse stuff
 .classpath
 .project
-.settings
+# .settings
 eclipse
 bin
 
