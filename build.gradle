@@ -37,7 +37,7 @@ group = 'net.slimevoid'
 archivesBaseName = 'LittleBlocks'
 
 dependencies {
-    compile 'net.slimevoid:SlimevoidLibrary:' + slimevoidVersion
+    compile 'net.slimevoid:SlimevoidLibrary:' + slimevoidVersion + ':dev'
 }
 
 minecraft {
@@ -46,10 +46,7 @@ minecraft {
     
     replaceIn 'net/slimevoid/' + pack + '/core/lib/CoreLib.java'
     replace '@VERSION@', project.version
-    replace 'MOD_DEPENDENCIES', 'BLANK_DEPENDENCIES'
-    replace 'ACTUAL_DEPENDENCIES ', 'MOD_DEPENDENCIES'
-    replace '@FORGEVERSION@', forge
-    replace '@SLIMEVERSION@', slimevoidVersion
+    replace 'required-after:SlimevoidLib', 'required-after:Forge@[' + forge + ',);required-after:SlimevoidLib@[' + slimevoidVersion + ',)'
 }
 
 processResources {
