@@ -31,9 +31,6 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.util.ForgeDirection;
-
-import com.google.common.collect.ImmutableSetMultimap;
-
 import net.slimevoid.library.core.SlimevoidCore;
 import net.slimevoid.library.data.Logger;
 import net.slimevoid.library.data.Logger.LogLevel;
@@ -43,14 +40,23 @@ import net.slimevoid.littleblocks.core.LoggerLittleBlocks;
 import net.slimevoid.littleblocks.core.lib.ConfigurationLib;
 import net.slimevoid.littleblocks.core.lib.CoreLib;
 import net.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
+
+import com.google.common.collect.ImmutableSetMultimap;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class LittleWorld extends World implements ILittleWorld {
+public abstract class LittleWorld extends World implements ILittleWorld {
 
-    protected int              ticksInWorld        = 0;
-    protected static final int MAX_TICKS_IN_WORLD  = 5;
-    public Set<ChunkPosition>  activeChunkPosition = new HashSet<ChunkPosition>();
+    private List               addedTileEntityList             = new ArrayList<TileEntity>();
+    private boolean           /* scanningTiles */field_147481_N;
+
+    /** Entities marked for removal. */
+    private List              /* tileRemoval */field_147483_b = new ArrayList();
+
+    protected int              ticksInWorld                    = 0;
+    protected static final int MAX_TICKS_IN_WORLD              = 5;
+    public Set<ChunkPosition>  activeChunkPosition             = new HashSet<ChunkPosition>();
 
     private int                parentDimension;
 
@@ -122,22 +128,15 @@ public class LittleWorld extends World implements ILittleWorld {
         }
     }
 
-    public List<TileEntity>  loadedTiles = new ArrayList<TileEntity>();
-    private List<TileEntity> addedTiles  = new ArrayList<TileEntity>();
-    private boolean          scanningTiles;
-
-    /** Entities marked for removal. */
-    private List             tileRemoval = new ArrayList();
-
     @Override
     public void updateEntities() {
-        this.scanningTiles = true;
-        Iterator<TileEntity> loadedTile = this.loadedTiles.iterator();
+        this.field_147481_N = true;
+        Iterator<TileEntity> iterator = this.loadedTileEntityList.iterator();
 
-        while (loadedTile.hasNext()) {
-            TileEntity tileentity = loadedTile.next();
+        while (iterator.hasNext()) {
+            TileEntity tileentity = iterator.next();
 
-            if (!tileentity.isInvalid() && tileentity.canUpdate()
+            if (!tileentity.isInvalid() && tileentity.hasWorldObj()
                 && this.blockExists(tileentity.xCoord,
                                     tileentity.yCoord,
                                     tileentity.zCoord)) {
@@ -164,37 +163,37 @@ public class LittleWorld extends World implements ILittleWorld {
             }
 
             if (tileentity.isInvalid()) {
-                loadedTile.remove();
+                iterator.remove();
 
                 TileEntity tileentitylb = this.getParentWorld().getTileEntity(tileentity.xCoord >> 3,
                                                                               tileentity.yCoord >> 3,
                                                                               tileentity.zCoord >> 3);
                 if (tileentitylb != null
                     && tileentitylb instanceof TileEntityLittleChunk) {
-                    ((TileEntityLittleChunk) tileentitylb).cleanChunkBlockTileEntity(tileentity.xCoord & 7,
-                                                                                     tileentity.yCoord & 7,
-                                                                                     tileentity.zCoord & 7);
+                    ((TileEntityLittleChunk) tileentitylb).removeInvalidTileEntity(tileentity.xCoord & 7,
+                                                                                   tileentity.yCoord & 7,
+                                                                                   tileentity.zCoord & 7);
                 }
             }
         }
 
-        if (!this.tileRemoval.isEmpty()) {
-            for (Object tile : tileRemoval) {
+        if (!this.field_147483_b.isEmpty()) {
+            for (Object tile : field_147483_b) {
                 ((TileEntity) tile).onChunkUnload();
             }
-            this.loadedTiles.removeAll(this.tileRemoval);
-            this.tileRemoval.clear();
+            this.loadedTileEntityList.removeAll(this.field_147483_b);
+            this.field_147483_b.clear();
         }
 
-        this.scanningTiles = false;
+        this.field_147481_N = false;
 
-        if (!this.addedTiles.isEmpty()) {
-            for (int i = 0; i < this.addedTiles.size(); ++i) {
-                TileEntity tileentity = this.addedTiles.get(i);
+        if (!this.addedTileEntityList.isEmpty()) {
+            for (int i = 0; i < this.addedTileEntityList.size(); ++i) {
+                TileEntity tileentity = (TileEntity) this.addedTileEntityList.get(i);
 
                 if (!tileentity.isInvalid()) {
-                    if (!this.loadedTiles.contains(tileentity)) {
-                        this.loadedTiles.add(tileentity);
+                    if (!this.loadedTileEntityList.contains(tileentity)) {
+                        this.loadedTileEntityList.add(tileentity);
                     }
                 } else {
                     TileEntity tileentitylb = this.getParentWorld().getTileEntity(tileentity.xCoord >> 3,
@@ -202,14 +201,14 @@ public class LittleWorld extends World implements ILittleWorld {
                                                                                   tileentity.zCoord >> 3);
                     if (tileentitylb != null
                         && tileentitylb instanceof TileEntityLittleChunk) {
-                        ((TileEntityLittleChunk) tileentitylb).cleanChunkBlockTileEntity(tileentity.xCoord & 7,
-                                                                                         tileentity.yCoord & 7,
-                                                                                         tileentity.zCoord & 7);
+                        ((TileEntityLittleChunk) tileentitylb).removeInvalidTileEntity(tileentity.xCoord & 7,
+                                                                                       tileentity.yCoord & 7,
+                                                                                       tileentity.zCoord & 7);
                     }
                 }
             }
 
-            this.addedTiles.clear();
+            this.addedTileEntityList.clear();
         }
     }
 
@@ -988,9 +987,9 @@ public class LittleWorld extends World implements ILittleWorld {
                 int l;
                 TileEntity tileentity1;
 
-                if (this.scanningTiles) {
-                    for (l = 0; l < this.addedTiles.size(); ++l) {
-                        tileentity1 = (TileEntity) this.addedTiles.get(l);
+                if (this.field_147481_N) {
+                    for (l = 0; l < this.addedTileEntityList.size(); ++l) {
+                        tileentity1 = (TileEntity) this.addedTileEntityList.get(l);
 
                         if (!tileentity1.isInvalid() && tileentity1.xCoord == x
                             && tileentity1.yCoord == y
@@ -1005,14 +1004,16 @@ public class LittleWorld extends World implements ILittleWorld {
                     TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getParentWorld().getTileEntity(x >> 3,
                                                                                                              y >> 3,
                                                                                                              z >> 3);
-                    tileentity = tile.getChunkTileEntity(x & 7,
-                                                         y & 7,
-                                                         z & 7);
+                    if (tile != null) {
+                        tileentity = tile.getChunkTileEntity(x & 7,
+                                                             y & 7,
+                                                             z & 7);
+                    }
                 }
 
                 if (tileentity == null) {
-                    for (l = 0; l < this.addedTiles.size(); ++l) {
-                        tileentity1 = (TileEntity) this.addedTiles.get(l);
+                    for (l = 0; l < this.addedTileEntityList.size(); ++l) {
+                        tileentity1 = (TileEntity) this.addedTileEntityList.get(l);
 
                         if (!tileentity1.isInvalid() && tileentity1.xCoord == x
                             && tileentity1.yCoord == y
@@ -1043,8 +1044,8 @@ public class LittleWorld extends World implements ILittleWorld {
                 return;
             }
             if (tileentity.canUpdate()) {
-                if (scanningTiles) {
-                    Iterator iterator = addedTiles.iterator();
+                if (field_147481_N) {
+                    Iterator iterator = addedTileEntityList.iterator();
                     while (iterator.hasNext()) {
                         TileEntity tileentity1 = (TileEntity) iterator.next();
 
@@ -1054,9 +1055,9 @@ public class LittleWorld extends World implements ILittleWorld {
                             iterator.remove();
                         }
                     }
-                    addedTiles.add(tileentity);
+                    addedTileEntityList.add(tileentity);
                 } else {
-                    loadedTiles.add(tileentity);
+                    loadedTileEntityList.add(tileentity);
                 }
             }
             TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getParentWorld().getTileEntity(x >> 3,
@@ -1084,7 +1085,7 @@ public class LittleWorld extends World implements ILittleWorld {
 
     @Override
     public void func_147448_a/* addTileEntity */(Collection par1Collection) {
-        List dest = scanningTiles ? addedTiles : loadedTiles;
+        List dest = field_147481_N ? addedTileEntityList : loadedTileEntityList;
         for (Object entity : par1Collection) {
             if (((TileEntity) entity).canUpdate()) {
                 dest.add(entity);
@@ -1094,7 +1095,7 @@ public class LittleWorld extends World implements ILittleWorld {
 
     @Override
     public void addTileEntity(TileEntity tileentity) {
-        List<TileEntity> dest = scanningTiles ? addedTiles : loadedTiles;
+        List dest = field_147481_N ? addedTileEntityList : loadedTileEntityList;
         if (tileentity.canUpdate()) {
             dest.add(tileentity);
         }
@@ -1102,7 +1103,7 @@ public class LittleWorld extends World implements ILittleWorld {
 
     @Override
     public void func_147457_a/* markTileEntityForDespawn */(TileEntity par1TileEntity) {
-        this.tileRemoval.add(par1TileEntity);
+        this.field_147483_b.add(par1TileEntity);
     }
 
     @Override
@@ -1777,5 +1778,15 @@ public class LittleWorld extends World implements ILittleWorld {
         if (forced) {
             this.activeChunkPosition.add(chunkposition);
         }
+    }
+
+    @Override
+    public List<TileEntity> getLoadedTileEntities() {
+        return this.loadedTileEntityList;
+    }
+
+    @Override
+    public void addLoadedTileEntity(TileEntity tileentity) {
+        this.addTileEntity(tileentity);
     }
 }

@@ -547,4 +547,14 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
         this.getLittleWorld().activeChunkPosition(chunkposition,
                                                   forced);
     }
+
+    @Override
+    public List<TileEntity> getLoadedTileEntities() {
+        return this.getLittleWorld().getLoadedTileEntities();
+    }
+
+    @Override
+    public void addLoadedTileEntity(TileEntity tileentity) {
+        this.getLittleWorld().addLoadedTileEntity(tileentity);
+    }
 }

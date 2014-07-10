@@ -31,7 +31,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class LittleWorldClient extends World implements ILittleWorld {
 
-    private final LittleWorld littleWorld;
+    private final LittleClientWorld littleWorld;
 
     public LittleWorldClient(World referenceWorld, ISaveHandler saveHandler, String worldName, WorldProvider provider, WorldSettings worldSettings, int difficultySetting, Profiler profiler) {
         super(saveHandler, worldName, provider, worldSettings, profiler);
@@ -39,7 +39,7 @@ public class LittleWorldClient extends World implements ILittleWorld {
         String name = referenceWorld.getWorldInfo().getWorldName()
                       + ".littleWorld";
         this.finishSetup();
-        this.littleWorld = new LittleWorld(referenceWorld, provider, name);
+        this.littleWorld = new LittleClientWorld(referenceWorld, provider, name);
         MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(this));
     }
 
@@ -431,5 +431,15 @@ public class LittleWorldClient extends World implements ILittleWorld {
     public void activeChunkPosition(ChunkPosition chunkposition, boolean forced) {
         this.getLittleWorld().activeChunkPosition(chunkposition,
                                                   forced);
+    }
+
+    @Override
+    public List<TileEntity> getLoadedTileEntities() {
+        return this.getLittleWorld().getLoadedTileEntities();
+    }
+
+    @Override
+    public void addLoadedTileEntity(TileEntity tileentity) {
+        this.getLittleWorld().addLoadedTileEntity(tileentity);
     }
 }

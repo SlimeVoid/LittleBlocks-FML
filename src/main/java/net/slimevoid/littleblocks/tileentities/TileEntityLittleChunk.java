@@ -645,7 +645,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
         }
     }
 
-    public void cleanChunkBlockTileEntity(int x, int y, int z) {
+    public void removeInvalidTileEntity(int x, int y, int z) {
         ChunkPosition chunkposition = new ChunkPosition(x, y, z);
         TileEntity tileentity = (TileEntity) this.chunkTileEntityMap.get(chunkposition);
 
@@ -703,7 +703,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
         return tileentity;
     }
 
-    private void addTileEntity(TileEntity tile) {
+    public void addTileEntity(TileEntity tile) {
         int x = tile.xCoord & 7;
         int y = tile.yCoord & 7;
         int z = tile.zCoord & 7;
@@ -711,6 +711,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
                                      y,
                                      z,
                                      tile);
+        // this.getLittleWorld().addLoadedTileEntity(tile);
     }
 
     @Override

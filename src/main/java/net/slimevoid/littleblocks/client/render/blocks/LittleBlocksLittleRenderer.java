@@ -18,14 +18,13 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.world.IBlockAccess;
-
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
-
 import net.slimevoid.library.data.Logger.LogLevel;
 import net.slimevoid.littleblocks.core.LoggerLittleBlocks;
 import net.slimevoid.littleblocks.core.lib.ConfigurationLib;
 import net.slimevoid.littleblocks.core.lib.CoreLib;
+
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 
 public class LittleBlocksLittleRenderer {
     private RenderBlocks              renderBlocks;
@@ -85,5 +84,9 @@ public class LittleBlocksLittleRenderer {
             GL11.glPopMatrix();
             tessellator.startDrawingQuads();
         }
+    }
+
+    public boolean needsRefresh(RenderBlocks renderer) {
+        return !this.renderBlocks.equals(renderer);
     }
 }

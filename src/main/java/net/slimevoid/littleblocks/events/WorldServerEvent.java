@@ -40,7 +40,8 @@ public class WorldServerEvent {
 
     @SubscribeEvent
     public void onWorldLoad(Load event) {
-        if (event.world instanceof ILittleWorld) {
+        if (event.world instanceof ILittleWorld
+            && event.world instanceof WorldServer) {
             // System.out.println("ENOUGH WORLD INCEPTION ALREADY!!!!   ");
             WorldServer littleWorldServer = (WorldServer) event.world;
             Chunk chunk = new Chunk(littleWorldServer, new Block[] { Blocks.air }, 0, 0);
