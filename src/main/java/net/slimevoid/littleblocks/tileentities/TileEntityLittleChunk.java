@@ -44,6 +44,10 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
     @Override
     public void setWorldObj(World world) {
         this.worldObj = world;
+    }
+    
+    @Override
+    public void validate() {
         this.setLittleWorldObjs();
     }
 
@@ -711,7 +715,9 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
                                      y,
                                      z,
                                      tile);
-        // this.getLittleWorld().addLoadedTileEntity(tile);
+        if (!this.isInvalid() && this.getLittleWorld() != null) {
+        	this.getLittleWorld().addLoadedTileEntity(tile);
+        }
     }
 
     @Override
