@@ -601,7 +601,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
             TileEntity tile = (TileEntity) tiles.next();
             tile.setWorldObj((World) littleWorld);
             if (littleWorld != null) {
-                ((World) littleWorld).addTileEntity(tile);
+                littleWorld.addLoadedTileEntity(tile);;
             }
         }
 
