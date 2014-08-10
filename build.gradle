@@ -42,7 +42,7 @@ dependencies {
 
 minecraft {
     version = mc
-    assetDir = 'eclipse/assets'
+    runDir = 'eclipse/assets'
     
     replaceIn 'net/slimevoid/' + pack + '/core/lib/CoreLib.java'
     replace '@VERSION@', project.version
