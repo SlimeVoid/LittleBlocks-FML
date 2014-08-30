@@ -25,6 +25,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.world.WorldEvent;
 import net.slimevoid.littleblocks.api.ILittleWorld;
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -442,4 +443,10 @@ public class LittleWorldClient extends World implements ILittleWorld {
     public void addLoadedTileEntity(TileEntity tileentity) {
         this.getLittleWorld().addLoadedTileEntity(tileentity);
     }
+
+	@Override
+	/** getRenderViewDistance()**/
+	protected int func_152379_p() {
+        return FMLClientHandler.instance().getClient().gameSettings.renderDistanceChunks;
+	}
 }

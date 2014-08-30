@@ -8,6 +8,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEventData;
 import net.minecraft.block.BlockPistonBase;
@@ -522,4 +523,10 @@ public class LittleServerWorld extends LittleWorld {
     public EntityPlayer getClosestPlayer(double x, double y, double z, double distance) {
         return null;
     }
+
+	@Override
+	/** getRenderViewDistance()**/
+	protected int func_152379_p() {
+		return FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().getViewDistance();
+	}
 }

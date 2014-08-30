@@ -13,6 +13,7 @@ import net.slimevoid.littleblocks.core.LittleBlocks;
 import net.slimevoid.littleblocks.core.lib.CoreLib;
 
 import com.mojang.authlib.GameProfile;
+import com.mojang.util.UUIDTypeAdapter;
 
 import cpw.mods.fml.common.eventhandler.Event.Result;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -75,7 +76,7 @@ public class LittleContainerInteract {
         // last ditch effort
         if (event.getResult() != Result.ALLOW
             && event.getResult() != Result.DENY) {
-            FakePlayer fakePlayer = new FakePlayer((WorldServer) event.entityPlayer.worldObj, new GameProfile(String.valueOf(event.entityPlayer.getEntityId()), CoreLib.MOD_CHANNEL));
+            FakePlayer fakePlayer = new FakePlayer((WorldServer) event.entityPlayer.worldObj, new GameProfile(UUIDTypeAdapter.fromString(String.valueOf(event.entityPlayer.getEntityId())), CoreLib.MOD_CHANNEL));
             fakePlayer.posX = event.entityPlayer.posX * 8;
             fakePlayer.posY = (event.entityPlayer.posY + (event.entityPlayer.height * 0.9)) * 8;
             fakePlayer.posZ = event.entityPlayer.posZ * 8;
@@ -96,7 +97,7 @@ public class LittleContainerInteract {
                                                 - event.entityPlayer.posZ,
                                         2),
                      .5) <= 4) {
-            FakePlayer fakePlayer = new FakePlayer((WorldServer) event.entityPlayer.worldObj, new GameProfile(String.valueOf(event.entityPlayer.getEntityId()), CoreLib.MOD_CHANNEL));
+            FakePlayer fakePlayer = new FakePlayer((WorldServer) event.entityPlayer.worldObj, new GameProfile(UUIDTypeAdapter.fromString(String.valueOf(event.entityPlayer.getEntityId())), CoreLib.MOD_CHANNEL));
             fakePlayer.posX = (tile.xCoord);
             fakePlayer.posY = (tile.yCoord);
             fakePlayer.posZ = (tile.zCoord);
@@ -114,7 +115,7 @@ public class LittleContainerInteract {
             worldField.set(datasource,
                            LittleBlocks.proxy.getLittleWorld(world,
                                                              false));
-            FakePlayer fakePlayer = new FakePlayer((WorldServer) event.entityPlayer.worldObj, new GameProfile(String.valueOf(event.entityPlayer.getEntityId()), CoreLib.MOD_CHANNEL));
+            FakePlayer fakePlayer = new FakePlayer((WorldServer) event.entityPlayer.worldObj, new GameProfile(UUIDTypeAdapter.fromString(String.valueOf(event.entityPlayer.getEntityId())), CoreLib.MOD_CHANNEL));
             if (fields.length > worldFieldIndex + 3) {
                 fields[worldFieldIndex + 1].setAccessible(true);
                 fields[worldFieldIndex + 2].setAccessible(true);

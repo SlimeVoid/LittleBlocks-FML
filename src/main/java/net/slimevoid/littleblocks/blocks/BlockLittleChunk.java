@@ -690,9 +690,9 @@ public class BlockLittleChunk extends BlockContainer {
                                                     z);
                 return new MovingObjectPosition(x, y, z, (byte) min.sideHit,
                 /** ((Vec3) min.hitVec).addVector(x, y, z) **/
-                hitVec = min.hitVec.myVec3LocalPool.getVecFromPool((min.hitVec.xCoord * 8) % 1,
-                                                                   (min.hitVec.yCoord * 8) % 1,
-                                                                   (min.hitVec.zCoord * 8) % 1).addVector(x,
+                hitVec = Vec3.createVectorHelper((min.hitVec.xCoord * 8) % 1,
+                                                          (min.hitVec.yCoord * 8) % 1,
+                                                          (min.hitVec.zCoord * 8) % 1).addVector(x,
                                                                                                           y,
                                                                                                           z));
             }
