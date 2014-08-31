@@ -520,7 +520,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
         if (lastBlock == block && lastData == metadata) {
             return false;
         } else {
-            if (lastBlock != Blocks.air && !this.worldObj.isRemote) {
+            if (!this.worldObj.isRemote) {
                 lastBlock.onBlockPreDestroy(this.getWorldObj(),
                                             ((this.xCoord << 3) + x),
                                             ((this.yCoord << 3) + y),
@@ -570,6 +570,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
                                      z) != block) {
                 return false;
             } else {
+            	this.setExtBlockMetadata(x, y, z, metadata);
                 TileEntity tileentity;
 
                 if (!this.worldObj.isRemote) {
@@ -618,7 +619,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
         }
     }
 
-    public void setChunkBlockTileEntity(int x, int y, int z, TileEntity tile) {
+    public void setTileEntity(int x, int y, int z, TileEntity tile) {
         ChunkPosition chunkposition = new ChunkPosition(x, y, z);
 
         tile.setWorldObj((World) this.getLittleWorld());
@@ -640,7 +641,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
         }
     }
 
-    public void removeChunkBlockTileEntity(int x, int y, int z) {
+    public void removeTileEntity(int x, int y, int z) {
         ChunkPosition chunkposition = new ChunkPosition(x, y, z);
         TileEntity tileentity = (TileEntity) this.chunkTileEntityMap.remove(chunkposition);
 
@@ -711,7 +712,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
         int x = tile.xCoord & 7;
         int y = tile.yCoord & 7;
         int z = tile.zCoord & 7;
-        this.setChunkBlockTileEntity(x,
+        this.setTileEntity(x,
                                      y,
                                      z,
                                      tile);

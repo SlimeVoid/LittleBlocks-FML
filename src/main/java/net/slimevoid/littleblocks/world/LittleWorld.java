@@ -647,71 +647,69 @@ public abstract class LittleWorld extends World implements ILittleWorld {
                                                                                                          LoggerLittleBlocks.LogLevel.DEBUG);
                 return false;
             } else {
-                if (!this.isRemote) {
-                    Chunk chunk = this.getParentWorld().getChunkFromChunkCoords(x >> 7,
-                                                                                z >> 7);
-                    if (chunk.getBlock((x & 0x7f) >> 3,
-                                       y >> 3,
-                                       (z & 0x7f) >> 3) != ConfigurationLib.littleChunk
-                        && this.isAirBlock(x,
-                                           y,
-                                           z)) {
-                        this.getParentWorld().setBlock(x >> 3,
-                                                       y >> 3,
-                                                       z >> 3,
-                                                       ConfigurationLib.littleChunk);
-                    } else if (chunk.getBlock((x & 0x7f) >> 3,
-                                              y >> 3,
-                                              (z & 0x7f) >> 3) != ConfigurationLib.littleChunk) {
-                        return false;
-                    }
-                    TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getParentWorld().getTileEntity(x >> 3,
-                                                                                                             y >> 3,
-                                                                                                             z >> 3);
-                    Block originalId = Blocks.air;
-
-                    if ((update & 1) != 0) {
-                        originalId = tile.getBlock(x & 7,
-                                                   y & 7,
-                                                   z & 7);
-                    }
-
-                    boolean flag = tile.setBlockIDWithMetadata(x & 7,
-                                                               y & 7,
-                                                               z & 7,
-                                                               block,
-                                                               newmeta);
-
-                    this.func_147451_t/* updateAllLightTypes */(x,
-                                                                y,
-                                                                z);
-
-                    if (flag) {
-                        if ((update & 2) != 0
-                            && (!this.getParentWorld().isRemote || (update & 4) == 0)) {
-                            this.markBlockForUpdate(x,
-                                                    y,
-                                                    z);
-                        }
-
-                        if (!this.getParentWorld().isRemote
-                            && (update & 1) != 0) {
-                            this.notifyBlockChange(x,
-                                                   y,
-                                                   z,
-                                                   originalId);
-
-                            if (block != null
-                                && block.hasComparatorInputOverride()) {
-                                this.func_147453_f(x,
-                                                   y,
-                                                   z,
-                                                   block);
-                            }
-                        }
-                    }
-                    return flag;
+                Chunk chunk = this.getParentWorld().getChunkFromChunkCoords(x >> 7,
+                                                                            z >> 7);
+                if (chunk.getBlock((x & 0x7f) >> 3,
+                                   y >> 3,
+                                   (z & 0x7f) >> 3) != ConfigurationLib.littleChunk
+                    && this.isAirBlock(x,
+                                       y,
+                                       z)) {
+                    this.getParentWorld().setBlock(x >> 3,
+                                                   y >> 3,
+                                                   z >> 3,
+                                                   ConfigurationLib.littleChunk);
+                } else if (chunk.getBlock((x & 0x7f) >> 3,
+                                          y >> 3,
+                                          (z & 0x7f) >> 3) != ConfigurationLib.littleChunk) {
+                    return false;
                 }
+                TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getParentWorld().getTileEntity(x >> 3,
+                                                                                                         y >> 3,
+                                                                                                         z >> 3);
+                Block originalId = null;
+
+                if ((update & 1) != 0) {
+                    originalId = tile.getBlock(x & 7,
+                                               y & 7,
+                                               z & 7);
+                }
+
+                boolean flag = tile.setBlockIDWithMetadata(x & 7,
+                                                           y & 7,
+                                                           z & 7,
+                                                           block,
+                                                           newmeta);
+
+                this.func_147451_t/* updateAllLightTypes */(x,
+                                                            y,
+                                                            z);
+
+                if (flag) {
+                    if ((update & 2) != 0
+                        && (!this.isRemote || (update & 4) == 0)) {
+                        this.markBlockForUpdate(x,
+                                                y,
+                                                z);
+                    }
+
+                    if (!this.isRemote
+                        && (update & 1) != 0) {
+                        this.notifyBlockChange(x,
+                                               y,
+                                               z,
+                                               originalId);
+
+                        if (block != null
+                            && block.hasComparatorInputOverride()) {
+                            this.func_147453_f(x,
+                                               y,
+                                               z,
+                                               block);
+                        }
+                    }
+                }
+                return flag;
             }
         } else {
             LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(this.getParentWorld().isRemote,
@@ -1064,7 +1062,7 @@ public abstract class LittleWorld extends World implements ILittleWorld {
                                                                                                      y >> 3,
                                                                                                      z >> 3);
             if (tile != null) {
-                tile.setChunkBlockTileEntity(x & 7,
+                tile.setTileEntity(x & 7,
                                              y & 7,
                                              z & 7,
                                              tileentity);
@@ -1108,29 +1106,15 @@ public abstract class LittleWorld extends World implements ILittleWorld {
 
     @Override
     public void removeTileEntity(int x, int y, int z) {
-        if (x < 0xfe363c80 || z < 0xfe363c80 || x >= 0x1c9c380
-            || z >= 0x1c9c380) {
-            return;
+        TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getParentWorld().getTileEntity(x >> 3,
+                                                                                                 y >> 3,
+                                                                                                 z >> 3);
+        if (tile != null) {
+        	tile.removeTileEntity(x & 7,
+						                    y & 7,
+						                    z & 7);
         }
-        if (y < 0) {
-            return;
-        }
-        if (y >= this.getHeight()) {
-            return;
-        } else {
-            Chunk chunk = this.getParentWorld().getChunkFromChunkCoords(x >> 7,
-                                                                        z >> 7);
-            if (chunk.getBlock((x & 0x7f) >> 3,
-                               y >> 3,
-                               (z & 0x7f) >> 3) == ConfigurationLib.littleChunk) {
-                TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getParentWorld().getTileEntity(x >> 3,
-                                                                                                         y >> 3,
-                                                                                                         z >> 3);
-                tile.removeChunkBlockTileEntity(x & 7,
-                                                y & 7,
-                                                z & 7);
-            }
-        }
+        this.func_147453_f(x, y, z, this.getBlock(x, y, z));
     }
 
     @Override

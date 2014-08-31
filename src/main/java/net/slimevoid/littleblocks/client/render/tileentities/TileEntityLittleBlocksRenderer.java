@@ -1,5 +1,6 @@
 package net.slimevoid.littleblocks.client.render.tileentities;
 
+import java.util.Collection;
 import java.util.List;
 
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
@@ -28,8 +29,6 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
         if (tileentitylittleblocks != null) {
             ILittleWorld littleWorld = tileentitylittleblocks.getLittleWorld();
 
-            List<TileEntity> tilesToRender = littleWorld.getLoadedTileEntities();
-
             this.field_147501_a.func_147543_a/* tileEntityRenderer.setWorld( */((World) littleWorld);
 
             GL11.glPushMatrix();
@@ -47,6 +46,8 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
             GL11.glScalef(scale,
                           scale,
                           scale);
+            
+            Collection<TileEntity> tilesToRender = tileentitylittleblocks.getTileEntityList();
 
             for (TileEntity tileentity : tilesToRender) {
                 this.field_147501_a/* tileEntityRenderer */.renderTileEntityAt(tileentity,

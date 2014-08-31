@@ -332,7 +332,7 @@ public enum EnumWandAction {
                                                                                                   y1,
                                                                                                   z1);
                                             if (oldLittleTile != null) {
-                                                newtilelb.setChunkBlockTileEntity(x1,
+                                                newtilelb.setTileEntity(x1,
                                                                                   y1,
                                                                                   z1,
                                                                                   oldLittleTile);
@@ -367,7 +367,8 @@ public enum EnumWandAction {
                                                          entityplayer,
                                                          x,
                                                          y,
-                                                         z);
+                                                         z,
+                                                         true);
             world.setBlockToAir(x,
                                 y,
                                 z);
@@ -375,4 +376,8 @@ public enum EnumWandAction {
         }
         return false;
     }
+
+	public static boolean forceDestroy(EntityPlayer entityplayer) {
+		return getWandActionForPlayer(entityplayer).equals(EnumWandAction.DESTROY_LB);
+	}
 }
