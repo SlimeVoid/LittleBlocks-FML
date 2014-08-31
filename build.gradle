@@ -94,7 +94,7 @@ uploadArchives {
     repositories.mavenDeployer {
     	configuration = configurations.deployJars
         if (project.hasProperty("slimevoidUsername")) {
-            repository(url: 'scp://hyda.slimevoid.net/home/maven/www/repos') {
+            repository(url: 'scp://maven.slimevoid.net/repos') {
                 authentication(userName: slimevoidUsername, password: slimevoidPassword)
             }
         } else {
