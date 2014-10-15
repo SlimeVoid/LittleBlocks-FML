@@ -198,7 +198,7 @@ public class BlockUtil {
     }
 
     public static void onServerBlockActivated(World world, EntityPlayer entityplayer, ItemStack stack, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
-        MinecraftServer mcServer = FMLCommonHandler.instance().getMinecraftServerInstance();
+    	MinecraftServer mcServer = FMLCommonHandler.instance().getMinecraftServerInstance();
         ItemStack itemstack = entityplayer.inventory.getCurrentItem();
         boolean flag = false;
         // ((EntityPlayerMP) entityplayer).func_143004_u();
@@ -213,7 +213,8 @@ public class BlockUtil {
                                                                            0,
                                                                            0,
                                                                            0,
-                                                                           -1);
+                                                                           -1,
+                                                                           world);
             if (event.useItem != Event.Result.DENY) {
                 getLittleItemManager((EntityPlayerMP) entityplayer,
                                      world).tryUseItem(entityplayer,

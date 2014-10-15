@@ -803,13 +803,13 @@ public abstract class LittleWorld extends World implements ILittleWorld {
                                                 z & 7);
 
                     if ((update & 2) != 0
-                        && (!this.getParentWorld().isRemote || (update & 4) == 0)) {
+                        && (!this.isRemote || (update & 4) == 0)) {
                         this.markBlockForUpdate(x,
                                                 y,
                                                 z);
                     }
 
-                    if (!this.getParentWorld().isRemote && (update & 1) != 0) {
+                    if (!this.isRemote && (update & 1) != 0) {
                         this.notifyBlockChange(x,
                                                y,
                                                z,

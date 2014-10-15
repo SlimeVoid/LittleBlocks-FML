@@ -268,6 +268,7 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 
     @Override
     public boolean setBlockMetadataWithNotify(int x, int y, int z, int newmeta, int update) {
+    	System.out.println("Server: " + this.getBlock(x, y, z) + " | " + newmeta);
         return this.getLittleWorld().setBlockMetadataWithNotify(x,
                                                                 y,
                                                                 z,

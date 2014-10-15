@@ -6,7 +6,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
@@ -120,7 +119,6 @@ public class LittlePlayerController extends PlayerControllerMP {
 
     @Override
     public boolean onPlayerRightClick(EntityPlayer entityplayer, World world, ItemStack itemstack, int x, int y, int z, int side, Vec3 hitAt) {
-
         float xOffset = (float) hitAt.xCoord;
         float yOffset = (float) hitAt.yCoord;
         float zOffset = (float) hitAt.zCoord;

@@ -22,7 +22,7 @@ import net.slimevoid.littleblocks.network.handlers.PacketLittleBlocksHandler;
 import net.slimevoid.littleblocks.network.handlers.PacketLittleNotifyHandler;
 import net.slimevoid.littleblocks.network.handlers.PacketLoginHandler;
 import net.slimevoid.littleblocks.network.packets.PacketLittleBlock;
-import net.slimevoid.littleblocks.network.packets.PacketLittleBlocks;
+import net.slimevoid.littleblocks.network.packets.PacketLittleBlockChange;
 import net.slimevoid.littleblocks.network.packets.PacketLittleBlocksEvents;
 import net.slimevoid.littleblocks.network.packets.PacketLittleNotify;
 import net.slimevoid.littleblocks.network.packets.executors.PacketLittleBlockActivatedExecutor;
@@ -121,7 +121,8 @@ public class PacketLib {
     }
 
     public static void sendBlockChange(World world, EntityPlayer entityplayer, int x, int y, int z) {
-        PacketLittleBlocks changePacket = new PacketLittleBlocks(x, y, z, world);
+        PacketLittleBlockChange changePacket = new PacketLittleBlockChange(x, y, z, world);
+        System.out.println("PreChange | " + changePacket.getBlock().getLocalizedName() + " | " + changePacket.getMetadata());
         PacketHelper.sendToPlayer(changePacket,
                                   (EntityPlayerMP) entityplayer);
     }

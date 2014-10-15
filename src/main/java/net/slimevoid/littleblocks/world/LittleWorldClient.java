@@ -171,6 +171,7 @@ public class LittleWorldClient extends World implements ILittleWorld {
 
     @Override
     public boolean setBlock(int x, int y, int z, Block blockID, int newmeta, int update) {
+    	System.out.println("Client: " + blockID + " | " + newmeta);
         return this.getLittleWorld().setBlock(x,
                                               y,
                                               z,
@@ -181,6 +182,7 @@ public class LittleWorldClient extends World implements ILittleWorld {
 
     @Override
     public boolean setBlockMetadataWithNotify(int x, int y, int z, int newmeta, int update) {
+    	System.out.println("Client: " + this.getBlock(x, y, z) + " | " + newmeta);
         return this.getLittleWorld().setBlockMetadataWithNotify(x,
                                                                 y,
                                                                 z,

@@ -5,13 +5,12 @@ import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.slimevoid.library.network.PacketIds;
-import net.slimevoid.library.network.PacketPayload;
 import net.slimevoid.library.network.PacketUpdate;
 import net.slimevoid.littleblocks.core.lib.CommandLib;
 import net.slimevoid.littleblocks.core.lib.ConfigurationLib;
 import net.slimevoid.littleblocks.core.lib.CoreLib;
 
-public class PacketLittleBlocks extends PacketUpdate {
+public class PacketLittleBlockChange extends PacketUpdate {
 
     @Override
     public void writeData(ChannelHandlerContext ctx, ByteBuf data) {
@@ -25,24 +24,26 @@ public class PacketLittleBlocks extends PacketUpdate {
                        data);
     }
 
-    public PacketLittleBlocks() {
+    public PacketLittleBlockChange() {
         super(PacketIds.UPDATE);
         this.setChannel(CoreLib.MOD_CHANNEL);
     }
 
-    public PacketLittleBlocks(int x, int y, int z, World world) {
+    public PacketLittleBlockChange(int x, int y, int z, World world) {
         this();
+        int blockID = Block.getIdFromBlock(world.getBlock(x,
+                y,
+                z));
+        int metadata = world.getBlockMetadata(
+        		x,
+                y,
+                z);
+        int bam = (blockID << 4) + metadata;
         this.setPosition(x,
                          y,
                          z,
-                         Block.getIdFromBlock(world.getBlock(x,
-                                                             y,
-                                                             z)));
-        this.payload = new PacketPayload(1, 0, 0, 1);
+                         bam);
         this.setCommand(CommandLib.UPDATE_CLIENT);
-        this.setMetadata(world.getBlockMetadata(x,
-                                                y,
-                                                z));
     }
 
     @Override
@@ -55,13 +56,8 @@ public class PacketLittleBlocks extends PacketUpdate {
         return false;
     }
 
-    public void setMetadata(int metadata) {
-        this.payload.setIntPayload(0,
-                                   metadata);
-    }
-
     public int getBlockID() {
-        return this.side;
+        return this.side >> 4;
     }
 
     public Block getBlock() {
@@ -69,6 +65,6 @@ public class PacketLittleBlocks extends PacketUpdate {
     }
 
     public int getMetadata() {
-        return this.payload.getIntPayload(0);
+        return this.side & 15;
     }
 }

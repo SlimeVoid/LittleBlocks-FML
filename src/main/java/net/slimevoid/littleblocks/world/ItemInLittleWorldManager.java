@@ -1,13 +1,11 @@
 package net.slimevoid.littleblocks.world;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.server.management.ItemInWorldManager;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
@@ -131,11 +129,13 @@ public class ItemInLittleWorldManager extends ItemInWorldManager {
 	            blockHarvested = this.removeBlock(x,
 	                                              y,
 	                                              z);
-	            if (blockHarvested) PacketLib.sendBlockChange(this.theWorld,
-	                                                          this.thisPlayerMP,
-	                                                          x,
-	                                                          y,
-	                                                          z);
+	            if (blockHarvested) {
+	            	PacketLib.sendBlockChange(this.theWorld,
+                                              this.thisPlayerMP,
+                                              x,
+                                              y,
+                                              z);
+	            }
 	        } else {
 	            ItemStack playerHeldItem = this.thisPlayerMP.getCurrentEquippedItem();
 	            boolean canHarvest = false;
