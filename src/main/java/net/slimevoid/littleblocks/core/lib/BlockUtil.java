@@ -233,7 +233,7 @@ public class BlockUtil {
                                            y >> 3,
                                            z >> 3,
                                            entityplayer)) {
-                getLittleItemManager((EntityPlayerMP) entityplayer,
+            	getLittleItemManager((EntityPlayerMP) entityplayer,
                                      world).activateBlockOrUseItem(entityplayer,
                                                                    world,
                                                                    itemstack,
@@ -244,7 +244,7 @@ public class BlockUtil {
                                                                    hitX,
                                                                    hitY,
                                                                    hitZ);
-                flag = true;
+            	flag = true;
             }
 
         }

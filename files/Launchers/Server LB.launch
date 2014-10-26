@@ -11,5 +11,5 @@
 <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="--accessToken FML"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="LittleBlocks-FML"/>
 <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xincgc -Xmx1024M -Xms1024M"/>
-<stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="${workspace_loc:forge/eclipse}"/>
+<stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="${workspace_loc:LittleBlocks-FML/eclipse}"/>
 </launchConfiguration>

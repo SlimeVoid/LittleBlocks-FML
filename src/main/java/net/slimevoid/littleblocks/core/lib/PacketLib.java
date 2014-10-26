@@ -122,7 +122,6 @@ public class PacketLib {
 
     public static void sendBlockChange(World world, EntityPlayer entityplayer, int x, int y, int z) {
         PacketLittleBlockChange changePacket = new PacketLittleBlockChange(x, y, z, world);
-        System.out.println("PreChange | " + changePacket.getBlock().getLocalizedName() + " | " + changePacket.getMetadata());
         PacketHelper.sendToPlayer(changePacket,
                                   (EntityPlayerMP) entityplayer);
     }

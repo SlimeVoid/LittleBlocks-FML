@@ -91,7 +91,7 @@ public class BlockLittleChunk extends BlockContainer {
     @Override
     public boolean canRenderInPass(int pass) {
         currentPass = pass;
-        return pass == 0 ? true : false;
+        return true;
     }
 
     @Override

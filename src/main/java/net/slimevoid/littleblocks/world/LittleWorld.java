@@ -664,52 +664,53 @@ public abstract class LittleWorld extends World implements ILittleWorld {
                                           (z & 0x7f) >> 3) != ConfigurationLib.littleChunk) {
                     return false;
                 }
-                TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getParentWorld().getTileEntity(x >> 3,
-                                                                                                         y >> 3,
-                                                                                                         z >> 3);
-                Block originalId = null;
-
-                if ((update & 1) != 0) {
-                    originalId = tile.getBlock(x & 7,
-                                               y & 7,
-                                               z & 7);
+                if (!this.isRemote) {
+	                TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getParentWorld().getTileEntity(x >> 3,
+	                                                                                                         y >> 3,
+	                                                                                                         z >> 3);
+	                Block originalId = null;
+	
+	                if ((update & 1) != 0) {
+	                    originalId = tile.getBlock(x & 7,
+	                                               y & 7,
+	                                               z & 7);
+	                }
+	
+	                boolean flag = tile.setBlockIDWithMetadata(x & 7,
+	                                                           y & 7,
+	                                                           z & 7,
+	                                                           block,
+	                                                           newmeta);
+	
+	                this.func_147451_t/* updateAllLightTypes */(x,
+	                                                            y,
+	                                                            z);
+	
+	                if (flag) {
+	                    if ((update & 2) != 0
+	                        && ((update & 4) == 0)) {
+	                        this.markBlockForUpdate(x,
+	                                                y,
+	                                                z);
+	                    }
+	
+	                    if ((update & 1) != 0) {
+	                        this.notifyBlockChange(x,
+	                                               y,
+	                                               z,
+	                                               originalId);
+	
+	                        if (block != null
+	                            && block.hasComparatorInputOverride()) {
+	                            this.func_147453_f(x,
+	                                               y,
+	                                               z,
+	                                               block);
+	                        }
+	                    }
+	                }
+	                return flag;
                 }
-
-                boolean flag = tile.setBlockIDWithMetadata(x & 7,
-                                                           y & 7,
-                                                           z & 7,
-                                                           block,
-                                                           newmeta);
-
-                this.func_147451_t/* updateAllLightTypes */(x,
-                                                            y,
-                                                            z);
-
-                if (flag) {
-                    if ((update & 2) != 0
-                        && (!this.isRemote || (update & 4) == 0)) {
-                        this.markBlockForUpdate(x,
-                                                y,
-                                                z);
-                    }
-
-                    if (!this.isRemote
-                        && (update & 1) != 0) {
-                        this.notifyBlockChange(x,
-                                               y,
-                                               z,
-                                               originalId);
-
-                        if (block != null
-                            && block.hasComparatorInputOverride()) {
-                            this.func_147453_f(x,
-                                               y,
-                                               z,
-                                               block);
-                        }
-                    }
-                }
-                return flag;
             }
         } else {
             LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(this.getParentWorld().isRemote,
@@ -789,45 +790,46 @@ public abstract class LittleWorld extends World implements ILittleWorld {
                                           (z & 0x7f) >> 3) != ConfigurationLib.littleChunk) {
                     return false;
                 }
-                TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getParentWorld().getTileEntity(x >> 3,
-                                                                                                         y >> 3,
-                                                                                                         z >> 3);
-                boolean flag = tile.setBlockMetadata(x & 7,
-                                                     y & 7,
-                                                     z & 7,
-                                                     metadata);
-
-                if (flag) {
-                    Block block = tile.getBlock(x & 7,
-                                                y & 7,
-                                                z & 7);
-
-                    if ((update & 2) != 0
-                        && (!this.isRemote || (update & 4) == 0)) {
-                        this.markBlockForUpdate(x,
-                                                y,
-                                                z);
-                    }
-
-                    if (!this.isRemote && (update & 1) != 0) {
-                        this.notifyBlockChange(x,
-                                               y,
-                                               z,
-                                               block);
-
-                        if (block != null && block.hasComparatorInputOverride()) {
-                            this.func_147453_f(x,
-                                               y,
-                                               z,
-                                               block);
-                        }
-                    }
+                if (!this.isRemote) {
+	                TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getParentWorld().getTileEntity(x >> 3,
+	                                                                                                         y >> 3,
+	                                                                                                         z >> 3);
+	                boolean flag = tile.setBlockMetadata(x & 7,
+	                                                     y & 7,
+	                                                     z & 7,
+	                                                     metadata);
+	
+	                if (flag) {
+	                    Block block = tile.getBlock(x & 7,
+	                                                y & 7,
+	                                                z & 7);
+	
+	                    if ((update & 2) != 0
+	                        && ((update & 4) == 0)) {
+	                        this.markBlockForUpdate(x,
+	                                                y,
+	                                                z);
+	                    }
+	
+	                    if ((update & 1) != 0) {
+	                        this.notifyBlockChange(x,
+	                                               y,
+	                                               z,
+	                                               block);
+	
+	                        if (block != null && block.hasComparatorInputOverride()) {
+	                            this.func_147453_f(x,
+	                                               y,
+	                                               z,
+	                                               block);
+	                        }
+	                    }
+	                }
+	                return flag;
                 }
-                return flag;
             }
-        } else {
-            return false;
         }
+        return false;
     }
 
     @Override

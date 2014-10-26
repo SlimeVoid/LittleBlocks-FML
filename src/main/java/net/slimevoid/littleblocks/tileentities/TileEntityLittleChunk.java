@@ -366,7 +366,6 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
         if (lastData == metadata) {
             return false;
         } else {
-            this.markDirty();
             this.setExtBlockMetadata(x,
                                      y,
                                      z,
@@ -385,6 +384,7 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
                     tileentity.blockMetadata = metadata;
                 }
             }
+            this.markDirty();
             return true;
         }
     }

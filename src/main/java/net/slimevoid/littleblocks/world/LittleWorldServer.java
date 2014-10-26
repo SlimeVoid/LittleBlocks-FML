@@ -258,6 +258,7 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 
     @Override
     public boolean setBlock(int x, int y, int z, Block blockID, int newmeta, int update) {
+    	//System.out.println("Server: " + this + " : " + blockID + " | " + newmeta);
         return this.getLittleWorld().setBlock(x,
                                               y,
                                               z,
@@ -268,7 +269,7 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 
     @Override
     public boolean setBlockMetadataWithNotify(int x, int y, int z, int newmeta, int update) {
-    	System.out.println("Server: " + this.getBlock(x, y, z) + " | " + newmeta);
+    	//System.out.println("Server: " + this + " : " + this.getBlock(x, y, z) + " | " + newmeta);
         return this.getLittleWorld().setBlockMetadataWithNotify(x,
                                                                 y,
                                                                 z,

@@ -171,6 +171,7 @@ public class LittlePlayerController extends PlayerControllerMP {
             }
         }
 
+        //System.out.println("Controller: " + world);
         PacketLib.sendBlockPlace(world,
                                  entityplayer,
                                  x,
