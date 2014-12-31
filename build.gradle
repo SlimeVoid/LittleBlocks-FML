@@ -28,7 +28,7 @@ apply plugin: 'forge'
 apply plugin: 'eclipse'
 
 def slimevoidVersion = '2.0.4.7'
-def forge = '10.13.0.1208'
+def forge = '10.13.2.1230'
 def mc = '1.7.10-' + forge
 def pack = 'littleblocks'
 def github = 'LittleBlocks-FML'
