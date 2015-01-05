@@ -31,7 +31,6 @@ public class ItemInLittleWorldManager extends ItemInWorldManager {
     @Override
     public void onBlockClicked(int x, int y, int z, int side) {
         PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(thisPlayerMP, Action.LEFT_CLICK_BLOCK, x, y, z, side, theWorld);
-        MinecraftForge.EVENT_BUS.post(event);
         if (event.isCanceled()) {
             PacketLib.sendBlockChange(this.theWorld,
                                       this.thisPlayerMP,

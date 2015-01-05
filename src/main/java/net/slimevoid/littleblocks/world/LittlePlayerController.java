@@ -23,7 +23,7 @@ import net.slimevoid.littleblocks.items.wand.EnumWandAction;
 import cpw.mods.fml.client.FMLClientHandler;
 
 public class LittlePlayerController extends PlayerControllerMP {
-
+	
     private Minecraft              mc;
     private WorldSettings.GameType currentGameType;
 
