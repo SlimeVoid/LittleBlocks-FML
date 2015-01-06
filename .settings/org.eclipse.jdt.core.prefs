@@ -1,9 +1,19 @@
 #
 <<<<<<< Upstream, based on branch 'master' of local repository
+<<<<<<< Upstream, based on branch 'master' of local repository
 #Tue Jan 06 22:18:56 GMT 2015
 =======
+=======
+<<<<<<< Upstream, based on branch 'MC1.8' of https://github.com/SlimeVoid/LittleBlocks-FML.git
+>>>>>>> 7a55203 Overriding for some null pointers! FML!
 #Tue Jan 06 20:07:12 GMT 2015
+<<<<<<< Upstream, based on branch 'master' of local repository
 >>>>>>> 224e3a3 MC1.8 Branch
+=======
+=======
+#Tue Jan 06 22:18:56 GMT 2015
+>>>>>>> 9f81581 Overriding for some null pointers! FML!
+>>>>>>> 7a55203 Overriding for some null pointers! FML!
 org.eclipse.jdt.core.compiler.debug.localVariable=generate
 org.eclipse.jdt.core.compiler.compliance=1.6
 org.eclipse.jdt.core.compiler.codegen.unusedLocal=preserve
