@@ -18,6 +18,7 @@ import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
+import net.minecraft.world.WorldSavedData;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.storage.ISaveHandler;
@@ -450,5 +451,22 @@ public class LittleWorldClient extends World implements ILittleWorld {
 	/** getRenderViewDistance()**/
 	protected int func_152379_p() {
         return FMLClientHandler.instance().getClient().gameSettings.renderDistanceChunks;
+	}
+	
+	@Override
+    public WorldSavedData loadItemData(Class itemClass, String itemName) {
+		WorldSavedData yourMum = null;
+		return yourMum;
+	}
+	
+	@Override
+    public void setItemData(String itemName, WorldSavedData yourMum) {
+		// Your Mum!
+	}
+
+	@Override
+    public int getUniqueDataId(String itemName) {
+		int yourMum = 0;
+		return yourMum;
 	}
 }

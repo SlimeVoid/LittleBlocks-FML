@@ -237,26 +237,26 @@ public abstract class LittleWorld extends World implements ILittleWorld {
 
     @Override
     public long getWorldTime() {
-        if (this.getParentWorld() != null) {
-            return this.getParentWorld().provider.getWorldTime();
-        } else {
-            LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(this.getParentWorld().isRemote,
-                                                                                                     "getWorldTime().[null]",
-                                                                                                     LoggerLittleBlocks.LogLevel.DEBUG);
-            return 0;
-        }
+        //if (this.getParentWorld() != null) {
+        //    return this.getParentWorld().provider.getWorldTime();
+        //} else {
+        //    LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(this.getParentWorld().isRemote,
+        //                                                                                             "getWorldTime().[null]",
+        //                                                                                             LoggerLittleBlocks.LogLevel.DEBUG);
+            return super.getWorldTime();
+        //}
     }
 
     @Override
     public long getTotalWorldTime() {
-        if (this.getParentWorld() != null) {
-            return this.getParentWorld().getWorldInfo().getWorldTotalTime();
-        } else {
-            LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(this.getParentWorld().isRemote,
-                                                                                                     "getTotalWorldTime().[null]",
-                                                                                                     LoggerLittleBlocks.LogLevel.DEBUG);
-            return 0;
-        }
+        //if (this.getParentWorld() != null) {
+        //    return this.getParentWorld().getWorldInfo().getWorldTotalTime();
+        //} else {
+        //    LoggerLittleBlocks.getInstance(Logger.filterClassName(this.getClass().toString())).write(this.getParentWorld().isRemote,
+        //                                                                                             "getTotalWorldTime().[null]",
+        //                                                                                             LoggerLittleBlocks.LogLevel.DEBUG);
+            return super.getTotalWorldTime();
+        //}
     }
 
     @Override

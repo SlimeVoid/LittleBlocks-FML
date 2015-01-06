@@ -22,6 +22,7 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.MinecraftException;
 import net.minecraft.world.NextTickListEntry;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldSavedData;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.chunk.Chunk;
@@ -176,12 +177,12 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 
     @Override
     public long getWorldTime() {
-        return this.getLittleWorld().getWorldTime();
+        return super.getWorldTime(); // this.getLittleWorld() != null ? this.getLittleWorld().getWorldTime() : super.getWorldTime();
     }
 
     @Override
     public long getTotalWorldTime() {
-        return this.getLittleWorld().getTotalWorldTime();
+        return super.getTotalWorldTime(); // this.getLittleWorld() != null ? this.getLittleWorld().getTotalWorldTime() : super.getTotalWorldTime();
     }
 
     @Override
@@ -559,4 +560,21 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
     public void addLoadedTileEntity(TileEntity tileentity) {
         this.getLittleWorld().addLoadedTileEntity(tileentity);
     }
+	
+	@Override
+    public WorldSavedData loadItemData(Class itemClass, String itemName) {
+		WorldSavedData yourMum = null;
+		return yourMum;
+	}
+	
+	@Override
+    public void setItemData(String itemName, WorldSavedData yourMum) {
+		// Your Mum!
+	}
+
+	@Override
+    public int getUniqueDataId(String itemName) {
+		int yourMum = 0;
+		return yourMum;
+	}
 }
