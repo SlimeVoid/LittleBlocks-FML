@@ -1,5 +1,9 @@
 #
+<<<<<<< Upstream, based on branch 'master' of local repository
 #Tue Jan 06 22:18:56 GMT 2015
+=======
+#Tue Jan 06 20:07:12 GMT 2015
+>>>>>>> 224e3a3 MC1.8 Branch
 org.eclipse.jdt.core.compiler.debug.localVariable=generate
 org.eclipse.jdt.core.compiler.compliance=1.6
 org.eclipse.jdt.core.compiler.codegen.unusedLocal=preserve

@@ -27,12 +27,12 @@ apply plugin: 'maven'
 apply plugin: 'forge'
 apply plugin: 'eclipse'
 
-def slimevoidVersion = '2.0.4.7'
-def forge = '10.13.2.1230'
-def mc = '1.7.10-' + forge
+def slimevoidVersion = '2.0.5.0'
+def forge = '11.14.0.1281'
+def mc = '1.8-' + forge + '-1.8'
 def pack = 'littleblocks'
 def github = 'LittleBlocks-FML'
-version = '2.2.4.4'
+version = '2.2.5.0'
 group = 'net.slimevoid'
 archivesBaseName = 'LittleBlocks'
 
@@ -42,8 +42,11 @@ dependencies {
 
 minecraft {
     version = mc
-    runDir = 'eclipse/assets'
-    
+    if  (file('../run').exists()) {
+       runDir = "../run/assets"
+    } else {
+       runDir = "assets"
+    }
     replaceIn 'net/slimevoid/' + pack + '/core/lib/CoreLib.java'
     replace '@VERSION@', project.version
     replace 'required-after:SlimevoidLib', 'required-after:Forge@[' + forge + ',);required-after:SlimevoidLib@[' + slimevoidVersion + ',)'
