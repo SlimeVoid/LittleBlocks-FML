@@ -20,8 +20,8 @@ import net.slimevoid.littleblocks.events.LittleBlocksCollectionPickup;
 import net.slimevoid.littleblocks.events.LittleChunkEvent;
 import net.slimevoid.littleblocks.events.WorldServerEvent;
 import net.slimevoid.littleblocks.tickhandlers.LittleWorldServerTickHandler;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
 
 public class CommonProxy implements ILBCommonProxy {
 

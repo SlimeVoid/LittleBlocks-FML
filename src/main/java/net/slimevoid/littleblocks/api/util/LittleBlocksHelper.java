@@ -2,10 +2,12 @@ package net.slimevoid.littleblocks.api.util;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -48,29 +50,21 @@ public class LittleBlocksHelper implements ISlimevoidHelper {
     }
 
     @Override
-    public Block getBlock(World world, int x, int y, int z) {
+    public IBlockState getBlockState(World world, BlockPos pos) {
         if (world != null) {
             return getWorld(world,
-                            x,
-                            y,
-                            z).getBlock(x,
-                                        y,
-                                        z);
+                            pos).getBlockState(pos);
         }
-        return Blocks.air;
+        return Blocks.air.getDefaultState();
     }
 
     @Override
-    public TileEntity getBlockTileEntity(IBlockAccess world, int x, int y, int z) {
+    public TileEntity getBlockTileEntity(IBlockAccess world, BlockPos pos) {
         if (world != null) {
             IBlockAccess newWorld = this.getWorld(world,
-                                                  x,
-                                                  y,
-                                                  z);
+                                                  pos);
             if (newWorld != null) {
-                TileEntity tileentity = newWorld.getTileEntity(x,
-                                                               y,
-                                                               z);
+                TileEntity tileentity = newWorld.getTileEntity(pos);
                 return tileentity;
             }
         }
@@ -78,23 +72,19 @@ public class LittleBlocksHelper implements ISlimevoidHelper {
     }
 
     @Override
-    public boolean targetExists(World world, int x, int y, int z) {
+    public boolean targetExists(World world, BlockPos pos) {
         if (world != null) {
             return ((World) getWorld(world,
-                                     x,
-                                     y,
-                                     z)).blockExists(x,
-                                                     y,
-                                                     z);
+                                     pos)).isBlockLoaded(pos);
         }
         return false;
     }
 
-    private IBlockAccess getWorld(IBlockAccess world, int x, int y, int z) {
+    private IBlockAccess getWorld(IBlockAccess world, BlockPos pos) {
         if (isLittleBlock(world,
-                          x,
-                          y,
-                          z)) {
+                          pos.getX(),
+                          pos.getY(),
+                          pos.getZ())) {
             return (World) ((ILBCommonProxy) proxy).getLittleWorld(world,
                                                                    false);
         }
@@ -105,9 +95,10 @@ public class LittleBlocksHelper implements ISlimevoidHelper {
         if (world instanceof ILittleWorld) {
             return true;
         }
-        if (world.getTileEntity(x >> 3,
-                                y >> 3,
-                                z >> 3) instanceof ILittleBlocks) {
+        BlockPos pos = new BlockPos(x >> 3,
+					                y >> 3,
+					                z >> 3);
+        if (world.getTileEntity(pos) instanceof ILittleBlocks) {
             return true;
         }
         return false;
@@ -137,27 +128,29 @@ public class LittleBlocksHelper implements ISlimevoidHelper {
      * Credits : Tarig and Unclemion
      */
     @Override
-    public boolean isLadder(IBlockAccess world, int x, int y, int z, EntityLivingBase entity) {
+    public boolean isLadder(IBlockAccess world, BlockPos pos, EntityLivingBase entity) {
+    	int x = pos.getX(), y = pos.getY(), z = pos.getZ();
+        TileEntityLittleChunk tile = (TileEntityLittleChunk) world.getTileEntity(pos);
+        double minX = entity.getBoundingBox().minX + 0.001D;
 
-        TileEntityLittleChunk tile = (TileEntityLittleChunk) world.getTileEntity(x,
-                                                                                 y,
-                                                                                 z);
-        double minX = entity.boundingBox.minX + 0.001D;
+        double minY = entity.getBoundingBox().minY + 0.001D;
 
-        double minY = entity.boundingBox.minY + 0.001D;
+        double minZ = entity.getBoundingBox().minZ + 0.001D;
 
-        double minZ = entity.boundingBox.minZ + 0.001D;
+        double maxX = entity.getBoundingBox().maxX - 0.001D;
 
-        double maxX = entity.boundingBox.maxX - 0.001D;
-
-        double maxZ = entity.boundingBox.maxZ - 0.001D;
-
-        if (((World) world).checkChunksExist(MathHelper.floor_double(minX),
+        double maxZ = entity.getBoundingBox().maxZ - 0.001D;
+        
+        BlockPos from = new BlockPos(MathHelper.floor_double(minX),
                                              MathHelper.floor_double(minY),
-                                             MathHelper.floor_double(minZ),
-                                             MathHelper.floor_double(maxX),
-                                             MathHelper.floor_double(minY),
-                                             MathHelper.floor_double(maxZ))) {
+                                             MathHelper.floor_double(minZ));
+
+        BlockPos to = new BlockPos(MathHelper.floor_double(maxX),
+                MathHelper.floor_double(minY),
+                MathHelper.floor_double(maxZ));
+        
+        if (((World) world).isAreaLoaded(from,
+                                         to)) {
 
             boolean result = false;
             // X/8 = .125 solve for the floor of X .125 * 8 = 1 the floor of 1
@@ -187,10 +180,9 @@ public class LittleBlocksHelper implements ISlimevoidHelper {
                     if (block != null && block.getMaterial() != Material.air) {
                         int xx = (x << 3) + littleX, yy = (y << 3) + (int) minY, zz = (z << 3)
                                                                                       + littleZ;
+                        BlockPos littlePos = new BlockPos(xx, yy, zz);
                         if (block.isLadder((World) tile.getLittleWorld(),
-                                           xx,
-                                           yy,
-                                           zz,
+                                           littlePos,
                                            entity)) {
                             return true;
                         }
@@ -201,5 +193,17 @@ public class LittleBlocksHelper implements ISlimevoidHelper {
         }
         return false;
     }
+
+	@Override
+	public Block getBlock(World world, BlockPos pos) {
+		return this.getBlockState(world, pos).getBlock();
+	}
+
+	@Override
+	@Deprecated
+	public boolean isLadder(IBlockAccess world, int x, int y, int z,
+			EntityLivingBase entity) {
+		return this.isLadder(world, new BlockPos(x, y, z), entity);
+	}
 
 }

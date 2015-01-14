@@ -5,7 +5,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 
-public class BlockLBDoor extends BlockDoor {
+public class BlockLBDoor { /**extends BlockDoor {
 
     public BlockLBDoor(int blockID, Material material) {
         super(material);
@@ -26,5 +26,5 @@ public class BlockLBDoor extends BlockDoor {
                                                                                   x,
                                                                                   y + 1,
                                                                                   z);
-    }
+    }**/
 }

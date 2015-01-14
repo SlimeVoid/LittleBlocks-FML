@@ -11,7 +11,7 @@ import net.slimevoid.littleblocks.api.ILittleWorld;
 import net.slimevoid.littleblocks.core.LittleBlocks;
 import net.slimevoid.littleblocks.core.lib.CoreLib;
 import net.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class LittleChunkEvent {
 

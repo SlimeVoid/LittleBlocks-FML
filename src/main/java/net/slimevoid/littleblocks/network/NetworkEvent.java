@@ -13,8 +13,8 @@ import net.slimevoid.littleblocks.core.lib.ConfigurationLib;
 import net.slimevoid.littleblocks.items.wand.EnumWandAction;
 import net.slimevoid.littleblocks.network.packets.PacketLittleBlocksSettings;
 import net.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.network.FMLNetworkEvent.ServerConnectionFromClientEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent.ServerConnectionFromClientEvent;
 
 public class NetworkEvent {
 

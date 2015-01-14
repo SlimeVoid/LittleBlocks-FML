@@ -1,8 +1,8 @@
 package net.slimevoid.littleblocks.core.lib;
 
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class CoreLib {
 
@@ -14,6 +14,7 @@ public class CoreLib {
     public static final String MOD_CHANNEL        = "LITTLEBLOCKS";
     public static final String CLIENT_PROXY       = "net.slimevoid.littleblocks.client.proxy.ClientProxy";
     public static final String COMMON_PROXY       = "net.slimevoid.littleblocks.proxy.CommonProxy";
+	public static final int LITTLECHUNK_SIZE 	  = 512;
     @SideOnly(Side.CLIENT)
     public static boolean      OPTIFINE_INSTALLED = FMLClientHandler.instance().hasOptifine();
 }

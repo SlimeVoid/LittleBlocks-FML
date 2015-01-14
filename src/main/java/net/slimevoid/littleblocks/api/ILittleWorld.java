@@ -3,7 +3,7 @@ package net.slimevoid.littleblocks.api;
 import java.util.List;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.ChunkPosition;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -15,7 +15,7 @@ public interface ILittleWorld extends IBlockAccess {
 
     public boolean isOutSideLittleWorld(int x, int y, int z);
 
-    public void activeChunkPosition(ChunkPosition chunkposition, boolean forced);
+    public void activeChunkPosition(BlockPos chunkposition, boolean forced);
 
     public List<TileEntity> getLoadedTileEntities();
 

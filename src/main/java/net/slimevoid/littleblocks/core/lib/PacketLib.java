@@ -28,8 +28,8 @@ import net.slimevoid.littleblocks.network.packets.PacketLittleNotify;
 import net.slimevoid.littleblocks.network.packets.executors.PacketLittleBlockActivatedExecutor;
 import net.slimevoid.littleblocks.network.packets.executors.PacketLittleBlockClickedExecutor;
 import net.slimevoid.littleblocks.network.packets.executors.PacketLittleWandSwitchExecutor;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class PacketLib {
 

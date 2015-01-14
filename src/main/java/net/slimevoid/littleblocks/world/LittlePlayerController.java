@@ -20,7 +20,7 @@ import net.slimevoid.littleblocks.core.lib.ConfigurationLib;
 import net.slimevoid.littleblocks.core.lib.PacketLib;
 import net.slimevoid.littleblocks.items.ItemLittleBlocksWand;
 import net.slimevoid.littleblocks.items.wand.EnumWandAction;
-import cpw.mods.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.client.FMLClientHandler;
 
 public class LittlePlayerController extends PlayerControllerMP {
 	
@@ -53,6 +53,7 @@ public class LittlePlayerController extends PlayerControllerMP {
         }
     }
 
+    @Override
     public void onPlayerRightClickFirst(EntityPlayer entityplayer, World world, ItemStack itemstack, int x, int y, int z, int sumside, float hitX, float hitY, float hitZ) {
         boolean flag = true;
         int stackSize = itemstack != null ? itemstack.stackSize : 0;

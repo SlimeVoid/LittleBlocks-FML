@@ -11,7 +11,7 @@
  */
 package net.slimevoid.littleblocks.core.lib;
 
-import cpw.mods.fml.common.registry.LanguageRegistry;
+import net.minecraftforge.fml.common.registry.LanguageRegistry;
 
 public class LocalizationLib {
 

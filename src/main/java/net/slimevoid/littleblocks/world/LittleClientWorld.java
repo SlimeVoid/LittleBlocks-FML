@@ -1,6 +1,6 @@
 package net.slimevoid.littleblocks.world;
 
-import cpw.mods.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 

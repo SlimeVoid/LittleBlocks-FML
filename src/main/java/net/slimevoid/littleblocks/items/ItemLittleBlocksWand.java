@@ -9,8 +9,8 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.slimevoid.littleblocks.core.lib.IconLib;
 import net.slimevoid.littleblocks.items.wand.EnumWandAction;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemLittleBlocksWand extends Item {
 

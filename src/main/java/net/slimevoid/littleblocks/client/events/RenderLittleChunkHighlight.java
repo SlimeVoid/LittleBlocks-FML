@@ -1,7 +1,7 @@
 package net.slimevoid.littleblocks.client.events;
 
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class RenderLittleChunkHighlight {
 

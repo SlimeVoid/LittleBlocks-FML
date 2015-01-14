@@ -9,7 +9,7 @@ import net.slimevoid.library.util.helpers.ChatHelper;
 import net.slimevoid.littleblocks.core.lib.CommandLib;
 import net.slimevoid.littleblocks.core.lib.MessageLib;
 import net.slimevoid.littleblocks.network.packets.PacketLittleNotify;
-import cpw.mods.fml.common.registry.LanguageRegistry;
+import net.minecraftforge.fml.common.registry.LanguageRegistry;
 
 public class ClientCopierNotifyExecutor implements IPacketExecutor {
 
