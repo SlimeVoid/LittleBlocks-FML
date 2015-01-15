@@ -64,10 +64,6 @@ public class BlockLittleChunk extends BlockContainer {
 
     private static boolean isFluid        = false;
 
-    // public void registerIcons(IIconRegister iconRegister) {
-    //    this.blockIcon = iconRegister.registerIcon(IconLib.LB_CHUNK);
-    // }
-
     private Class<? extends TileEntity> clazz;
 
     public BlockLittleChunk(int id, Class<? extends TileEntity> clazz, Material material, float hardness, boolean selfNotify) {
@@ -77,22 +73,6 @@ public class BlockLittleChunk extends BlockContainer {
         this.stepSound = Block.soundTypeWood;
         this.setCreativeTab(CreativeTabs.tabDecorations);
     }
-
-    // @Override
-    // public boolean isBlockSolid(IBlockAccess par1IBlockAccess, BlockPos pos, EnumFacing side) {
-    //    return false;
-    // }
-
-    // @Override
-    // public int getRenderBlockPass() {
-    //    return 0;
-    // }
-
-    // @Override
-    // public boolean canRenderInPass(int pass) {
-    //    currentPass = pass;
-    //    return true;
-    // }
 
     @Override
     public boolean isLadder(IBlockAccess world, BlockPos pos, EntityLivingBase entity) {

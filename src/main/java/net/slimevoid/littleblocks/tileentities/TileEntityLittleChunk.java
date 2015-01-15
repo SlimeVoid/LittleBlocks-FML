@@ -6,12 +6,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import com.google.common.collect.Maps;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.crash.CrashReport;
+import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -21,12 +24,11 @@ import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
-import net.minecraft.world.ChunkPosition;
+import net.minecraft.util.ReportedException;
 import net.minecraft.world.NextTickListEntry;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.NibbleArray;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.slimevoid.library.core.SlimevoidCore;
 import net.slimevoid.library.core.lib.CoreLib;
 import net.slimevoid.littleblocks.api.ILittleBlocks;
@@ -63,6 +65,39 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
     public ILittleWorld getLittleWorld() {
         return LittleBlocks.proxy.getLittleWorld(this.worldObj,
                                                  false);
+    }
+    
+    private Block getBlock0(int x, int y, int z) {
+        Block block = Blocks.air;
+        try {
+            block = this.storageArray.getBlockByExtId(x, y & 15, z);
+        }
+        catch (Throwable throwable) {
+            CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Getting block");
+            throw new ReportedException(crashreport);
+        }
+        return block;
+    }
+
+    public Block getBlock(final int x, final int y, final int z) {
+        try {
+            return this.getBlock0(x, y, z);
+        } catch(ReportedException reportedexception) {
+            CrashReportCategory crashreportcategory = reportedexception.getCrashReport().makeCategory("Block being got");
+            crashreportcategory.addCrashSectionCallable("Location", new Callable()
+            {
+                private static final String __OBFID = "CL_00000374";
+                public String call()
+                {
+                    return CrashReportCategory.getCoordinateInfo(pos);
+                }
+            });
+            throw reportedexception;
+        }
+    }
+    
+    public Block getBlock(BlockPos pos) {
+        return this.getBlock(pos.getX(), pos.getY(), pos.getZ());
     }
 
 	public IBlockState getBlockState(BlockPos pos) {
@@ -102,183 +137,70 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
         	}
         	return null;
         } else {
-        	return this.storageArray.get(x, y, z);
+        	return this.storageArray.get(x,
+        	                             y,
+        	                             z);
         }
-		return null;
 	}
 
     public int getBlockMetadata(int x, int y, int z) {
-        } else {
-            return getExtBlockMetadata(x,
-                                       y,
-                                       z);
-        }
+        return this.storageArray.getExtBlockMetadata(x,
+                                                     y,
+                                                     z);
+    }
+    
+    public int getBlockMetadata(BlockPos pos) {
+        return this.getBlockMetadata(pos.getX(), pos.getY(), pos.getZ());
     }
 
-    public Block getBlock(int x, int y, int z) {
-        if (x >= size | y >= size | z >= size) {
-            if (this.worldObj.getBlock(xCoord + (x >= size ? 1 : 0),
-                                       yCoord + (y >= size ? 1 : 0),
-                                       zCoord + (z >= size ? 1 : 0)) == ConfigurationLib.littleChunk) {
-                TileEntityLittleChunk tile = (TileEntityLittleChunk) this.worldObj.getTileEntity(xCoord
-                                                                                                         + (x >= size ? 1 : 0),
-                                                                                                 yCoord
-                                                                                                         + (y >= size ? 1 : 0),
-                                                                                                 zCoord
-                                                                                                         + (z >= size ? 1 : 0));
-                return tile.getBlock(x >= size ? x - size : x,
-                                     y >= size ? y - size : y,
-                                     z >= size ? z - size : z);
+    public IBlockState setBlockState(BlockPos pos) {
+        int x = pos.getX(), y = pos.getY(), z = pos.getZ();
+        if (x >= this.size | y >= this.size | z >= this.size) {
+            BlockPos actualPos = new BlockPos(
+                    this.getPos().getX() + (x >= this.size ? 1 : 0),
+                    this.getPos().getY() + (y >= this.size ? 1 : 0),
+                    this.getPos().getZ() + (z >= this.size ? 1 : 0));
+            IBlockState blockState = this.getWorld().getBlockState(actualPos);
+            if (blockState.getBlock().isAssociatedBlock(Blocks.air)) {
+                this.getWorld().setBlockState(actualPos, ConfigurationLib.littleChunk.getDefaultState());
             }
-            if (this.worldObj.getBlock(xCoord + (x >= size ? 1 : 0),
-                                       yCoord + (y >= size ? 1 : 0),
-                                       zCoord + (z >= size ? 1 : 0)) == Blocks.air) {
-                return Blocks.air;
+            if (blockState.getBlock().isAssociatedBlock(this.blockType)) {
+                TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getWorld().getTileEntity(actualPos);
+                BlockPos newLittlePos = new BlockPos(x >= this.size ? x - this.size : x,
+                                                     y >= this.size ? y - this.size : y,
+                                                     z >= this.size ? z - this.size : z);
+                return tile.setBlockState(newLittlePos);
             }
             return null;
         } else if (x < 0 | z < 0 | y < 0) {
-            if (this.worldObj.getBlock(xCoord - (x < 0 ? 1 : 0),
-                                       yCoord - (y < 0 ? 1 : 0),
-                                       zCoord - (z < 0 ? 1 : 0)) == ConfigurationLib.littleChunk) {
-                TileEntityLittleChunk tile = (TileEntityLittleChunk) this.worldObj.getTileEntity(xCoord
-                                                                                                         - (x < 0 ? 1 : 0),
-                                                                                                 yCoord
-                                                                                                         - (y < 0 ? 1 : 0),
-                                                                                                 zCoord
-                                                                                                         - (z < 0 ? 1 : 0));
-                return tile.getBlock(x < 0 ? x + size : x,
-                                     y < 0 ? y + size : y,
-                                     z < 0 ? z + size : z);
+            BlockPos actualPos = new BlockPos(
+                    this.getPos().getX() - (x < 0 ? 1 : 0),
+                    this.getPos().getY() - (y < 0 ? 1 : 0),
+                    this.getPos().getZ() - (z < 0 ? 1 : 0));
+            IBlockState blockState = this.getWorld().getBlockState(pos);
+            if (blockState.getBlock().isAssociatedBlock(Blocks.air)) {
+                this.getWorld().setBlockState(actualPos, ConfigurationLib.littleChunk.getDefaultState());
             }
-            if (this.worldObj.getBlock(xCoord - (x < 0 ? 1 : 0),
-                                       yCoord - (y < 0 ? 1 : 0),
-                                       zCoord - (z < 0 ? 1 : 0)) == Blocks.air) {
-                return Blocks.air;
+            if (blockState.getBlock().isAssociatedBlock(this.blockType)) {
+                TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getWorld().getTileEntity(actualPos);
+                BlockPos newLittlePos = new BlockPos(x < 0 ? x + this.size : x,
+                                                     y < 0 ? y + this.size : y,
+                                                     z < 0 ? z + this.size : z);
+                return tile.getBlockState(newLittlePos);
+            }
+            if (blockState.getBlock().isAssociatedBlock(Blocks.air)) {
+                return Blocks.air.getDefaultState();
             }
             return null;
         } else {
-            return this.getBlockByExtId(x,
-                                        y,
-                                        z);
-        }
-    }
-
-    public int getBlockLightValue(int x, int y, int z, int side) {
-        if (x >= size | y >= size | z >= size) {
-            if (this.worldObj.getBlock(xCoord + (x >= size ? 1 : 0),
-                                       yCoord + (y >= size ? 1 : 0),
-                                       zCoord + (z >= size ? 1 : 0)) == ConfigurationLib.littleChunk) {
-                TileEntityLittleChunk tile = (TileEntityLittleChunk) this.worldObj.getTileEntity(xCoord
-                                                                                                         + (x >= size ? 1 : 0),
-                                                                                                 yCoord
-                                                                                                         + (y >= size ? 1 : 0),
-                                                                                                 zCoord
-                                                                                                         + (z >= size ? 1 : 0));
-                return tile.getBlockLightValue(x >= size ? x - size : x,
-                                               y >= size ? y - size : y,
-                                               z >= size ? z - size : z,
-                                               side);
-            } else {
-                return this.worldObj.getBlockLightValue(this.xCoord,
-                                                        this.yCoord,
-                                                        this.zCoord);
-            }
-        } else if (x < 0 | z < 0 | y < 0) {
-            if (this.worldObj.getBlock(xCoord - (x < 0 ? 1 : 0),
-                                       yCoord - (y < 0 ? 1 : 0),
-                                       zCoord - (z < 0 ? 1 : 0)) == ConfigurationLib.littleChunk) {
-                TileEntityLittleChunk tile = (TileEntityLittleChunk) this.worldObj.getTileEntity(xCoord
-                                                                                                         - (x < 0 ? 1 : 0),
-                                                                                                 yCoord
-                                                                                                         - (y < 0 ? 1 : 0),
-                                                                                                 zCoord
-                                                                                                         - (z < 0 ? 1 : 0));
-                return tile.getBlockLightValue(x < 0 ? x + size : x,
-                                               y < 0 ? y + size : y,
-                                               z < 0 ? z + size : z,
-                                               side);
-            } else {
-                return this.worldObj.getBlockLightValue(this.xCoord,
-                                                        this.yCoord,
-                                                        this.zCoord);
-            }
-        } else {
-            return lightMap[x][y][z];
-        }
-    }
-
-    public int getSavedLightValue(int x, int y, int z) {
-        return 0;
-    }
-
-    public void setLightValue(int x, int y, int z, int value) {
-        if (x >= size | y >= size | z >= size) {
-            if (this.worldObj.getBlock(xCoord + (x >= size ? 1 : 0),
-                                       yCoord + (y >= size ? 1 : 0),
-                                       zCoord + (z >= size ? 1 : 0)) == ConfigurationLib.littleChunk) {
-                TileEntityLittleChunk tile = (TileEntityLittleChunk) this.worldObj.getTileEntity(xCoord
-                                                                                                         + (x >= size ? 1 : 0),
-                                                                                                 yCoord
-                                                                                                         + (y >= size ? 1 : 0),
-                                                                                                 zCoord
-                                                                                                         + (z >= size ? 1 : 0));
-                tile.setLightValue(x >= size ? x - size : x,
-                                   y >= size ? y - size : y,
-                                   z >= size ? z - size : z,
-                                   value);
-            }
-        } else if (x < 0 | z < 0 | y < 0) {
-            if (this.worldObj.getBlock(xCoord - (x < 0 ? 1 : 0),
-                                       yCoord - (y < 0 ? 1 : 0),
-                                       zCoord - (z < 0 ? 1 : 0)) == ConfigurationLib.littleChunk) {
-                TileEntityLittleChunk tile = (TileEntityLittleChunk) this.worldObj.getTileEntity(xCoord
-                                                                                                         - (x < 0 ? 1 : 0),
-                                                                                                 yCoord
-                                                                                                         - (y < 0 ? 1 : 0),
-                                                                                                 zCoord
-                                                                                                         - (z < 0 ? 1 : 0));
-                tile.setLightValue(x < 0 ? x + size : x,
-                                   y < 0 ? y + size : y,
-                                   z < 0 ? z + size : z,
-                                   value);
-            }
-        }
-        int lastLight = this.lightMap[x][y][z];
-        if (lastLight == value) {
-            return;
-        } else {
-            this.lightMap[x][y][z] = value;
-            this.markDirty();
+            return this.storageArray.get(x,
+                                         y,
+                                         z);
         }
     }
 
     public boolean setBlockMetadata(int x, int y, int z, int metadata) {
-        if (x >= size | y >= size | z >= size) {
-            if (this.worldObj.getBlock(xCoord + (x >= size ? 1 : 0),
-                                       yCoord + (y >= size ? 1 : 0),
-                                       zCoord + (z >= size ? 1 : 0)) == Blocks.air) {
-                this.worldObj.setBlock(xCoord + (x >= size ? 1 : 0),
-                                       yCoord + (y >= size ? 1 : 0),
-                                       zCoord + (z >= size ? 1 : 0),
-                                       ConfigurationLib.littleChunk,
-                                       0,
-                                       0x02);
-            }
-            if (this.worldObj.getBlock(xCoord + (x >= size ? 1 : 0),
-                                       yCoord + (y >= size ? 1 : 0),
-                                       zCoord + (z >= size ? 1 : 0)) == ConfigurationLib.littleChunk) {
-                TileEntityLittleChunk tile = (TileEntityLittleChunk) this.worldObj.getTileEntity(xCoord
-                                                                                                         + (x >= size ? 1 : 0),
-                                                                                                 yCoord
-                                                                                                         + (y >= size ? 1 : 0),
-                                                                                                 zCoord
-                                                                                                         + (z >= size ? 1 : 0));
-                return tile.setBlockMetadata(x >= size ? x - size : x,
-                                             y >= size ? y - size : y,
-                                             z >= size ? z - size : z,
-                                             metadata);
-            }
-        } else if (x < 0 | z < 0 | y < 0) {
+        if (x < 0 | z < 0 | y < 0) {
             if (this.worldObj.getBlock(xCoord - (x < 0 ? 1 : 0),
                                        yCoord - (y < 0 ? 1 : 0),
                                        zCoord - (z < 0 ? 1 : 0)) == Blocks.air) {
@@ -330,60 +252,6 @@ public class TileEntityLittleChunk extends TileEntity implements ILittleBlocks {
             }
             this.markDirty();
             return true;
-        }
-    }
-
-    public void setExtBlockMetadata(int x, int y, int z, int metadata) {
-        this.blockMetadataArray.set(x,
-                                    y,
-                                    z,
-                                    metadata);
-    }
-
-    public void setExtBlockId(int x, int y, int z, Block block) {
-        int lastBlockId = this.blockLSBArray[y << 8 | z << 4 | x] & 255;
-
-        if (this.blockMSBArray != null) {
-            lastBlockId |= this.blockMSBArray.get(x,
-                                                  y,
-                                                  z) << 8;
-        }
-
-        Block lastBlock = Block.getBlockById(lastBlockId);
-
-        if (lastBlock != Blocks.air) {
-            --this.blockRefCount;
-
-            if (lastBlock.getTickRandomly()) {
-                --this.tickRefCount;
-            }
-        }
-
-        if (block != Blocks.air) {
-            ++this.blockRefCount;
-
-            if (block.getTickRandomly()) {
-                ++this.tickRefCount;
-            }
-        }
-
-        int blockId = Block.getIdFromBlock(block);
-        this.blockLSBArray[y << 8 | z << 4 | x] = (byte) (blockId & 255);
-
-        if (blockId > 255) {
-            if (this.blockMSBArray == null) {
-                this.blockMSBArray = new NibbleArray(this.blockLSBArray.length, 4);
-            }
-
-            this.blockMSBArray.set(x,
-                                   y,
-                                   z,
-                                   (blockId & 3840) >> 8);
-        } else if (this.blockMSBArray != null) {
-            this.blockMSBArray.set(x,
-                                   y,
-                                   z,
-                                   0);
         }
     }
 
