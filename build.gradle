@@ -28,23 +28,28 @@ apply plugin: 'forge'
 apply plugin: 'eclipse'
 def slimevoidVersion = '3.0.0.2-beta-1.8'
 def number = '2.2.5.0'
-def release = 'beta'
+def release = 'alpha'
 def mcversion = '1.8'
 def forge = '11.14.0.1281'
+def map = 'snapshot_20150110'
 def mc = mcversion + '-' + forge + '-' + mcversion
 def pack = 'littleblocks'
 def github = 'LittleBlocks-FML'
-
 version = number + '-' + release + '-' + mcversion
 group = 'net.slimevoid'
 archivesBaseName = 'LittleBlocks'
 
 dependencies {
-    compile 'net.slimevoid:SlimevoidLibrary:' + slimevoidVersion + ':dev'
+    if (findProject(':SlimevoidLibrary') != null ) {
+        compile project(':SlimevoidLibrary')
+    } else {
+        compile 'net.slimevoid:SlimevoidLibrary:' + slimevoidVersion + ':dev'
+    }
 }
 
 minecraft {
     version = mc
+    mappings = map
     if  (file('../run').exists()) {
        runDir = "../run/assets"
     } else {
@@ -56,6 +61,10 @@ minecraft {
 }
 
 processResources {
+    // this will ensure that this task is redone when the versions change.
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
@@ -67,6 +76,12 @@ processResources {
     // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
+    }
+}
+
+sourceSets {
+    main {
+        output.resourcesDir = output.classesDir
     }
 }
 
@@ -100,7 +115,7 @@ uploadArchives {
     repositories.mavenDeployer {
     	configuration = configurations.deployJars
         if (project.hasProperty("slimevoidUsername")) {
-            repository(url: 'scp://maven.slimevoid.net/repos') {
+            repository(url: 'scp://hyda.slimevoid.net/home/maven/www/repos') {
                 authentication(userName: slimevoidUsername, password: slimevoidPassword)
             }
         } else {

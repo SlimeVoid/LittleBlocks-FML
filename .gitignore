@@ -6,6 +6,10 @@ build
 .gradle
 upload.bat
 
+# intellij stuff
+.idea
+*.iml
+
 # eclipse stuff
 .classpath
 .project
