@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties version="1.0">
+	<comment>简体中文语言文件</comment>
+  <entry key="message.lb.deny.wand">抱歉，此功能暂不可用！</entry>
+	<entry key="message.lb.deny.copy">抱歉，此功能只能在创造模式使用！</entry>
+	<entry key="message.lb.deny.place">抱歉，你不能在这里放置小方块！</entry>
+	<entry key="message.lb.deny.use">抱歉，你不能在这里使用物品！</entry>
+	<entry key="tile.lb.littleblocks.name">小区块</entry>
+	<entry key="item.lb.wand.name">小方块魔杖</entry>
+</properties>
