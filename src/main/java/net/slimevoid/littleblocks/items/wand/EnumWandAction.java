@@ -328,9 +328,9 @@ public enum EnumWandAction {
                                                                              z1,
                                                                              blockId,
                                                                              metadata);
-                                            TileEntity oldLittleTile = oldtile.getChunkTileEntity(x1,
-                                                                                                  y1,
-                                                                                                  z1);
+                                            TileEntity oldLittleTile = oldtile.getTileEntity(x1,
+                                                    y1,
+                                                    z1);
                                             if (oldLittleTile != null) {
                                                 newtilelb.setTileEntity(x1,
                                                                                   y1,

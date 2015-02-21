@@ -152,11 +152,11 @@ public class BlockLittleChunk extends BlockContainer {
                                     int contentMeta = tile.getBlockMetadata(x1,
                                                                             y1,
                                                                             z1);
-                                    if (blockId != Blocks.air) {
+                                    if (!blockState.getBlock().isAssociatedBlock(Blocks.air)) {
                                         ItemStack itemToDrop = this.dropLittleBlockAsNormalBlock(world,
                                                                                                  pos,
-                                                                                                 blockId,
-                                                                                                 contentMeta);
+                                                                                                 blockState.getBlock(),
+                                                                                                 blockState);
                                         if (itemToDrop != null) {
                                             collection.addItemToDrop(itemToDrop);
                                         }
@@ -184,17 +184,17 @@ public class BlockLittleChunk extends BlockContainer {
                                      willHarvest);
     }
 
-    private ItemStack dropLittleBlockAsNormalBlock(World world, BlockPos pos, Block blockId, IBlockState state) {
-        boolean dropsBlocks = blockId.getDrops(world,
+    private ItemStack dropLittleBlockAsNormalBlock(World world, BlockPos pos, Block block, IBlockState state) {
+        boolean dropsBlocks = block.getDrops(world,
                                                pos,
                                                state,
                                                0).size() > 0 ? true : false;
         if (dropsBlocks) {
-            Item idDropped = blockId.getItemDropped(state,
+            Item idDropped = block.getItemDropped(state,
                                                     world.rand,
                                                     0);
-            int quantityDropped = blockId.quantityDropped(world.rand);
-            int damageDropped = blockId.damageDropped(state);
+            int quantityDropped = block.quantityDropped(world.rand);
+            int damageDropped = block.damageDropped(state);
             ItemStack itemstack = new ItemStack(idDropped, quantityDropped, damageDropped);
 
             if (quantityDropped > 0) {
@@ -249,16 +249,16 @@ public class BlockLittleChunk extends BlockContainer {
             }
             if (itemHeld instanceof ItemBlock) {
                 itemBlock = (ItemBlock) itemHeld;
-                block = itemBlock.field_150939_a;
+                block = itemBlock.getBlock();
             }
             if (block != null) {
                 if (!BlockUtil.isBlockAllowed(block)) {
                     denyPlacement = true;
                     placementMessage = MessageLib.DENY_PLACEMENT;
                 }
-                if (block.hasTileEntity(0)) {
+                if (block.hasTileEntity(block.getDefaultState())) {
                     if (!BlockUtil.isTileEntityAllowed(block.createTileEntity(world,
-                                                                              0))) {
+                                                                              block.getDefaultState()))) {
                         denyPlacement = true;
                         placementMessage = MessageLib.DENY_PLACEMENT;
                     }
@@ -266,10 +266,10 @@ public class BlockLittleChunk extends BlockContainer {
             }
             if (item != null) {
                 if (item instanceof ItemBlock) {
-                    Block itemBlockId = ((ItemBlock) item).field_150939_a;
-                    if (itemBlockId.hasTileEntity(0)) {
-                        if (!BlockUtil.isTileEntityAllowed(itemBlockId.createTileEntity(world,
-                                                                                        0))) {
+                    Block blockItem = ((ItemBlock) item).getBlock();
+                    if (blockItem.hasTileEntity(blockItem.getDefaultState())) {
+                        if (!BlockUtil.isTileEntityAllowed(blockItem.createTileEntity(world,
+                                                                                        blockItem.getDefaultState()))) {
                             denyPlacement = true;
                             placementMessage = MessageLib.DENY_PLACEMENT;
                         }
@@ -290,10 +290,11 @@ public class BlockLittleChunk extends BlockContainer {
         return true;
     }
 
-    public void onServerBlockActivated(World world, EntityPlayer entityplayer, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
-        if (!entityplayer.canPlayerEdit(x >> 3,
-                                        y >> 3,
-                                        z >> 3,
+    public void onServerBlockActivated(World world, EntityPlayer entityplayer, int x, int y, int z, EnumFacing side, float hitX, float hitY, float hitZ) {
+        BlockPos pos = new BlockPos(x >> 3,
+                y >> 3,
+                z >> 3);
+        if (!entityplayer./*canPlayerEdit*/func_175151_a(pos,
                                         side,
                                         entityplayer.getHeldItem())) {
             return;
@@ -322,9 +323,9 @@ public class BlockLittleChunk extends BlockContainer {
     }
 
     @Override
-    public void onBlockClicked(World world, int x, int y, int z, EntityPlayer entityplayer) {
+    public void onBlockClicked(World world, BlockPos pos, EntityPlayer entityplayer) {
         if (world.isRemote) {
-            BlockUtil.getLittleController().clickBlock((x << 3) + xSelected,
+            BlockUtil.getLittleController().clickBlock((pos.getX() << 3) + xSelected,
                                                        (y << 3) + ySelected,
                                                        (z << 3) + zSelected,
                                                        side);
@@ -621,9 +622,9 @@ public class BlockLittleChunk extends BlockContainer {
                     if (littleBlock != null) {
                         if (!(littleBlock.hasTileEntity(tile.getBlockMetadata(xSelected,
                                                                               ySelected,
-                                                                              zSelected)) && tile.getChunkTileEntity(xSelected,
-                                                                                                                     ySelected,
-                                                                                                                     zSelected) == null)) {
+                                                                              zSelected)) && tile.getTileEntity(xSelected,
+                                ySelected,
+                                zSelected) == null)) {
 
                             try {
                                 littleBlock.collisionRayTrace((World) tile.getLittleWorld(),

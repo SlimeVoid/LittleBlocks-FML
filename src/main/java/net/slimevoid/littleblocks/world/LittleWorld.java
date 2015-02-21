@@ -931,9 +931,9 @@ public abstract class LittleWorld extends World implements ILittleWorld {
                                                             y >> 3,
                                                             z >> 3);
                     if (tile != null) {
-                        tileentity = tile.getChunkTileEntity(x & 7,
-                                                             y & 7,
-                                                             z & 7);
+                        tileentity = tile.getTileEntity(x & 7,
+                                y & 7,
+                                z & 7);
                     }
                 }
 

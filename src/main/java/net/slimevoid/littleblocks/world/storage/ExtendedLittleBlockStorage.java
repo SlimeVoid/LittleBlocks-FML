@@ -55,12 +55,12 @@ public class ExtendedLittleBlockStorage {
         return iblockstate != null ? iblockstate : Blocks.air.getDefaultState();
     }
 
-    public void set(int x, int y, int z, IBlockState state) {
-        IBlockState iblockstate = this.get(x,
+    public void set(int x, int y, int z, IBlockState newState) {
+        IBlockState state = this.get(x,
                                            y,
                                            z);
-        Block block = iblockstate.getBlock();
-        Block block1 = state.getBlock();
+        Block block = state.getBlock();
+        Block newBlock = newState.getBlock();
 
         if (block != Blocks.air) {
             --this.blockRefCount;
@@ -70,10 +70,10 @@ public class ExtendedLittleBlockStorage {
             }
         }
 
-        if (block1 != Blocks.air) {
+        if (newBlock != Blocks.air) {
             ++this.blockRefCount;
 
-            if (block1.getTickRandomly()) {
+            if (newBlock.getTickRandomly()) {
                 ++this.tickRefCount;
             }
         }

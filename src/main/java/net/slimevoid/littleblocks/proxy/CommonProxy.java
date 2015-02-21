@@ -80,7 +80,7 @@ public class CommonProxy implements ILBCommonProxy {
     public ILittleWorld getLittleWorld(IBlockAccess iblockaccess, boolean needsRefresh) {
         World world = (World) iblockaccess;
         if (world != null) {
-            int dimension = world.provider.dimensionId;
+            int dimension = world.provider.getDimensionId();
             if (ConfigurationLib.littleWorldServer.containsKey(dimension)) {
                 World littleWorld = DimensionManager.getWorld(ConfigurationLib.littleWorldServer.get(dimension));
                 if (littleWorld == null) {

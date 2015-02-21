@@ -4,9 +4,9 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import net.slimevoid.library.nbt.NBTHelper;
 import net.slimevoid.library.network.PacketIds;
 import net.slimevoid.library.network.PacketUpdate;
+import net.slimevoid.library.util.helpers.NBTHelper;
 import net.slimevoid.littleblocks.core.lib.CommandLib;
 import net.slimevoid.littleblocks.core.lib.CoreLib;
 
@@ -23,7 +23,7 @@ public class PacketLittleBlock extends PacketUpdate {
         } else {
             data.writeBoolean(true);
             NBTHelper.writeItemStack(data,
-                                     this.itemStack);
+                    this.itemStack);
         }
     }
 
