@@ -1,32 +1,15 @@
 package net.slimevoid.littleblocks.items;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.slimevoid.littleblocks.core.lib.IconLib;
 import net.slimevoid.littleblocks.items.wand.EnumWandAction;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemLittleBlocksWand extends Item {
-
-    protected IIcon[] iconList;
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void registerIcons(IIconRegister iconRegister) {
-        iconList = new IIcon[1];
-        iconList[0] = iconRegister.registerIcon(IconLib.LB_WAND);
-    }
-
-    @Override
-    public IIcon getIconFromDamage(int i) {
-        return iconList[0];
-    }
 
     public ItemLittleBlocksWand(int id) {
         super();
@@ -38,24 +21,20 @@ public class ItemLittleBlocksWand extends Item {
         return true;
     }
 
-    public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
+    public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
         return true;
     }
 
     @Override
-    public boolean onItemUseFirst(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
-        if (entityplayer.canPlayerEdit(x,
-                                       y,
-                                       z,
+    public boolean onItemUseFirst(ItemStack itemstack, EntityPlayer entityplayer, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
+        if (entityplayer.canPlayerEdit(pos,
                                        side,
                                        itemstack)) {
             if (!world.isRemote) {
                 return EnumWandAction.doWandAction(itemstack,
                                                    entityplayer,
                                                    world,
-                                                   x,
-                                                   y,
-                                                   z,
+                                                   pos,
                                                    side,
                                                    hitX,
                                                    hitY,

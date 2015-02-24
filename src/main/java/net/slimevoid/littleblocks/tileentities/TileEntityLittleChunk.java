@@ -289,6 +289,10 @@ public class TileEntityLittleChunk extends TileEntity implements IUpdatePlayerLi
         return !block.hasTileEntity(state) ? null : block.createTileEntity((World) this.getLittleWorld(), state);
     }
 
+    public TileEntity getTileEntity(int x, int y, int z) {
+        return (TileEntity) this.chunkTileEntityMap.get(new BlockPos(x, y, z));
+    }
+
     public TileEntity getTileEntity(BlockPos pos, Chunk.EnumCreateEntityType type) {
         TileEntity tileentity = (TileEntity) this.chunkTileEntityMap.get(pos);
 

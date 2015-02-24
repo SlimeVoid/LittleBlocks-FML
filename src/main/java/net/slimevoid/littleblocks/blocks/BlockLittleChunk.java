@@ -364,7 +364,7 @@ public class BlockLittleChunk extends BlockContainer {
                                  axis);
     }
 
-    public boolean rotateLittleChunk(World world, int x, int y, int z, ForgeDirection axis) {
+    public boolean rotateLittleChunk(World world, BlockPos pos, EnumFacing axis) {
         TileEntity tileentity = world.getTileEntity(x,
                                                     y,
                                                     z);

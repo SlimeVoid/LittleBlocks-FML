@@ -1,14 +1,13 @@
 package net.slimevoid.littleblocks.network.packets;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
 
 import java.util.HashMap;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.slimevoid.library.nbt.NBTHelper;
+import net.slimevoid.library.util.helpers.NBTHelper;
 import net.slimevoid.library.network.PacketEntity;
 import net.slimevoid.littleblocks.core.lib.CommandLib;
 import net.slimevoid.littleblocks.core.lib.CoreLib;
@@ -34,9 +33,8 @@ public class PacketLittleBlocksCollection extends PacketEntity {
     }
 
     @Override
-    public void readData(ChannelHandlerContext ctx, ByteBuf data) {
-        super.readData(ctx,
-                       data);
+    public void readData(ByteBuf data) {
+        super.readData(data);
         int stacks = data.readInt();
         for (int i = 0; i < stacks; i++) {
             this.addItemToDrop(ItemStack.loadItemStackFromNBT(NBTHelper.readNBTTagCompound(data)));
@@ -44,9 +42,8 @@ public class PacketLittleBlocksCollection extends PacketEntity {
     }
 
     @Override
-    public void writeData(ChannelHandlerContext ctx, ByteBuf data) {
-        super.writeData(ctx,
-                        data);
+    public void writeData(ByteBuf data) {
+        super.writeData(data);
         data.writeInt(itemstackCollection.size());
         for (ItemStack itemstack : itemstackCollection.values()) {
             NBTTagCompound nbttagcompound = new NBTTagCompound();

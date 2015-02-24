@@ -2,17 +2,18 @@ package net.slimevoid.littleblocks.items.wand;
 
 import java.util.HashMap;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.IFluidBlock;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.slimevoid.library.data.ReadWriteLock;
 import net.slimevoid.library.util.helpers.ChatHelper;
 import net.slimevoid.library.util.helpers.PacketHelper;
@@ -24,7 +25,6 @@ import net.slimevoid.littleblocks.network.packets.PacketLittleNotify;
 import net.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public enum EnumWandAction {
     PLACE_LB, ROTATE_LB, COPY_LB, DESTROY_LB;
@@ -113,15 +113,13 @@ public enum EnumWandAction {
         playerWandAction = action;
     }
 
-    public static boolean doWandAction(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
+    public static boolean doWandAction(ItemStack itemstack, EntityPlayer entityplayer, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
         EnumWandAction playerWandAction = EnumWandAction.getWandActionForPlayer(entityplayer);
         if (playerWandAction.equals(EnumWandAction.COPY_LB)) {
             return doCopyLB(itemstack,
                             entityplayer,
                             world,
-                            x,
-                            y,
-                            z,
+                            pos,
                             side,
                             hitX,
                             hitY,
@@ -131,9 +129,7 @@ public enum EnumWandAction {
             return doRotateLB(itemstack,
                               entityplayer,
                               world,
-                              x,
-                              y,
-                              z,
+                              pos,
                               side,
                               hitX,
                               hitY,
@@ -143,9 +139,7 @@ public enum EnumWandAction {
             return doPlaceLB(itemstack,
                              entityplayer,
                              world,
-                             x,
-                             y,
-                             z,
+                             pos,
                              side,
                              hitX,
                              hitY,
@@ -155,9 +149,7 @@ public enum EnumWandAction {
             return doDestroyLB(itemstack,
                                entityplayer,
                                world,
-                               x,
-                               y,
-                               z,
+                               pos,
                                side,
                                hitX,
                                hitY,
@@ -166,79 +158,54 @@ public enum EnumWandAction {
         return false;
     }
 
-    private static boolean doRotateLB(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
-        if (world.getBlock(x,
-                           y,
-                           z) == ConfigurationLib.littleChunk) {
+    private static boolean doRotateLB(ItemStack itemstack, EntityPlayer entityplayer, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
+        if (world.getBlockState(pos).getBlock() == ConfigurationLib.littleChunk) {
             ((BlockLittleChunk) ConfigurationLib.littleChunk).rotateLittleChunk(world,
-                                                                                x,
-                                                                                y,
-                                                                                z,
-                                                                                ForgeDirection.UP);
+                                                                                pos,
+                                                                                EnumFacing.UP);
             return true;
         }
         return false;
     }
 
-    private static boolean doPlaceLB(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
-        Block blockID = world.getBlock(x,
-                                       y,
-                                       z);
-        if (blockID != ConfigurationLib.littleChunk) {
-            if (!blockID.isReplaceable(world,
-                                       x,
-                                       y,
-                                       z) || blockID instanceof IFluidBlock) {
-                if (side == 0) {
-                    --y;
-                }
-
-                if (side == 1) {
-                    ++y;
-                }
-
-                if (side == 2) {
-                    --z;
-                }
-
-                if (side == 3) {
-                    ++z;
-                }
-
-                if (side == 4) {
-                    --x;
-                }
-
-                if (side == 5) {
-                    ++x;
-                }
+    private static boolean doPlaceLB(ItemStack itemstack, EntityPlayer entityplayer, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
+        if (!world.getBlockState(pos).getBlock().isAssociatedBlock(ConfigurationLib.littleChunk)) {
+            if (!world.getBlockState(pos).getBlock().isReplaceable(world,
+                    pos) || world.getBlockState(pos).getBlock() instanceof IFluidBlock) {
+                pos = pos.add(side.getFrontOffsetX(), side.getFrontOffsetY(), side.getFrontOffsetZ());
+//                if (side == 0) {
+//                    --y;
+//                }
+//
+//                if (side == 1) {
+//                    ++y;
+//                }
+//
+//                if (side == 2) {
+//                    --z;
+//                }
+//
+//                if (side == 3) {
+//                    ++z;
+//                }
+//
+//                if (side == 4) {
+//                    --x;
+//                }
+//
+//                if (side == 5) {
+//                    ++x;
+//                }
             }
-            blockID = world.getBlock(x,
-                                     y,
-                                     z);
-            if (blockID.getMaterial() == Material.air || blockID.isAir(world,
-                                                                       x,
-                                                                       y,
-                                                                       z)
-                || blockID.isReplaceable(world,
-                                         x,
-                                         y,
-                                         z)
-                && !(world.getBlock(x,
-                                    y,
-                                    z) instanceof IFluidBlock)) {
-                world.setBlock(x,
-                               y,
-                               z,
-                               ConfigurationLib.littleChunk);
-                TileEntity newtile = world.getTileEntity(x,
-                                                         y,
-                                                         z);
+            if (world.isAirBlock(pos)
+                || world.getBlockState(pos).getBlock().isReplaceable(world, pos)
+                && !(world.getBlockState(pos).getBlock() instanceof IFluidBlock)) {
+                world.setBlockState(pos,
+                               ConfigurationLib.littleChunk.getDefaultState());
+                TileEntity newtile = world.getTileEntity(pos);
                 if (newtile != null) {
                     newtile.markDirty();
-                    world.markBlockForUpdate(x,
-                                             y,
-                                             z);
+                    world.markBlockForUpdate(pos);
                 } else {
                     FMLCommonHandler.instance().getFMLLogger().warn("Could not initialize LittleChunk");
                 }
@@ -248,11 +215,9 @@ public enum EnumWandAction {
         return false;
     }
 
-    private static boolean doCopyLB(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
+    private static boolean doCopyLB(ItemStack itemstack, EntityPlayer entityplayer, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (((EntityPlayerMP) entityplayer).capabilities.isCreativeMode) {
-            TileEntity tileentity = world.getTileEntity(x,
-                                                        y,
-                                                        z);
+            TileEntity tileentity = world.getTileEntity(pos);
             if (tileentity != null
                 && tileentity instanceof TileEntityLittleChunk) {
                 try {
@@ -273,78 +238,69 @@ public enum EnumWandAction {
                     }
                     TileEntityLittleChunk selectedLittleTile = selectedLittleTiles.get(entityplayer);
                     tileLock.readUnlock();
-                    int xx = x, yy = y, zz = z;
+                    int xx = pos.getX(), yy = pos.getY(), zz = pos.getZ();
+                    BlockPos newPos = new BlockPos(xx, yy, zz);
                     if (selectedLittleTile != null) {
-                        if (side == 0) {
-                            --yy;
-                        }
-
-                        if (side == 1) {
-                            ++yy;
-                        }
-
-                        if (side == 2) {
-                            --zz;
-                        }
-
-                        if (side == 3) {
-                            ++zz;
-                        }
-
-                        if (side == 4) {
-                            --xx;
-                        }
-
-                        if (side == 5) {
-                            ++xx;
-                        }
-                        world.setBlock(xx,
-                                       yy,
-                                       zz,
-                                       ConfigurationLib.littleChunk);
-                        TileEntity newtile = world.getTileEntity(xx,
-                                                                 yy,
-                                                                 zz);
+                        newPos = newPos.add(side.getFrontOffsetX(), side.getFrontOffsetY(), side.getFrontOffsetZ());
+//                        if (side == 0) {
+//                            --yy;
+//                        }
+//
+//                        if (side == 1) {
+//                            ++yy;
+//                        }
+//
+//                        if (side == 2) {
+//                            --zz;
+//                        }
+//
+//                        if (side == 3) {
+//                            ++zz;
+//                        }
+//
+//                        if (side == 4) {
+//                            --xx;
+//                        }
+//
+//                        if (side == 5) {
+//                            ++xx;
+//                        }
+                        world.setBlockState(newPos,
+                                       ConfigurationLib.littleChunk.getDefaultState());
+                        TileEntity newtile = world.getTileEntity(newPos);
                         if (newtile != null
                             && newtile instanceof TileEntityLittleChunk) {
                             TileEntityLittleChunk newtilelb = (TileEntityLittleChunk) newtile;
                             tileLock.readLock(world);
                             TileEntityLittleChunk oldtile = selectedLittleTiles.get(entityplayer);
                             tileLock.readUnlock();
+                            BlockPos littlePos = new BlockPos(pos.getX() << 3, pos.getY() << 3, pos.getZ() << 3);
                             for (int x1 = 0; x1 < ConfigurationLib.littleBlocksSize; x1++) {
                                 for (int y1 = 0; y1 < ConfigurationLib.littleBlocksSize; y1++) {
                                     for (int z1 = 0; z1 < ConfigurationLib.littleBlocksSize; z1++) {
-                                        if (oldtile.getBlock(x1,
-                                                             y1,
-                                                             z1) != Blocks.air) {
-                                            Block blockId = oldtile.getBlock(x1,
-                                                                             y1,
-                                                                             z1);
-                                            int metadata = oldtile.getBlockMetadata(x1,
-                                                                                    y1,
-                                                                                    z1);
-                                            newtilelb.setBlockIDWithMetadata(x1,
-                                                                             y1,
-                                                                             z1,
-                                                                             blockId,
-                                                                             metadata);
-                                            TileEntity oldLittleTile = oldtile.getTileEntity(x1,
-                                                    y1,
-                                                    z1);
-                                            if (oldLittleTile != null) {
-                                                newtilelb.setTileEntity(x1,
-                                                                                  y1,
-                                                                                  z1,
-                                                                                  oldLittleTile);
-                                            }
+                                        IBlockState state = oldtile.getBlockState(new BlockPos(x1, y1, z1));
+                                        if (state.getBlock() != Blocks.air) {
+                                            ((World) newtilelb.getLittleWorld()).setBlockState(littlePos.add(x1, y1, z1), state);
+//                                            newtilelb.setBlockIDWithMetadata(x1,
+//                                                                             y1,
+//                                                                             z1,
+//                                                                             blockId,
+//                                                                             metadata);
+//                                            TileEntity oldLittleTile = oldtile.getTileEntity(x1,
+//                                                    y1,
+//                                                    z1);
+//                                            if (oldLittleTile != null) {
+//                                                newtilelb.setTileEntity(x1,
+//                                                                                  y1,
+//                                                                                  z1,
+//                                                                                  oldLittleTile);
+//                                            }
                                         }
                                     }
                                 }
                             }
                             newtilelb.markDirty();
-                            world.markBlockForUpdate(xx,
-                                                     yy,
-                                                     zz);
+                            world.markBlockForUpdate(newPos);
                         }
                     }
                     return true;
@@ -358,20 +314,14 @@ public enum EnumWandAction {
         return false;
     }
 
-    private static boolean doDestroyLB(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
-        Block block = world.getBlock(x,
-                                     y,
-                                     z);
-        if (block == ConfigurationLib.littleChunk) {
+    private static boolean doDestroyLB(ItemStack itemstack, EntityPlayer entityplayer, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
+        IBlockState state = world.getBlockState(pos);
+        if (state.getBlock() == ConfigurationLib.littleChunk) {
             ConfigurationLib.littleChunk.removedByPlayer(world,
+                                                         pos,
                                                          entityplayer,
-                                                         x,
-                                                         y,
-                                                         z,
                                                          true);
-            world.setBlockToAir(x,
-                                y,
-                                z);
+            world.setBlockToAir(pos);
             return true;
         }
         return false;

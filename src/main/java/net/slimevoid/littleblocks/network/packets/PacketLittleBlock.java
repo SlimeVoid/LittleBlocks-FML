@@ -15,9 +15,8 @@ public class PacketLittleBlock extends PacketUpdate {
     private ItemStack itemStack;
 
     @Override
-    public void writeData(ChannelHandlerContext ctx, ByteBuf data) {
-        super.writeData(ctx,
-                        data);
+    public void writeData(ByteBuf data) {
+        super.writeData(data);
         if (this.itemStack == null) {
             data.writeBoolean(false);
         } else {
@@ -28,9 +27,8 @@ public class PacketLittleBlock extends PacketUpdate {
     }
 
     @Override
-    public void readData(ChannelHandlerContext ctx, ByteBuf data) {
-        super.readData(ctx,
-                       data);
+    public void readData(ByteBuf data) {
+        super.readData(data);
         if (data.readBoolean() == true) {
             this.itemStack = NBTHelper.readItemStack(data);
         }
