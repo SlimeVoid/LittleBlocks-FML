@@ -1,53 +1,51 @@
 package net.slimevoid.littleblocks.events;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.ChunkPosition;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.event.world.ChunkEvent.Load;
 import net.minecraftforge.event.world.ChunkEvent.Unload;
+import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.slimevoid.library.core.SlimevoidCore;
 import net.slimevoid.littleblocks.api.ILittleWorld;
 import net.slimevoid.littleblocks.core.LittleBlocks;
 import net.slimevoid.littleblocks.core.lib.CoreLib;
 import net.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class LittleChunkEvent {
 
-    @SubscribeEvent
+    @EventHandler
     public void onChunkLoad(Load event) {
         Chunk chunk = event.getChunk();
-        for (Object obj : chunk.chunkTileEntityMap.values()) {
+        for (Object obj : chunk.getTileEntityMap().values()) {
             TileEntity tileentity = (TileEntity) obj;
             if (tileentity instanceof TileEntityLittleChunk) {
-                ChunkPosition chunkpos = new ChunkPosition(tileentity.xCoord, tileentity.yCoord, tileentity.zCoord);
                 this.setActiveChunkPosition(event.world, LittleBlocks.proxy.getLittleWorld(event.world,
                                                                               false),
-                                            chunkpos,
+                                            tileentity.getPos(),
                                             true);
             }
         }
     }
 
-    @SubscribeEvent
+    @EventHandler
     public void onChunkUnload(Unload event) {
         Chunk chunk = event.getChunk();
-        for (Object obj : chunk.chunkTileEntityMap.values()) {
+        for (Object obj : chunk.getTileEntityMap().values()) {
             TileEntity tileentity = (TileEntity) obj;
             if (tileentity instanceof TileEntityLittleChunk) {
-                ChunkPosition chunkpos = new ChunkPosition(tileentity.xCoord, tileentity.yCoord, tileentity.zCoord);
                 this.setActiveChunkPosition(event.world, LittleBlocks.proxy.getLittleWorld(event.world,
                                                                               false),
-                                            chunkpos,
+                                            tileentity.getPos(),
                                             false);
             }
         }
     }
 
-    private void setActiveChunkPosition(World referenceWorld, ILittleWorld littleworld, ChunkPosition chunkposition, boolean forced) {
+    private void setActiveChunkPosition(World referenceWorld, ILittleWorld littleworld, BlockPos pos, boolean forced) {
         if (littleworld != null) {
-            littleworld.activeChunkPosition(chunkposition,
+            littleworld.activeChunkPosition(pos,
                                             forced);
         } else {
             SlimevoidCore.console(CoreLib.MOD_ID,

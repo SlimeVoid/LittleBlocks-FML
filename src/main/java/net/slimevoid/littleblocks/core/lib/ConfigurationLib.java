@@ -6,18 +6,19 @@ import java.util.HashMap;
 import java.util.List;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.BlockModelRenderer;
+import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.item.Item;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.slimevoid.littleblocks.core.LoggerLittleBlocks;
 import net.slimevoid.littleblocks.world.LittleWorldClient;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ConfigurationLib {
 
@@ -48,7 +49,7 @@ public class ConfigurationLib {
     private static List<Integer>            disallowedDimensionIds = new ArrayList<Integer>();
 
     @SideOnly(Side.CLIENT)
-    public static RenderBlocks              littleRenderer;
+    public static BlockRendererDispatcher              littleRenderer;
 
     public static Configuration getConfiguration() {
         return configuration;
@@ -109,7 +110,7 @@ public class ConfigurationLib {
         renderingMethod = configuration.get(Configuration.CATEGORY_GENERAL,
                                             "renderingMethod",
                                             0).getInt();
-        renderType = RenderingRegistry.getNextAvailableRenderId();
+        //renderType = RenderingRegistry.getNextAvailableRenderId();
         loggerLevel = configuration.get(Configuration.CATEGORY_GENERAL,
                                         "loggerLevel",
                                         "INFO").getString();
@@ -142,7 +143,7 @@ public class ConfigurationLib {
     }
 
     @SideOnly(Side.CLIENT)
-    public static RenderBlocks getLittleRenderer(World world) {
+    public static BlockRendererDispatcher getLittleRenderer(World world) {
         /*
          * if (littleRenderer != null &&
          * !LBCore.littleWorldClient.isOutdated(world)) { return littleRenderer;
@@ -152,11 +153,11 @@ public class ConfigurationLib {
     }
 
     @SideOnly(Side.CLIENT)
-    public static RenderBlocks setLittleRenderer(World world) {
+    public static BlockRendererDispatcher setLittleRenderer(World world) {
         if (world == null) {
             return littleRenderer = null;
         }
-        return littleRenderer = new RenderBlocks(littleWorldClient);
+        return null; // TODO:: littleRenderer = new BlockModelRenderer(littleWorldClient);
     }
 
     public static int getLittleServerDimension(int dimension) {

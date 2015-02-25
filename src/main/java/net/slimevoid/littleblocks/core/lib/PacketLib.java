@@ -6,7 +6,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.slimevoid.library.network.PacketIds;
-import net.slimevoid.library.network.handlers.PacketPipeline;
 import net.slimevoid.library.util.helpers.PacketHelper;
 import net.slimevoid.littleblocks.client.network.ClientNetworkEvent;
 import net.slimevoid.littleblocks.client.network.packets.executors.ClientBlockChangeExecutor;
@@ -15,16 +14,7 @@ import net.slimevoid.littleblocks.client.network.packets.executors.ClientCopierN
 import net.slimevoid.littleblocks.client.network.packets.executors.ClientLittleCollectionExecutor;
 import net.slimevoid.littleblocks.client.network.packets.executors.ClientPacketLittleBlocksLoginExecutor;
 import net.slimevoid.littleblocks.network.NetworkEvent;
-import net.slimevoid.littleblocks.network.handlers.PacketLittleBlockCollectionHandler;
-import net.slimevoid.littleblocks.network.handlers.PacketLittleBlockEventHandler;
-import net.slimevoid.littleblocks.network.handlers.PacketLittleBlockHandler;
-import net.slimevoid.littleblocks.network.handlers.PacketLittleBlocksHandler;
-import net.slimevoid.littleblocks.network.handlers.PacketLittleNotifyHandler;
-import net.slimevoid.littleblocks.network.handlers.PacketLoginHandler;
-import net.slimevoid.littleblocks.network.packets.PacketLittleBlock;
-import net.slimevoid.littleblocks.network.packets.PacketLittleBlockChange;
-import net.slimevoid.littleblocks.network.packets.PacketLittleBlocksEvents;
-import net.slimevoid.littleblocks.network.packets.PacketLittleNotify;
+import net.slimevoid.littleblocks.network.packets.*;
 import net.slimevoid.littleblocks.network.packets.executors.PacketLittleBlockActivatedExecutor;
 import net.slimevoid.littleblocks.network.packets.executors.PacketLittleBlockClickedExecutor;
 import net.slimevoid.littleblocks.network.packets.executors.PacketLittleWandSwitchExecutor;
@@ -40,58 +30,54 @@ public class PacketLib {
     public final static int      DIG_ONGOING           = 1;
     public final static int      DIG_BROKEN            = 2;
 
-    public static PacketPipeline handler               = new PacketPipeline();
-
     @SideOnly(Side.CLIENT)
     public static void registerClientPacketHandlers() {
         MinecraftForge.EVENT_BUS.register(new ClientNetworkEvent());
 
-        handler.getPacketHandler(PacketIds.LOGIN).registerClientExecutor(CommandLib.SETTINGS,
-                                                                         new ClientPacketLittleBlocksLoginExecutor());
+        PacketHelper.registerClientExecutor(/*CommandLib.SETTINGS,*/
+                ClientPacketLittleBlocksLoginExecutor.class,
+                PacketLittleBlocksSettings.class,
+                PacketIds.LOGIN);
 
-        handler.getPacketHandler(PacketIds.UPDATE).registerClientExecutor(CommandLib.UPDATE_CLIENT,
-                                                                          new ClientBlockChangeExecutor());
+        PacketHelper.registerClientExecutor(/*CommandLib.UPDATE_CLIENT,*/
+                ClientBlockChangeExecutor.class,
+                PacketLittleBlockChange.class,
+                PacketIds.UPDATE);
 
-        handler.getPacketHandler(PacketIds.ENTITY).registerClientExecutor(CommandLib.ENTITY_COLLECTION,
-                                                                          new ClientLittleCollectionExecutor());
+        PacketHelper.registerClientExecutor(/*CommandLib.ENTITY_COLLECTION,*/
+                ClientLittleCollectionExecutor.class,
+                PacketLittleBlocksCollection.class,
+                PacketIds.ENTITY);
 
-        handler.getPacketHandler(PacketIds.PLAYER).registerClientExecutor(CommandLib.COPIER_MESSAGE,
-                                                                          new ClientCopierNotifyExecutor());
+        PacketHelper.registerClientExecutor(/*CommandLib.COPIER_MESSAGE,*/
+                ClientCopierNotifyExecutor.class,
+                PacketLittleNotify.class,
+                PacketIds.PLAYER);
 
-        handler.getPacketHandler(PACKETID_EVENT).registerClientExecutor(CommandLib.BLOCK_EVENT,
-                                                                        new ClientBlockEventExecutor());
+        PacketHelper.registerClientExecutor(/*CommandLib.BLOCK_EVENT,*/
+                ClientBlockEventExecutor.class,
+                PacketLittleBlocksEvents.class,
+                PACKETID_EVENT);
     }
 
     public static void registerPacketHandlers() {
         MinecraftForge.EVENT_BUS.register(new NetworkEvent());
 
-        PacketLittleNotifyHandler playerHandler = new PacketLittleNotifyHandler();
-        playerHandler.registerServerExecutor(CommandLib.WAND_SWITCH,
-                                             new PacketLittleWandSwitchExecutor());
+        //PacketLittleNotifyHandler playerHandler = new PacketLittleNotifyHandler();
+        PacketHelper.registerServerExecutor(/*CommandLib.WAND_SWITCH,*/
+                PacketLittleWandSwitchExecutor.class,
+                PacketLittleNotify.class,
+                PacketIds.PLAYER);
 
-        handler.registerPacketHandler(PacketIds.PLAYER,
-                                      playerHandler);
-
-        PacketLittleBlockHandler littleBlockHandler = new PacketLittleBlockHandler();
-        littleBlockHandler.registerServerExecutor(CommandLib.BLOCK_ACTIVATED,
-                                                  new PacketLittleBlockActivatedExecutor());
-        littleBlockHandler.registerServerExecutor(CommandLib.BLOCK_CLICKED,
-                                                  new PacketLittleBlockClickedExecutor());
-
-        handler.registerPacketHandler(PacketIds.LOGIN,
-                                      new PacketLoginHandler());
-
-        handler.registerPacketHandler(PacketIds.TILE,
-                                      littleBlockHandler);
-
-        handler.registerPacketHandler(PacketIds.ENTITY,
-                                      new PacketLittleBlockCollectionHandler());
-
-        handler.registerPacketHandler(PACKETID_EVENT,
-                                      new PacketLittleBlockEventHandler());
-
-        handler.registerPacketHandler(PacketIds.UPDATE,
-                                      new PacketLittleBlocksHandler());
+        //PacketLittleBlockHandler littleBlockHandler = new PacketLittleBlockHandler();
+        PacketHelper.registerServerExecutor(/*CommandLib.BLOCK_ACTIVATED,*/
+                PacketLittleBlockActivatedExecutor.class,
+                PacketLittleBlock.class,
+                PacketIds.LOGIN);
+        PacketHelper.registerServerExecutor(/*CommandLib.BLOCK_CLICKED,*/
+                PacketLittleBlockClickedExecutor.class,
+                PacketLittleBlock.class,
+                PacketIds.TILE);
     }
 
     @SideOnly(Side.CLIENT)

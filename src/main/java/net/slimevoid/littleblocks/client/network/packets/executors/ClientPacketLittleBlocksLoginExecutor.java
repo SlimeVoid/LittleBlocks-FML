@@ -11,11 +11,11 @@ import net.slimevoid.littleblocks.network.packets.PacketLittleBlocksSettings;
 public class ClientPacketLittleBlocksLoginExecutor implements IPacketExecutor {
 
     @Override
-    public void execute(PacketUpdate packet, World world, EntityPlayer entityplayer) {
-        if (packet instanceof PacketLittleBlocksSettings
-            && packet.getCommand() == CommandLib.SETTINGS) {
+    public PacketUpdate execute(PacketUpdate packet, World world, EntityPlayer entityplayer) {
+        if (packet.getCommand() == CommandLib.SETTINGS) {
             ConfigurationLib.littleBlocksClip = ((PacketLittleBlocksSettings) packet).getClipMode();
         }
+        return null;
     }
 
 }
