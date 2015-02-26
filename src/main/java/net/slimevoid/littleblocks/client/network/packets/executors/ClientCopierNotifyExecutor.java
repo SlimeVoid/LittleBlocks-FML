@@ -14,7 +14,7 @@ import net.minecraftforge.fml.common.registry.LanguageRegistry;
 public class ClientCopierNotifyExecutor implements IPacketExecutor {
 
     @Override
-    public void execute(PacketUpdate packet, World world, EntityPlayer entityplayer) {
+    public PacketUpdate execute(PacketUpdate packet, World world, EntityPlayer entityplayer) {
         if (packet instanceof PacketLittleNotify
             && packet.getCommand().equals(CommandLib.COPIER_MESSAGE)) {
             String message = LanguageRegistry.instance().getStringLocalization(MessageLib.DENY_COPY);
@@ -23,6 +23,7 @@ public class ClientCopierNotifyExecutor implements IPacketExecutor {
                                                   EnumChatFormatting.BLUE,
                                                   message);
         }
+        return null;
     }
 
 }

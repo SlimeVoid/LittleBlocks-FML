@@ -2,12 +2,12 @@ package net.slimevoid.littleblocks.world;
 
 import java.util.List;
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.IProgressUpdate;
-import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.slimevoid.littleblocks.api.ILittleWorld;
 
@@ -24,9 +24,9 @@ public class LittleChunkProvider implements IChunkProvider {
      * loads or generates the chunk at the chunk location specified
      */
     @Override
-    public Chunk loadChunk(int x, int y) {
-        return this.provideChunk(x,
-                                 y);
+    public Chunk provideChunk(BlockPos pos) {
+        return this.provideChunk(pos.getX(),
+                                 pos.getZ());
     }
 
     /**
@@ -35,17 +35,17 @@ public class LittleChunkProvider implements IChunkProvider {
      * and chunk seed
      */
     @Override
-    public Chunk provideChunk(int x, int y) {
-        Block[] bytes = new Block[32768];
-        Chunk chunk = new Chunk(this.littleWorld, bytes, x, y);
+    public Chunk provideChunk(int x, int z) {
+        ChunkPrimer chunkprimer = new ChunkPrimer();
+        Chunk chunk = new Chunk(this.littleWorld, chunkprimer, x, z);
         return chunk;
     }
 
     /**
-     * Checks to see if a chunk exists at x, y
+     * Checks to see if a chunk exists at x, z
      */
     @Override
-    public boolean chunkExists(int par1, int par2) {
+    public boolean chunkExists(int x, int z) {
         return true;
     }
 
@@ -53,7 +53,12 @@ public class LittleChunkProvider implements IChunkProvider {
      * Populates chunk with ores etc etc
      */
     @Override
-    public void populate(IChunkProvider par1IChunkProvider, int par2, int par3) {
+    public void populate(IChunkProvider chunkProvider, int x, int z) {
+    }
+
+    @Override
+    public boolean func_177460_a(IChunkProvider p_177460_1_, Chunk p_177460_2_, int p_177460_3_, int p_177460_4_) {
+        return false;
     }
 
     /**
@@ -62,7 +67,7 @@ public class LittleChunkProvider implements IChunkProvider {
      * saved.
      */
     @Override
-    public boolean saveChunks(boolean par1, IProgressUpdate par2IProgressUpdate) {
+    public boolean saveChunks(boolean par1, IProgressUpdate progressUpdate) {
         return false;
     }
 
@@ -88,7 +93,7 @@ public class LittleChunkProvider implements IChunkProvider {
      */
     @SuppressWarnings("rawtypes")
     @Override
-    public List getPossibleCreatures(EnumCreatureType par1EnumCreatureType, int par2, int par3, int par4) {
+    public List func_177458_a/*getPossibleCreatures*/(EnumCreatureType enumCreatureType, BlockPos pos) {
         return null;
     }
 
@@ -97,7 +102,7 @@ public class LittleChunkProvider implements IChunkProvider {
      * not found returns null.
      */
     @Override
-    public ChunkPosition func_147416_a/* findClosestStructure */(World par1World, String par2Str, int par3, int par4, int par5) {
+    public BlockPos getStrongholdGen(World world, String structureName, BlockPos pos) {
         return null;
     }
 
@@ -107,7 +112,7 @@ public class LittleChunkProvider implements IChunkProvider {
     }
 
     @Override
-    public void recreateStructures(int var1, int var2) {
+    public void recreateStructures(Chunk chunk, int var1, int var2) {
     }
 
     @Override
@@ -117,7 +122,5 @@ public class LittleChunkProvider implements IChunkProvider {
 
     @Override
     public void saveExtraData() {
-        // TODO :: Auto-generated method stub
-
     }
 }

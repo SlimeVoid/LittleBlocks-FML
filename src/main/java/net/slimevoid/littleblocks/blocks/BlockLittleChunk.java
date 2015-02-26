@@ -378,14 +378,6 @@ public class BlockLittleChunk extends BlockContainer {
         return false;
     }
 
-    public void dropLittleBlockAsItem_do(World world, int x, int y, int z, ItemStack itemStack) {
-        this.dropBlockAsItem(world,
-                             x,
-                             y,
-                             z,
-                             itemStack);
-    }
-
     @Override
     public TileEntity createNewTileEntity(World world, int metadata) {
         try {
@@ -405,12 +397,7 @@ public class BlockLittleChunk extends BlockContainer {
         return false;
     }
 
-    @Override
-    public boolean renderAsNormalBlock() {
-        return false;
-    }
-
-    private void setBlockBoundsBasedOnSelection(World world, int x, int y, int z) {
+    private void setBlockBoundsBasedOnSelection(World world, BlockPos pos) {
         float m = ConfigurationLib.littleBlocksSize;
         if (xSelected == -10) {
             this.setBlockBounds(0f,
@@ -420,9 +407,7 @@ public class BlockLittleChunk extends BlockContainer {
                                 0f,
                                 0f);
         } else {
-            TileEntityLittleChunk tile = (TileEntityLittleChunk) world.getTileEntity(x,
-                                                                                     y,
-                                                                                     z);
+            TileEntityLittleChunk tile = (TileEntityLittleChunk) world.getTileEntity(pos);
             Block block = tile.getBlock(xSelected,
                                         ySelected,
                                         zSelected);
@@ -436,7 +421,7 @@ public class BlockLittleChunk extends BlockContainer {
                                     (zSelected + 1) / m);
             } else {
                 if (block != null) {
-                    if (BlockStairs.func_150148_a/* isBlockStairsID */(block)) {
+                    if (BlockStairs.isBlockStairs(block)) {
                         block.setBlockBounds(0,
                                              0,
                                              0,
@@ -444,10 +429,10 @@ public class BlockLittleChunk extends BlockContainer {
                                              1,
                                              1);
                     } else {
-                        block.setBlockBoundsBasedOnState(tile.getLittleWorld(),
-                                                         (x << 3) + xSelected,
-                                                         (y << 3) + ySelected,
-                                                         (z << 3) + zSelected);
+                        block.setBlockBoundsBasedOnState(tile.getLittleWorld(), new BlockPos(
+                                                         (pos.getX() << 3) + xSelected,
+                                                         (pos.getY() << 3) + ySelected,
+                                                         (pos.getZ() << 3) + zSelected));
                     }
                     this.setBlockBounds((float) (xSelected + block.getBlockBoundsMinX())
                                                 / m,

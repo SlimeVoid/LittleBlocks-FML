@@ -12,7 +12,7 @@ import net.slimevoid.littleblocks.network.packets.PacketLittleBlocksCollection;
 public class ClientLittleCollectionExecutor implements IPacketExecutor {
 
     @Override
-    public void execute(PacketUpdate packet, World world, EntityPlayer entityplayer) {
+    public PacketUpdate execute(PacketUpdate packet, World world, EntityPlayer entityplayer) {
         if (packet instanceof PacketLittleBlocksCollection
             && packet.getCommand().equals(CommandLib.ENTITY_COLLECTION)) {
             Entity entity = world.getEntityByID(((PacketLittleBlocksCollection) packet).getEntityId());
@@ -20,6 +20,7 @@ public class ClientLittleCollectionExecutor implements IPacketExecutor {
                 ((EntityItemLittleBlocksCollection) entity).setCollection(((PacketLittleBlocksCollection) packet).itemstackCollection);
             }
         }
+        return null;
     }
 
 }
