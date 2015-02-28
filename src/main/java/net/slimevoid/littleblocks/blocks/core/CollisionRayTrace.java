@@ -47,9 +47,7 @@ public class CollisionRayTrace {
                                                                                             view.yCoord * 8,
                                                                                             view.zCoord * 8));
                                 if (ret != null) {
-                                    ret.blockX -= (i << 3);
-                                    ret.blockY -= (j << 3);
-                                    ret.blockZ -= (k << 3);
+                                    ret.getBlockPos().add(-(i << 3), -(j << 3), - (k << 3));
                                     ret.hitVec = new Vec3(ret.hitVec.xCoord / 8.0,
                                                           ret.hitVec.yCoord / 8.0,
                                                           ret.hitVec.zCoord / 8.0);
@@ -156,7 +154,7 @@ public class CollisionRayTrace {
                                       world,
                                       player,
                                       view,
-                                      pos.offsetDown(),
+                                      pos.down(),
                                       -1,
                                       returns);
         /*
@@ -166,7 +164,7 @@ public class CollisionRayTrace {
                                       world,
                                       player,
                                       view,
-                                      pos.offsetUp(),
+                                      pos.up(),
                                       m,
                                       returns);
         /*

@@ -115,8 +115,7 @@ public class TileEntityLittleChunk extends TileEntity implements IUpdatePlayerLi
         }
     }
 
-    public IBlockState getBlockState(BlockPos pos) {
-        int x = pos.getX(), y = pos.getY(), z = pos.getZ();
+    public IBlockState getBlockState(int x, int y, int z) {
         if (x >= this.size | y >= this.size | z >= this.size) {
             BlockPos actualPos = new BlockPos(
                     this.getPos().getX() + (x >= this.size ? 1 : 0),
@@ -156,6 +155,11 @@ public class TileEntityLittleChunk extends TileEntity implements IUpdatePlayerLi
                     y,
                     z);
         }
+    }
+
+    public IBlockState getBlockState(BlockPos pos) {
+        int x = pos.getX(), y = pos.getY(), z = pos.getZ();
+        return this.getBlockState(x, y, z);
     }
 
     public int getBlockMetadata(int x, int y, int z) {

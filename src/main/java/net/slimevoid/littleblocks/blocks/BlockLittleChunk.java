@@ -290,11 +290,12 @@ public class BlockLittleChunk extends BlockContainer {
         return true;
     }
 
-    public void onServerBlockActivated(World world, EntityPlayer entityplayer, int x, int y, int z, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public void onServerBlockActivated(World world, EntityPlayer entityplayer, int x, int y, int z, int direction, float hitX, float hitY, float hitZ) {
         BlockPos pos = new BlockPos(x >> 3,
                 y >> 3,
                 z >> 3);
-        if (!entityplayer./*canPlayerEdit*/func_175151_a(pos,
+        EnumFacing side = EnumFacing.getFront(direction);
+        if (!entityplayer.canPlayerEdit(pos,
                                         side,
                                         entityplayer.getHeldItem())) {
             return;
@@ -312,7 +313,7 @@ public class BlockLittleChunk extends BlockContainer {
                                                  x,
                                                  y,
                                                  z,
-                                                 side,
+                                                 direction,
                                                  hitX,
                                                  hitY,
                                                  hitZ);
@@ -326,8 +327,8 @@ public class BlockLittleChunk extends BlockContainer {
     public void onBlockClicked(World world, BlockPos pos, EntityPlayer entityplayer) {
         if (world.isRemote) {
             BlockUtil.getLittleController().clickBlock((pos.getX() << 3) + xSelected,
-                                                       (y << 3) + ySelected,
-                                                       (z << 3) + zSelected,
+                                                       (pos.getY() << 3) + ySelected,
+                                                       (pos.getZ() << 3) + zSelected,
                                                        side);
         }
     }
@@ -336,9 +337,9 @@ public class BlockLittleChunk extends BlockContainer {
         if (entityplayer instanceof EntityPlayerMP) {
             EntityPlayerMP player = (EntityPlayerMP) entityplayer;
             if (!FMLCommonHandler.instance().getMinecraftServerInstance().isBlockProtected(((ILittleWorld) world).getParentWorld(),
-                                                                                           x >> 3,
-                                                                                           y >> 3,
-                                                                                           z >> 3,
+                                                                                           new BlockPos(x >> 3,
+                                                                                                        y >> 3,
+                                                                                                        z >> 3),
                                                                                            entityplayer)) {
                 BlockUtil.getLittleItemManager(player,
                                                world).onBlockClicked(x,
@@ -356,24 +357,18 @@ public class BlockLittleChunk extends BlockContainer {
     }
 
     @Override
-    public boolean rotateBlock(World world, int x, int y, int z, ForgeDirection axis) {
+    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis) {
         return super.rotateBlock(world,
-                                 x,
-                                 y,
-                                 z,
+                                 pos,
                                  axis);
     }
 
     public boolean rotateLittleChunk(World world, BlockPos pos, EnumFacing axis) {
-        TileEntity tileentity = world.getTileEntity(x,
-                                                    y,
-                                                    z);
+        TileEntity tileentity = world.getTileEntity(pos);
         if (tileentity != null && tileentity instanceof TileEntityLittleChunk) {
             ((TileEntityLittleChunk) tileentity).rotateContents(axis);
             tileentity.markDirty();
-            world.markBlockForUpdate(x,
-                                     y,
-                                     z);
+            world.markBlockForUpdate(pos);
         }
         return false;
     }
@@ -452,87 +447,87 @@ public class BlockLittleChunk extends BlockContainer {
     }
 
     @Override
-    public boolean canCollideCheck(int meta, boolean rightClicked) {
+    public boolean canCollideCheck(IBlockState state, boolean rightClicked) {
         isFluid = rightClicked;
-        return super.canCollideCheck(meta,
+        return super.canCollideCheck(state,
                                      rightClicked);
     }
 
     @Override
-    public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z) {
+    public AxisAlignedBB getCollisionBoundingBox(World world, BlockPos pos, IBlockState state) {
         if (ConfigurationLib.littleBlocksClip) {
-            return super.getCollisionBoundingBoxFromPool(world,
-                                                         x,
-                                                         y,
-                                                         z);
+            return super.getCollisionBoundingBox(
+                    world,
+                    pos,
+                    state);
         }
         return null;
     }
 
     @SuppressWarnings("rawtypes")
     @Override
-    public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB axisalignedbb, List list, Entity entity) {
-        TileEntity tileentity = world.getTileEntity(x,
-                                                    y,
-                                                    z);
+    public void addCollisionBoxesToList(World world, BlockPos pos, IBlockState state, AxisAlignedBB axisalignedbb, List list, Entity entity) {
+        TileEntity tileentity = world.getTileEntity(pos);
         if (tileentity != null && tileentity instanceof TileEntityLittleChunk) {
             TileEntityLittleChunk tile = (TileEntityLittleChunk) tileentity;
 
             float m = ConfigurationLib.littleBlocksSize;
 
-            AxisAlignedBB bb = AxisAlignedBB.getBoundingBox(axisalignedbb.minX
-                                                                    * m,
-                                                            axisalignedbb.minY
-                                                                    * m,
-                                                            axisalignedbb.minZ
-                                                                    * m,
-                                                            axisalignedbb.maxX
-                                                                    * m,
-                                                            axisalignedbb.maxY
-                                                                    * m,
-                                                            axisalignedbb.maxZ
-                                                                    * m);
+            AxisAlignedBB bb = AxisAlignedBB.fromBounds(axisalignedbb.minX
+                                                                * m,
+                                                        axisalignedbb.minY
+                                                                * m,
+                                                        axisalignedbb.minZ
+                                                                * m,
+                                                        axisalignedbb.maxX
+                                                                * m,
+                                                        axisalignedbb.maxY
+                                                                * m,
+                                                        axisalignedbb.maxZ
+                                                                * m);
             List<AxisAlignedBB> bbs = new ArrayList<AxisAlignedBB>();
             for (int xx = 0; xx < tile.size; xx++) {
                 for (int yy = 0; yy < tile.size; yy++) {
                     for (int zz = 0; zz < tile.size; zz++) {
                         if (tile.getBlock(xx,
-                                          yy,
-                                          zz) != Blocks.air) {
+                                yy,
+                                zz) != Blocks.air) {
                             Block block = tile.getBlock(xx,
-                                                        yy,
-                                                        zz);
+                                    yy,
+                                    zz);
                             if (block != null) {
-                                block.addCollisionBoxesToList((World) tile.getLittleWorld(),
-                                                              (x << 3) + xx,
-                                                              (y << 3) + yy,
-                                                              (z << 3) + zz,
-                                                              bb,
-                                                              bbs,
-                                                              entity);
+                                block.addCollisionBoxesToList(
+                                        (World) tile.getLittleWorld(),
+                                        new BlockPos(
+                                                (pos.getX() << 3) + xx,
+                                                (pos.getY() << 3) + yy,
+                                                (pos.getZ() << 3) + zz),
+                                        tile.getBlockState(xx, yy, zz),
+                                        bb,
+                                        bbs,
+                                        entity);
                             }
                         }
                     }
                 }
             }
             for (AxisAlignedBB aabb : bbs) {
-                aabb.setBounds(aabb.minX / m,
+                /*aabb.setBounds(aabb.minX / m,
                                aabb.minY / m,
                                aabb.minZ / m,
                                aabb.maxX / m,
                                aabb.maxY / m,
                                aabb.maxZ / m);
-                list.add(aabb);
+                list.add(aabb);*/
+                // TODO :: setBounds for Collision
             }
         }
     }
 
     @SideOnly(Side.CLIENT)
     @Override
-    public MovingObjectPosition collisionRayTrace(World world, int x, int y, int z, Vec3 player, Vec3 view) {
-        TileEntityLittleChunk tile = (TileEntityLittleChunk) world.getTileEntity(x,
-                                                                                 y,
-                                                                                 z);
+    public MovingObjectPosition collisionRayTrace(World world, BlockPos pos, Vec3 player, Vec3 view) {
+        TileEntityLittleChunk tile = (TileEntityLittleChunk) world.getTileEntity(pos);
 
         if (tile == null) {
             return null;
@@ -543,18 +538,18 @@ public class BlockLittleChunk extends BlockContainer {
         returns = CollisionRayTrace.rayTraceLittleBlocks(this,
                                                          player,
                                                          view,
-                                                         x,
-                                                         y,
-                                                         z,
+                                                         pos.getX(),
+                                                         pos.getY(),
+                                                         pos.getZ(),
                                                          returns,
                                                          tile,
                                                          isFluid);
-        player = player.addVector(-x,
-                                  -y,
-                                  -z);
-        view = view.addVector(-x,
-                              -y,
-                              -z);
+        player = player.addVector(-pos.getX(),
+                                  -pos.getY(),
+                                  -pos.getZ());
+        view = view.addVector(-pos.getX(),
+                              -pos.getY(),
+                              -pos.getZ());
 
         returns = CollisionRayTrace.collisionRayTracer(this,
                                                        world,

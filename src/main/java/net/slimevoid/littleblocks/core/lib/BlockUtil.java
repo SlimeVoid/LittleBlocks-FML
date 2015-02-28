@@ -8,6 +8,7 @@ import java.util.Set;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPistonBase;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -19,6 +20,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.S2FPacketSetSlot;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
@@ -183,38 +186,40 @@ public class BlockUtil {
 
     public static boolean isLittleChunk(World world, int x, int y, int z) {
         if (world instanceof ILittleWorld) {
-            return ((ILittleWorld) world).getParentWorld().getBlock(x >> 3,
-                                                                    y >> 3,
-                                                                    z >> 3) == ConfigurationLib.littleChunk;
+            return ((ILittleWorld) world).getParentWorld().getBlockState(
+                    new BlockPos(
+                            x >> 3,
+                            y >> 3,
+                            z >> 3)).getBlock().isAssociatedBlock(ConfigurationLib.littleChunk);
         }
         return false;
     }
 
     public static boolean isLittleChunk(World world, MovingObjectPosition target) {
         return isLittleChunk(world,
-                             target.blockX,
-                             target.blockY,
-                             target.blockZ);
+                             target.getBlockPos().getX(),
+                             target.getBlockPos().getY(),
+                             target.getBlockPos().getZ());
     }
 
-    public static void onServerBlockActivated(World world, EntityPlayer entityplayer, ItemStack stack, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
+    public static void onServerBlockActivated(World world, EntityPlayer entityplayer, ItemStack stack, int x, int y, int z, int direction, float hitX, float hitY, float hitZ) {
     	MinecraftServer mcServer = FMLCommonHandler.instance().getMinecraftServerInstance();
         ItemStack itemstack = entityplayer.inventory.getCurrentItem();
         boolean flag = false;
         // ((EntityPlayerMP) entityplayer).func_143004_u();
+        EnumFacing side = EnumFacing.getFront(direction);
 
-        if (side == 255) {
+        if (direction == 255) {
             if (itemstack == null) {
                 return;
             }
 
-            PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(entityplayer,
-                                                                           PlayerInteractEvent.Action.RIGHT_CLICK_AIR,
-                                                                           0,
-                                                                           0,
-                                                                           0,
-                                                                           -1,
-                                                                           world);
+            PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(
+                    entityplayer,
+                    PlayerInteractEvent.Action.RIGHT_CLICK_AIR,
+                    world,
+                    new BlockPos(0, 0, 0),
+                    null);
             if (event.useItem != Event.Result.DENY) {
                 getLittleItemManager((EntityPlayerMP) entityplayer,
                                      world).tryUseItem(entityplayer,
@@ -222,24 +227,26 @@ public class BlockUtil {
                                                        itemstack);
             }
         } else if (y >= world.getHeight() - 1
-                   && (side == 1 || y >= world.getHeight())) {
+                   && (side == EnumFacing.UP || y >= world.getHeight())) {
             // TODO :: Send Player Build height message
             flag = true;
         } else {
             // double dist = this.getBlockReachDistance() + 1;
             // dist *= dist;
             if (!mcServer.isBlockProtected(((ILittleWorld) world).getParentWorld(),
-                                           x >> 3,
-                                           y >> 3,
-                                           z >> 3,
+                                           new BlockPos(
+                                                   x >> 3,
+                                                   y >> 3,
+                                                   z >> 3),
                                            entityplayer)) {
             	getLittleItemManager((EntityPlayerMP) entityplayer,
                                      world).activateBlockOrUseItem(entityplayer,
                                                                    world,
                                                                    itemstack,
-                                                                   x,
-                                                                   y,
-                                                                   z,
+                                                                   new BlockPos(
+                                                                           x,
+                                                                           y,
+                                                                           z),
                                                                    side,
                                                                    hitX,
                                                                    hitY,
@@ -280,51 +287,48 @@ public class BlockUtil {
         }
     }
 
-    private static void checkPlacement(World world, EntityPlayer entityplayer, int x, int y, int z, int side) {
+    private static void checkPlacement(World world, EntityPlayer entityplayer, int x, int y, int z, EnumFacing side) {
         PacketLib.sendBlockChange(world,
                                   entityplayer,
                                   x,
                                   y,
                                   z);
-        if (side == 0) {
-            --y;
-        }
-
-        if (side == 1) {
-            ++y;
-        }
-
-        if (side == 2) {
-            --z;
-        }
-
-        if (side == 3) {
-            ++z;
-        }
-
-        if (side == 4) {
-            --x;
-        }
-
-        if (side == 5) {
-            ++x;
-        }
-        Block block = world.getBlock(x,
-                                     y,
-                                     z);
-        if (block != null && block instanceof BlockPistonBase) {
-            int newData = BlockPistonBase.determineOrientation(((ILittleWorld) world).getParentWorld(),
-                                                               x >> 3,
-                                                               y >> 3,
-                                                               z >> 3,
+        BlockPos pos = new BlockPos(x, y, z);
+        pos.add(side.getFrontOffsetX(), side.getFrontOffsetY(), side.getFrontOffsetZ());
+//        if (side == 0) {
+//            --y;
+//        }
+//
+//        if (side == 1) {
+//            ++y;
+//        }
+//
+//        if (side == 2) {
+//            --z;
+//        }
+//
+//        if (side == 3) {
+//            ++z;
+//        }
+//
+//        if (side == 4) {
+//            --x;
+//        }
+//
+//        if (side == 5) {
+//            ++x;
+//        }
+        IBlockState blockState = world.getBlockState(pos);
+        if (blockState.getBlock() instanceof BlockPistonBase) {
+            EnumFacing newData = BlockPistonBase.getFacingFromEntity(((ILittleWorld) world).getParentWorld(),
+                                                               new BlockPos(x >> 3,
+                                                                        y >> 3,
+                                                                        z >> 3),
                                                                entityplayer);
-            world.setBlock/** .setBlockAndMetadataWithNotify **/
-            (x,
-             y,
-             z,
-             block,
-             newData,
-             3);
+            world.setBlockState(pos,
+                                blockState.withProperty(
+                                        BlockPistonBase.FACING,
+                                        newData));
         }
 
         PacketLib.sendBlockChange(world,

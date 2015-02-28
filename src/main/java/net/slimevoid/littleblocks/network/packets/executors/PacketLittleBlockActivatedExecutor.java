@@ -26,7 +26,7 @@ public class PacketLittleBlockActivatedExecutor implements IPacketExecutor {
 	                                                                                     packet.xPosition,
 	                                                                                     packet.yPosition,
 	                                                                                     packet.zPosition,
-	                                                                                     packet.side,
+	                                                                                     ((PacketLittleBlock) packet).getDirection(),
 	                                                                                     packet.hitX,
 	                                                                                     packet.hitY,
 	                                                                                     packet.hitZ);
