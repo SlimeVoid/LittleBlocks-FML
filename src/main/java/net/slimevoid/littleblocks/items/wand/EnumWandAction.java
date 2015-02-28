@@ -1,7 +1,5 @@
 package net.slimevoid.littleblocks.items.wand;
 
-import java.util.HashMap;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -13,6 +11,8 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.IFluidBlock;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.slimevoid.library.data.ReadWriteLock;
 import net.slimevoid.library.util.helpers.ChatHelper;
@@ -23,8 +23,8 @@ import net.slimevoid.littleblocks.core.lib.CommandLib;
 import net.slimevoid.littleblocks.core.lib.ConfigurationLib;
 import net.slimevoid.littleblocks.network.packets.PacketLittleNotify;
 import net.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
+
+import java.util.HashMap;
 
 public enum EnumWandAction {
     PLACE_LB, ROTATE_LB, COPY_LB, DESTROY_LB;

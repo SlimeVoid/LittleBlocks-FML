@@ -1,13 +1,15 @@
 package net.slimevoid.littleblocks.client.proxy;
 
-import java.io.File;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-import net.slimevoid.library.core.SlimevoidCore;
+import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.slimevoid.littleblocks.api.ILittleWorld;
 import net.slimevoid.littleblocks.blocks.events.LittleChunkBucketEvent;
 import net.slimevoid.littleblocks.blocks.events.LittleChunkShiftRightClick;
@@ -19,17 +21,13 @@ import net.slimevoid.littleblocks.client.render.blocks.LittleBlocksRenderer;
 import net.slimevoid.littleblocks.client.render.entities.LittleBlocksCollectionRenderer;
 import net.slimevoid.littleblocks.client.render.tileentities.TileEntityLittleBlocksRenderer;
 import net.slimevoid.littleblocks.core.lib.ConfigurationLib;
-import net.slimevoid.littleblocks.core.lib.CoreLib;
 import net.slimevoid.littleblocks.core.lib.PacketLib;
 import net.slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
 import net.slimevoid.littleblocks.proxy.CommonProxy;
 import net.slimevoid.littleblocks.tickhandlers.LittleWorldTickHandler;
 import net.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
-import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.io.File;
 
 @SideOnly(Side.CLIENT)
 public class ClientProxy extends CommonProxy {

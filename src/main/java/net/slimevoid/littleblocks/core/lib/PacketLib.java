@@ -5,21 +5,17 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.slimevoid.library.network.PacketIds;
 import net.slimevoid.library.util.helpers.PacketHelper;
 import net.slimevoid.littleblocks.client.network.ClientNetworkEvent;
-import net.slimevoid.littleblocks.client.network.packets.executors.ClientBlockChangeExecutor;
-import net.slimevoid.littleblocks.client.network.packets.executors.ClientBlockEventExecutor;
-import net.slimevoid.littleblocks.client.network.packets.executors.ClientCopierNotifyExecutor;
-import net.slimevoid.littleblocks.client.network.packets.executors.ClientLittleCollectionExecutor;
-import net.slimevoid.littleblocks.client.network.packets.executors.ClientPacketLittleBlocksLoginExecutor;
+import net.slimevoid.littleblocks.client.network.packets.executors.*;
 import net.slimevoid.littleblocks.network.NetworkEvent;
 import net.slimevoid.littleblocks.network.packets.*;
 import net.slimevoid.littleblocks.network.packets.executors.PacketLittleBlockActivatedExecutor;
 import net.slimevoid.littleblocks.network.packets.executors.PacketLittleBlockClickedExecutor;
 import net.slimevoid.littleblocks.network.packets.executors.PacketLittleWandSwitchExecutor;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class PacketLib {
 

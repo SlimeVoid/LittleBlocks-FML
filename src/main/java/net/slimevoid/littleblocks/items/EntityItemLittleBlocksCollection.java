@@ -1,7 +1,5 @@
 package net.slimevoid.littleblocks.items;
 
-import java.util.HashMap;
-
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -10,6 +8,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
 import net.slimevoid.littleblocks.core.lib.ConfigurationLib;
+
+import java.util.HashMap;
 
 public class EntityItemLittleBlocksCollection extends EntityItem {
     private HashMap<Item, ItemStack> itemstackCollection = new HashMap<Item, ItemStack>();

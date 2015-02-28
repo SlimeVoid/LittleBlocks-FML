@@ -1,9 +1,5 @@
 package net.slimevoid.littleblocks.blocks;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockStairs;
@@ -21,12 +17,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.*;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.IFluidBlock;
@@ -49,6 +40,10 @@ import net.slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
 import net.slimevoid.littleblocks.items.ItemLittleBlocksWand;
 import net.slimevoid.littleblocks.network.packets.PacketLittleBlocksCollection;
 import net.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class BlockLittleChunk extends BlockContainer {
 
@@ -555,9 +550,7 @@ public class BlockLittleChunk extends BlockContainer {
                                                        world,
                                                        player,
                                                        view,
-                                                       x,
-                                                       y,
-                                                       z,
+                                                       pos,
                                                        returns);
         if (!returns.isEmpty()) {
             MovingObjectPosition min = null;
@@ -566,15 +559,11 @@ public class BlockLittleChunk extends BlockContainer {
             for (MovingObjectPosition ret : returns) {
                 double dist = (double) ret.hitVec.squareDistanceTo(player);
 
-                Block retBlock = tile.getBlock(ret.blockX,
-                                               ret.blockY,
-                                               ret.blockZ);
+                Block retBlock = tile.getBlock(ret.getBlockPos());
                 if (retBlock != Blocks.air) {
                     isLiquid = retBlock instanceof IFluidBlock;
                     if (isLiquid && isFluid) {
-                        isLiquid = !(retBlock instanceof BlockStaticLiquid && tile.getBlockMetadata(ret.blockX,
-                                                                                                    ret.blockY,
-                                                                                                    ret.blockZ) == 0);
+                        isLiquid = !(retBlock instanceof BlockStaticLiquid && tile.getBlockMetadata(ret.getBlockPos()) == 0);
                     }
                 }
 
@@ -588,10 +577,10 @@ public class BlockLittleChunk extends BlockContainer {
                                               zSelected);
 
             if (min != null) {
-                side = (byte) min.sideHit;
-                xSelected = (int) min.blockX;
-                ySelected = (int) min.blockY;
-                zSelected = (int) min.blockZ;
+                side = (byte) min.sideHit.getIndex();
+                xSelected = min.getBlockPos().getX();
+                ySelected = min.getBlockPos().getY();
+                zSelected = min.getBlockPos().getZ();
                 if (isFluid) {
                     littleBlock = tile.getBlock(xSelected,
                                                 ySelected,
@@ -600,39 +589,45 @@ public class BlockLittleChunk extends BlockContainer {
                 boolean rayTraced = false;
                 if (littleBlock != Blocks.air) {
                     if (littleBlock != null) {
-                        if (!(littleBlock.hasTileEntity(tile.getBlockMetadata(xSelected,
-                                                                              ySelected,
-                                                                              zSelected)) && tile.getTileEntity(xSelected,
-                                ySelected,
-                                zSelected) == null)) {
+                        if (!(littleBlock.hasTileEntity(
+                                tile.getBlockState(
+                                        xSelected,
+                                        ySelected,
+                                        zSelected))
+                                && tile.getTileEntity(
+                                    xSelected,
+                                    ySelected,
+                                    zSelected) == null)) {
 
                             try {
-                                littleBlock.collisionRayTrace((World) tile.getLittleWorld(),
-                                                              (x << 3)
-                                                                      + xSelected,
-                                                              (y << 3)
-                                                                      + ySelected,
-                                                              (z << 3)
-                                                                      + zSelected,
-                                                              player,
-                                                              view);
+                                littleBlock.collisionRayTrace(
+                                        (World) tile.getLittleWorld(),
+                                        new BlockPos(
+                                                (pos.getX() << 3) + this.xSelected,
+                                                (pos.getY() << 3) + this.ySelected,
+                                                (pos.getZ() << 3) + this.zSelected
+                                        ),
+                                        player,
+                                        view);
                             } catch (ClassCastException e) {
                                 FMLCommonHandler.instance().getFMLLogger().warn(e.getLocalizedMessage());
                             }
                         }
                     }
                 }
-                this.setBlockBoundsBasedOnSelection(world,
-                                                    x,
-                                                    y,
-                                                    z);
-                return new MovingObjectPosition(x, y, z, (byte) min.sideHit,
+                this.setBlockBoundsBasedOnSelection(world, pos);
+                // TODO :: createVectorHelper
+                return new MovingObjectPosition(hitVec = new Vec3(
+                        (min.hitVec.xCoord * 8) % 1,
+                        (min.hitVec.yCoord * 8) % 1,
+                        (min.hitVec.zCoord * 8) % 1).addVector(
+                        pos.getX(),
+                        pos.getY(),
+                        pos.getZ()),
+                        min.sideHit,
+                        pos
                 /** ((Vec3) min.hitVec).addVector(x, y, z) **/
-                hitVec = Vec3.createVectorHelper((min.hitVec.xCoord * 8) % 1,
-                                                          (min.hitVec.yCoord * 8) % 1,
-                                                          (min.hitVec.zCoord * 8) % 1).addVector(x,
-                                                                                                          y,
-                                                                                                          z));
+                );
             }
         }
         xSelected = -10;
@@ -640,15 +635,12 @@ public class BlockLittleChunk extends BlockContainer {
         zSelected = -10;
         side = -1;
         hitVec = null;
-        this.setBlockBoundsBasedOnSelection(world,
-                                            x,
-                                            y,
-                                            z);
+        this.setBlockBoundsBasedOnSelection(world, pos);
 
         return null;
     }
 
-    public MovingObjectPosition rayTraceBound(AxisAlignedBB bound, int i, int j, int k, Vec3 player, Vec3 view) {
+    public MovingObjectPosition rayTraceBound(AxisAlignedBB bound, BlockPos pos, Vec3 player, Vec3 view) {
         Vec3 minX = player.getIntermediateWithXValue(view,
                                                      bound.minX);
         Vec3 maxX = player.getIntermediateWithXValue(view,
@@ -732,7 +724,7 @@ public class BlockLittleChunk extends BlockContainer {
         if (tracedBound == maxZ) {
             side = 3;
         }
-        return new MovingObjectPosition(i, j, k, side, tracedBound);
+        return new MovingObjectPosition(tracedBound, EnumFacing.getFront(side), pos);
     }
 
     private boolean isVecInsideYZBounds(AxisAlignedBB bound, Vec3 Vec3) {
@@ -744,42 +736,40 @@ public class BlockLittleChunk extends BlockContainer {
         }
     }
 
-    private boolean isVecInsideXZBounds(AxisAlignedBB bound, Vec3 Vec3) {
-        if (Vec3 == null) {
+    private boolean isVecInsideXZBounds(AxisAlignedBB bound, Vec3 vec) {
+        if (vec == null) {
             return false;
         } else {
-            return Vec3.xCoord >= bound.minX && Vec3.xCoord <= bound.maxX
-                   && Vec3.zCoord >= bound.minZ && Vec3.zCoord <= bound.maxZ;
+            return vec.xCoord >= bound.minX && vec.xCoord <= bound.maxX
+                   && vec.zCoord >= bound.minZ && vec.zCoord <= bound.maxZ;
         }
     }
 
-    private boolean isVecInsideXYBounds(AxisAlignedBB bound, Vec3 Vec3) {
-        if (Vec3 == null) {
+    private boolean isVecInsideXYBounds(AxisAlignedBB bound, Vec3 vec) {
+        if (vec == null) {
             return false;
         } else {
-            return Vec3.xCoord >= bound.minX && Vec3.xCoord <= bound.maxX
-                   && Vec3.yCoord >= bound.minY && Vec3.yCoord <= bound.maxY;
+            return vec.xCoord >= bound.minX && vec.xCoord <= bound.maxX
+                   && vec.yCoord >= bound.minY && vec.yCoord <= bound.maxY;
         }
     }
 
     @Override
-    public int isProvidingWeakPower(IBlockAccess iblockaccess, int x, int y, int z, int side) {
-        int weakPower = super.isProvidingWeakPower(iblockaccess,
-                                                   x,
-                                                   y,
-                                                   z,
-                                                   side);
+    public int isProvidingWeakPower(IBlockAccess iblockaccess, BlockPos pos, IBlockState state, EnumFacing side) {
+        int weakPower = super.isProvidingWeakPower(
+                iblockaccess,
+                pos,
+                state,
+                side);
         if (weakPower > 0) {
             return weakPower;
         } else {
-            TileEntityLittleChunk tile = (TileEntityLittleChunk) iblockaccess.getTileEntity(x,
-                                                                                            y,
-                                                                                            z);
+            TileEntityLittleChunk tile = (TileEntityLittleChunk) iblockaccess.getTileEntity(pos);
             if (tile != null) {
                 int maX = tile.size, maY = tile.size, maZ = tile.size;
                 int startX = 0, startY = 0, startZ = 0;
 
-                switch (side) {
+                switch (side.getIndex()) {
                 case 1:
                     maY = 1;
                     break;
@@ -814,14 +804,14 @@ public class BlockLittleChunk extends BlockContainer {
                                 Block littleBlock = tile.getBlock(xx,
                                                                   yy,
                                                                   zz);
+                                IBlockState littleState = tile.getBlockState(xx, yy, zz);
                                 if (littleBlock != null) {
                                     return littleBlock.isProvidingWeakPower(tile.getLittleWorld(),
-                                                                            (x << 3)
-                                                                                    + xx,
-                                                                            (y << 3)
-                                                                                    + yy,
-                                                                            (z << 3)
-                                                                                    + zz,
+                                                                            new BlockPos(
+                                                                                    (pos.getX() << 3) + xx,
+                                                                                    (pos.getY() << 3) + yy,
+                                                                                    (pos.getZ() << 3) + zz),
+                                                                            littleState,
                                                                             side);
                                 }
                             }
@@ -834,16 +824,14 @@ public class BlockLittleChunk extends BlockContainer {
     }
 
     @Override
-    public void onNeighborBlockChange(World world, int x, int y, int z, Block blockId) {
-        super.onNeighborBlockChange(world,
-                                    x,
-                                    y,
-                                    z,
-                                    blockId);
+    public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block block) {
+        super.onNeighborBlockChange(
+                world,
+                pos,
+                state,
+                block);
         if (updateEveryone) {
-            TileEntityLittleChunk tile = (TileEntityLittleChunk) world.getTileEntity(x,
-                                                                                     y,
-                                                                                     z);
+            TileEntityLittleChunk tile = (TileEntityLittleChunk) world.getTileEntity(pos);
             if (tile != null) {
                 int maX = tile.size, maY = tile.size, maZ = tile.size;
                 int startX = 0, startY = 0, startZ = 0;
@@ -881,17 +869,18 @@ public class BlockLittleChunk extends BlockContainer {
                                                   yy,
                                                   zz) != Blocks.air) {
                                     Block littleBlock = tile.getBlock(xx,
-                                                                      yy,
-                                                                      zz);
+                                            yy,
+                                            zz);
                                     if (littleBlock != null) {
-                                        littleBlock.onNeighborBlockChange((World) tile.getLittleWorld(),
-                                                                          (x << 3)
-                                                                                  + xx,
-                                                                          (y << 3)
-                                                                                  + yy,
-                                                                          (z << 3)
-                                                                                  + zz,
-                                                                          blockId);
+                                        littleBlock.onNeighborBlockChange(
+                                                (World) tile.getLittleWorld(),
+                                                new BlockPos(
+                                                        (pos.getX() << 3) + xx,
+                                                        (pos.getY() << 3) + yy,
+                                                        (pos.getZ() << 3) + zz
+                                                ),
+                                                state,
+                                                block);
                                     }
                                 }
                             }
@@ -899,22 +888,19 @@ public class BlockLittleChunk extends BlockContainer {
                     }
                 }
             } else {
-                super.onNeighborBlockChange(world,
-                                            x,
-                                            y,
-                                            z,
-                                            blockId);
+                super.onNeighborBlockChange(
+                        world,
+                        pos,
+                        state,
+                        block);
             }
         }
     }
 
     @Override
-    public boolean addDestroyEffects(World world, int x, int y, int z, int meta, EffectRenderer effectRenderer) {
+    public boolean addDestroyEffects(World world, BlockPos pos, EffectRenderer effectRenderer) {
         return LittleBlockDiggingFX.doBlockDestroyEffects(world,
-                                                          x,
-                                                          y,
-                                                          z,
-                                                          meta,
+                                                          pos,
                                                           effectRenderer,
                                                           this);
     }
@@ -928,22 +914,17 @@ public class BlockLittleChunk extends BlockContainer {
     }
 
     @Override
-    public int getLightValue(IBlockAccess world, int x, int y, int z) {
-        TileEntityLittleChunk tile = (TileEntityLittleChunk) world.getTileEntity(x,
-                                                                                 y,
-                                                                                 z);
-        try {
-            if (tile != null) return tile.getLightlevel();
-        } catch (ClassCastException e) {
-            FMLCommonHandler.instance().getFMLLogger().warn(e.getLocalizedMessage());
-            return super.getLightValue(world,
-                                       x,
-                                       y,
-                                       z);
-        }
-        return super.getLightValue(world,
-                                   x,
-                                   y,
-                                   z);
+    public int getLightValue(IBlockAccess world, BlockPos pos) {
+        TileEntityLittleChunk tile = (TileEntityLittleChunk) world.getTileEntity(pos);
+//        try {
+//            if (tile != null) return tile.getLightlevel();
+//        } catch (ClassCastException e) {
+//            FMLCommonHandler.instance().getFMLLogger().warn(e.getLocalizedMessage());
+//            return super.getLightValue(world,
+//                                       x,
+//                                       y,
+//                                       z);
+//        }
+        return super.getLightValue(world, pos);
     }
 }

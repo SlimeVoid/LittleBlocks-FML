@@ -1,11 +1,5 @@
 package net.slimevoid.littleblocks.core.lib;
 
-import ibxm.Player;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPistonBase;
 import net.minecraft.block.state.IBlockState;
@@ -27,6 +21,11 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.slimevoid.library.data.Logger;
 import net.slimevoid.littleblocks.api.ILittleWorld;
 import net.slimevoid.littleblocks.core.LBCore;
@@ -34,11 +33,10 @@ import net.slimevoid.littleblocks.core.LoggerLittleBlocks;
 import net.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 import net.slimevoid.littleblocks.world.ItemInLittleWorldManager;
 import net.slimevoid.littleblocks.world.LittlePlayerController;
-import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 public class BlockUtil {
 

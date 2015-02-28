@@ -1,7 +1,5 @@
 package net.slimevoid.littleblocks.blocks.core;
 
-import java.util.List;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
@@ -15,6 +13,8 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.slimevoid.littleblocks.blocks.BlockLittleChunk;
 import net.slimevoid.littleblocks.core.lib.ConfigurationLib;
 import net.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
+
+import java.util.List;
 
 public class CollisionRayTrace {
 
@@ -73,17 +73,20 @@ public class CollisionRayTrace {
         if (block.getMaterial() != Material.air && block.isOpaqueCube()) {
             for (int yy = 0; yy < m; yy++) {
                 for (int zz = 0; zz < m; zz++) {
-                    MovingObjectPosition ret = littleBlocks.rayTraceBound(AxisAlignedBB.fromBounds((double) xx / m,
-                                                                                                   (double) yy / m,
-                                                                                                   (double) zz / m,
-                                                                                                   (double) (xx + 1) / m,
-                                                                                                   (double) (yy + 1) / m,
-                                                                                                   (double) (zz + 1) / m),
-                                                                          xx,
-                                                                          yy,
-                                                                          zz,
-                                                                          player,
-                                                                          view);
+                    MovingObjectPosition ret = littleBlocks.rayTraceBound(
+                            AxisAlignedBB.fromBounds(
+                                    (double) xx / m,
+                                    (double) yy / m,
+                                    (double) zz / m,
+                                    (double) (xx + 1) / m,
+                                    (double) (yy + 1) / m,
+                                    (double) (zz + 1) / m),
+                            new BlockPos(
+                                    xx,
+                                    yy,
+                                    zz),
+                            player,
+                            view);
                     if (ret != null) {
                         returns.add(ret);
                     }
@@ -99,17 +102,20 @@ public class CollisionRayTrace {
         if (block.getMaterial() != Material.air && block.isOpaqueCube()) {
             for (int xx = 0; xx < m; xx++) {
                 for (int zz = 0; zz < m; zz++) {
-                    MovingObjectPosition ret = littleBlocks.rayTraceBound(AxisAlignedBB.fromBounds((double) xx / m,
-                                                                                                    (double) yy / m,
-                                                                                                    (double) zz / m,
-                                                                                                    (double) (xx + 1) / m,
-                                                                                                    (double) (yy + 1) / m,
-                                                                                                    (double) (zz + 1) / m),
-                                                                          xx,
-                                                                          yy,
-                                                                          zz,
-                                                                          player,
-                                                                          view);
+                    MovingObjectPosition ret = littleBlocks.rayTraceBound(
+                            AxisAlignedBB.fromBounds(
+                                    (double) xx / m,
+                                    (double) yy / m,
+                                    (double) zz / m,
+                                    (double) (xx + 1) / m,
+                                    (double) (yy + 1) / m,
+                                    (double) (zz + 1) / m),
+                            new BlockPos(
+                                    xx,
+                                    yy,
+                                    zz),
+                            player,
+                            view);
                     if (ret != null) {
                         returns.add(ret);
                     }
@@ -125,17 +131,20 @@ public class CollisionRayTrace {
         if (block.getMaterial() != Material.air && block.isOpaqueCube()) {
             for (int yy = 0; yy < m; yy++) {
                 for (int xx = 0; xx < m; xx++) {
-                    MovingObjectPosition ret = littleBlocks.rayTraceBound(AxisAlignedBB.fromBounds((double) xx / m,
-                                                                                                   (double) yy / m,
-                                                                                                   (double) zz / m,
-                                                                                                   (double) (xx + 1) / m,
-                                                                                                   (double) (yy + 1) / m,
-                                                                                                   (double) (zz + 1) / m),
-                                                                          xx,
-                                                                          yy,
-                                                                          zz,
-                                                                          player,
-                                                                          view);
+                    MovingObjectPosition ret = littleBlocks.rayTraceBound(
+                            AxisAlignedBB.fromBounds(
+                                    (double) xx / m,
+                                    (double) yy / m,
+                                    (double) zz / m,
+                                    (double) (xx + 1) / m,
+                                    (double) (yy + 1) / m,
+                                    (double) (zz + 1) / m),
+                            new BlockPos(
+                                    xx,
+                                    yy,
+                                    zz),
+                            player,
+                            view);
                     if (ret != null) {
                         returns.add(ret);
                     }

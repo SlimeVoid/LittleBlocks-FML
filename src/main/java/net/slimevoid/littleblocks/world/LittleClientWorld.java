@@ -1,8 +1,8 @@
 package net.slimevoid.littleblocks.world;
 
-import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
+import net.minecraftforge.fml.client.FMLClientHandler;
 
 public class LittleClientWorld extends LittleWorld {
 

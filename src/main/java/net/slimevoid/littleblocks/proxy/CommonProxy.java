@@ -1,7 +1,5 @@
 package net.slimevoid.littleblocks.proxy;
 
-import java.io.File;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
@@ -9,19 +7,19 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.MinecraftForge;
-import net.slimevoid.library.core.SlimevoidCore;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
 import net.slimevoid.littleblocks.api.ILBCommonProxy;
 import net.slimevoid.littleblocks.api.ILittleWorld;
 import net.slimevoid.littleblocks.blocks.events.LittleContainerInteract;
 import net.slimevoid.littleblocks.core.lib.ConfigurationLib;
-import net.slimevoid.littleblocks.core.lib.CoreLib;
 import net.slimevoid.littleblocks.core.lib.PacketLib;
 import net.slimevoid.littleblocks.events.LittleBlocksCollectionPickup;
 import net.slimevoid.littleblocks.events.LittleChunkEvent;
 import net.slimevoid.littleblocks.events.WorldServerEvent;
 import net.slimevoid.littleblocks.tickhandlers.LittleWorldServerTickHandler;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
+
+import java.io.File;
 
 public class CommonProxy implements ILBCommonProxy {
 

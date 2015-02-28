@@ -4,17 +4,13 @@ import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.registry.EntityRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.slimevoid.littleblocks.blocks.BlockLittleChunk;
-import net.slimevoid.littleblocks.core.lib.BlockLib;
-import net.slimevoid.littleblocks.core.lib.BlockUtil;
-import net.slimevoid.littleblocks.core.lib.ConfigurationLib;
-import net.slimevoid.littleblocks.core.lib.ItemLib;
-import net.slimevoid.littleblocks.core.lib.LocalizationLib;
+import net.slimevoid.littleblocks.core.lib.*;
 import net.slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
 import net.slimevoid.littleblocks.items.ItemLittleBlocksWand;
 import net.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
-import net.minecraftforge.fml.common.registry.EntityRegistry;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class LBCore {
 

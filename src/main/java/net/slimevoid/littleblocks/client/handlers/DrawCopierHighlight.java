@@ -1,22 +1,22 @@
 package net.slimevoid.littleblocks.client.handlers;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.IFluidBlock;
+import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.slimevoid.littleblocks.core.lib.ConfigurationLib;
 import net.slimevoid.littleblocks.core.lib.TextureLib;
 import net.slimevoid.littleblocks.items.ItemLittleBlocksWand;
-
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
-
-import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class DrawCopierHighlight {
 
@@ -33,10 +33,12 @@ public class DrawCopierHighlight {
     }
 
     public void drawInWorldCopierOverlay(DrawBlockHighlightEvent event) {
-
-        double x = event.target.blockX + 0.5F;
-        double y = event.target.blockY + 0.5F;
-        double z = event.target.blockZ + 0.5F;
+        int blockX = event.target.getBlockPos().getX();
+        int blockY = event.target.getBlockPos().getY();
+        int blockZ = event.target.getBlockPos().getZ();
+        double x = blockX + 0.5F;
+        double y = blockY + 0.5F;
+        double z = blockZ + 0.5F;
         double iPX = event.player.prevPosX
                      + (event.player.posX - event.player.prevPosX)
                      * event.partialTicks;
@@ -56,15 +58,13 @@ public class DrawCopierHighlight {
 
         World world = FMLClientHandler.instance().getClient().theWorld;
         if (this.shouldDoDraw(world,
-                              event.target.blockX,
-                              event.target.blockY,
-                              event.target.blockZ)) {
+                              event.target.getBlockPos())) {
             xShift = 0;
             yShift = 0;
             zShift = 0;
         }
 
-        ForgeDirection sideHit = ForgeDirection.getOrientation(event.target.sideHit);
+        EnumFacing sideHit = event.target.sideHit;
 
         switch (sideHit) {
         case UP: {
@@ -115,16 +115,20 @@ public class DrawCopierHighlight {
         default:
             break;
         }
-        Block blockID = world.getBlock(event.target.blockX + (int) xShift,
-                                       event.target.blockY + (int) yShift,
-                                       event.target.blockZ + (int) zShift);
-        if (!(blockID instanceof IFluidBlock)) {
+        IBlockState state = world.getBlockState(
+                new BlockPos(
+                        blockX + (int) xShift,
+                        blockY + (int) yShift,
+                        blockZ + (int) zShift
+                )
+        );
+        if (!(state.getBlock() instanceof IFluidBlock)) {
 
             GL11.glDepthMask(false);
             GL11.glDisable(GL11.GL_CULL_FACE);
 
             for (int i = 0; i < 6; i++) {
-                ForgeDirection forgeDir = ForgeDirection.getOrientation(i);
+                EnumFacing forgeDir = EnumFacing.getFront(i);
                 int zCorrection = (i == 2) ? -1 : 1;
                 GL11.glPushMatrix();
                 GL11.glTranslated(-iPX + x + xShift,
@@ -134,9 +138,9 @@ public class DrawCopierHighlight {
                               1F * yScale,
                               1F * zScale);
                 GL11.glRotatef(90,
-                               forgeDir.offsetX,
-                               forgeDir.offsetY,
-                               forgeDir.offsetZ);
+                               forgeDir.getFrontOffsetX(),
+                               forgeDir.getFrontOffsetY(),
+                               forgeDir.getFrontOffsetZ());
                 GL11.glTranslated(0,
                                   0,
                                   0.5f * zCorrection);
@@ -152,15 +156,10 @@ public class DrawCopierHighlight {
         }
     }
 
-    private boolean shouldDoDraw(World world, int blockX, int blockY, int blockZ) {
-        Block block = world.getBlock(blockX,
-                                     blockY,
-                                     blockZ);
+    private boolean shouldDoDraw(World world, BlockPos pos) {
+        Block block = world.getBlockState(pos).getBlock();
         return block == ConfigurationLib.littleChunk
-               || block.isReplaceable(world,
-                                      blockX,
-                                      blockY,
-                                      blockZ);
+               || block.isReplaceable(world, pos);
     }
 
     public static void renderPulsingQuad(TextureManager renderEngine, ResourceLocation wandOverlay, float maxTransparency) {
@@ -169,7 +168,7 @@ public class DrawCopierHighlight {
 
         renderEngine.bindTexture(wandOverlay);
         // GL11.glBindTexture(GL11.GL_TEXTURE_2D, overlay);
-        Tessellator tessellator = Tessellator.instance;
+        Tessellator tessellator = Tessellator.getInstance();
 
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         GL11.glEnable(GL11.GL_BLEND);
@@ -180,34 +179,34 @@ public class DrawCopierHighlight {
                        1,
                        pulseTransparency);
 
-        tessellator.startDrawingQuads();
-        tessellator.setColorRGBA_F(1,
-                                   1,
-                                   1,
-                                   pulseTransparency);
+        tessellator.getWorldRenderer().startDrawingQuads();
+        tessellator.getWorldRenderer().setColorRGBA_F(1,
+                1,
+                1,
+                pulseTransparency);
 
-        tessellator.addVertexWithUV(-0.5D,
-                                    0.5D,
-                                    0F,
-                                    0,
-                                    0.5);
-        tessellator.addVertexWithUV(0.5D,
-                                    0.5D,
-                                    0F,
-                                    0.5,
-                                    0.5);
-        tessellator.addVertexWithUV(0.5D,
-                                    -0.5D,
-                                    0F,
-                                    0.5,
-                                    0);
-        tessellator.addVertexWithUV(-0.5D,
-                                    -0.5D,
-                                    0F,
-                                    0,
-                                    0);
+        tessellator.getWorldRenderer().addVertexWithUV(-0.5D,
+                0.5D,
+                0F,
+                0,
+                0.5);
+        tessellator.getWorldRenderer().addVertexWithUV(0.5D,
+                0.5D,
+                0F,
+                0.5,
+                0.5);
+        tessellator.getWorldRenderer().addVertexWithUV(0.5D,
+                -0.5D,
+                0F,
+                0.5,
+                0);
+        tessellator.getWorldRenderer().addVertexWithUV(-0.5D,
+                -0.5D,
+                0F,
+                0,
+                0);
 
-        tessellator.draw();
+        tessellator.getWorldRenderer().finishDrawing();
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
     }

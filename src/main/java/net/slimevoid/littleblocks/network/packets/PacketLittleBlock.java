@@ -1,7 +1,6 @@
 package net.slimevoid.littleblocks.network.packets;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.slimevoid.library.network.PacketIds;

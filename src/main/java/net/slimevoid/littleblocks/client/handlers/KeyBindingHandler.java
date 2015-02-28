@@ -1,16 +1,12 @@
 package net.slimevoid.littleblocks.client.handlers;
 
-import java.util.EnumSet;
-
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
-import net.slimevoid.littleblocks.core.lib.PacketLib;
-
-import org.lwjgl.input.Keyboard;
-
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.slimevoid.littleblocks.core.lib.PacketLib;
+import org.lwjgl.input.Keyboard;
 
 public class KeyBindingHandler {
 

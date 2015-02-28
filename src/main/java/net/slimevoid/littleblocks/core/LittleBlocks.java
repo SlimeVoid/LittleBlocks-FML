@@ -1,9 +1,5 @@
 package net.slimevoid.littleblocks.core;
 
-import net.slimevoid.library.util.helpers.PacketHelper;
-import net.slimevoid.littleblocks.api.ILBCommonProxy;
-import net.slimevoid.littleblocks.core.lib.CoreLib;
-import net.slimevoid.littleblocks.core.lib.PacketLib;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -11,6 +7,10 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.slimevoid.library.util.helpers.PacketHelper;
+import net.slimevoid.littleblocks.api.ILBCommonProxy;
+import net.slimevoid.littleblocks.core.lib.CoreLib;
+import net.slimevoid.littleblocks.core.lib.PacketLib;
 
 @Mod(
         modid = CoreLib.MOD_ID,

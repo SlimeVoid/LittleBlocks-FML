@@ -1,11 +1,11 @@
 package net.slimevoid.littleblocks.api;
 
-import java.util.List;
-
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
+import java.util.List;
 
 public interface ILittleWorld extends IBlockAccess {
 

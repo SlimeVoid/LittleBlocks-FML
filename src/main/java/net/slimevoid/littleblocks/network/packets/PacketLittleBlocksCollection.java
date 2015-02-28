@@ -1,17 +1,16 @@
 package net.slimevoid.littleblocks.network.packets;
 
 import io.netty.buffer.ByteBuf;
-
-import java.util.HashMap;
-
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.slimevoid.library.util.helpers.NBTHelper;
 import net.slimevoid.library.network.PacketEntity;
+import net.slimevoid.library.util.helpers.NBTHelper;
 import net.slimevoid.littleblocks.core.lib.CommandLib;
 import net.slimevoid.littleblocks.core.lib.CoreLib;
 import net.slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
+
+import java.util.HashMap;
 
 public class PacketLittleBlocksCollection extends PacketEntity {
     public HashMap<Item, ItemStack> itemstackCollection = new HashMap<Item, ItemStack>();

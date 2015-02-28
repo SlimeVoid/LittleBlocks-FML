@@ -3,11 +3,11 @@ package net.slimevoid.littleblocks.tickhandlers;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
-import net.slimevoid.littleblocks.api.ILittleWorld;
-import net.slimevoid.littleblocks.core.lib.ConfigurationLib;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
+import net.slimevoid.littleblocks.api.ILittleWorld;
+import net.slimevoid.littleblocks.core.lib.ConfigurationLib;
 
 public class LittleWorldServerTickHandler {
 

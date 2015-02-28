@@ -4,13 +4,10 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-import net.slimevoid.littleblocks.api.ILittleWorld;
+import net.minecraftforge.fml.client.registry.ISimpleBlockRenderingHandler;
 import net.slimevoid.littleblocks.blocks.BlockLittleChunk;
 import net.slimevoid.littleblocks.core.lib.ConfigurationLib;
 import net.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
-import net.minecraftforge.fml.client.registry.ISimpleBlockRenderingHandler;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class LittleBlocksRenderer implements ISimpleBlockRenderingHandler {
 

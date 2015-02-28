@@ -1,14 +1,12 @@
 package net.slimevoid.littleblocks.blocks.events;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
-import net.slimevoid.littleblocks.blocks.BlockLittleChunk;
-import net.slimevoid.littleblocks.core.lib.ConfigurationLib;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.slimevoid.littleblocks.blocks.BlockLittleChunk;
+import net.slimevoid.littleblocks.core.lib.ConfigurationLib;
 
 public class LittleChunkBucketEvent {
 

@@ -1,24 +1,22 @@
 package net.slimevoid.littleblocks.core.lib;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.BlockModelRenderer;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.item.Item;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import net.slimevoid.littleblocks.core.LoggerLittleBlocks;
-import net.slimevoid.littleblocks.world.LittleWorldClient;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.slimevoid.littleblocks.core.LoggerLittleBlocks;
+import net.slimevoid.littleblocks.world.LittleWorldClient;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class ConfigurationLib {
 

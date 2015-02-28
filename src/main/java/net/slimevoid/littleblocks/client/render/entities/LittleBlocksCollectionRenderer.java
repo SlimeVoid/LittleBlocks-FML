@@ -1,7 +1,5 @@
 package net.slimevoid.littleblocks.client.render.entities;
 
-import java.util.Random;
-
 import net.minecraft.client.renderer.entity.RenderEntityItem;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -11,6 +9,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.slimevoid.library.util.helpers.ReflectionHelper;
 import net.slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
+
+import java.util.Random;
 
 public class LittleBlocksCollectionRenderer extends RenderEntityItem {
 

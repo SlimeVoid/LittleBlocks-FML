@@ -1,20 +1,20 @@
 package net.slimevoid.littleblocks.network;
 
-import java.util.List;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent.ServerConnectionFromClientEvent;
 import net.slimevoid.library.util.helpers.PacketHelper;
 import net.slimevoid.littleblocks.core.lib.CommandLib;
 import net.slimevoid.littleblocks.core.lib.ConfigurationLib;
 import net.slimevoid.littleblocks.items.wand.EnumWandAction;
 import net.slimevoid.littleblocks.network.packets.PacketLittleBlocksSettings;
 import net.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.network.FMLNetworkEvent.ServerConnectionFromClientEvent;
+
+import java.util.List;
 
 public class NetworkEvent {
 

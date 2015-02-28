@@ -6,7 +6,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.event.world.ChunkEvent.Load;
 import net.minecraftforge.event.world.ChunkEvent.Unload;
-import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.slimevoid.library.core.SlimevoidCore;
 import net.slimevoid.littleblocks.api.ILittleWorld;
 import net.slimevoid.littleblocks.core.LittleBlocks;
@@ -15,7 +15,7 @@ import net.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 
 public class LittleChunkEvent {
 
-    @EventHandler
+    @SubscribeEvent
     public void onChunkLoad(Load event) {
         Chunk chunk = event.getChunk();
         for (Object obj : chunk.getTileEntityMap().values()) {
@@ -29,7 +29,7 @@ public class LittleChunkEvent {
         }
     }
 
-    @EventHandler
+    @SubscribeEvent
     public void onChunkUnload(Unload event) {
         Chunk chunk = event.getChunk();
         for (Object obj : chunk.getTileEntityMap().values()) {

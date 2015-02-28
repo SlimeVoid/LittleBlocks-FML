@@ -11,9 +11,6 @@
  */
 package net.slimevoid.littleblocks.client.render.blocks;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
@@ -22,9 +19,11 @@ import net.slimevoid.library.data.Logger.LogLevel;
 import net.slimevoid.littleblocks.core.LoggerLittleBlocks;
 import net.slimevoid.littleblocks.core.lib.ConfigurationLib;
 import net.slimevoid.littleblocks.core.lib.CoreLib;
-
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class LittleBlocksLittleRenderer {
     private RenderBlocks              renderBlocks;

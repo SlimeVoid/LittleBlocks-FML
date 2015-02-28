@@ -1,17 +1,15 @@
 package net.slimevoid.littleblocks.client.render.tileentities;
 
-import java.util.Collection;
-import java.util.List;
-
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.slimevoid.littleblocks.api.ILittleWorld;
 import net.slimevoid.littleblocks.core.lib.ConfigurationLib;
 import net.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
-
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+
+import java.util.Collection;
 
 public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 

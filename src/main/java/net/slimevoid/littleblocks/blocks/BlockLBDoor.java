@@ -1,10 +1,5 @@
 package net.slimevoid.littleblocks.blocks;
 
-import net.minecraft.block.BlockDoor;
-import net.minecraft.block.material.Material;
-import net.minecraft.init.Blocks;
-import net.minecraft.world.World;
-
 public class BlockLBDoor { /**extends BlockDoor {
 
     public BlockLBDoor(int blockID, Material material) {

@@ -3,12 +3,12 @@ package net.slimevoid.littleblocks.blocks.events;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.slimevoid.littleblocks.blocks.BlockLittleChunk;
-import net.slimevoid.littleblocks.core.lib.ConfigurationLib;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
+import net.slimevoid.littleblocks.blocks.BlockLittleChunk;
+import net.slimevoid.littleblocks.core.lib.ConfigurationLib;
 
 public class LittleChunkShiftRightClick {
 

@@ -1,11 +1,8 @@
 package net.slimevoid.littleblocks.api;
 
-import net.slimevoid.library.ICommonProxy;
-
-import net.minecraft.network.INetHandler;
-import net.minecraft.network.NetworkManager;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.slimevoid.library.ICommonProxy;
 
 public interface ILBCommonProxy extends ICommonProxy {
 
