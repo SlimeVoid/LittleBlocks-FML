@@ -41,7 +41,7 @@ public class LittleContainerInteract {
                 if (fields[i].get(datasource) instanceof TileEntity) {
                     TileEntity tile = (TileEntity) fields[i].get(datasource);
                     if (tile.hasWorldObj()
-                        && tile.getWorldObj() instanceof ILittleWorld) {
+                        && tile.getWorld() instanceof ILittleWorld) {
                         TileEntityCanInteract(event,
                                               tile);
                         break;
@@ -86,19 +86,19 @@ public class LittleContainerInteract {
     }
 
     private void TileEntityCanInteract(PlayerOpenContainerEvent event, TileEntity tile) {
-        if (Math.pow(Math.pow((tile.xCoord >> 3) - event.entityPlayer.posX,
+        if (Math.pow(Math.pow((tile.getPos().getX() >> 3) - event.entityPlayer.posX,
                               2)
-                             + Math.pow((tile.yCoord >> 3)
+                             + Math.pow((tile.getPos().getY() >> 3)
                                                 - event.entityPlayer.posY,
                                         2)
-                             + Math.pow((tile.zCoord >> 3)
+                             + Math.pow((tile.getPos().getZ() >> 3)
                                                 - event.entityPlayer.posZ,
                                         2),
                      .5) <= 4) {
             FakePlayer fakePlayer = new FakePlayer((WorldServer) event.entityPlayer.worldObj, new GameProfile((UUID)null, CoreLib.MOD_CHANNEL));
-            fakePlayer.posX = (tile.xCoord);
-            fakePlayer.posY = (tile.yCoord);
-            fakePlayer.posZ = (tile.zCoord);
+            fakePlayer.posX = (tile.getPos().getX());
+            fakePlayer.posY = (tile.getPos().getY());
+            fakePlayer.posZ = (tile.getPos().getZ());
 
             fakePlayer.openContainer = event.entityPlayer.openContainer;
             if (fakePlayer.openContainer.canInteractWith(fakePlayer)) {

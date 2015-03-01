@@ -37,8 +37,7 @@ public class LittleBlocks {
     @EventHandler
     public void LittleBlocksInit(FMLInitializationEvent event) {
         proxy.init();
-        PacketHelper.registerHandler(CoreLib.MOD_CHANNEL,
-                                     PacketLib.handler);
+        PacketHelper.registerHandler();
         LBInit.initialize();
     }
 

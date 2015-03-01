@@ -9,6 +9,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
@@ -39,16 +41,12 @@ public class LittlePlayerController extends PlayerControllerMP {
         this.currentGameType.configurePlayerCapabilities(this.mc.thePlayer.capabilities);
     }
 
-    public static void clickBlockCreative(Minecraft client, LittlePlayerController controller, int x, int y, int z, int side) {
+    public static void clickBlockCreative(Minecraft client, LittlePlayerController controller, BlockPos pos, EnumFacing side) {
         if (!((World) LittleBlocks.proxy.getLittleWorld(client.theWorld,
                                                         false)).extinguishFire(client.thePlayer,
-                                                                               x,
-                                                                               y,
-                                                                               z,
+                                                                               pos,
                                                                                side)) {
-            controller.onPlayerDestroyBlock(x,
-                                            y,
-                                            z,
+            controller.onPlayerDestroyBlock(pos,
                                             side);
         }
     }

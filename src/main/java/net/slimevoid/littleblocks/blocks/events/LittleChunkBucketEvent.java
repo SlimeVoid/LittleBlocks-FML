@@ -13,18 +13,18 @@ public class LittleChunkBucketEvent {
     @SubscribeEvent
     public void onBucketEvent(FillBucketEvent event) {
         if (event.current.getItem() == Items.bucket) {
-            if (!event.entityPlayer./*canPlayerEdit*/func_175151_a(event.target.func_178782_a(),
-                                                  event.target./*side*/field_178784_b,
+            if (!event.entityPlayer.canPlayerEdit(event.target.getBlockPos(),
+                                                  event.target.sideHit,
                                                   event.result)) {
                 event.setResult(Event.Result.DENY);
             } else {
-                IBlockState blockState = event.world.getBlockState(event.target./*getBlockPos*/func_178782_a());
+                IBlockState blockState = event.world.getBlockState(event.target.getBlockPos());
                 if (blockState.getBlock().isAssociatedBlock(ConfigurationLib.littleChunk)) {
                     if (blockState.getBlock().onBlockActivated(event.world,
-                                                     event.target./*getBlockPos*/func_178782_a(),
+                                                     event.target.getBlockPos(),
                                                      blockState,
                                                      event.entityPlayer,
-                                                     event.target.field_178784_b,
+                                                     event.target.sideHit,
                                                      (float) BlockLittleChunk.hitVec.xCoord,
                                                      (float) BlockLittleChunk.hitVec.yCoord,
                                                      (float) BlockLittleChunk.hitVec.zCoord)) {
