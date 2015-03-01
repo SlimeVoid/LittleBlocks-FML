@@ -1,5 +1,6 @@
 package net.slimevoid.littleblocks.world;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSetMultimap;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -1004,356 +1005,360 @@ public abstract class LittleWorld extends World implements ILittleWorld {
 //        }
 //    }
 
-    private int computeLightValue(int par1, int par2, int par3, EnumSkyBlock par4EnumSkyBlock) {
-        if (par4EnumSkyBlock == EnumSkyBlock.Sky && this
-                .canBlockSeeTheSky(par1,
-                                   par2,
-                                   par3)) {
-            return 15;
-        } else {
-            Block block = this.getBlock(par1,
-                                        par2,
-                                        par3);
-            int blockLight = (block == null ? 0 : block.getLightValue(this,
-                                                                      par1,
-                                                                      par2,
-                                                                      par3));
-            int i1 = par4EnumSkyBlock == EnumSkyBlock.Sky ? 0 : blockLight;
-            int j1 = (block == null ? 0 : block.getLightOpacity(this,
-                                                                par1,
-                                                                par2,
-                                                                par3));
-
-            if (j1 >= 15 && blockLight > 0) {
-                j1 = 1;
-            }
-
-            if (j1 < 1) {
-                j1 = 1;
-            }
-
-            if (j1 >= 15) {
-                return 0;
-            } else if (i1 >= 14) {
-                return i1;
-            } else {
-                for (int k1 = 0; k1 < 6; ++k1) {
-                    int l1 = par1 + Facing.offsetsXForSide[k1];
-                    int i2 = par2 + Facing.offsetsYForSide[k1];
-                    int j2 = par3 + Facing.offsetsZForSide[k1];
-                    int k2 = this.getSavedLightValue(par4EnumSkyBlock,
-                                                     l1,
-                                                     i2,
-                                                     j2) - j1;
-
-                    if (k2 > i1) {
-                        i1 = k2;
-                    }
-
-                    if (i1 >= 14) {
-                        return i1;
-                    }
-                }
-
-                return i1;
-            }
-        }
-    }
+//    private int computeLightValue(int par1, int par2, int par3, EnumSkyBlock par4EnumSkyBlock) { TODO
+//        if (par4EnumSkyBlock == EnumSkyBlock.Sky && this
+//                .canBlockSeeTheSky(par1,
+//                                   par2,
+//                                   par3)) {
+//            return 15;
+//        } else {
+//            Block block = this.getBlock(par1,
+//                                        par2,
+//                                        par3);
+//            int blockLight = (block == null ? 0 : block.getLightValue(this,
+//                                                                      par1,
+//                                                                      par2,
+//                                                                      par3));
+//            int i1 = par4EnumSkyBlock == EnumSkyBlock.Sky ? 0 : blockLight;
+//            int j1 = (block == null ? 0 : block.getLightOpacity(this,
+//                                                                par1,
+//                                                                par2,
+//                                                                par3));
+//
+//            if (j1 >= 15 && blockLight > 0) {
+//                j1 = 1;
+//            }
+//
+//            if (j1 < 1) {
+//                j1 = 1;
+//            }
+//
+//            if (j1 >= 15) {
+//                return 0;
+//            } else if (i1 >= 14) {
+//                return i1;
+//            } else {
+//                for (int k1 = 0; k1 < 6; ++k1) {
+//                    int l1 = par1 + Facing.offsetsXForSide[k1];
+//                    int i2 = par2 + Facing.offsetsYForSide[k1];
+//                    int j2 = par3 + Facing.offsetsZForSide[k1];
+//                    int k2 = this.getSavedLightValue(par4EnumSkyBlock,
+//                                                     l1,
+//                                                     i2,
+//                                                     j2) - j1;
+//
+//                    if (k2 > i1) {
+//                        i1 = k2;
+//                    }
+//
+//                    if (i1 >= 14) {
+//                        return i1;
+//                    }
+//                }
+//
+//                return i1;
+//            }
+//        }
+//    }
 
     int[] lightUpdateBlockList;
 
-    public int getSavedLightValue(EnumSkyBlock enumskyblock, int x, int y, int z) {
-        if (x < 0xfe363c80 || z < 0xfe363c80 || x >= 0x1c9c380 || z >= 0x1c9c380) {
-            LoggerLittleBlocks
-                    .getInstance(Logger.filterClassName(this.getClass()
-                            .toString()))
-                    .write(this.getParentWorld().isRemote,
-                           "getBlockMetadata(" + x + ", " + y + ", " + z + ").[Out of bounds]",
-                           LoggerLittleBlocks.LogLevel.DEBUG);
-            return 0;
-        }
-        if (y < 0) {
-            LoggerLittleBlocks
-                    .getInstance(Logger.filterClassName(this.getClass()
-                            .toString()))
-                    .write(this.getParentWorld().isRemote,
-                           "getBlockMetadata(" + x + ", " + y + ", " + z + ").[y < 0]",
-                           LoggerLittleBlocks.LogLevel.DEBUG);
-            return 0;
-        }
-        if (y >= this.getHeight()) {
-            LoggerLittleBlocks
-                    .getInstance(Logger.filterClassName(this.getClass()
-                            .toString()))
-                    .write(this.getParentWorld().isRemote,
-                           "getBlockMetadata(" + x + ", " + y + ", " + z + ").[y >= " + this
-                                   .getHeight() + "]",
-                           LoggerLittleBlocks.LogLevel.DEBUG);
-            return 0;
-        } else {
-            Block id = this.getParentWorld().getChunkFromChunkCoords(x >> 7,
-                                                                     z >> 7)
-                    .getBlock((x & 0x7f) >> 3,
-                              y >> 3,
-                              (z & 0x7f) >> 3);
-            int metadata = this.getParentWorld()
-                    .getChunkFromChunkCoords(x >> 7,
-                                             z >> 7)
-                    .getBlockMetadata((x & 0x7f) >> 3,
-                                      y >> 3,
-                                      (z & 0x7f) >> 3);
-            if (id == ConfigurationLib.littleChunk) {
-                TileEntityLittleChunk tile = (TileEntityLittleChunk) this
-                        .getParentWorld().getTileEntity(x >> 3,
-                                                        y >> 3,
-                                                        z >> 3);
-                return tile.getSavedLightValue(x & 7,
-                                               y & 7,
-                                               z & 7);
-            } else {
-                return enumskyblock.defaultLightValue;
-            }
-        }
-    }
+//    public int getSavedLightValue(EnumSkyBlock enumskyblock, int x, int y, int z) { TODO
+//        if (x < 0xfe363c80 || z < 0xfe363c80 || x >= 0x1c9c380 || z >= 0x1c9c380) {
+//            LoggerLittleBlocks
+//                    .getInstance(Logger.filterClassName(this.getClass()
+//                            .toString()))
+//                    .write(this.getParentWorld().isRemote,
+//                           "getBlockMetadata(" + x + ", " + y + ", " + z + ").[Out of bounds]",
+//                           LoggerLittleBlocks.LogLevel.DEBUG);
+//            return 0;
+//        }
+//        if (y < 0) {
+//            LoggerLittleBlocks
+//                    .getInstance(Logger.filterClassName(this.getClass()
+//                            .toString()))
+//                    .write(this.getParentWorld().isRemote,
+//                           "getBlockMetadata(" + x + ", " + y + ", " + z + ").[y < 0]",
+//                           LoggerLittleBlocks.LogLevel.DEBUG);
+//            return 0;
+//        }
+//        if (y >= this.getHeight()) {
+//            LoggerLittleBlocks
+//                    .getInstance(Logger.filterClassName(this.getClass()
+//                            .toString()))
+//                    .write(this.getParentWorld().isRemote,
+//                           "getBlockMetadata(" + x + ", " + y + ", " + z + ").[y >= " + this
+//                                   .getHeight() + "]",
+//                           LoggerLittleBlocks.LogLevel.DEBUG);
+//            return 0;
+//        } else {
+//            Block id = this.getParentWorld().getChunkFromChunkCoords(x >> 7,
+//                                                                     z >> 7)
+//                    .getBlock((x & 0x7f) >> 3,
+//                              y >> 3,
+//                              (z & 0x7f) >> 3);
+//            int metadata = this.getParentWorld()
+//                    .getChunkFromChunkCoords(x >> 7,
+//                                             z >> 7)
+//                    .getBlockMetadata((x & 0x7f) >> 3,
+//                                      y >> 3,
+//                                      (z & 0x7f) >> 3);
+//            if (id == ConfigurationLib.littleChunk) {
+//                TileEntityLittleChunk tile = (TileEntityLittleChunk) this
+//                        .getParentWorld().getTileEntity(x >> 3,
+//                                                        y >> 3,
+//                                                        z >> 3);
+//                return tile.getSavedLightValue(x & 7,
+//                                               y & 7,
+//                                               z & 7);
+//            } else {
+//                return enumskyblock.defaultLightValue;
+//            }
+//        }
+//    }
 
     // TODO :: Lighting
-    @Override
-    public boolean updateLightByType(EnumSkyBlock enumskyblock, int x, int y, int z) {
-        // this.getRealWorld().updateLightByType(enumSkyBlock,
-        // x >> 3,
-        // y >> 3,
-        // z >> 3);
-        if (this.doChunksNearChunkExist(x,
-                                        y,
-                                        z,
-                                        17)) {
-            int lightCount = 0;
-            int changeCount = 0;
-            int savedLight = this.getSavedLightValue(enumskyblock,
-                                                     x,
-                                                     y,
-                                                     z);
-            int computedLight = this.computeLightValue(x,
-                                                       y,
-                                                       z,
-                                                       enumskyblock);
-            int l1;
-            int i2;
-            int j2;
-            int k2;
-            int l2;
-            int i3;
-            int j3;
-            int k3;
-            int l3;
+//    @Override
+//    public boolean updateLightByType(EnumSkyBlock enumskyblock, int x, int y, int z) {
+//        // this.getRealWorld().updateLightByType(enumSkyBlock,
+//        // x >> 3,
+//        // y >> 3,
+//        // z >> 3);
+//        if (this.doChunksNearChunkExist(x,
+//                                        y,
+//                                        z,
+//                                        17)) {
+//            int lightCount = 0;
+//            int changeCount = 0;
+//            int savedLight = this.getSavedLightValue(enumskyblock,
+//                                                     x,
+//                                                     y,
+//                                                     z);
+//            int computedLight = this.computeLightValue(x,
+//                                                       y,
+//                                                       z,
+//                                                       enumskyblock);
+//            int l1;
+//            int i2;
+//            int j2;
+//            int k2;
+//            int l2;
+//            int i3;
+//            int j3;
+//            int k3;
+//            int l3;
+//
+//            if (computedLight > savedLight) {
+//                this.lightUpdateBlockList[changeCount++] = 133152;
+//            } else if (computedLight < savedLight) {
+//                this.lightUpdateBlockList[changeCount++] = 133152 | savedLight << 18;
+//
+//                while (lightCount < changeCount) {
+//                    l1 = this.lightUpdateBlockList[lightCount++];
+//                    i2 = (l1 & 63) - 32 + x;
+//                    j2 = (l1 >> 6 & 63) - 32 + y;
+//                    k2 = (l1 >> 12 & 63) - 32 + z;
+//                    l2 = l1 >> 18 & 15;
+//                    i3 = this.getSavedLightValue(enumskyblock,
+//                                                 i2,
+//                                                 j2,
+//                                                 k2);
+//
+//                    if (i3 == l2) {
+//                        this.setLightValue(enumskyblock,
+//                                           i2,
+//                                           j2,
+//                                           k2,
+//                                           0);
+//
+//                        if (l2 > 0) {
+//                            j3 = MathHelper.abs_int(i2 - x);
+//                            l3 = MathHelper.abs_int(j2 - y);
+//                            k3 = MathHelper.abs_int(k2 - z);
+//
+//                            if (j3 + l3 + k3 < 17) {
+//                                for (int i4 = 0; i4 < 6; ++i4) {
+//                                    int j4 = i2 + Facing.offsetsXForSide[i4];
+//                                    int k4 = j2 + Facing.offsetsYForSide[i4];
+//                                    int l4 = k2 + Facing.offsetsZForSide[i4];
+//                                    Block block = this.getBlock(j4,
+//                                                                k4,
+//                                                                l4);
+//                                    int blockOpacity = (block == null ? 0 : block
+//                                            .getLightOpacity(this,
+//                                                             j4,
+//                                                             k4,
+//                                                             l4));
+//                                    int i5 = Math.max(1,
+//                                                      blockOpacity);
+//                                    i3 = this.getSavedLightValue(enumskyblock,
+//                                                                 j4,
+//                                                                 k4,
+//                                                                 l4);
+//
+//                                    if (i3 == l2 - i5 && changeCount < this.lightUpdateBlockList.length) {
+//                                        this.lightUpdateBlockList[changeCount++] = j4 - x + 32 | k4 - y + 32 << 6 | l4 - z + 32 << 12 | l2 - i5 << 18;
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//
+//                lightCount = 0;
+//            }
+//
+//            while (lightCount < changeCount) {
+//                l1 = this.lightUpdateBlockList[lightCount++];
+//                i2 = (l1 & 63) - 32 + x;
+//                j2 = (l1 >> 6 & 63) - 32 + y;
+//                k2 = (l1 >> 12 & 63) - 32 + z;
+//                l2 = this.getSavedLightValue(enumskyblock,
+//                                             i2,
+//                                             j2,
+//                                             k2);
+//                i3 = this.computeLightValue(i2,
+//                                            j2,
+//                                            k2,
+//                                            enumskyblock);
+//
+//                if (i3 != l2) {
+//                    this.setLightValue(enumskyblock,
+//                                       i2,
+//                                       j2,
+//                                       k2,
+//                                       i3);
+//
+//                    if (i3 > l2) {
+//                        j3 = Math.abs(i2 - x);
+//                        l3 = Math.abs(j2 - y);
+//                        k3 = Math.abs(k2 - z);
+//                        boolean flag = changeCount < this.lightUpdateBlockList.length - 6;
+//
+//                        if (j3 + l3 + k3 < 17 && flag) {
+//                            if (this.getSavedLightValue(enumskyblock,
+//                                                        i2 - 1,
+//                                                        j2,
+//                                                        k2) < i3) {
+//                                this.lightUpdateBlockList[changeCount++] = i2 - 1 - x + 32 + (j2 - y + 32 << 6) + (k2 - z + 32 << 12);
+//                            }
+//
+//                            if (this.getSavedLightValue(enumskyblock,
+//                                                        i2 + 1,
+//                                                        j2,
+//                                                        k2) < i3) {
+//                                this.lightUpdateBlockList[changeCount++] = i2 + 1 - x + 32 + (j2 - y + 32 << 6) + (k2 - z + 32 << 12);
+//                            }
+//
+//                            if (this.getSavedLightValue(enumskyblock,
+//                                                        i2,
+//                                                        j2 - 1,
+//                                                        k2) < i3) {
+//                                this.lightUpdateBlockList[changeCount++] = i2 - x + 32 + (j2 - 1 - y + 32 << 6) + (k2 - z + 32 << 12);
+//                            }
+//
+//                            if (this.getSavedLightValue(enumskyblock,
+//                                                        i2,
+//                                                        j2 + 1,
+//                                                        k2) < i3) {
+//                                this.lightUpdateBlockList[changeCount++] = i2 - x + 32 + (j2 + 1 - y + 32 << 6) + (k2 - z + 32 << 12);
+//                            }
+//
+//                            if (this.getSavedLightValue(enumskyblock,
+//                                                        i2,
+//                                                        j2,
+//                                                        k2 - 1) < i3) {
+//                                this.lightUpdateBlockList[changeCount++] = i2 - x + 32 + (j2 - y + 32 << 6) + (k2 - 1 - z + 32 << 12);
+//                            }
+//
+//                            if (this.getSavedLightValue(enumskyblock,
+//                                                        i2,
+//                                                        j2,
+//                                                        k2 + 1) < i3) {
+//                                this.lightUpdateBlockList[changeCount++] = i2 - x + 32 + (j2 - y + 32 << 6) + (k2 + 1 - z + 32 << 12);
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        return false;
+//    }
 
-            if (computedLight > savedLight) {
-                this.lightUpdateBlockList[changeCount++] = 133152;
-            } else if (computedLight < savedLight) {
-                this.lightUpdateBlockList[changeCount++] = 133152 | savedLight << 18;
+//    @Override
+//    public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb, IEntitySelector entitySelector) {
+//        ArrayList arraylist = new ArrayList();
+//        int minX = MathHelper
+//                .floor_double((axisalignedbb.minX - MAX_ENTITY_RADIUS) / 16.0D);
+//        int maxX = MathHelper
+//                .floor_double((axisalignedbb.maxX + MAX_ENTITY_RADIUS) / 16.0D);
+//        int minZ = MathHelper
+//                .floor_double((axisalignedbb.minZ - MAX_ENTITY_RADIUS) / 16.0D);
+//        int maxZ = MathHelper
+//                .floor_double((axisalignedbb.maxZ + MAX_ENTITY_RADIUS) / 16.0D);
+//
+//        for (int x = minX; x <= maxX; ++x) {
+//            for (int z = minZ; z <= maxZ; ++z) {
+//                // if (this.chunkExists( x,
+//                // z)) {
+//                // this.getChunkFromChunkCoords( x,
+//                // z).getEntitiesWithinAABBForEntity( entity,
+//                // axisalignedbb,
+//                // arraylist,
+//                // entitySelector);
+//                // }
+//            }
+//        }
+//
+//        return arraylist;
+//    }
 
-                while (lightCount < changeCount) {
-                    l1 = this.lightUpdateBlockList[lightCount++];
-                    i2 = (l1 & 63) - 32 + x;
-                    j2 = (l1 >> 6 & 63) - 32 + y;
-                    k2 = (l1 >> 12 & 63) - 32 + z;
-                    l2 = l1 >> 18 & 15;
-                    i3 = this.getSavedLightValue(enumskyblock,
-                                                 i2,
-                                                 j2,
-                                                 k2);
+//    @Override
+//    public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb) {
+//        return this
+//                .getEntitiesWithinAABBExcludingEntity(entity,
+//                                                      axisalignedbb,
+//                                                      (IEntitySelector) null);
+//    }
 
-                    if (i3 == l2) {
-                        this.setLightValue(enumskyblock,
-                                           i2,
-                                           j2,
-                                           k2,
-                                           0);
+//    @Override TODO
+//    public List getEntitiesWithinAABB(Class entityClass, AxisAlignedBB aabb, Predicate filter) {
+//    }
+//
+//    @Override
+//    public List selectEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisalignedbb, IEntitySelector entitySelector) {
+//        ArrayList arraylist = new ArrayList();
+//        int minX = MathHelper
+//                .floor_double((axisalignedbb.minX - MAX_ENTITY_RADIUS) / 16.0D);
+//        int maxX = MathHelper
+//                .floor_double((axisalignedbb.maxX + MAX_ENTITY_RADIUS) / 16.0D);
+//        int minZ = MathHelper
+//                .floor_double((axisalignedbb.minZ - MAX_ENTITY_RADIUS) / 16.0D);
+//        int maxZ = MathHelper
+//                .floor_double((axisalignedbb.maxZ + MAX_ENTITY_RADIUS) / 16.0D);
+//
+//        for (int x = minX; x <= maxX; ++x) {
+//            for (int z = minZ; z <= maxZ; ++z) {
+//                // if (this.chunkExists( x,
+//                // z)) {
+//                // this.getChunkFromChunkCoords( x,
+//                // z).getEntitiesOfTypeWithinAAAB(entityClass,
+//                // axisalignedbb,
+//                // arraylist,
+//                // entitySelector);
+//                // }
+//            }
+//        }
+//
+//        return arraylist;
+//    }
 
-                        if (l2 > 0) {
-                            j3 = MathHelper.abs_int(i2 - x);
-                            l3 = MathHelper.abs_int(j2 - y);
-                            k3 = MathHelper.abs_int(k2 - z);
-
-                            if (j3 + l3 + k3 < 17) {
-                                for (int i4 = 0; i4 < 6; ++i4) {
-                                    int j4 = i2 + Facing.offsetsXForSide[i4];
-                                    int k4 = j2 + Facing.offsetsYForSide[i4];
-                                    int l4 = k2 + Facing.offsetsZForSide[i4];
-                                    Block block = this.getBlock(j4,
-                                                                k4,
-                                                                l4);
-                                    int blockOpacity = (block == null ? 0 : block
-                                            .getLightOpacity(this,
-                                                             j4,
-                                                             k4,
-                                                             l4));
-                                    int i5 = Math.max(1,
-                                                      blockOpacity);
-                                    i3 = this.getSavedLightValue(enumskyblock,
-                                                                 j4,
-                                                                 k4,
-                                                                 l4);
-
-                                    if (i3 == l2 - i5 && changeCount < this.lightUpdateBlockList.length) {
-                                        this.lightUpdateBlockList[changeCount++] = j4 - x + 32 | k4 - y + 32 << 6 | l4 - z + 32 << 12 | l2 - i5 << 18;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                lightCount = 0;
-            }
-
-            while (lightCount < changeCount) {
-                l1 = this.lightUpdateBlockList[lightCount++];
-                i2 = (l1 & 63) - 32 + x;
-                j2 = (l1 >> 6 & 63) - 32 + y;
-                k2 = (l1 >> 12 & 63) - 32 + z;
-                l2 = this.getSavedLightValue(enumskyblock,
-                                             i2,
-                                             j2,
-                                             k2);
-                i3 = this.computeLightValue(i2,
-                                            j2,
-                                            k2,
-                                            enumskyblock);
-
-                if (i3 != l2) {
-                    this.setLightValue(enumskyblock,
-                                       i2,
-                                       j2,
-                                       k2,
-                                       i3);
-
-                    if (i3 > l2) {
-                        j3 = Math.abs(i2 - x);
-                        l3 = Math.abs(j2 - y);
-                        k3 = Math.abs(k2 - z);
-                        boolean flag = changeCount < this.lightUpdateBlockList.length - 6;
-
-                        if (j3 + l3 + k3 < 17 && flag) {
-                            if (this.getSavedLightValue(enumskyblock,
-                                                        i2 - 1,
-                                                        j2,
-                                                        k2) < i3) {
-                                this.lightUpdateBlockList[changeCount++] = i2 - 1 - x + 32 + (j2 - y + 32 << 6) + (k2 - z + 32 << 12);
-                            }
-
-                            if (this.getSavedLightValue(enumskyblock,
-                                                        i2 + 1,
-                                                        j2,
-                                                        k2) < i3) {
-                                this.lightUpdateBlockList[changeCount++] = i2 + 1 - x + 32 + (j2 - y + 32 << 6) + (k2 - z + 32 << 12);
-                            }
-
-                            if (this.getSavedLightValue(enumskyblock,
-                                                        i2,
-                                                        j2 - 1,
-                                                        k2) < i3) {
-                                this.lightUpdateBlockList[changeCount++] = i2 - x + 32 + (j2 - 1 - y + 32 << 6) + (k2 - z + 32 << 12);
-                            }
-
-                            if (this.getSavedLightValue(enumskyblock,
-                                                        i2,
-                                                        j2 + 1,
-                                                        k2) < i3) {
-                                this.lightUpdateBlockList[changeCount++] = i2 - x + 32 + (j2 + 1 - y + 32 << 6) + (k2 - z + 32 << 12);
-                            }
-
-                            if (this.getSavedLightValue(enumskyblock,
-                                                        i2,
-                                                        j2,
-                                                        k2 - 1) < i3) {
-                                this.lightUpdateBlockList[changeCount++] = i2 - x + 32 + (j2 - y + 32 << 6) + (k2 - 1 - z + 32 << 12);
-                            }
-
-                            if (this.getSavedLightValue(enumskyblock,
-                                                        i2,
-                                                        j2,
-                                                        k2 + 1) < i3) {
-                                this.lightUpdateBlockList[changeCount++] = i2 - x + 32 + (j2 - y + 32 << 6) + (k2 + 1 - z + 32 << 12);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb, IEntitySelector entitySelector) {
-        ArrayList arraylist = new ArrayList();
-        int minX = MathHelper
-                .floor_double((axisalignedbb.minX - MAX_ENTITY_RADIUS) / 16.0D);
-        int maxX = MathHelper
-                .floor_double((axisalignedbb.maxX + MAX_ENTITY_RADIUS) / 16.0D);
-        int minZ = MathHelper
-                .floor_double((axisalignedbb.minZ - MAX_ENTITY_RADIUS) / 16.0D);
-        int maxZ = MathHelper
-                .floor_double((axisalignedbb.maxZ + MAX_ENTITY_RADIUS) / 16.0D);
-
-        for (int x = minX; x <= maxX; ++x) {
-            for (int z = minZ; z <= maxZ; ++z) {
-                // if (this.chunkExists( x,
-                // z)) {
-                // this.getChunkFromChunkCoords( x,
-                // z).getEntitiesWithinAABBForEntity( entity,
-                // axisalignedbb,
-                // arraylist,
-                // entitySelector);
-                // }
-            }
-        }
-
-        return arraylist;
-    }
-
-    @Override
-    public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb) {
-        return this
-                .getEntitiesWithinAABBExcludingEntity(entity,
-                                                      axisalignedbb,
-                                                      (IEntitySelector) null);
-    }
-
-    @Override
-    public List selectEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisalignedbb, IEntitySelector entitySelector) {
-        ArrayList arraylist = new ArrayList();
-        int minX = MathHelper
-                .floor_double((axisalignedbb.minX - MAX_ENTITY_RADIUS) / 16.0D);
-        int maxX = MathHelper
-                .floor_double((axisalignedbb.maxX + MAX_ENTITY_RADIUS) / 16.0D);
-        int minZ = MathHelper
-                .floor_double((axisalignedbb.minZ - MAX_ENTITY_RADIUS) / 16.0D);
-        int maxZ = MathHelper
-                .floor_double((axisalignedbb.maxZ + MAX_ENTITY_RADIUS) / 16.0D);
-
-        for (int x = minX; x <= maxX; ++x) {
-            for (int z = minZ; z <= maxZ; ++z) {
-                // if (this.chunkExists( x,
-                // z)) {
-                // this.getChunkFromChunkCoords( x,
-                // z).getEntitiesOfTypeWithinAAAB(entityClass,
-                // axisalignedbb,
-                // arraylist,
-                // entitySelector);
-                // }
-            }
-        }
-
-        return arraylist;
-    }
-
-    @Override
-    public List getEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisAlignedBB) {
-        return this.selectEntitiesWithinAABB(entityClass,
-                                             axisAlignedBB,
-                                             (IEntitySelector) null);
-    }
+//    @Override TODO
+//    public List getEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisAlignedBB) {
+//        return this.selectEntitiesWithinAABB(entityClass,
+//                                             axisAlignedBB,
+//                                             (IEntitySelector) null);
+//    }
 
     @Override
     public boolean checkNoEntityCollision(AxisAlignedBB axisalignedbb, Entity entity) {
@@ -1371,46 +1376,48 @@ public abstract class LittleWorld extends World implements ILittleWorld {
         return true;
     }
 
-    @Override
-    public boolean canPlaceEntityOnSide(Block block, int x, int y, int z, boolean flag, int side, Entity entityPlacing, ItemStack itemstack) {
-        Block blockAt = this.getBlock(x,
-                                      y,
-                                      z);
-        AxisAlignedBB axisalignedbb = block
-                .getCollisionBoundingBoxFromPool(this,
-                                                 x,
-                                                 y,
-                                                 z);
 
-        if (flag) {
-            axisalignedbb = null;
-        }
 
-        if (axisalignedbb != null && !this
-                .checkNoEntityCollision(axisalignedbb,
-                                        entityPlacing)) {
-            return false;
-        } else {
-            if (blockAt != null && (blockAt == Blocks.flowing_water || blockAt == Blocks.water || blockAt == Blocks.flowing_lava || blockAt == Blocks.lava || blockAt == Blocks.fire || blockAt
-                    .getMaterial().isReplaceable())) {
-                blockAt = null;
-            }
-
-            if (blockAt != null && blockAt.isReplaceable(this,
-                                                         x,
-                                                         y,
-                                                         z)) {
-                blockAt = null;
-            }
-
-            return blockAt != null && blockAt.getMaterial() == Material.circuits && block == Blocks.anvil ? true : block != Blocks.air && blockAt == null && block
-                    .canPlaceBlockOnSide(this,
-                                         x,
-                                         y,
-                                         z,
-                                         side);
-        }
-    }
+//    @Override TODO dahell is that?
+//    public boolean canPlaceEntityOnSide(Block block, int x, int y, int z, boolean flag, int side, Entity entityPlacing, ItemStack itemstack) {
+//        Block blockAt = this.getBlock(x,
+//                                      y,
+//                                      z);
+//        AxisAlignedBB axisalignedbb = block
+//                .getCollisionBoundingBoxFromPool(this,
+//                                                 x,
+//                                                 y,
+//                                                 z);
+//
+//        if (flag) {
+//            axisalignedbb = null;
+//        }
+//
+//        if (axisalignedbb != null && !this
+//                .checkNoEntityCollision(axisalignedbb,
+//                                        entityPlacing)) {
+//            return false;
+//        } else {
+//            if (blockAt != null && (blockAt == Blocks.flowing_water || blockAt == Blocks.water || blockAt == Blocks.flowing_lava || blockAt == Blocks.lava || blockAt == Blocks.fire || blockAt
+//                    .getMaterial().isReplaceable())) {
+//                blockAt = null;
+//            }
+//
+//            if (blockAt != null && blockAt.isReplaceable(this,
+//                                                         x,
+//                                                         y,
+//                                                         z)) {
+//                blockAt = null;
+//            }
+//
+//            return blockAt != null && blockAt.getMaterial() == Material.circuits && block == Blocks.anvil ? true : block != Blocks.air && blockAt == null && block
+//                    .canPlaceBlockOnSide(this,
+//                                         x,
+//                                         y,
+//                                         z,
+//                                         side);
+//        }
+//    }
 
     @Override
     public boolean isOutSideLittleWorld(int x, int y, int z) {
@@ -1423,7 +1430,7 @@ public abstract class LittleWorld extends World implements ILittleWorld {
     }
 
     @Override
-    public void activeChunkPosition(ChunkPosition chunkposition, boolean forced) {
+    public void activeChunkPosition(BlockPos chunkposition, boolean forced) {
         if (this.activeChunkPosition.contains(chunkposition)) {
             this.activeChunkPosition.remove(chunkposition);
         }

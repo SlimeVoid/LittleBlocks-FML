@@ -1,6 +1,7 @@
 package net.slimevoid.littleblocks.world;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,9 +12,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.world.*;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.slimevoid.littleblocks.api.ILittleWorld;
 
 import java.util.Collection;
@@ -23,8 +24,8 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 
     private final LittleServerWorld littleWorld;
 
-    public LittleWorldServer(World referenceWorld, MinecraftServer minecraftServer, ISaveHandler iSaveHandler, String par3Str, int par4, WorldSettings par5WorldSettings, Profiler par6Profiler) {
-        super(minecraftServer, iSaveHandler, par3Str, par4, par5WorldSettings, par6Profiler);
+    public LittleWorldServer(World referenceWorld, MinecraftServer minecraftServer, ISaveHandler iSaveHandler, int par4, Profiler par6Profiler) {
+        super(minecraftServer, iSaveHandler, referenceWorld.getWorldInfo(), par4, par6Profiler);
         this.littleWorld = new LittleServerWorld(referenceWorld, this.provider);
     }
 
@@ -43,7 +44,7 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
     }
 
     @Override
-    protected void initialize(WorldSettings worldSettings) {
+    public void initialize(WorldSettings worldSettings) {
     }
 
     @Override
@@ -56,10 +57,10 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
         return this.getLittleWorld().tickUpdates(tick);
     }
 
-    @Override
-    protected void func_147456_g/* tickBlocksAndAmbiance */() {
-        this.getLittleWorld().func_147456_g/* tickBlocksAndAmbiance */();
-    }
+//    @Override TODO
+//    protected void func_147456_g/* tickBlocksAndAmbiance */() {
+//        this.getLittleWorld().func_147456_g/* tickBlocksAndAmbiance */();
+//    }
 
     public void updateLittleEntities() {
     }
@@ -74,11 +75,8 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
      * future. Args: X, Y, Z, blockID
      */
     @Override
-    public boolean isBlockTickScheduledThisTick(int x, int y, int z, Block blockId) {
-        return this.getLittleWorld().isBlockTickScheduledThisTick(x,
-                                                                  y,
-                                                                  z,
-                                                                  blockId);
+    public boolean isBlockTickPending(BlockPos pos, Block blockType) {
+        return this.getLittleWorld().isBlockTickPending(pos, blockType);
     }
 
     /**
@@ -104,13 +102,8 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
      * EventParameter
      */
     @Override
-    public void addBlockEvent(int x, int y, int z, Block blockID, int eventID, int eventParam) {
-        this.getLittleWorld().addBlockEvent(x,
-                                            y,
-                                            z,
-                                            blockID,
-                                            eventID,
-                                            eventParam);
+    public void addBlockEvent(BlockPos pos, Block blockIn, int eventID, int eventParam) {
+        this.getLittleWorld().addBlockEvent(pos, blockIn, eventID, eventParam);
     }
 
     @Override
@@ -123,45 +116,40 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
      * Schedules a tick to a block with a delay (Most commonly the tick rate)
      */
     @Override
-    public void scheduleBlockUpdate(int x, int y, int z, Block blockId, int tickRate) {
-        this.scheduleBlockUpdateWithPriority(x,
-                                             y,
-                                             z,
-                                             blockId,
-                                             tickRate,
-                                             0);
+    public void scheduleUpdate(BlockPos pos, Block blockIn, int delay) {
+        this.getLittleWorld().scheduleUpdate(pos, blockIn, delay);
     }
 
     /**
      * Schedules a tick to a block with a delay (Most commonly the tick rate)
      * with some Value
      */
-    @Override
-    public void scheduleBlockUpdateWithPriority(int x, int y, int z, Block blockId, int tickRate, int someValue) {
-        this.getLittleWorld().scheduleBlockUpdateWithPriority(x,
-                                                              y,
-                                                              z,
-                                                              blockId,
-                                                              tickRate,
-                                                              someValue);
-    }
+//    @Override TODO
+//    public void scheduleBlockUpdateWithPriority(int x, int y, int z, Block blockId, int tickRate, int someValue) {
+//        this.getLittleWorld().scheduleBlockUpdateWithPriority(x,
+//                                                              y,
+//                                                              z,
+//                                                              blockId,
+//                                                              tickRate,
+//                                                              someValue);
+//    }
 
-    @Override
-    public void func_147446_b/* scheduleBlockUpdateFromLoad */(int x, int y, int z, Block blockId, int tickRate, int par6) {
-        this.getLittleWorld().func_147446_b/* scheduleBlockUpdateFromLoad */(x,
-                                                                             y,
-                                                                             z,
-                                                                             blockId,
-                                                                             tickRate,
-                                                                             par6);
-    }
+//    @Override TODO
+//    public void func_147446_b/* scheduleBlockUpdateFromLoad */(int x, int y, int z, Block blockId, int tickRate, int par6) {
+//        this.getLittleWorld().func_147446_b/* scheduleBlockUpdateFromLoad */(x,
+//                                                                             y,
+//                                                                             z,
+//                                                                             blockId,
+//                                                                             tickRate,
+//                                                                             par6);
+//    }
 
-    public int getSkyBlockTypeBrightness(EnumSkyBlock enumskyblock, int x, int y, int z) {
-        return this.getLittleWorld().getSkyBlockTypeBrightness(enumskyblock,
-                                                               x,
-                                                               y,
-                                                               z);
-    }
+//    public int getSkyBlockTypeBrightness(EnumSkyBlock enumskyblock, int x, int y, int z) { TODO ??
+//        return this.getLittleWorld().getSkyBlockTypeBrightness(enumskyblock,
+//                                                               x,
+//                                                               y,
+//                                                               z);
+//    }
 
     @Override
     public long getWorldTime() {
@@ -174,58 +162,49 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
     }
 
     @Override
-    public int getLightBrightnessForSkyBlocks(int x, int y, int z, int l) {
-        return this.getLittleWorld().getLightBrightnessForSkyBlocks(x,
-                                                                    y,
-                                                                    z,
-                                                                    l);
+    public int getCombinedLight(BlockPos pos, int a) { // TODO = getLightBrightnessForSkyBlocks?
+        return this.getLittleWorld().getCombinedLight(pos, a);
     }
 
     @Override
-    public float getLightBrightness(int x, int y, int z) {
-        return this.getLittleWorld().getLightBrightness(x,
-                                                        y,
-                                                        z);
+    public float getLightBrightness(BlockPos pos) {
+        return this.getLittleWorld().getLightBrightness(pos);
     }
 
     @Override
-    public int getBlockLightValue(int x, int y, int z) {
-        return this.getLittleWorld().getBlockLightValue(x,
-                                                        y,
-                                                        z);
+    public int getLight(BlockPos pos) {
+        return this.getLittleWorld().getLight(pos);
+    }
+
+//    @Override TODO
+//    public int getFullBlockLightValue(int x, int y, int z) {
+//        return this.getLittleWorld().getFullBlockLightValue(x,
+//                                                            y,
+//                                                            z);
+//    }
+
+
+    @Override
+    public boolean canBlockSeeSky(BlockPos pos) {
+        return this.getLittleWorld().canBlockSeeSky(pos);
     }
 
     @Override
-    public int getFullBlockLightValue(int x, int y, int z) {
-        return this.getLittleWorld().getFullBlockLightValue(x,
-                                                            y,
-                                                            z);
+    public void setInitialSpawnLocation() {
+        this.getLittleWorld().setInitialSpawnLocation();
     }
 
-    @Override
-    public boolean canBlockSeeTheSky(int x, int y, int z) {
-        return this.getLittleWorld().canBlockSeeTheSky(x,
-                                                       y,
-                                                       z);
-    }
+//    @Override TODO ?
+//    public boolean blockExists(int x, int y, int z) {
+//        return this.getLittleWorld().blockExists(x,
+//                                                 y,
+//                                                 z);
+//    }
+
 
     @Override
-    public void setSpawnLocation() {
-        this.getLittleWorld().setSpawnLocation();
-    }
-
-    @Override
-    public boolean blockExists(int x, int y, int z) {
-        return this.getLittleWorld().blockExists(x,
-                                                 y,
-                                                 z);
-    }
-
-    @Override
-    public Block getBlock(int x, int y, int z) {
-        return this.getLittleWorld().getBlock(x,
-                                              y,
-                                              z);
+    public IBlockState getBlockState(BlockPos pos) {
+        return this.getLittleWorld().getBlockState(pos);
     }
 
     @Override
@@ -234,108 +213,99 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
     }
 
     @Override
-    public int getBlockMetadata(int x, int y, int z) {
-        return this.getLittleWorld().getBlockMetadata(x,
-                                                      y,
-                                                      z);
-    }
-
-    @Override
     public int getHeight() {
         return this.getLittleWorld().getHeight();
     }
 
     @Override
-    public boolean setBlock(int x, int y, int z, Block blockID, int newmeta, int update) {
-    	//System.out.println("Server: " + this + " : " + blockID + " | " + newmeta);
-        return this.getLittleWorld().setBlock(x,
-                                              y,
-                                              z,
-                                              blockID,
-                                              newmeta,
-                                              update);
+    public boolean setBlockState(BlockPos pos, IBlockState newState, int flags) {
+        return this.getLittleWorld().setBlockState(pos, newState, flags);
     }
 
     @Override
-    public boolean setBlockMetadataWithNotify(int x, int y, int z, int newmeta, int update) {
-    	//System.out.println("Server: " + this + " : " + this.getBlock(x, y, z) + " | " + newmeta);
-        return this.getLittleWorld().setBlockMetadataWithNotify(x,
-                                                                y,
-                                                                z,
-                                                                newmeta,
-                                                                update);
+    public boolean isAreaLoaded(StructureBoundingBox box) {
+        return this.getLittleWorld().isAreaLoaded(box);
     }
 
     @Override
-    public boolean checkChunksExist(int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
-        return this.getLittleWorld().checkChunksExist(minX,
-                                                      minY,
-                                                      minZ,
-                                                      maxX,
-                                                      maxY,
-                                                      maxZ);
+    public boolean isAreaLoaded(StructureBoundingBox box, boolean allowEmpty) {
+        return this.getLittleWorld().isAreaLoaded(box, allowEmpty);
     }
 
     @Override
-    public void notifyBlocksOfNeighborChange(int x, int y, int z, Block blockId) {
-        this.getLittleWorld().notifyBlocksOfNeighborChange(x,
-                                                           y,
-                                                           z,
-                                                           blockId);
+    public boolean isAreaLoaded(BlockPos center, int radius) {
+        return this.getLittleWorld().isAreaLoaded(center, radius);
     }
 
     @Override
-    public void notifyBlockOfNeighborChange(int x, int y, int z, Block blockId) {
-        this.getLittleWorld().notifyBlockOfNeighborChange(x,
-                                                          y,
-                                                          z,
-                                                          blockId);
+    public boolean isAreaLoaded(BlockPos center, int radius, boolean allowEmpty) {
+        return this.getLittleWorld().isAreaLoaded(center, radius, allowEmpty);
     }
 
     @Override
-    public TileEntity getTileEntity(int x, int y, int z) {
-        return this.getLittleWorld().getTileEntity(x,
-                                                   y,
-                                                   z);
+    public boolean isAreaLoaded(BlockPos from, BlockPos to) {
+        return this.getLittleWorld().isAreaLoaded(from, to);
     }
 
     @Override
-    public void setTileEntity(int x, int y, int z, TileEntity tileentity) {
-        this.getLittleWorld().setTileEntity(x,
-                                            y,
-                                            z,
-                                            tileentity);
+    public boolean isAreaLoaded(BlockPos from, BlockPos to, boolean allowEmpty) {
+        return this.getLittleWorld().isAreaLoaded(from, to, allowEmpty);
     }
 
     @Override
-    public void func_147448_a/* addTileEntity */(Collection collection) {
-        this.getLittleWorld().func_147448_a/* addTileEntity */(collection);
+    public void notifyBlockOfStateChange(BlockPos pos, Block blockIn) {
+        this.getLittleWorld().notifyBlockOfStateChange(pos, blockIn);
     }
 
     @Override
-    public void addTileEntity(TileEntity tileentity) {
-        this.getLittleWorld().addTileEntity(tileentity);
+    public void notifyNeighborsOfStateChange(BlockPos pos, Block blockType) {
+        this.getLittleWorld().notifyNeighborsOfStateChange(pos, blockType);
     }
 
     @Override
-    public void func_147457_a/* markTileEntityForDespawn */(TileEntity tileentity) {
-        this.getLittleWorld().func_147457_a/* markTileEntityForDespawn */(tileentity);
+    public void notifyNeighborsOfStateExcept(BlockPos pos, Block blockType, EnumFacing skipSide) {
+        this.getLittleWorld().notifyNeighborsOfStateExcept(pos, blockType, skipSide);
     }
 
     @Override
-    public void removeTileEntity(int x, int y, int z) {
-        this.getLittleWorld().removeTileEntity(x,
-                                               y,
-                                               z);
+    public void notifyNeighborsRespectDebug(BlockPos pos, Block blockType) {
+        this.getLittleWorld().notifyNeighborsRespectDebug(pos, blockType);
     }
 
     @Override
-    public boolean isSideSolid(int x, int y, int z, ForgeDirection side, boolean _default) {
-        return this.getLittleWorld().isSideSolid(x,
-                                                 y,
-                                                 z,
-                                                 side,
-                                                 _default);
+    public TileEntity getTileEntity(BlockPos pos) {
+        return this.getLittleWorld().getTileEntity(pos);
+    }
+
+    @Override
+    public void setTileEntity(BlockPos pos, TileEntity tileEntityIn) {
+        this.getLittleWorld().setTileEntity(pos, tileEntityIn);
+    }
+
+    @Override
+    public void addTileEntities(Collection tileEntityCollection) {
+        this.getLittleWorld().addTileEntities(tileEntityCollection);
+    }
+
+//    @Override TODO
+//    public void addTileEntity(TileEntity tileentity) {
+//        this.getLittleWorld().addTileEntity(tileentity);
+//    }
+
+
+    @Override
+    public void markTileEntityForRemoval(TileEntity tileEntityIn) {
+        this.getLittleWorld().markTileEntityForRemoval(tileEntityIn);
+    }
+
+    @Override
+    public void removeTileEntity(BlockPos pos) {
+        this.getLittleWorld().removeTileEntity(pos);
+    }
+
+    @Override
+    public boolean isSideSolid(BlockPos pos, EnumFacing side, boolean _default) {
+        return this.getLittleWorld().isSideSolid(pos, side, _default);
     }
 
     @Override
@@ -349,40 +319,23 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
     }
 
     @Override
-    public void playRecord(String s, int x, int y, int z) {
-        this.getLittleWorld().playRecord(s,
-                                         x,
-                                         y,
-                                         z);
+    public void playRecord(BlockPos p, String s) {
+        super.playRecord(p, s);
     }
 
     @Override
-    public void playAuxSFX(int soundID, int x, int y, int z, int blockIDWithMetadata) {
-        this.getLittleWorld().playAuxSFX(soundID,
-                                         x,
-                                         y,
-                                         z,
-                                         blockIDWithMetadata);
+    public void playAuxSFX(int a, BlockPos p, int b) {
+        super.playAuxSFX(a, p, b);
     }
 
     @Override
-    public void spawnParticle(String s, double x, double y, double z, double d3, double d4, double d5) {
-        this.getLittleWorld().spawnParticle(s,
-                                            x,
-                                            y,
-                                            z,
-                                            d3,
-                                            d4,
-                                            d5);
+    public void spawnParticle(EnumParticleTypes particleType, boolean p_175682_2_, double p_175682_3_, double p_175682_5_, double p_175682_7_, double p_175682_9_, double p_175682_11_, double p_175682_13_, int... p_175682_15_) {
+        this.getLittleWorld().spawnParticle(particleType, p_175682_2_, p_175682_3_, p_175682_5_, p_175682_7_, p_175682_9_, p_175682_11_, p_175682_13_, p_175682_15_);
     }
 
     @Override
-    public MovingObjectPosition func_147447_a/* rayTraceBlocks_do_do */(Vec3 Vec3, Vec3 Vec31, boolean flag, boolean flag1, boolean flag2) {
-        return this.getLittleWorld().func_147447_a/* rayTraceBlocks_do_do */(Vec3,
-                                                                             Vec31,
-                                                                             flag,
-                                                                             flag1,
-                                                                             flag2);
+    public MovingObjectPosition rayTraceBlocks(Vec3 p_72933_1_, Vec3 p_72933_2_) {
+        return this.getLittleWorld().rayTraceBlocks(p_72933_1_, p_72933_2_);
     }
 
     @Override
@@ -419,19 +372,18 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
     // distance);
     // }
 
-    @Override
-    public EntityPlayer getClosestVulnerablePlayer(double x, double y, double z, double distance) {
-        return this.getLittleWorld().getClosestVulnerablePlayer(x,
-                                                                y,
-                                                                z,
-                                                                distance);
-    }
+//    @Override
+//    public EntityPlayer getClosestVulnerablePlayer(double x, double y, double z, double distance) {
+//        return this.getLittleWorld().getClosestVulnerablePlayer(x,
+//                                                                y,
+//                                                                z,
+//                                                                distance);
+//    }
+
 
     @Override
-    public void markBlockForUpdate(int x, int y, int z) {
-        this.getLittleWorld().markBlockForUpdate(x,
-                                                 y,
-                                                 z);
+    public void markBlockForUpdate(BlockPos pos) {
+        this.getLittleWorld().markBlockForUpdate(pos);
     }
 
     @Override
@@ -444,21 +396,21 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
                                                             z2);
     }
 
-    @Override
-    public void markTileEntityChunkModified(int x, int y, int z, TileEntity tileentity) {
-        this.getLittleWorld().markTileEntityChunkModified(x,
-                                                          y,
-                                                          z,
-                                                          tileentity);
-    }
-
-    @Override
-    public boolean updateLightByType(EnumSkyBlock enumSkyBlock, int x, int y, int z) {
-        return this.getLittleWorld().updateLightByType(enumSkyBlock,
-                                                       x,
-                                                       y,
-                                                       z);
-    }
+//    @Override TODO
+//    public void markTileEntityChunkModified(int x, int y, int z, TileEntity tileentity) {
+//        this.getLittleWorld().markTileEntityChunkModified(x,
+//                                                          y,
+//                                                          z,
+//                                                          tileentity);
+//    }
+//
+//    @Override TODO
+//    public boolean updateLightByType(EnumSkyBlock enumSkyBlock, int x, int y, int z) {
+//        return this.getLittleWorld().updateLightByType(enumSkyBlock,
+//                                                       x,
+//                                                       y,
+//                                                       z);
+//    }
 
     // @Override
     // protected IChunkProvider createChunkProvider() {
@@ -470,37 +422,37 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 
     }
 
-    @Override
-    public boolean canPlaceEntityOnSide(Block blockId, int x, int y, int z, boolean flag, int side, Entity entityPlacing, ItemStack itemstack) {
-        return this.getLittleWorld().canPlaceEntityOnSide(blockId,
-                                                          x,
-                                                          y,
-                                                          z,
-                                                          flag,
-                                                          side,
-                                                          entityPlacing,
-                                                          itemstack);
-    }
-
-    @Override
-    public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb, IEntitySelector entitySelector) {
-        return this.getLittleWorld().getEntitiesWithinAABBExcludingEntity(entity,
-                                                                          axisalignedbb,
-                                                                          entitySelector);
-    }
-
-    @Override
-    public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb) {
-        return this.getLittleWorld().getEntitiesWithinAABBExcludingEntity(entity,
-                                                                          axisalignedbb);
-    }
-
-    @Override
-    public List selectEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisalignedbb, IEntitySelector entitySelector) {
-        return this.getLittleWorld().selectEntitiesWithinAABB(entityClass,
-                                                              axisalignedbb,
-                                                              entitySelector);
-    }
+//    @Override TODO
+//    public boolean canPlaceEntityOnSide(Block blockId, int x, int y, int z, boolean flag, int side, Entity entityPlacing, ItemStack itemstack) {
+//        return this.getLittleWorld().canPlaceEntityOnSide(blockId,
+//                                                          x,
+//                                                          y,
+//                                                          z,
+//                                                          flag,
+//                                                          side,
+//                                                          entityPlacing,
+//                                                          itemstack);
+//    }
+//
+//    @Override
+//    public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb, IEntitySelector entitySelector) {
+//        return this.getLittleWorld().getEntitiesWithinAABBExcludingEntity(entity,
+//                                                                          axisalignedbb,
+//                                                                          entitySelector);
+//    }
+//
+//    @Override
+//    public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb) {
+//        return this.getLittleWorld().getEntitiesWithinAABBExcludingEntity(entity,
+//                                                                          axisalignedbb);
+//    }
+//
+//    @Override
+//    public List selectEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisalignedbb, IEntitySelector entitySelector) {
+//        return this.getLittleWorld().selectEntitiesWithinAABB(entityClass,
+//                                                              axisalignedbb,
+//                                                              entitySelector);
+//    }
 
     @Override
     public List getEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisAlignedBB) {
@@ -533,10 +485,10 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
     // }
     //
 
+
     @Override
-    public void activeChunkPosition(ChunkPosition chunkposition, boolean forced) {
-        this.getLittleWorld().activeChunkPosition(chunkposition,
-                                                  forced);
+    public void activeChunkPosition(BlockPos pos, boolean forced) {
+        this.getLittleWorld().activeChunkPosition(pos, forced);
     }
 
     @Override

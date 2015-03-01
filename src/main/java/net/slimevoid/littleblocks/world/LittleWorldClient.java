@@ -1,20 +1,18 @@
 package net.slimevoid.littleblocks.world;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.*;
 import net.minecraft.world.*;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -29,9 +27,8 @@ public class LittleWorldClient extends World implements ILittleWorld {
 
     private final LittleClientWorld littleWorld;
 
-    public LittleWorldClient(World referenceWorld, ISaveHandler saveHandler, String worldName, WorldProvider provider, WorldSettings worldSettings, int difficultySetting, Profiler profiler) {
-        super(saveHandler, worldName, provider, worldSettings, profiler);
-        this.isRemote = true;
+    public LittleWorldClient(World referenceWorld, ISaveHandler saveHandler, WorldProvider provider) {
+        super(saveHandler, referenceWorld.getWorldInfo(), provider, referenceWorld.theProfiler, true);
         String name = referenceWorld.getWorldInfo().getWorldName()
                       + ".littleWorld";
         this.finishSetup();
@@ -39,10 +36,9 @@ public class LittleWorldClient extends World implements ILittleWorld {
         MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(this));
     }
 
-    @Override
     public void finishSetup() {
         this.provider.registerWorld(this);
-        this.provider.dimensionId = this.provider.dimensionId;
+        this.provider.setDimension(this.provider.getDimensionId());
     }
 
     @Override
@@ -74,13 +70,15 @@ public class LittleWorldClient extends World implements ILittleWorld {
         this.getLittleWorld().updateEntities();
     }
 
-    @Override
-    public int getSkyBlockTypeBrightness(EnumSkyBlock enumskyblock, int x, int y, int z) {
-        return this.getLittleWorld().getSkyBlockTypeBrightness(enumskyblock,
-                                                               x,
-                                                               y,
-                                                               z);
-    }
+
+
+//    @Override TODO Dahell is that?
+//    public int getSkyBlockTypeBrightness(EnumSkyBlock enumskyblock, int x, int y, int z) {
+//        return this.getLittleWorld().getSkyBlockTypeBrightness(enumskyblock,
+//                                                               x,
+//                                                               y,
+//                                                               z);
+//    }
 
     @Override
     public long getWorldTime() {
@@ -93,70 +91,56 @@ public class LittleWorldClient extends World implements ILittleWorld {
     }
 
     @Override
-    public int getLightBrightnessForSkyBlocks(int x, int y, int z, int l) {
-        return this.getLittleWorld().getLightBrightnessForSkyBlocks(x,
-                                                                    y,
-                                                                    z,
-                                                                    l);
+    public int getCombinedLight(BlockPos pos, int a) { // TODO = getLightBrightnessForSkyBlocks ?
+        return this.getLittleWorld().getCombinedLight(pos, a);
     }
 
     @Override
-    public float getLightBrightness(int x, int y, int z) {
-        return this.getLittleWorld().getLightBrightness(x,
-                                                        y,
-                                                        z);
+    public float getLightBrightness(BlockPos pos) {
+        return this.getLittleWorld().getLightBrightness(pos);
     }
 
     @Override
-    public int getBlockLightValue(int x, int y, int z) {
-        return this.getLittleWorld().getBlockLightValue(x,
-                                                        y,
-                                                        z);
+    public int getBlockLightOpacity(BlockPos pos) {
+        return this.getLittleWorld().getBlockLightOpacity(pos);
+    }
+
+//    @Override // TODO ??
+//    public int getFullBlockLightValue(int x, int y, int z) {
+//        return this.getLittleWorld().getFullBlockLightValue(x,
+//                                                            y,
+//                                                            z);
+//    }
+
+
+    @Override
+    public boolean canSeeSky(BlockPos pos) {
+        return this.getLittleWorld().canSeeSky(pos);
     }
 
     @Override
-    public int getFullBlockLightValue(int x, int y, int z) {
-        return this.getLittleWorld().getFullBlockLightValue(x,
-                                                            y,
-                                                            z);
+    public void setInitialSpawnLocation() {
+        this.getLittleWorld().setInitialSpawnLocation();
     }
 
-    @Override
-    public boolean canBlockSeeTheSky(int x, int y, int z) {
-        return this.getLittleWorld().canBlockSeeTheSky(x,
-                                                       y,
-                                                       z);
-    }
+//    @Override TODO ??
+//    public boolean blockExists(int x, int y, int z) {
+//        return this.getLittleWorld().blockExists(x,
+//                                                 y,
+//                                                 z);
+//    }
+
 
     @Override
-    public void setSpawnLocation() {
-        this.getLittleWorld().setSpawnLocation();
+    public IBlockState getBlockState(BlockPos pos) {
+        return this.getLittleWorld().getBlockState(pos);
     }
 
-    @Override
-    public boolean blockExists(int x, int y, int z) {
-        return this.getLittleWorld().blockExists(x,
-                                                 y,
-                                                 z);
-    }
 
-    @Override
-    public Block getBlock(int x, int y, int z) {
-        return this.getLittleWorld().getBlock(x,
-                                              y,
-                                              z);
-    }
 
     @Override
     public boolean spawnEntityInWorld(Entity entity) {
         return this.getLittleWorld().spawnEntityInWorld(entity);
-    }
-
-    @Override
-    public int getBlockMetadata(int x, int y, int z) {
-        return this.getLittleWorld().getBlockMetadata(x,
-                                                      y,
-                                                      z);
     }
 
     @Override
@@ -165,96 +149,71 @@ public class LittleWorldClient extends World implements ILittleWorld {
     }
 
     @Override
-    public boolean setBlock(int x, int y, int z, Block blockID, int newmeta, int update) {
-    	//System.out.println("Client: " + this + " : " + blockID + " | " + newmeta);
-        return this.getLittleWorld().setBlock(x,
-                                              y,
-                                              z,
-                                              blockID,
-                                              newmeta,
-                                              update);
+    public boolean setBlockState(BlockPos pos, IBlockState newState, int flags) {
+        return this.getLittleWorld().setBlockState(pos, newState, flags);
+    }
+
+
+
+//    @Override TODO ??
+//    public boolean checkChunksExist(int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
+//        return this.getLittleWorld().checkChunksExist(minX,
+//                                                      minY,
+//                                                      minZ,
+//                                                      maxX,
+//                                                      maxY,
+//                                                      maxZ);
+//    }
+
+
+    @Override
+    public void notifyNeighborsOfStateChange(BlockPos pos, Block blockType) {
+        this.getLittleWorld().notifyNeighborsOfStateChange(pos, blockType);
     }
 
     @Override
-    public boolean setBlockMetadataWithNotify(int x, int y, int z, int newmeta, int update) {
-    	//System.out.println("Client: " + this + " : " + this.getBlock(x, y, z) + " | " + newmeta);
-        return this.getLittleWorld().setBlockMetadataWithNotify(x,
-                                                                y,
-                                                                z,
-                                                                newmeta,
-                                                                update);
+    public void notifyNeighborsOfStateExcept(BlockPos pos, Block blockType, EnumFacing skipSide) {
+        this.getLittleWorld().notifyNeighborsOfStateExcept(pos, blockType, skipSide);
     }
 
     @Override
-    public boolean checkChunksExist(int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
-        return this.getLittleWorld().checkChunksExist(minX,
-                                                      minY,
-                                                      minZ,
-                                                      maxX,
-                                                      maxY,
-                                                      maxZ);
+    public void notifyBlockOfStateChange(BlockPos pos, Block blockIn) {
+        this.getLittleWorld().notifyBlockOfStateChange(pos, blockIn);
     }
 
     @Override
-    public void notifyBlocksOfNeighborChange(int x, int y, int z, Block blockId) {
-        this.getLittleWorld().notifyBlocksOfNeighborChange(x,
-                                                           y,
-                                                           z,
-                                                           blockId);
+    public TileEntity getTileEntity(BlockPos pos) {
+        return this.getLittleWorld().getTileEntity(pos);
     }
 
     @Override
-    public void notifyBlockOfNeighborChange(int x, int y, int z, Block blockId) {
-        this.getLittleWorld().notifyBlockOfNeighborChange(x,
-                                                          y,
-                                                          z,
-                                                          blockId);
+    public void setTileEntity(BlockPos pos, TileEntity tileEntityIn) {
+        this.getLittleWorld().setTileEntity(pos, tileEntityIn);
     }
 
     @Override
-    public TileEntity getTileEntity(int x, int y, int z) {
-        return this.getLittleWorld().getTileEntity(x,
-                                                   y,
-                                                   z);
+    public void addTileEntities(Collection tileEntityCollection) {
+        this.getLittleWorld().addTileEntities(tileEntityCollection);
     }
 
     @Override
-    public void setTileEntity(int x, int y, int z, TileEntity tileentity) {
-        this.getLittleWorld().setTileEntity(x,
-                                            y,
-                                            z,
-                                            tileentity);
+    public boolean addTileEntity(TileEntity tileentity) {
+        return this.getLittleWorld().addTileEntity(tileentity);
     }
 
     @Override
-    public void func_147448_a/* addTileEntity */(Collection collection) {
-        this.getLittleWorld().func_147448_a/* addTileEntity */(collection);
+    public void markTileEntityForRemoval(TileEntity tileEntityIn) {
+        this.getLittleWorld().markTileEntityForRemoval(tileEntityIn);
     }
 
     @Override
-    public void addTileEntity(TileEntity tileentity) {
-        this.getLittleWorld().addTileEntity(tileentity);
+    public void removeTileEntity(BlockPos pos) {
+        this.getLittleWorld().removeTileEntity(pos);
     }
 
     @Override
-    public void func_147457_a/* markTileEntityForDespawn */(TileEntity tileentity) {
-        this.getLittleWorld().func_147457_a/* markTileEntityForDespawn */(tileentity);
-    }
-
-    @Override
-    public void removeTileEntity(int x, int y, int z) {
-        this.getLittleWorld().removeTileEntity(x,
-                                               y,
-                                               z);
-    }
-
-    @Override
-    public boolean isSideSolid(int x, int y, int z, ForgeDirection side, boolean _default) {
-        return this.getLittleWorld().isSideSolid(x,
-                                                 y,
-                                                 z,
-                                                 side,
-                                                 _default);
+    public boolean isSideSolid(BlockPos pos, EnumFacing side, boolean _default) {
+        return this.getLittleWorld().isSideSolid(pos, side, _default);
     }
 
     @Override
@@ -268,40 +227,23 @@ public class LittleWorldClient extends World implements ILittleWorld {
     }
 
     @Override
-    public void playRecord(String s, int x, int y, int z) {
-        this.getLittleWorld().playRecord(s,
-                                         x,
-                                         y,
-                                         z);
+    public void playRecord(BlockPos p, String s) {
+        this.getLittleWorld().playRecord(p, s);
     }
 
     @Override
-    public void playAuxSFX(int x, int y, int z, int l, int i1) {
-        this.getLittleWorld().playAuxSFX(x,
-                                         y,
-                                         z,
-                                         l,
-                                         i1);
+    public void playAuxSFX(int a, BlockPos p, int b) {
+        this.getLittleWorld().playAuxSFX(a, p, b);
     }
 
     @Override
-    public void spawnParticle(String s, double x, double y, double z, double d3, double d4, double d5) {
-        this.getLittleWorld().spawnParticle(s,
-                                            x,
-                                            y,
-                                            z,
-                                            d3,
-                                            d4,
-                                            d5);
+    public void spawnParticle(EnumParticleTypes particleType, double xCoord, double yCoord, double zCoord, double xOffset, double yOffset, double zOffset, int... p_175688_14_) {
+        this.getLittleWorld().spawnParticle(particleType, xCoord, yCoord, zCoord, xOffset, yOffset, zOffset, p_175688_14_);
     }
 
     @Override
-    public MovingObjectPosition func_147447_a/* rayTraceBlocks_do_do */(Vec3 Vec3, Vec3 Vec31, boolean flag, boolean flag1, boolean flag2) {
-        return this.getLittleWorld().func_147447_a/* rayTraceBlocks_do_do */(Vec3,
-                                                                             Vec31,
-                                                                             flag,
-                                                                             flag1,
-                                                                             flag2);
+    public MovingObjectPosition rayTraceBlocks(Vec3 u, Vec3 v, boolean a, boolean b, boolean c) {
+        return this.getLittleWorld().rayTraceBlocks(u, v, a, b, c);
     }
 
     @Override
@@ -333,19 +275,18 @@ public class LittleWorldClient extends World implements ILittleWorld {
                                                       distance);
     }
 
-    @Override
-    public EntityPlayer getClosestVulnerablePlayer(double x, double y, double z, double distance) {
-        return this.getLittleWorld().getClosestVulnerablePlayer(x,
-                                                                y,
-                                                                z,
-                                                                distance);
-    }
+//    @Override TODO ??
+//    public EntityPlayer getClosestVulnerablePlayer(double x, double y, double z, double distance) {
+//        return this.getLittleWorld().getClosestVulnerablePlayer(x,
+//                                                                y,
+//                                                                z,
+//                                                                distance);
+//    }
+
 
     @Override
-    public void markBlockForUpdate(int x, int y, int z) {
-        this.getLittleWorld().markBlockForUpdate(x,
-                                                 y,
-                                                 z);
+    public void markBlockForUpdate(BlockPos pos) {
+        this.getLittleWorld().markBlockForUpdate(pos);
     }
 
     @Override
@@ -358,59 +299,61 @@ public class LittleWorldClient extends World implements ILittleWorld {
                                                             z2);
     }
 
-    @Override
-    public void markTileEntityChunkModified(int x, int y, int z, TileEntity tileentity) {
-        this.getLittleWorld().markTileEntityChunkModified(x,
-                                                          y,
-                                                          z,
-                                                          tileentity);
-    }
 
-    @Override
-    public boolean updateLightByType(EnumSkyBlock enumSkyBlock, int x, int y, int z) {
-        return this.getLittleWorld().updateLightByType(enumSkyBlock,
-                                                       x,
-                                                       y,
-                                                       z);
-    }
 
-    @Override
-    public boolean canPlaceEntityOnSide(Block blockId, int x, int y, int z, boolean flag, int side, Entity entityPlacing, ItemStack itemstack) {
-        return this.getLittleWorld().canPlaceEntityOnSide(blockId,
-                                                          x,
-                                                          y,
-                                                          z,
-                                                          flag,
-                                                          side,
-                                                          entityPlacing,
-                                                          itemstack);
-    }
+//    @Override TODO ??
+//    public void markTileEntityChunkModified(int x, int y, int z, TileEntity tileentity) {
+//        this.getLittleWorld().markTileEntityChunkModified(x,
+//                                                          y,
+//                                                          z,
+//                                                          tileentity);
+//    }
 
-    @Override
-    public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb, IEntitySelector entitySelector) {
-        return this.getLittleWorld().getEntitiesWithinAABBExcludingEntity(entity,
-                                                                          axisalignedbb,
-                                                                          entitySelector);
-    }
+//    @Override TODO ??
+//    public boolean updateLightByType(EnumSkyBlock enumSkyBlock, int x, int y, int z) {
+//        return this.getLittleWorld().updateLightByType(enumSkyBlock,
+//                                                       x,
+//                                                       y,
+//                                                       z);
+//    }
 
-    @Override
-    public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb) {
-        return this.getLittleWorld().getEntitiesWithinAABBExcludingEntity(entity,
-                                                                          axisalignedbb);
-    }
+//    @Override
+//    public boolean canPlaceEntityOnSide(Block blockId, int x, int y, int z, boolean flag, int side, Entity entityPlacing, ItemStack itemstack) {
+//        return this.getLittleWorld().canPlaceEntityOnSide(blockId,
+//                                                          x,
+//                                                          y,
+//                                                          z,
+//                                                          flag,
+//                                                          side,
+//                                                          entityPlacing,
+//                                                          itemstack);
+//    }
 
-    @Override
-    public List selectEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisalignedbb, IEntitySelector entitySelector) {
-        return this.getLittleWorld().selectEntitiesWithinAABB(entityClass,
-                                                              axisalignedbb,
-                                                              entitySelector);
-    }
-
-    @Override
-    public List getEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisAlignedBB) {
-        return this.getLittleWorld().getEntitiesWithinAABB(entityClass,
-                                                           axisAlignedBB);
-    }
+//    @Override
+//    public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb, IEntitySelector entitySelector) {
+//        return this.getLittleWorld().getEntitiesWithinAABBExcludingEntity(entity,
+//                                                                          axisalignedbb,
+//                                                                          entitySelector);
+//    }
+//
+//    @Override
+//    public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb) {
+//        return this.getLittleWorld().getEntitiesWithinAABBExcludingEntity(entity,
+//                                                                          axisalignedbb);
+//    }
+//
+//    @Override
+//    public List selectEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisalignedbb, IEntitySelector entitySelector) {
+//        return this.getLittleWorld().selectEntitiesWithinAABB(entityClass,
+//                                                              axisalignedbb,
+//                                                              entitySelector);
+//    }
+//
+//    @Override
+//    public List getEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisAlignedBB) {
+//        return this.getLittleWorld().getEntitiesWithinAABB(entityClass,
+//                                                           axisAlignedBB);
+//    }
 
     @Override
     public boolean checkNoEntityCollision(AxisAlignedBB axisalignedbb, Entity entity) {
@@ -426,9 +369,8 @@ public class LittleWorldClient extends World implements ILittleWorld {
     }
 
     @Override
-    public void activeChunkPosition(ChunkPosition chunkposition, boolean forced) {
-        this.getLittleWorld().activeChunkPosition(chunkposition,
-                                                  forced);
+    public void activeChunkPosition(BlockPos pos, boolean forced) {
+        this.getLittleWorld().activeChunkPosition(pos, forced);
     }
 
     @Override
@@ -441,12 +383,11 @@ public class LittleWorldClient extends World implements ILittleWorld {
         this.getLittleWorld().addLoadedTileEntity(tileentity);
     }
 
-	@Override
-	/** getRenderViewDistance()**/
-	protected int func_152379_p() {
+    @Override
+    protected int getRenderDistanceChunks() {
         return FMLClientHandler.instance().getClient().gameSettings.renderDistanceChunks;
-	}
-	
+    }
+
 	@Override
     public WorldSavedData loadItemData(Class itemClass, String itemName) {
 		WorldSavedData yourMum = null;
