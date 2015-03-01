@@ -1,5 +1,6 @@
 package net.slimevoid.littleblocks.core;
 
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -45,5 +46,9 @@ public class LittleBlocks {
     public void LittleBlocksPostInit(FMLPostInitializationEvent event) {
         proxy.postInit();
         LBInit.postInitialize();
+    }
+
+    public static BlockPos scaleDownPos(BlockPos pos) {
+        return new BlockPos(pos.getX() << 3, pos.getY() << 3, pos.getZ() << 3);
     }
 }

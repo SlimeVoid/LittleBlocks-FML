@@ -185,10 +185,7 @@ public class BlockUtil {
     public static boolean isLittleChunk(World world, int x, int y, int z) {
         if (world instanceof ILittleWorld) {
             return ((ILittleWorld) world).getParentWorld().getBlockState(
-                    new BlockPos(
-                            x >> 3,
-                            y >> 3,
-                            z >> 3)).getBlock().isAssociatedBlock(ConfigurationLib.littleChunk);
+                    getParentPos(x, y , z)).getBlock().isAssociatedBlock(ConfigurationLib.littleChunk);
         }
         return false;
     }
@@ -232,10 +229,7 @@ public class BlockUtil {
             // double dist = this.getBlockReachDistance() + 1;
             // dist *= dist;
             if (!mcServer.isBlockProtected(((ILittleWorld) world).getParentWorld(),
-                                           new BlockPos(
-                                                   x >> 3,
-                                                   y >> 3,
-                                                   z >> 3),
+                                           getParentPos(x, y, z),
                                            entityplayer)) {
             	getLittleItemManager((EntityPlayerMP) entityplayer,
                                      world).activateBlockOrUseItem(entityplayer,
@@ -319,9 +313,7 @@ public class BlockUtil {
         IBlockState blockState = world.getBlockState(pos);
         if (blockState.getBlock() instanceof BlockPistonBase) {
             EnumFacing newData = BlockPistonBase.getFacingFromEntity(((ILittleWorld) world).getParentWorld(),
-                                                               new BlockPos(x >> 3,
-                                                                        y >> 3,
-                                                                        z >> 3),
+                                                               getParentPos(pos),
                                                                entityplayer);
             world.setBlockState(pos,
                                 blockState.withProperty(
@@ -334,5 +326,44 @@ public class BlockUtil {
                                   x,
                                   y,
                                   z);
+    }
+
+    /**
+     *
+     * @param pos Little Chunk position in parent world
+     * @return The (0, 0) coordinates of the little chunk in the little world
+     */
+    public static BlockPos getLittleChunkPos(BlockPos pos) {
+        return getLittleChunkPos(pos.getX(), pos.getY(), pos.getZ());
+    }
+
+    public static BlockPos getLittleChunkPos(int x, int y, int z) {
+        return new BlockPos(x << 3, y << 3, z << 3);
+    }
+
+    /**
+     *
+     * @param pos A position in the little world
+     * @return The position of the corresponding little chunk in the parent world
+     */
+    public static BlockPos getParentPos(BlockPos pos) {
+        return getParentPos(pos.getX(), pos.getY(), pos.getZ());
+    }
+
+    public static BlockPos getParentPos(int x, int y, int z) {
+        return new BlockPos(x >> 3, y >> 3, z >> 3);
+    }
+
+    /**
+     *
+     * @param pos A position in the little world
+     * @return The same position relative to the corresponding little chunk
+     */
+    public static BlockPos getLittlePos(BlockPos pos) {
+        return getLittlePos(pos.getX(), pos.getY(), pos.getZ());
+    }
+
+    public static BlockPos getLittlePos(int x, int y, int z) {
+        return new BlockPos(x & 7, y & 7, z & 7);
     }
 }
