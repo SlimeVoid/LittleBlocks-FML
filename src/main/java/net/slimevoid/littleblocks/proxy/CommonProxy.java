@@ -30,7 +30,7 @@ public class CommonProxy implements ILBCommonProxy {
 
     @Override
     public void init() {
-        PacketLib.registerPacketHandlers();
+
     }
 
     @Override
@@ -102,6 +102,11 @@ public class CommonProxy implements ILBCommonProxy {
     public boolean isClient(World world) {
         return FMLCommonHandler.instance().getSide() == Side.CLIENT
                || (world != null && world.isRemote);
+    }
+
+    @Override
+    public void registerPacketHandlers() {
+        PacketLib.registerPacketHandlers();
     }
 
     @Override

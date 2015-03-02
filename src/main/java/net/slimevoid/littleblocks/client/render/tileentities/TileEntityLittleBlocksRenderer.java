@@ -14,7 +14,7 @@ import java.util.Collection;
 public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
 
     @Override
-    public void renderTileEntityAt(TileEntity tileentity, double d, double d1, double d2, float f) {
+    public void renderTileEntityAt(TileEntity tileentity, double d, double d1, double d2, float f, int unknown) {
         renderTileEntityLittleBlocks((TileEntityLittleChunk) tileentity,
                                      d,
                                      d1,
@@ -27,16 +27,16 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
         if (tileentitylittleblocks != null) {
             ILittleWorld littleWorld = tileentitylittleblocks.getLittleWorld();
 
-            this.field_147501_a.func_147543_a/* tileEntityRenderer.setWorld( */((World) littleWorld);
+            this.rendererDispatcher.setWorld((World) littleWorld);/* tileEntityRenderer.setWorld( */
 
             GL11.glPushMatrix();
 
             GL11.glTranslated(x,
                               y,
                               z);
-            GL11.glTranslated(-tileentitylittleblocks.xCoord,
-                              -tileentitylittleblocks.yCoord,
-                              -tileentitylittleblocks.zCoord);
+            GL11.glTranslated(-tileentitylittleblocks.getPos().getX(),
+                              -tileentitylittleblocks.getPos().getY(),
+                              -tileentitylittleblocks.getPos().getZ());
             GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 
             float scale = 1F / ConfigurationLib.littleBlocksSize;
@@ -48,17 +48,17 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
             Collection<TileEntity> tilesToRender = tileentitylittleblocks.getTileEntityList();
 
             for (TileEntity tileentity : tilesToRender) {
-                this.field_147501_a/* tileEntityRenderer */.renderTileEntityAt(tileentity,
-                                                                               tileentity.xCoord,
-                                                                               tileentity.yCoord,
-                                                                               tileentity.zCoord,
+                this.rendererDispatcher/* tileEntityRenderer */.renderTileEntityAt(tileentity,
+                                                                               tileentity.getPos().getX(),
+                                                                               tileentity.getPos().getY(),
+                                                                               tileentity.getPos().getZ(),
                                                                                f);
             }
 
             GL11.glDisable(GL12.GL_RESCALE_NORMAL);
             GL11.glPopMatrix();
 
-            this.field_147501_a.func_147543_a/* tileEntityRenderer.setWorld( */(tileentitylittleblocks.getWorldObj());
+            this.rendererDispatcher.setWorld(/* tileEntityRenderer.setWorld( */(tileentitylittleblocks.getWorld()));
         }
     }
 }

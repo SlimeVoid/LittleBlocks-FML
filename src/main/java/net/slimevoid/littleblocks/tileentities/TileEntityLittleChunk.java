@@ -257,7 +257,7 @@ public class TileEntityLittleChunk extends TileEntity implements IUpdatePlayerLi
         while (ticks.hasNext()) {
             NBTTagCompound pendingTick = (NBTTagCompound) ticks.next();
 
-            ((World) this.getLittleWorld()).func_180497_b/* scheduleBlockUpdateFromLoad */(new BlockPos(pendingTick.getInteger("x"),
+            ((World) this.getLittleWorld()).scheduleBlockUpdate(new BlockPos(pendingTick.getInteger("x"),
                             pendingTick.getInteger("y"),
                             pendingTick.getInteger("z")),
                     Block.getBlockById(pendingTick.getInteger("i")),

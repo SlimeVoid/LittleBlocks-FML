@@ -6,13 +6,13 @@ import net.minecraftforge.fml.client.FMLClientHandler;
 
 public class LittleClientWorld extends LittleWorld {
 
-    public LittleClientWorld(World world, WorldProvider worldprovider, String worldName) {
-        super(world, worldprovider, worldName);
+    public LittleClientWorld(World world, WorldProvider worldprovider, boolean isRemote) {
+        super(world, worldprovider, isRemote);
     }
 
 	@Override
 	/** getRenderViewDistance()**/
-	protected int func_152379_p() {
+	protected int getRenderDistanceChunks() {
         return FMLClientHandler.instance().getClient().gameSettings.renderDistanceChunks;
 	}
 

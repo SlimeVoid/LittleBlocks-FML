@@ -26,13 +26,13 @@ repositories {
 apply plugin: 'maven'
 apply plugin: 'forge'
 apply plugin: 'eclipse'
-def slimevoidVersion = '3.0.0.3-beta-1.8'
+def slimevoidVersion = '3.0.0.4-beta-1.8'
 def number = '2.2.5.0'
 def release = 'alpha'
 def mcversion = '1.8'
-def forge = '11.14.0.1285'
-def map = 'snapshot_20150110'
-def mc = mcversion + '-' + forge + '-' + mcversion
+def forge = '11.14.1.1334'
+def map = 'snapshot_20150302'
+def mc = mcversion + '-' + forge
 def pack = 'littleblocks'
 def github = 'LittleBlocks-FML'
 version = number + '-' + release + '-' + mcversion

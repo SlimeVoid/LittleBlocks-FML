@@ -6,6 +6,8 @@ import net.minecraft.block.BlockStairs;
 import net.minecraft.block.BlockStaticLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -201,20 +203,17 @@ public class BlockLittleChunk extends BlockContainer {
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState blockState, EntityPlayer entityplayer, EnumFacing localSide, float hitX, float hitY, float hitZ) {
-    	int x = pos.getX(), y = pos.getY(), z = pos.getZ();
         // System.out.println("Activated");
         if (world.isRemote) {
             if (this.canPlayerPlaceBlockOrUseItem(world,
                                                   entityplayer)) {
                 try {
-                    BlockUtil.getLittleController().onPlayerRightClickFirst(entityplayer,
-                                                                            (World) LittleBlocks.proxy.getLittleWorld(world,
+                    BlockUtil.getLittleController().onPlayerRightClickFirst((EntityPlayerSP) entityplayer,
+                                                                            (WorldClient) LittleBlocks.proxy.getLittleWorld(world,
                                                                                                                       false),
                                                                             entityplayer.inventory.getCurrentItem(),
-                                                                            ((x << 3) + xSelected),
-                                                                            ((y << 3) + ySelected),
-                                                                            ((z << 3) + zSelected),
-                                                                            side,
+                                                                            BlockUtil.getLittleChunkPos(pos).add(xSelected, ySelected, zSelected),
+                                                                            EnumFacing.getFront(side),
                                                                             hitX,
                                                                             hitY,
                                                                             hitZ);
@@ -285,12 +284,9 @@ public class BlockLittleChunk extends BlockContainer {
         return true;
     }
 
-    public void onServerBlockActivated(World world, EntityPlayer entityplayer, int x, int y, int z, int direction, float hitX, float hitY, float hitZ) {
-        BlockPos pos = new BlockPos(x >> 3,
-                y >> 3,
-                z >> 3);
+    public void onServerBlockActivated(World world, EntityPlayer entityplayer, BlockPos pos, int direction, float hitX, float hitY, float hitZ) {
         EnumFacing side = EnumFacing.getFront(direction);
-        if (!entityplayer.canPlayerEdit(pos,
+        if (!entityplayer.canPlayerEdit(BlockUtil.getParentPos(pos),
                                         side,
                                         entityplayer.getHeldItem())) {
             return;
@@ -305,9 +301,7 @@ public class BlockLittleChunk extends BlockContainer {
                 BlockUtil.onServerBlockActivated(world,
                                                  entityplayer,
                                                  entityplayer.getCurrentEquippedItem(),
-                                                 x,
-                                                 y,
-                                                 z,
+                                                 pos,
                                                  direction,
                                                  hitX,
                                                  hitY,
@@ -321,32 +315,24 @@ public class BlockLittleChunk extends BlockContainer {
     @Override
     public void onBlockClicked(World world, BlockPos pos, EntityPlayer entityplayer) {
         if (world.isRemote) {
-            BlockUtil.getLittleController().clickBlock((pos.getX() << 3) + xSelected,
-                                                       (pos.getY() << 3) + ySelected,
-                                                       (pos.getZ() << 3) + zSelected,
-                                                       side);
+            BlockUtil.getLittleController().clickBlock(BlockUtil.getLittleChunkPos(pos).add(xSelected, ySelected, zSelected),
+                                                       EnumFacing.getFront(side));
         }
     }
 
-    public void onServerBlockClicked(World world, int x, int y, int z, int side, EntityPlayer entityplayer) {
+    public void onServerBlockClicked(World world, BlockPos pos, EnumFacing side, EntityPlayer entityplayer) {
         if (entityplayer instanceof EntityPlayerMP) {
             EntityPlayerMP player = (EntityPlayerMP) entityplayer;
             if (!FMLCommonHandler.instance().getMinecraftServerInstance().isBlockProtected(((ILittleWorld) world).getParentWorld(),
-                                                                                           new BlockPos(x >> 3,
-                                                                                                        y >> 3,
-                                                                                                        z >> 3),
+                                                                                           BlockUtil.getParentPos(pos),
                                                                                            entityplayer)) {
                 BlockUtil.getLittleItemManager(player,
-                                               world).onBlockClicked(x,
-                                                                     y,
-                                                                     z,
+                                               world).onBlockClicked(pos,
                                                                      side);
             } else {
                 PacketLib.sendBlockChange(world,
                                           entityplayer,
-                                          x,
-                                          y,
-                                          z);
+                                          pos);
             }
         }
     }

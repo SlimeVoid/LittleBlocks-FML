@@ -14,22 +14,22 @@ import net.slimevoid.littleblocks.network.packets.PacketLittleBlock;
 public class PacketLittleBlockActivatedExecutor implements IPacketExecutor {
 
     @Override
-    public void execute(PacketUpdate packet, World world, EntityPlayer entityplayer) {
+    public PacketUpdate execute(PacketUpdate packet, World world, EntityPlayer entityplayer) {
         if (packet instanceof PacketLittleBlock
             && packet.getCommand().equals(CommandLib.BLOCK_ACTIVATED)) {
         	ILittleWorld littleworld = LittleBlocks.proxy.getLittleWorld(world,
                     false);
         	//System.out.println(littleworld);
-	            ((BlockLittleChunk) ConfigurationLib.littleChunk).onServerBlockActivated((World) littleworld,
-	                                                                                     entityplayer,
-	                                                                                     // littlePacket.getItemStack(),
-	                                                                                     packet.xPosition,
-	                                                                                     packet.yPosition,
-	                                                                                     packet.zPosition,
-	                                                                                     ((PacketLittleBlock) packet).getDirection(),
-	                                                                                     packet.hitX,
-	                                                                                     packet.hitY,
-	                                                                                     packet.hitZ);
+	            ((BlockLittleChunk) ConfigurationLib.littleChunk).onServerBlockActivated
+                        ((World) littleworld,
+                                entityplayer,
+	                            // littlePacket.getItemStack(),
+                                packet.getPosition(),
+                                ((PacketLittleBlock) packet).getDirection(),
+                                packet.hitX,
+                                packet.hitY,
+                                packet.hitZ);
         }
+        return null;
     }
 }

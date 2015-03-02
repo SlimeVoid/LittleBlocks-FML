@@ -1,5 +1,6 @@
 package net.slimevoid.littleblocks.blocks.events;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -18,20 +19,18 @@ public class LittleChunkShiftRightClick {
         if (entityplayer.isSneaking()) {
             if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
                 World world = FMLClientHandler.instance().getClient().theWorld;
-                int x = event.x, y = event.y, z = event.z;
-                if (world.getBlock(x,
-                                   y,
-                                   z) == ConfigurationLib.littleChunk) {
+                IBlockState state = world.getBlockState(event.pos);
+                if (state.getBlock().isAssociatedBlock(ConfigurationLib.littleChunk)) {
                     BlockLittleChunk littleChunk = ((BlockLittleChunk) ConfigurationLib.littleChunk);
-                    if (littleChunk.onBlockActivated(world,
-                                                     x,
-                                                     y,
-                                                     z,
-                                                     entityplayer,
-                                                     event.face,
-                                                     (float) BlockLittleChunk.hitVec.xCoord,
-                                                     (float) BlockLittleChunk.hitVec.yCoord,
-                                                     (float) BlockLittleChunk.hitVec.zCoord)) {
+                    if (littleChunk.onBlockActivated(
+                            world,
+                            event.pos,
+                            state,
+                            entityplayer,
+                            event.face,
+                            (float) BlockLittleChunk.hitVec.xCoord,
+                            (float) BlockLittleChunk.hitVec.yCoord,
+                            (float) BlockLittleChunk.hitVec.zCoord)) {
                         event.setCanceled(true);
                     }
                 }

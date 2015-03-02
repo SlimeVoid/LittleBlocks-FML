@@ -12,11 +12,9 @@ import net.slimevoid.littleblocks.api.ILittleWorld;
 import java.util.List;
 
 public class LittleChunkProvider implements IChunkProvider {
-    private World realWorld;
     private World littleWorld;
 
     public LittleChunkProvider(ILittleWorld littleWorld) {
-        this.realWorld = littleWorld.getParentWorld();
         this.littleWorld = (World) littleWorld;
     }
 
@@ -84,7 +82,7 @@ public class LittleChunkProvider implements IChunkProvider {
      */
     @Override
     public String makeString() {
-        return "[LB]" + realWorld.getProviderName();
+        return "[LB]" + littleWorld.getProviderName();
     }
 
     /**
@@ -93,7 +91,7 @@ public class LittleChunkProvider implements IChunkProvider {
      */
     @SuppressWarnings("rawtypes")
     @Override
-    public List func_177458_a/*getPossibleCreatures*/(EnumCreatureType enumCreatureType, BlockPos pos) {
+    public List getPossibleCreatures(EnumCreatureType enumCreatureType, BlockPos pos) {
         return null;
     }
 

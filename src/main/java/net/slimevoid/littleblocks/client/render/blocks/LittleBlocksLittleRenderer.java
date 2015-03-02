@@ -12,7 +12,7 @@
 package net.slimevoid.littleblocks.client.render.blocks;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.RenderBlocks;
+//import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.world.IBlockAccess;
 import net.slimevoid.library.data.Logger.LogLevel;
@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LittleBlocksLittleRenderer {
-    private RenderBlocks              renderBlocks;
+    /*private RenderBlocks              renderBlocks;
     private List<LittleBlockToRender> littleBlocksToRender;
 
     public LittleBlocksLittleRenderer(RenderBlocks renderBlocks) {
@@ -94,5 +94,5 @@ public class LittleBlocksLittleRenderer {
 
     public boolean needsRefresh(RenderBlocks renderer) {
         return !this.renderBlocks.equals(renderer);
-    }
+    }*/
 }

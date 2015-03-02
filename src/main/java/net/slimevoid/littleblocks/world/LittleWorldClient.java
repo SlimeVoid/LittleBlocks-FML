@@ -2,6 +2,7 @@ package net.slimevoid.littleblocks.world;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,16 +24,16 @@ import java.util.Collection;
 import java.util.List;
 
 @SideOnly(Side.CLIENT)
-public class LittleWorldClient extends World implements ILittleWorld {
+public class LittleWorldClient extends WorldClient implements ILittleWorld {
 
     private final LittleClientWorld littleWorld;
 
-    public LittleWorldClient(World referenceWorld, ISaveHandler saveHandler, WorldProvider provider) {
-        super(saveHandler, referenceWorld.getWorldInfo(), provider, referenceWorld.theProfiler, true);
+    public LittleWorldClient(World referenceWorld, WorldSettings settings, int dimensionId, EnumDifficulty difficulty) {
+        super(null, settings, dimensionId, difficulty, referenceWorld.theProfiler);
         String name = referenceWorld.getWorldInfo().getWorldName()
                       + ".littleWorld";
         this.finishSetup();
-        this.littleWorld = new LittleClientWorld(referenceWorld, provider, name);
+        this.littleWorld = new LittleClientWorld(referenceWorld, provider, false);
         MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(this));
     }
 
@@ -259,7 +260,7 @@ public class LittleWorldClient extends World implements ILittleWorld {
 
     @Override
     protected IChunkProvider createChunkProvider() {
-        return this.getLittleWorld().createChunkProvider();
+        return new LittleChunkProvider(this);
     }
 
     @Override

@@ -7,6 +7,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.slimevoid.library.util.helpers.ReflectionHelper;
 import net.slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
 
@@ -14,8 +15,8 @@ import java.util.Random;
 
 public class LittleBlocksCollectionRenderer extends RenderEntityItem {
 
-    public LittleBlocksCollectionRenderer(RenderManager renderManager, RenderItem renderItem) {
-        super(renderManager, renderItem);
+    public LittleBlocksCollectionRenderer() {
+        super(FMLClientHandler.instance().getClient().getRenderManager(), FMLClientHandler.instance().getClient().getRenderItem());
     }
 
     @Override

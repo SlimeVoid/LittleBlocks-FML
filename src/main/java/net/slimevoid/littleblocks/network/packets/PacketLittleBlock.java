@@ -2,6 +2,7 @@ package net.slimevoid.littleblocks.network.packets;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.slimevoid.library.network.PacketIds;
 import net.slimevoid.library.network.PacketUpdate;
@@ -41,11 +42,9 @@ public class PacketLittleBlock extends PacketUpdate {
     /**
      * CLICK BLOCK
      */
-    public PacketLittleBlock(int x, int y, int z, int face) {
+    public PacketLittleBlock(BlockPos pos, int face) {
         this();
-        this.setPosition(x,
-                         y,
-                         z,
+        this.setPosition(pos,
                          face);
         this.setCommand(CommandLib.BLOCK_CLICKED);
     }
@@ -53,11 +52,9 @@ public class PacketLittleBlock extends PacketUpdate {
     /**
      * ACTIVATE BLOCK
      */
-    public PacketLittleBlock(int x, int y, int z, int direction, ItemStack itemStack, float xOff, float yOff, float zOff) {
+    public PacketLittleBlock(BlockPos pos, int direction, ItemStack itemStack, float xOff, float yOff, float zOff) {
         this();
-        this.setPosition(x,
-                         y,
-                         z,
+        this.setPosition(pos,
                          direction);
         this.setHitVectors(xOff,
                            yOff,

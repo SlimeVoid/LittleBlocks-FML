@@ -19,7 +19,7 @@ public class LittleWorldServerTickHandler {
                 for (World world : worlds) {
                     if (world != null && !world.isRemote
                         && !(world instanceof ILittleWorld)) {
-                        int dimension = world.provider.dimensionId;
+                        int dimension = world.provider.getDimensionId();
                         if (!ConfigurationLib.littleWorldServer.containsKey(dimension)) {
                             System.out.println("WARNING! No LittleWorld loaded for Dimension "
                                                + dimension);

@@ -2,14 +2,14 @@ package net.slimevoid.littleblocks.client.render.blocks;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.RenderBlocks;
+//import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.fml.client.registry.ISimpleBlockRenderingHandler;
+//import net.minecraftforge.fml.client.registry.ISimpleBlockRenderingHandler;
 import net.slimevoid.littleblocks.blocks.BlockLittleChunk;
 import net.slimevoid.littleblocks.core.lib.ConfigurationLib;
 import net.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 
-public class LittleBlocksRenderer implements ISimpleBlockRenderingHandler {
+public class LittleBlocksRenderer {/*implements ISimpleBlockRenderingHandler {
 
     @Override
     public void renderInventoryBlock(Block block, int metadata, int modelID, RenderBlocks renderer) {
@@ -96,5 +96,5 @@ public class LittleBlocksRenderer implements ISimpleBlockRenderingHandler {
     @Override
     public int getRenderId() {
         return ConfigurationLib.renderType;
-    }
+    }*/
 }

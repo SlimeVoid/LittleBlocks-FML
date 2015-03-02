@@ -3,9 +3,12 @@ package net.slimevoid.littleblocks.network.packets;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.slimevoid.library.network.PacketIds;
 import net.slimevoid.library.network.PacketUpdate;
+import net.slimevoid.littleblocks.core.lib.BlockUtil;
 import net.slimevoid.littleblocks.core.lib.CommandLib;
 import net.slimevoid.littleblocks.core.lib.ConfigurationLib;
 import net.slimevoid.littleblocks.core.lib.CoreLib;
@@ -13,15 +16,13 @@ import net.slimevoid.littleblocks.core.lib.CoreLib;
 public class PacketLittleBlockChange extends PacketUpdate {
 
     @Override
-    public void writeData(ChannelHandlerContext ctx, ByteBuf data) {
-        super.writeData(ctx,
-                        data);
+    public void writeData(ByteBuf data) {
+        super.writeData(data);
     }
 
     @Override
-    public void readData(ChannelHandlerContext ctx, ByteBuf data) {
-        super.readData(ctx,
-                       data);
+    public void readData(ByteBuf data) {
+        super.readData(data);
     }
 
     public PacketLittleBlockChange() {
@@ -29,28 +30,20 @@ public class PacketLittleBlockChange extends PacketUpdate {
         this.setChannel(CoreLib.MOD_CHANNEL);
     }
 
-    public PacketLittleBlockChange(int x, int y, int z, World world) {
+    public PacketLittleBlockChange(BlockPos pos, World world) {
         this();
-        int blockID = Block.getIdFromBlock(world.getBlock(x,
-                y,
-                z));
-        int metadata = world.getBlockMetadata(
-        		x,
-                y,
-                z);
+        IBlockState state = world.getBlockState(pos);
+        int blockID = Block.getIdFromBlock(state.getBlock());
+        int metadata = state.getBlock().getMetaFromState(state);
         int bam = (blockID << 4) + metadata;
-        this.setPosition(x,
-                         y,
-                         z,
+        this.setPosition(pos,
                          bam);
         this.setCommand(CommandLib.UPDATE_CLIENT);
     }
 
     @Override
     public boolean targetExists(World world) {
-        if (world.getBlock(this.xPosition >> 3,
-                           this.yPosition >> 3,
-                           this.zPosition >> 3) == ConfigurationLib.littleChunk) {
+        if (world.getBlockState(BlockUtil.getParentPos(this.getPosition())).getBlock() == ConfigurationLib.littleChunk) {
             return true;
         }
         return false;

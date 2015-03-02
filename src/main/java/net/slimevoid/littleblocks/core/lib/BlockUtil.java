@@ -182,6 +182,11 @@ public class BlockUtil {
         return flag;
     }
 
+    public static boolean isLittleChunk(World world, BlockPos pos) {
+        return isLittleChunk(world, pos.getZ(), pos.getY(), pos.getZ());
+    }
+
+    @Deprecated
     public static boolean isLittleChunk(World world, int x, int y, int z) {
         if (world instanceof ILittleWorld) {
             return ((ILittleWorld) world).getParentWorld().getBlockState(
@@ -197,7 +202,7 @@ public class BlockUtil {
                              target.getBlockPos().getZ());
     }
 
-    public static void onServerBlockActivated(World world, EntityPlayer entityplayer, ItemStack stack, int x, int y, int z, int direction, float hitX, float hitY, float hitZ) {
+    public static void onServerBlockActivated(World world, EntityPlayer entityplayer, ItemStack stack, BlockPos pos, int direction, float hitX, float hitY, float hitZ) {
     	MinecraftServer mcServer = FMLCommonHandler.instance().getMinecraftServerInstance();
         ItemStack itemstack = entityplayer.inventory.getCurrentItem();
         boolean flag = false;
@@ -213,7 +218,7 @@ public class BlockUtil {
                     entityplayer,
                     PlayerInteractEvent.Action.RIGHT_CLICK_AIR,
                     world,
-                    new BlockPos(0, 0, 0),
+                    pos,
                     null);
             if (event.useItem != Event.Result.DENY) {
                 getLittleItemManager((EntityPlayerMP) entityplayer,
@@ -221,24 +226,21 @@ public class BlockUtil {
                                                        world,
                                                        itemstack);
             }
-        } else if (y >= world.getHeight() - 1
-                   && (side == EnumFacing.UP || y >= world.getHeight())) {
+        } else if (pos.getY() >= world.getHeight() - 1
+                   && (side == EnumFacing.UP || pos.getY() >= world.getHeight())) {
             // TODO :: Send Player Build height message
             flag = true;
         } else {
             // double dist = this.getBlockReachDistance() + 1;
             // dist *= dist;
             if (!mcServer.isBlockProtected(((ILittleWorld) world).getParentWorld(),
-                                           getParentPos(x, y, z),
+                                           getParentPos(pos),
                                            entityplayer)) {
             	getLittleItemManager((EntityPlayerMP) entityplayer,
                                      world).activateBlockOrUseItem(entityplayer,
                                                                    world,
                                                                    itemstack,
-                                                                   new BlockPos(
-                                                                           x,
-                                                                           y,
-                                                                           z),
+                                                                   pos,
                                                                    side,
                                                                    hitX,
                                                                    hitY,
@@ -251,9 +253,7 @@ public class BlockUtil {
         if (flag) {
             checkPlacement(world,
                            entityplayer,
-                           x,
-                           y,
-                           z,
+                           pos,
                            side);
         }
 
@@ -279,13 +279,10 @@ public class BlockUtil {
         }
     }
 
-    private static void checkPlacement(World world, EntityPlayer entityplayer, int x, int y, int z, EnumFacing side) {
+    private static void checkPlacement(World world, EntityPlayer entityplayer, BlockPos pos, EnumFacing side) {
         PacketLib.sendBlockChange(world,
                                   entityplayer,
-                                  x,
-                                  y,
-                                  z);
-        BlockPos pos = new BlockPos(x, y, z);
+                                  pos);
         pos.add(side.getFrontOffsetX(), side.getFrontOffsetY(), side.getFrontOffsetZ());
 //        if (side == 0) {
 //            --y;
@@ -323,9 +320,7 @@ public class BlockUtil {
 
         PacketLib.sendBlockChange(world,
                                   entityplayer,
-                                  x,
-                                  y,
-                                  z);
+                                  pos);
     }
 
     /**

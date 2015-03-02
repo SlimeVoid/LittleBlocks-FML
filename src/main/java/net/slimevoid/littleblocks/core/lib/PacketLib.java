@@ -3,6 +3,7 @@ package net.slimevoid.littleblocks.core.lib;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.Side;
@@ -77,8 +78,8 @@ public class PacketLib {
     }
 
     @SideOnly(Side.CLIENT)
-    public static void blockActivated(World world, EntityPlayer entityplayer, int x, int y, int z, int q, float a, float b, float c) {
-        PacketLittleBlock packetLB = new PacketLittleBlock(x, y, z, q, entityplayer.getCurrentEquippedItem(), a, b, c);
+    public static void blockActivated(World world, EntityPlayer entityplayer, BlockPos pos, int side, float a, float b, float c) {
+        PacketLittleBlock packetLB = new PacketLittleBlock(pos, side, entityplayer.getCurrentEquippedItem(), a, b, c);
         PacketHelper.sendToServer(packetLB);
     }
 
@@ -87,23 +88,23 @@ public class PacketLib {
         PacketHelper.broadcastPacket(eventPacket);
     }
 
-    public static void sendBlockClick(int x, int y, int z, int side) {
-        PacketLittleBlock clickPacket = new PacketLittleBlock(x, y, z, side);
+    public static void sendBlockClick(BlockPos pos, int side) {
+        PacketLittleBlock clickPacket = new PacketLittleBlock(pos, side);
         PacketHelper.sendToServer(clickPacket);
     }
 
-    public static void sendBlockPlace(World world, EntityPlayer entityplayer, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
-        PacketLittleBlock placePacket = new PacketLittleBlock(x, y, z, side, entityplayer.inventory.getCurrentItem(), hitX, hitY, hitZ);
+    public static void sendBlockPlace(World world, EntityPlayer entityplayer, BlockPos pos, int side, float hitX, float hitY, float hitZ) {
+        PacketLittleBlock placePacket = new PacketLittleBlock(pos, side, entityplayer.inventory.getCurrentItem(), hitX, hitY, hitZ);
         PacketHelper.sendToServer(placePacket);
     }
 
-    public static void sendItemUse(World world, EntityPlayer entityplayer, int x, int y, int z, int side, ItemStack itemstack) {
-        PacketLittleBlock usePacket = new PacketLittleBlock(x, y, z, side, itemstack, 0.0f, 0.0f, 0.0f);
+    public static void sendItemUse(World world, EntityPlayer entityplayer, BlockPos pos, int side, ItemStack itemstack) {
+        PacketLittleBlock usePacket = new PacketLittleBlock(pos, side, itemstack, 0.0f, 0.0f, 0.0f);
         PacketHelper.sendToServer(usePacket);
     }
 
-    public static void sendBlockChange(World world, EntityPlayer entityplayer, int x, int y, int z) {
-        PacketLittleBlockChange changePacket = new PacketLittleBlockChange(x, y, z, world);
+    public static void sendBlockChange(World world, EntityPlayer entityplayer, BlockPos pos) {
+        PacketLittleBlockChange changePacket = new PacketLittleBlockChange(pos, world);
         PacketHelper.sendToPlayer(changePacket,
                                   (EntityPlayerMP) entityplayer);
     }

@@ -12,6 +12,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.world.*;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraftforge.common.util.FakePlayer;
@@ -24,8 +25,8 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 
     private final LittleServerWorld littleWorld;
 
-    public LittleWorldServer(World referenceWorld, MinecraftServer minecraftServer, ISaveHandler iSaveHandler, int par4, Profiler par6Profiler) {
-        super(minecraftServer, iSaveHandler, referenceWorld.getWorldInfo(), par4, par6Profiler);
+    public LittleWorldServer(World referenceWorld, MinecraftServer minecraftServer, ISaveHandler iSaveHandler, int dimensionId, Profiler profiler) {
+        super(minecraftServer, iSaveHandler, referenceWorld.getWorldInfo(), dimensionId, profiler);
         this.littleWorld = new LittleServerWorld(referenceWorld, this.provider);
     }
 
@@ -412,10 +413,10 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 //                                                       z);
 //    }
 
-    // @Override
-    // protected IChunkProvider createChunkProvider() {
-    // return new LittleChunkProvider(this);
-    // }
+    @Override
+    protected IChunkProvider createChunkProvider() {
+        return new LittleChunkProvider(this);
+    }
 
     @Override
     public void saveAllChunks(boolean par1, IProgressUpdate par2IProgressUpdate) throws MinecraftException {
@@ -517,4 +518,8 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 		int yourMum = 0;
 		return yourMum;
 	}
+
+    public java.io.File getChunkSaveLocation() {
+        return ((net.minecraft.world.chunk.storage.AnvilChunkLoader)theChunkProviderServer.chunkLoader).chunkSaveLocation;
+    }
 }

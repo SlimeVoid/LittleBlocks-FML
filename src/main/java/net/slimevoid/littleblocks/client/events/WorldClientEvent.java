@@ -19,10 +19,22 @@ public class WorldClientEvent {
         if (event.world instanceof WorldClient
             && !(event.world instanceof ILittleWorld)) {
             WorldClient world = (WorldClient) event.world;
-            int dimension = world.provider.dimensionId;
+            int dimension = world.provider.getDimensionId();
             WorldProvider provider = WorldProvider.getProviderForDimension(dimension);
-
-            ConfigurationLib.littleWorldClient = new LittleWorldClient(world, world.getSaveHandler(), "LittleWorldClient", provider, new WorldSettings(world.getWorldInfo().getSeed(), world.getWorldInfo().getGameType(), world.getWorldInfo().isMapFeaturesEnabled(), world.getWorldInfo().isHardcoreModeEnabled(), world.getWorldInfo().getTerrainType()), world.difficultySetting.getDifficultyId(), null);
+            WorldSettings settings = new WorldSettings(
+                    world.getWorldInfo().getSeed(),
+                    world.getWorldInfo().getGameType(),
+                    world.getWorldInfo().isMapFeaturesEnabled(),
+                    world.getWorldInfo().isHardcoreModeEnabled(),
+                    world.getWorldInfo().getTerrainType());
+            ConfigurationLib.littleWorldClient = new LittleWorldClient(
+                    world,
+                    settings,
+                    dimension,
+                    world.getDifficulty());//,
+                    //"LittleWorldClient",
+                    //provider,
+                    //world.getDifficulty().getDifficultyId(), null);
         }
     }
 

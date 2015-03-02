@@ -31,9 +31,7 @@ public class NetworkEvent {
         List<TileEntity> tileEntities = world.loadedTileEntityList;
         for (TileEntity tileentity : tileEntities) {
             if (tileentity instanceof TileEntityLittleChunk) {
-                world.markBlockForUpdate(tileentity.xCoord,
-                                         tileentity.yCoord + 1,
-                                         tileentity.zCoord);
+                world.markBlockForUpdate(tileentity.getPos());
             }
         }
     }

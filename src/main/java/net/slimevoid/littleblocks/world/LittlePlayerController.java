@@ -2,8 +2,11 @@ package net.slimevoid.littleblocks.world;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
@@ -51,20 +54,20 @@ public class LittlePlayerController extends PlayerControllerMP {
         }
     }
 
-    @Override
-    public void onPlayerRightClickFirst(EntityPlayer entityplayer, World world, ItemStack itemstack, int x, int y, int z, int sumside, float hitX, float hitY, float hitZ) {
+    //@Override
+    public void onPlayerRightClickFirst(EntityPlayerSP entityplayer, WorldClient world, ItemStack itemstack, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
         boolean flag = true;
         int stackSize = itemstack != null ? itemstack.stackSize : 0;
-        if (this.onPlayerRightClick(entityplayer,
-                                    world,
-                                    itemstack,
-                                    x,
-                                    y,
-                                    z,
-                                    sumside,
-                                    Vec3.createVectorHelper(hitX,
-                                                            hitY,
-                                                            hitZ))) {
+        if (this.onPlayerRightClick(
+                entityplayer,
+                world,
+                itemstack,
+                pos,
+                side,
+                new Vec3(
+                        hitX,
+                        hitY,
+                        hitZ))) {
             flag = false;
             entityplayer.swingItem();
         }
@@ -92,9 +95,10 @@ public class LittlePlayerController extends PlayerControllerMP {
     public boolean sendUseItem(EntityPlayer entityplayer, World world, ItemStack itemstack) {
         PacketLib.sendItemUse(world,
                               entityplayer,
-                              -1,
-                              -1,
-                              -1,
+                              new BlockPos(
+                                      -1,
+                                      -1,
+                                      -1),
                               255,
                               itemstack);
         int i = itemstack.stackSize;
@@ -117,7 +121,7 @@ public class LittlePlayerController extends PlayerControllerMP {
     }
 
     @Override
-    public boolean onPlayerRightClick(EntityPlayer entityplayer, World world, ItemStack itemstack, int x, int y, int z, int side, Vec3 hitAt) {
+    public boolean onPlayerRightClick(EntityPlayerSP entityplayer, WorldClient world, ItemStack itemstack, BlockPos pos, EnumFacing side, Vec3 hitAt) {
         float xOffset = (float) hitAt.xCoord;
         float yOffset = (float) hitAt.yCoord;
         float zOffset = (float) hitAt.zCoord;
@@ -126,9 +130,7 @@ public class LittlePlayerController extends PlayerControllerMP {
             && itemstack.getItem().onItemUseFirst(itemstack,
                                                   entityplayer,
                                                   world,
-                                                  x,
-                                                  y,
-                                                  z,
+                                                  pos,
                                                   side,
                                                   xOffset,
                                                   yOffset,
@@ -138,34 +140,30 @@ public class LittlePlayerController extends PlayerControllerMP {
 
         if (!entityplayer.isSneaking()
             || (entityplayer.getHeldItem() == null || entityplayer.getHeldItem().getItem().doesSneakBypassUse/* shouldPassSneakingClickToBlock */(world,
-                                                                                                                                                  x,
-                                                                                                                                                  y,
-                                                                                                                                                  z,
+                                                                                                                                                  pos,
                                                                                                                                                   entityplayer))) {
-            flag = world.getBlock(x,
-                                  y,
-                                  z).onBlockActivated(world,
-                                                      x,
-                                                      y,
-                                                      z,
-                                                      entityplayer,
-                                                      side,
-                                                      xOffset,
-                                                      yOffset,
-                                                      zOffset);
+            IBlockState state = world.getBlockState(pos);
+            flag = state.getBlock().onBlockActivated(
+                    world,
+                    pos,
+                    state,
+                    entityplayer,
+                    side,
+                    xOffset,
+                    yOffset,
+                    zOffset);
         }
 
         if (!flag && itemstack != null
             && itemstack.getItem() instanceof ItemBlock) {
             ItemBlock itemblock = (ItemBlock) itemstack.getItem();
 
-            if (!itemblock.func_150936_a/* canPlaceItemBlockOnSide */(world,
-                                                                      x,
-                                                                      y,
-                                                                      z,
-                                                                      side,
-                                                                      entityplayer,
-                                                                      itemstack)) {
+            if (!itemblock.canPlaceBlockOnSide(
+                    world,
+                    pos,
+                    side,
+                    entityplayer,
+                    itemstack)) {
                 return false;
             }
         }
@@ -173,10 +171,8 @@ public class LittlePlayerController extends PlayerControllerMP {
         //System.out.println("Controller: " + world);
         PacketLib.sendBlockPlace(world,
                                  entityplayer,
-                                 x,
-                                 y,
-                                 z,
-                                 side,
+                                 pos,
+                                 side.getIndex(),
                                  xOffset,
                                  yOffset,
                                  zOffset);
@@ -188,28 +184,26 @@ public class LittlePlayerController extends PlayerControllerMP {
         } else if (this.currentGameType.isCreative()) {
             int damage = itemstack.getItemDamage();
             int stackSize = itemstack.stackSize;
-            boolean placedOrUsed = itemstack.tryPlaceItemIntoWorld(entityplayer,
-                                                                   world,
-                                                                   x,
-                                                                   y,
-                                                                   z,
-                                                                   side,
-                                                                   xOffset,
-                                                                   yOffset,
-                                                                   zOffset);
+            boolean placedOrUsed = itemstack.onItemUse(
+                    entityplayer,
+                    world,
+                    pos,
+                    side,
+                    xOffset,
+                    yOffset,
+                    zOffset);
             itemstack.setItemDamage(damage);
             itemstack.stackSize = stackSize;
             return placedOrUsed;
         } else {
-            if (!itemstack.tryPlaceItemIntoWorld(entityplayer,
-                                                 world,
-                                                 x,
-                                                 y,
-                                                 z,
-                                                 side,
-                                                 xOffset,
-                                                 yOffset,
-                                                 zOffset)) {
+            if (!itemstack.onItemUse(
+                    entityplayer,
+                    world,
+                    pos,
+                    side,
+                    xOffset,
+                    yOffset,
+                    zOffset)) {
                 return false;
             }
             if (itemstack.stackSize <= 0) {
@@ -220,57 +214,42 @@ public class LittlePlayerController extends PlayerControllerMP {
     }
 
     @Override
-    public void clickBlock(int x, int y, int z, int side) {
+    public boolean clickBlock(BlockPos pos, EnumFacing side) {
         World littleWorld = (World) LittleBlocks.proxy.getLittleWorld(mc.theWorld,
                                                                       false);
         if (!BlockUtil.isLittleChunk(littleWorld,
-                                     x,
-                                     y,
-                                     z)) {
-            return;
+                                     pos)) {
+            return false;
         }
         if (this.currentGameType.isCreative()) {
-            PacketLib.sendBlockClick(x,
-                                     y,
-                                     z,
-                                     side);
+            PacketLib.sendBlockClick(pos,
+                                     side.getIndex());
             clickBlockCreative(this.mc,
                                this,
-                               x,
-                               y,
-                               z,
+                               pos,
                                side);
         } else {
-            PacketLib.sendBlockClick(x,
-                                     y,
-                                     z,
-                                     side);
-            Block block = littleWorld.getBlock(x,
-                                               y,
-                                               z);
+            PacketLib.sendBlockClick(pos,
+                                     side.getIndex());
+            Block block = littleWorld.getBlockState(pos).getBlock();
             boolean flag = block.getMaterial() != Material.air;
             if (flag) {
                 block.onBlockClicked(littleWorld,
-                                     x,
-                                     y,
-                                     z,
+                                     pos,
                                      this.mc.thePlayer);
-                this.onPlayerDestroyBlock(x,
-                                          y,
-                                          z,
+                this.onPlayerDestroyBlock(pos,
                                           side);
             }
         }
+        return true;
     }
 
     @Override
-    public boolean onPlayerDestroyBlock(int x, int y, int z, int side) {
+    public boolean onPlayerDestroyBlock(BlockPos pos, EnumFacing side) {
         ItemStack stack = this.mc.thePlayer.getHeldItem();
         if (stack != null && stack.getItem() != null
             && stack.getItem().onBlockStartBreak(stack,
-                                                 x,
-                                                 y,
-                                                 z,
+                                                 pos,
                                                  this.mc.thePlayer)) {
             return false;
         }
@@ -281,58 +260,46 @@ public class LittlePlayerController extends PlayerControllerMP {
         } else {
             World littleWorld = (World) LittleBlocks.proxy.getLittleWorld(this.mc.theWorld,
                                                                           false);
-            Block littleBlock = littleWorld.getBlock(x,
-                                                     y,
-                                                     z);
+            IBlockState littleState = littleWorld.getBlockState(pos);
+            Block littleBlock = littleState.getBlock();
 
             if (littleBlock.getMaterial() == Material.air) {
                 return false;
             } else {
                 littleWorld.playAuxSFX(2001,
-                                       x,
-                                       y,
-                                       z,
+                                       pos,
                                        Block.getIdFromBlock(ConfigurationLib.littleChunk/*littleBlock)
                                                + (littleWorld.getBlockMetadata(x,
                                                                                y,
                                                                                z) << 12*/));
-                int metadata = littleWorld.getBlockMetadata(x,
-                                                            y,
-                                                            z);
 
                 boolean blockIsRemoved = littleBlock.removedByPlayer(littleWorld,
+                        pos,
                                                                      mc.thePlayer,
-                                                                     x,
-                                                                     y,
-                                                                     z);
+                        true);
 
                 if (this.mc.thePlayer.getHeldItem() != null
                     && this.mc.thePlayer.getHeldItem().getItem() instanceof ItemLittleBlocksWand) {
                     if (EnumWandAction.getWandAction().equals(EnumWandAction.DESTROY_LB)) {
-                        littleWorld.setBlockToAir(x,
-                                                  y,
-                                                  z);
+                        littleWorld.setBlockToAir(pos);
                         blockIsRemoved = true;
                     }
                 }
                 if (blockIsRemoved) {
                     littleBlock.onBlockDestroyedByPlayer(littleWorld,
-                                                         x,
-                                                         y,
-                                                         z,
-                                                         metadata);
+                                                         pos,
+                                                         littleState);
                 }
 
                 if (!this.currentGameType.isCreative()) {
                     ItemStack itemstack = this.mc.thePlayer.getCurrentEquippedItem();
 
                     if (itemstack != null) {
-                        itemstack.func_150999_a/* onBlockDestroyed */(littleWorld,
-                                                                      littleBlock,
-                                                                      x,
-                                                                      y,
-                                                                      z,
-                                                                      this.mc.thePlayer);
+                        itemstack.onBlockDestroyed(
+                                littleWorld,
+                                littleBlock,
+                                pos,
+                                this.mc.thePlayer);
 
                         if (itemstack.stackSize == 0) {
                             this.mc.thePlayer.destroyCurrentEquippedItem();

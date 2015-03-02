@@ -1,6 +1,7 @@
 package net.slimevoid.littleblocks.network.packets.executors;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.slimevoid.library.IPacketExecutor;
 import net.slimevoid.library.network.PacketUpdate;
@@ -16,13 +17,13 @@ public class PacketLittleBlockClickedExecutor implements IPacketExecutor {
     public PacketUpdate execute(PacketUpdate packet, World world, EntityPlayer entityplayer) {
         if (packet instanceof PacketLittleBlock
             && packet.getCommand().equals(CommandLib.BLOCK_CLICKED)) {
-            ((BlockLittleChunk) ConfigurationLib.littleChunk).onServerBlockClicked((World) LittleBlocks.proxy.getLittleWorld(world,
-                                                                                                                             false),
-                                                                                   packet.xPosition,
-                                                                                   packet.yPosition,
-                                                                                   packet.zPosition,
-                                                                                   packet.side,
-                                                                                   entityplayer);
+            ((BlockLittleChunk) ConfigurationLib.littleChunk).onServerBlockClicked(
+                    (World) LittleBlocks.proxy.getLittleWorld(
+                            world,
+                            false),
+                    packet.getPosition(),
+                    EnumFacing.getFront(packet.side),
+                    entityplayer);
         }
         return null;
     }
