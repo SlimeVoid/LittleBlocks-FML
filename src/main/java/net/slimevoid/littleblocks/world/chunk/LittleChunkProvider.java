@@ -1,4 +1,4 @@
-package net.slimevoid.littleblocks.world;
+package net.slimevoid.littleblocks.world.chunk;
 
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.BlockPos;

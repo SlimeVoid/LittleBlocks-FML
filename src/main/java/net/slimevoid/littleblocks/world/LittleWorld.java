@@ -6,8 +6,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.IEntitySelector;
-import net.minecraft.crash.CrashReport;
-import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -19,8 +17,6 @@ import net.minecraft.world.*;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.slimevoid.library.core.SlimevoidCore;
 import net.slimevoid.library.data.Logger;
 import net.slimevoid.library.data.Logger.LogLevel;
@@ -32,9 +28,9 @@ import net.slimevoid.littleblocks.core.lib.BlockUtil;
 import net.slimevoid.littleblocks.core.lib.ConfigurationLib;
 import net.slimevoid.littleblocks.core.lib.CoreLib;
 import net.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
+import net.slimevoid.littleblocks.world.chunk.LittleChunkProvider;
 
 import java.util.*;
-import java.util.concurrent.Callable;
 
 public abstract class LittleWorld extends World implements ILittleWorld {
 
@@ -430,8 +426,14 @@ public abstract class LittleWorld extends World implements ILittleWorld {
         if (!this.isValid(pos)) {
             return Blocks.air.getDefaultState();
         } else {
-            Chunk chunk = this.getChunkFromBlockCoords(pos);
-            return chunk.getBlockState(pos);
+            BlockPos parent = BlockUtil.getParentPos(pos);
+            IBlockState state = this.getParentWorld().getChunkFromBlockCoords(parent).getBlockState(parent);
+            if (state.getBlock().isAssociatedBlock(ConfigurationLib.littleChunk)) {
+                TileEntityLittleChunk chunk = (TileEntityLittleChunk) this.getParentWorld().getTileEntity(parent);
+                return chunk.getBlockState(BlockUtil.getLittlePos(pos));
+            } else {
+                return state;
+            }
         }
     }
     
@@ -1285,80 +1287,77 @@ public abstract class LittleWorld extends World implements ILittleWorld {
 //        return false;
 //    }
 
-//    @Override
-//    public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb, IEntitySelector entitySelector) {
-//        ArrayList arraylist = new ArrayList();
-//        int minX = MathHelper
-//                .floor_double((axisalignedbb.minX - MAX_ENTITY_RADIUS) / 16.0D);
-//        int maxX = MathHelper
-//                .floor_double((axisalignedbb.maxX + MAX_ENTITY_RADIUS) / 16.0D);
-//        int minZ = MathHelper
-//                .floor_double((axisalignedbb.minZ - MAX_ENTITY_RADIUS) / 16.0D);
-//        int maxZ = MathHelper
-//                .floor_double((axisalignedbb.maxZ + MAX_ENTITY_RADIUS) / 16.0D);
-//
-//        for (int x = minX; x <= maxX; ++x) {
-//            for (int z = minZ; z <= maxZ; ++z) {
-//                // if (this.chunkExists( x,
-//                // z)) {
-//                // this.getChunkFromChunkCoords( x,
-//                // z).getEntitiesWithinAABBForEntity( entity,
-//                // axisalignedbb,
-//                // arraylist,
-//                // entitySelector);
-//                // }
-//            }
-//        }
-//
-//        return arraylist;
-//    }
+    @Override
+    public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb) {
+        return this.getEntitiesInAABBexcluding(entity, axisalignedbb, IEntitySelector.NOT_SPECTATING);
+    }
 
-//    @Override
-//    public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb) {
-//        return this
-//                .getEntitiesWithinAABBExcludingEntity(entity,
-//                                                      axisalignedbb,
-//                                                      (IEntitySelector) null);
-//    }
+    /**
+     * getEntitiesWithinAABBForEntity
+     */
+    @Override
+    public List getEntitiesInAABBexcluding(Entity entity, AxisAlignedBB axisalignedbb, Predicate filter) {
+        ArrayList arraylist = new ArrayList();
+        int minX = MathHelper
+                .floor_double((axisalignedbb.minX - MAX_ENTITY_RADIUS) / 16.0D);
+        int maxX = MathHelper
+                .floor_double((axisalignedbb.maxX + MAX_ENTITY_RADIUS) / 16.0D);
+        int minZ = MathHelper
+                .floor_double((axisalignedbb.minZ - MAX_ENTITY_RADIUS) / 16.0D);
+        int maxZ = MathHelper
+                .floor_double((axisalignedbb.maxZ + MAX_ENTITY_RADIUS) / 16.0D);
 
-//    @Override TODO
-//    public List getEntitiesWithinAABB(Class entityClass, AxisAlignedBB aabb, Predicate filter) {
-//    }
-//
-//    @Override
-//    public List selectEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisalignedbb, IEntitySelector entitySelector) {
-//        ArrayList arraylist = new ArrayList();
-//        int minX = MathHelper
-//                .floor_double((axisalignedbb.minX - MAX_ENTITY_RADIUS) / 16.0D);
-//        int maxX = MathHelper
-//                .floor_double((axisalignedbb.maxX + MAX_ENTITY_RADIUS) / 16.0D);
-//        int minZ = MathHelper
-//                .floor_double((axisalignedbb.minZ - MAX_ENTITY_RADIUS) / 16.0D);
-//        int maxZ = MathHelper
-//                .floor_double((axisalignedbb.maxZ + MAX_ENTITY_RADIUS) / 16.0D);
-//
-//        for (int x = minX; x <= maxX; ++x) {
-//            for (int z = minZ; z <= maxZ; ++z) {
-//                // if (this.chunkExists( x,
-//                // z)) {
-//                // this.getChunkFromChunkCoords( x,
-//                // z).getEntitiesOfTypeWithinAAAB(entityClass,
-//                // axisalignedbb,
-//                // arraylist,
-//                // entitySelector);
-//                // }
-//            }
-//        }
-//
-//        return arraylist;
-//    }
+        for (int x = minX; x <= maxX; ++x) {
+            for (int z = minZ; z <= maxZ; ++z) {
+                // if (this.chunkExists( x,
+                // z)) {
+                // this.getChunkFromChunkCoords( x,
+                // z).getEntitiesWithinAABBForEntity( entity,
+                // axisalignedbb,
+                // arraylist,
+                // entitySelector);
+                // }
+            }
+        }
 
-//    @Override TODO
-//    public List getEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisAlignedBB) {
-//        return this.selectEntitiesWithinAABB(entityClass,
-//                                             axisAlignedBB,
-//                                             (IEntitySelector) null);
-//    }
+        return arraylist;
+    }
+
+    /**
+     * getEntitiesOfTypeWithinAAAB
+     */
+    @Override
+    public List getEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisalignedbb, Predicate filter) {
+        ArrayList arraylist = new ArrayList();
+        int minX = MathHelper
+                .floor_double((axisalignedbb.minX - MAX_ENTITY_RADIUS) / 16.0D);
+        int maxX = MathHelper
+                .floor_double((axisalignedbb.maxX + MAX_ENTITY_RADIUS) / 16.0D);
+        int minZ = MathHelper
+                .floor_double((axisalignedbb.minZ - MAX_ENTITY_RADIUS) / 16.0D);
+        int maxZ = MathHelper
+                .floor_double((axisalignedbb.maxZ + MAX_ENTITY_RADIUS) / 16.0D);
+
+        for (int x = minX; x <= maxX; ++x) {
+            for (int z = minZ; z <= maxZ; ++z) {
+                // if (this.chunkExists( x,
+                // z)) {
+                // this.getChunkFromChunkCoords( x,
+                // z).getEntitiesWithinAABBForEntity( entity,
+                // axisalignedbb,
+                // arraylist,
+                // entitySelector);
+                // }
+            }
+        }
+
+        return arraylist;
+    }
+
+    @Override
+    public List getEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisAlignedBB) {
+        return this.getEntitiesWithinAABB(entityClass, axisAlignedBB, IEntitySelector.NOT_SPECTATING);
+    }
 
     @Override
     public boolean checkNoEntityCollision(AxisAlignedBB axisalignedbb, Entity entity) {
@@ -1378,46 +1377,42 @@ public abstract class LittleWorld extends World implements ILittleWorld {
 
 
 
-//    @Override TODO dahell is that?
-//    public boolean canPlaceEntityOnSide(Block block, int x, int y, int z, boolean flag, int side, Entity entityPlacing, ItemStack itemstack) {
-//        Block blockAt = this.getBlock(x,
-//                                      y,
-//                                      z);
-//        AxisAlignedBB axisalignedbb = block
-//                .getCollisionBoundingBoxFromPool(this,
-//                                                 x,
-//                                                 y,
-//                                                 z);
-//
-//        if (flag) {
-//            axisalignedbb = null;
-//        }
-//
-//        if (axisalignedbb != null && !this
-//                .checkNoEntityCollision(axisalignedbb,
-//                                        entityPlacing)) {
-//            return false;
-//        } else {
-//            if (blockAt != null && (blockAt == Blocks.flowing_water || blockAt == Blocks.water || blockAt == Blocks.flowing_lava || blockAt == Blocks.lava || blockAt == Blocks.fire || blockAt
-//                    .getMaterial().isReplaceable())) {
-//                blockAt = null;
-//            }
-//
-//            if (blockAt != null && blockAt.isReplaceable(this,
-//                                                         x,
-//                                                         y,
-//                                                         z)) {
-//                blockAt = null;
-//            }
-//
-//            return blockAt != null && blockAt.getMaterial() == Material.circuits && block == Blocks.anvil ? true : block != Blocks.air && blockAt == null && block
-//                    .canPlaceBlockOnSide(this,
-//                                         x,
-//                                         y,
-//                                         z,
-//                                         side);
-//        }
-//    }
+    @Override
+    public boolean canBlockBePlaced(Block block, BlockPos pos, boolean flag, EnumFacing side, Entity entityPlacing, ItemStack itemstack) {
+        IBlockState blockAt = this.getBlockState(pos);
+        AxisAlignedBB axisalignedbb = blockAt.getBlock()
+                .getCollisionBoundingBox(this, pos, blockAt);
+
+        if (flag) {
+            axisalignedbb = null;
+        }
+
+        if (axisalignedbb != null && !this
+                .checkNoEntityCollision(axisalignedbb,
+                                        entityPlacing)) {
+            return false;
+        } else {
+            if ((blockAt.getBlock() == Blocks.flowing_water ||
+                    blockAt.getBlock() == Blocks.water ||
+                    blockAt == Blocks.flowing_lava ||
+                    blockAt == Blocks.lava ||
+                    blockAt == Blocks.fire ||
+                    blockAt.getBlock().getMaterial().isReplaceable())) {
+                blockAt = null;
+            }
+
+            if (blockAt.getBlock().isReplaceable(
+                            this,
+                            pos)) {
+                blockAt = null;
+            }
+
+            return blockAt.getBlock().getMaterial() == Material.circuits && block == Blocks.anvil ? true : block != Blocks.air && blockAt == null && block
+                    .canPlaceBlockOnSide(this,
+                                         pos,
+                                         side);
+        }
+    }
 
     @Override
     public boolean isOutSideLittleWorld(int x, int y, int z) {

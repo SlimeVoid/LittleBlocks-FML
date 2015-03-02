@@ -2,10 +2,8 @@ package net.slimevoid.littleblocks.world;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
@@ -13,10 +11,12 @@ import net.minecraft.util.*;
 import net.minecraft.world.*;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.chunk.storage.IChunkLoader;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraftforge.common.util.FakePlayer;
 import net.slimevoid.littleblocks.api.ILittleWorld;
+import net.slimevoid.littleblocks.world.chunk.LittleChunkProviderServer;
 
 import java.util.Collection;
 import java.util.List;
@@ -414,11 +414,6 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 //    }
 
     @Override
-    protected IChunkProvider createChunkProvider() {
-        return new LittleChunkProvider(this);
-    }
-
-    @Override
     public void saveAllChunks(boolean par1, IProgressUpdate par2IProgressUpdate) throws MinecraftException {
 
     }
@@ -518,6 +513,14 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 		int yourMum = 0;
 		return yourMum;
 	}
+
+    @Override
+    protected IChunkProvider createChunkProvider()
+    {
+        IChunkLoader ichunkloader = this.saveHandler.getChunkLoader(this.provider);
+        this.theChunkProviderServer = new LittleChunkProviderServer(this, ichunkloader, this.provider.createChunkGenerator());
+        return this.theChunkProviderServer;
+    }
 
     public java.io.File getChunkSaveLocation() {
         return ((net.minecraft.world.chunk.storage.AnvilChunkLoader)theChunkProviderServer.chunkLoader).chunkSaveLocation;
