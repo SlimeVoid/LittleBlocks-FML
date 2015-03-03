@@ -42,6 +42,8 @@ import net.slimevoid.littleblocks.items.EntityItemLittleBlocksCollection;
 import net.slimevoid.littleblocks.items.ItemLittleBlocksWand;
 import net.slimevoid.littleblocks.network.packets.PacketLittleBlocksCollection;
 import net.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
+import net.slimevoid.littleblocks.world.LittleWorld;
+import net.slimevoid.littleblocks.world.LittleWorldClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -561,46 +563,44 @@ public class BlockLittleChunk extends BlockContainer {
                     min = ret;
                 }
             }
-            Block littleBlock = tile.getBlock(xSelected,
-                                              ySelected,
-                                              zSelected);
 
             if (min != null) {
                 side = (byte) min.sideHit.getIndex();
                 xSelected = min.getBlockPos().getX();
                 ySelected = min.getBlockPos().getY();
                 zSelected = min.getBlockPos().getZ();
+                Block littleBlock = tile.getBlock(xSelected,
+                        ySelected,
+                        zSelected);
                 if (isFluid) {
                     littleBlock = tile.getBlock(xSelected,
                                                 ySelected,
                                                 zSelected);
                 }
                 boolean rayTraced = false;
-                if (littleBlock != Blocks.air) {
-                    if (littleBlock != null) {
-                        if (!(littleBlock.hasTileEntity(
-                                tile.getBlockState(
-                                        xSelected,
-                                        ySelected,
-                                        zSelected))
-                                && tile.getTileEntity(
+                if (littleBlock != Blocks.air && littleBlock != null) {
+                    if (!(littleBlock.hasTileEntity(
+                            tile.getBlockState(
                                     xSelected,
                                     ySelected,
-                                    zSelected) == null)) {
+                                    zSelected))
+                            && tile.getTileEntity(
+                                xSelected,
+                                ySelected,
+                                zSelected) == null)) {
 
-                            try {
-                                littleBlock.collisionRayTrace(
-                                        (World) tile.getLittleWorld(),
-                                        BlockUtil.getLittleChunkPos(pos).add(
-                                                xSelected,
-                                                ySelected,
-                                                zSelected
-                                        ),
-                                        player,
-                                        view);
-                            } catch (ClassCastException e) {
-                                FMLCommonHandler.instance().getFMLLogger().warn(e.getLocalizedMessage());
-                            }
+                        try {
+                            littleBlock.collisionRayTrace(
+                                    (World) tile.getLittleWorld(),
+                                    BlockUtil.getLittleChunkPos(pos).add(
+                                            xSelected,
+                                            ySelected,
+                                            zSelected
+                                    ),
+                                    player,
+                                    view);
+                        } catch (ClassCastException e) {
+                            FMLCommonHandler.instance().getFMLLogger().warn(e.getLocalizedMessage());
                         }
                     }
                 }
