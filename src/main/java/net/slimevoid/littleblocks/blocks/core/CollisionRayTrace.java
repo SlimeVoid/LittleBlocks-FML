@@ -11,6 +11,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.slimevoid.littleblocks.blocks.BlockLittleChunk;
+import net.slimevoid.littleblocks.core.lib.BlockUtil;
 import net.slimevoid.littleblocks.core.lib.ConfigurationLib;
 import net.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 
@@ -18,7 +19,7 @@ import java.util.List;
 
 public class CollisionRayTrace {
 
-    public static List<MovingObjectPosition> rayTraceLittleBlocks(BlockLittleChunk littleBlocks, Vec3 player, Vec3 view, int i, int j, int k, List<MovingObjectPosition> returns, TileEntityLittleChunk tile, boolean isFluid) {
+    public static List<MovingObjectPosition> rayTraceLittleBlocks(BlockLittleChunk littleBlocks, Vec3 player, Vec3 view, BlockPos pos, List<MovingObjectPosition> returns, TileEntityLittleChunk tile, boolean isFluid) {
         float m = ConfigurationLib.littleBlocksSize;
         for (int x = 0; x < tile.size; x++) {
             for (int y = 0; y < tile.size; y++) {
@@ -32,29 +33,37 @@ public class CollisionRayTrace {
                         if (block != null
                             && (!(block instanceof IFluidBlock) || isFluid)) {
                             try {
-                                BlockPos pos = new BlockPos((i << 3)
-                                                            + x,
-                                                            (j << 3)
-                                                            + y,
-                                                            (k << 3)
-                                                            + z);
-                                MovingObjectPosition ret = block.collisionRayTrace((World) tile.getLittleWorld(),
-                                                                                   pos,
-                                                                                   new Vec3(player.xCoord * 8,
-                                                                                            player.yCoord * 8,
-                                                                                            player.zCoord * 8),
-                                                                                   new Vec3(view.xCoord * 8,
-                                                                                            view.yCoord * 8,
-                                                                                            view.zCoord * 8));
+                                BlockPos littlePos = BlockUtil.getLittleChunkPos(pos).add(x, y, z);
+                                MovingObjectPosition ret = block.collisionRayTrace(
+                                        (World) tile.getLittleWorld(),
+                                        littlePos,
+                                        new Vec3(
+                                                player.xCoord * 8,
+                                                player.yCoord * 8,
+                                                player.zCoord * 8
+                                        ),
+                                        new Vec3(
+                                                view.xCoord * 8,
+                                                view.yCoord * 8,
+                                                view.zCoord * 8
+                                        )
+                                );
                                 if (ret != null) {
-                                    ret.getBlockPos().add(-(i << 3), -(j << 3), - (k << 3));
+                                    ;
                                     ret.hitVec = new Vec3(ret.hitVec.xCoord / 8.0,
                                                           ret.hitVec.yCoord / 8.0,
                                                           ret.hitVec.zCoord / 8.0);
-                                    ret.hitVec = ret.hitVec.addVector(-i,
-                                                                      -j,
-                                                                      -k);
-                                    returns.add(ret);
+                                    ret.hitVec = ret.hitVec.addVector(-pos.getX(),
+                                                                      -pos.getY(),
+                                                                      -pos.getZ());
+                                    returns.add(
+                                            new MovingObjectPosition(
+                                                    ret.hitVec,
+                                                    ret.sideHit,
+                                                    ret.getBlockPos().add(
+                                                            -(pos.getX() << 3),
+                                                            -(pos.getY() << 3),
+                                                            -(pos.getZ() << 3))));
                                 }
                             } catch (ClassCastException e) {
                                 FMLCommonHandler.instance().getFMLLogger().warn(e.getLocalizedMessage());

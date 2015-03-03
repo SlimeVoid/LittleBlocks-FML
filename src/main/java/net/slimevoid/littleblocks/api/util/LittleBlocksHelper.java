@@ -129,6 +129,9 @@ public class LittleBlocksHelper implements ISlimevoidHelper {
      */
     @Override
     public boolean isLadder(IBlockAccess world, BlockPos pos, EntityLivingBase entity) {
+        if (entity == null || entity.getBoundingBox() == null) {
+            return false;
+        }
     	int x = pos.getX(), y = pos.getY(), z = pos.getZ();
         TileEntityLittleChunk tile = (TileEntityLittleChunk) world.getTileEntity(pos);
         double minX = entity.getBoundingBox().minX + 0.001D;

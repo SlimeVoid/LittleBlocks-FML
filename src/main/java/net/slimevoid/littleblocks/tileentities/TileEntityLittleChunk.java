@@ -148,7 +148,7 @@ public class TileEntityLittleChunk extends TileEntity implements IUpdatePlayerLi
                     x,
                     y,
                     z);
-            if (littleState.getBlock() != Blocks.air) System.out.println("Block[" + x + "," + y + "," + z + "]: " + littleState.toString());
+            //if (littleState.getBlock() != Blocks.air) System.out.println("Block[" + x + "," + y + "," + z + "]: " + littleState.toString());
             return littleState;
         }
     }

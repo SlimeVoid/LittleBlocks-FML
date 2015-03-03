@@ -388,7 +388,7 @@ public class BlockLittleChunk extends BlockContainer {
             Block block = tile.getBlock(xSelected,
                                         ySelected,
                                         zSelected);
-            // System.out.println("Content: " + content);
+            // System.out.println("Block: " + block.getLocalizedName());
             if (block == null) {
                 this.setBlockBounds(xSelected / m,
                                     ySelected / m,
@@ -406,23 +406,27 @@ public class BlockLittleChunk extends BlockContainer {
                                              1,
                                              1);
                     } else {
-                        block.setBlockBoundsBasedOnState(tile.getLittleWorld(), new BlockPos(
-                                                         (pos.getX() << 3) + xSelected,
-                                                         (pos.getY() << 3) + ySelected,
-                                                         (pos.getZ() << 3) + zSelected));
+                        block.setBlockBoundsBasedOnState(tile.getLittleWorld(), BlockUtil.getLittleChunkPos(pos).add(xSelected, ySelected, zSelected));
                     }
-                    this.setBlockBounds((float) (xSelected + block.getBlockBoundsMinX())
-                                                / m,
-                                        (float) (ySelected + block.getBlockBoundsMinY())
-                                                / m,
-                                        (float) (zSelected + block.getBlockBoundsMinZ())
-                                                / m,
-                                        (float) (xSelected + block.getBlockBoundsMaxX())
-                                                / m,
-                                        (float) (ySelected + block.getBlockBoundsMaxY())
-                                                / m,
-                                        (float) (zSelected + block.getBlockBoundsMaxZ())
-                                                / m);
+                    double  blockBoundsMinX = block.getBlockBoundsMinX(),
+                            blockBoundsMinY = block.getBlockBoundsMinY(),
+                            blockBoundsMinZ = block.getBlockBoundsMinZ(),
+                            blockBoundsMaxX = block.getBlockBoundsMaxX(),
+                            blockBoundsMaxY = block.getBlockBoundsMaxY(),
+                            blockBoundsMaxZ = block.getBlockBoundsMaxZ();
+                    float   minX = (float) (xSelected + blockBoundsMinX),
+                            minY = (float) (ySelected + blockBoundsMinY),
+                            minZ = (float) (zSelected + blockBoundsMinZ),
+                            maxX = (float) (xSelected + blockBoundsMaxX),
+                            maxY = (float) (ySelected + blockBoundsMaxY),
+                            maxZ = (float) (zSelected + blockBoundsMaxZ);
+                    this.setBlockBounds(
+                            minX / m,
+                            minY / m,
+                            minZ / m,
+                            maxX / m,
+                            maxY / m,
+                            maxZ / m);
                 }
             }
         }
@@ -520,9 +524,7 @@ public class BlockLittleChunk extends BlockContainer {
         returns = CollisionRayTrace.rayTraceLittleBlocks(this,
                                                          player,
                                                          view,
-                                                         pos.getX(),
-                                                         pos.getY(),
-                                                         pos.getZ(),
+                                                         pos,
                                                          returns,
                                                          tile,
                                                          isFluid);
