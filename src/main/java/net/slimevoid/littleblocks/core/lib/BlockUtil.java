@@ -183,14 +183,14 @@ public class BlockUtil {
     }
 
     public static boolean isLittleChunk(World world, BlockPos pos) {
-        return isLittleChunk(world, pos.getZ(), pos.getY(), pos.getZ());
+        return isLittleChunk(world, pos.getX(), pos.getY(), pos.getZ());
     }
 
     @Deprecated
     public static boolean isLittleChunk(World world, int x, int y, int z) {
         if (world instanceof ILittleWorld) {
             return ((ILittleWorld) world).getParentWorld().getBlockState(
-                    getParentPos(x, y , z)).getBlock().isAssociatedBlock(ConfigurationLib.littleChunk);
+                    getParentPos(x, y, z)).getBlock().isAssociatedBlock(ConfigurationLib.littleChunk);
         }
         return false;
     }

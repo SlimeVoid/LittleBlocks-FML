@@ -591,10 +591,10 @@ public class BlockLittleChunk extends BlockContainer {
                             try {
                                 littleBlock.collisionRayTrace(
                                         (World) tile.getLittleWorld(),
-                                        new BlockPos(
-                                                (pos.getX() << 3) + this.xSelected,
-                                                (pos.getY() << 3) + this.ySelected,
-                                                (pos.getZ() << 3) + this.zSelected
+                                        BlockUtil.getLittleChunkPos(pos).add(
+                                                xSelected,
+                                                ySelected,
+                                                zSelected
                                         ),
                                         player,
                                         view);

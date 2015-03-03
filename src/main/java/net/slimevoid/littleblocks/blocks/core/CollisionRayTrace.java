@@ -49,7 +49,6 @@ public class CollisionRayTrace {
                                         )
                                 );
                                 if (ret != null) {
-                                    ;
                                     ret.hitVec = new Vec3(ret.hitVec.xCoord / 8.0,
                                                           ret.hitVec.yCoord / 8.0,
                                                           ret.hitVec.zCoord / 8.0);

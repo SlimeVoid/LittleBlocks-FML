@@ -383,12 +383,13 @@ public abstract class LittleWorld extends World implements ILittleWorld {
         if (!this.isValid(pos)) {
             return false;
         } else {
-            Block block = this.getParentWorld().getChunkFromBlockCoords(BlockUtil.getParentPos(pos))
-                    .getBlock(BlockUtil.getParentPos(pos));
-            if (block.equals(ConfigurationLib.littleChunk)) {
-                TileEntityLittleChunk tile = (TileEntityLittleChunk) this
-                        .getParentWorld().getTileEntity(BlockUtil.getParentPos(pos));
-                Block littleBlock = tile.getBlock(BlockUtil.getLittlePos(pos));
+            BlockPos parent = BlockUtil.getParentPos(pos);
+            Block block = this.getParentWorld()
+                    .getChunkFromBlockCoords(parent)
+                    .getBlock(parent);
+            if (block.isAssociatedBlock(ConfigurationLib.littleChunk)) {
+                TileEntityLittleChunk chunk = (TileEntityLittleChunk) this.getParentWorld().getTileEntity(parent);
+                Block littleBlock = chunk.getBlock(BlockUtil.getLittlePos(pos));
                 return littleBlock != Blocks.air ? true : false;
             } else {
                 return false;
@@ -402,13 +403,21 @@ public abstract class LittleWorld extends World implements ILittleWorld {
             return Blocks.air.getDefaultState();
         } else {
             BlockPos parent = BlockUtil.getParentPos(pos);
-            IBlockState state = this.getParentWorld().getChunkFromBlockCoords(parent).getBlockState(parent);
-            if (state.getBlock().isAssociatedBlock(ConfigurationLib.littleChunk)) {
-                TileEntityLittleChunk chunk = (TileEntityLittleChunk) this.getParentWorld().getTileEntity(parent);
-                return chunk.getBlockState(BlockUtil.getLittlePos(pos));
-            } else {
-                return state;
+            // TODO :: Check why getParentWorld is null
+            try {
+                Block block = this.getParentWorld()
+                        .getChunkFromBlockCoords(parent)
+                        .getBlock(parent);
+                if (block.isAssociatedBlock(ConfigurationLib.littleChunk)) {
+                    TileEntityLittleChunk chunk = (TileEntityLittleChunk) this.getParentWorld().getTileEntity(parent);
+                    return chunk.getBlockState(BlockUtil.getLittlePos(pos));
+                } else {
+                    return this.getParentWorld().getBlockState(parent);
+                }
+            } catch(NullPointerException e) {
+                System.out.println(e.getLocalizedMessage());
             }
+            return Blocks.air.getDefaultState();
         }
     }
     
