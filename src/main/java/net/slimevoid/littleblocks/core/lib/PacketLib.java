@@ -27,36 +27,6 @@ public class PacketLib {
     public final static int      DIG_ONGOING           = 1;
     public final static int      DIG_BROKEN            = 2;
 
-    @SideOnly(Side.CLIENT)
-    public static void registerClientPacketHandlers() {
-        MinecraftForge.EVENT_BUS.register(new ClientNetworkEvent());
-
-        PacketHelper.registerClientExecutor(/*CommandLib.SETTINGS,*/
-                ClientPacketLittleBlocksLoginExecutor.class,
-                PacketLittleBlocksSettings.class,
-                PacketIds.LOGIN);
-
-        PacketHelper.registerClientExecutor(/*CommandLib.UPDATE_CLIENT,*/
-                ClientBlockChangeExecutor.class,
-                PacketLittleBlockChange.class,
-                PacketIds.UPDATE);
-
-        PacketHelper.registerClientExecutor(/*CommandLib.ENTITY_COLLECTION,*/
-                ClientLittleCollectionExecutor.class,
-                PacketLittleBlocksCollection.class,
-                PacketIds.ENTITY);
-
-        PacketHelper.registerClientExecutor(/*CommandLib.COPIER_MESSAGE,*/
-                ClientCopierNotifyExecutor.class,
-                PacketLittleNotify.class,
-                PacketIds.PLAYER);
-
-        PacketHelper.registerClientExecutor(/*CommandLib.BLOCK_EVENT,*/
-                ClientBlockEventExecutor.class,
-                PacketLittleBlocksEvents.class,
-                PACKETID_EVENT);
-    }
-
     public static void registerPacketHandlers() {
         MinecraftForge.EVENT_BUS.register(new NetworkEvent());
 
@@ -64,17 +34,46 @@ public class PacketLib {
         PacketHelper.registerServerExecutor(/*CommandLib.WAND_SWITCH,*/
                 PacketLittleWandSwitchExecutor.class,
                 PacketLittleNotify.class,
-                PacketIds.PLAYER);
-
+                0);
         //PacketLittleBlockHandler littleBlockHandler = new PacketLittleBlockHandler();
         PacketHelper.registerServerExecutor(/*CommandLib.BLOCK_ACTIVATED,*/
                 PacketLittleBlockActivatedExecutor.class,
                 PacketLittleBlock.class,
-                PacketIds.LOGIN);
+                1);
         PacketHelper.registerServerExecutor(/*CommandLib.BLOCK_CLICKED,*/
                 PacketLittleBlockClickedExecutor.class,
                 PacketLittleBlock.class,
-                PacketIds.TILE);
+                2);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void registerClientPacketHandlers() {
+        MinecraftForge.EVENT_BUS.register(new ClientNetworkEvent());
+
+        PacketHelper.registerClientExecutor(/*CommandLib.COPIER_MESSAGE,*/
+                ClientCopierNotifyExecutor.class,
+                PacketLittleNotify.class,
+                0);
+
+        PacketHelper.registerClientExecutor(/*CommandLib.SETTINGS,*/
+                ClientPacketLittleBlocksLoginExecutor.class,
+                PacketLittleBlocksSettings.class,
+                3);
+
+        PacketHelper.registerClientExecutor(/*CommandLib.UPDATE_CLIENT,*/
+                ClientBlockChangeExecutor.class,
+                PacketLittleBlockChange.class,
+                4);
+
+        PacketHelper.registerClientExecutor(/*CommandLib.ENTITY_COLLECTION,*/
+                ClientLittleCollectionExecutor.class,
+                PacketLittleBlocksCollection.class,
+                5);
+
+        PacketHelper.registerClientExecutor(/*CommandLib.BLOCK_EVENT,*/
+                ClientBlockEventExecutor.class,
+                PacketLittleBlocksEvents.class,
+                6);
     }
 
     @SideOnly(Side.CLIENT)

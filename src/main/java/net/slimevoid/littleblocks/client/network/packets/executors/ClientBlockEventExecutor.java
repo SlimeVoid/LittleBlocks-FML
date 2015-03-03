@@ -4,10 +4,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.slimevoid.library.IPacketExecutor;
 import net.slimevoid.library.network.PacketUpdate;
+import net.slimevoid.library.network.executor.PacketExecutor;
 import net.slimevoid.littleblocks.core.LittleBlocks;
 import net.slimevoid.littleblocks.network.packets.PacketLittleBlocksEvents;
 
-public class ClientBlockEventExecutor implements IPacketExecutor {
+public class ClientBlockEventExecutor extends PacketExecutor {
 
     @Override
     public PacketUpdate execute(PacketUpdate packet, World world, EntityPlayer entityplayer) {

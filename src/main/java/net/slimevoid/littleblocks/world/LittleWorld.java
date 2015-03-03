@@ -34,6 +34,10 @@ import java.util.*;
 
 public abstract class LittleWorld extends World implements ILittleWorld {
 
+    public boolean restoringBlockSnapshots = false;
+    public boolean captureBlockSnapshots = false;
+    public ArrayList<net.minecraftforge.common.util.BlockSnapshot> capturedBlockSnapshots = new ArrayList<net.minecraftforge.common.util.BlockSnapshot>();
+
     private List               addedTileEntityList             = new ArrayList<TileEntity>();
     private boolean           processingLoadedTiles;
 
@@ -446,58 +450,6 @@ public abstract class LittleWorld extends World implements ILittleWorld {
                pos.getY() < this.getHeight();
     }
 
-
-
-//    @Override TODO done in blockstate, right?
-//    public Block getBlock(BlockPos pos) {
-//        if (pos.getX() < 0xfe363c80 || pos.getZ() < 0xfe363c80 || pos.getX() >= 0x1c9c380 || pos.getZ() >= 0x1c9c380) {
-//            LoggerLittleBlocks
-//                    .getInstance(Logger.filterClassName(this.getClass()
-//                            .toString()))
-//                    .write(this.getParentWorld().isRemote,
-//                           "getBlockId(" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ").[Out of bounds]",
-//                           LoggerLittleBlocks.LogLevel.DEBUG);
-//            return Blocks.air;
-//        }
-//        if (pos.getY() < 0) {
-//            LoggerLittleBlocks
-//                    .getInstance(Logger.filterClassName(this.getClass()
-//                            .toString()))
-//                    .write(this.getParentWorld().isRemote,
-//                           "getBlockId(" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ").[pos.getY() < 0]",
-//                           LoggerLittleBlocks.LogLevel.DEBUG);
-//            return Blocks.air;
-//        }
-//        if (pos.getY() >= this.getHeight()) {
-//            LoggerLittleBlocks
-//                    .getInstance(Logger.filterClassName(this.getClass()
-//                            .toString()))
-//                    .write(this.getParentWorld().isRemote,
-//                           "getBlockId(" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ").[pos.getY() >= " + this
-//                                   .getHeight() + "]",
-//                           LoggerLittleBlocks.LogLevel.DEBUG);
-//            return Blocks.air;
-//        } else {
-//            Block id = this.getParentWorld().getChunkFromChunkCoords(pos.getX() >> 7,
-//                                                                     pos.getZ() >> 7)
-//                    .getBlock((pos.getX() & 0x7f) >> 3,
-//                              pos.getY() >> 3,
-//                              (pos.getZ() & 0x7f) >> 3);
-//            if (id.equals(ConfigurationLib.littleChunk)) {
-//                TileEntityLittleChunk tile = (TileEntityLittleChunk) this
-//                        .getParentWorld().getTileEntity(new BlockPos(pos.getX() >> 3,
-//                                                                    pos.getY() >> 3,
-//                                                                    pos.getZ() >> 3));
-//                Block littleBlock = tile.getBlock(pos.getX() & 7,
-//                                                  pos.getY() & 7,
-//                                                  pos.getZ() & 7);
-//                return littleBlock;
-//            } else {
-//                return id;
-//            }
-//        }
-//    }
-
     @Override
     public boolean spawnEntityInWorld(Entity entity) {
         entity.setPosition(entity.posX / ConfigurationLib.littleBlocksSize,
@@ -527,144 +479,63 @@ public abstract class LittleWorld extends World implements ILittleWorld {
                     .getInstance(Logger.filterClassName(this.getClass()
                             .toString()))
                     .write(this.getParentWorld().isRemote,
-                            "setBlock("+pos+" "+newState+" "+flags+").[Pos invalid]",
+                            "setBlock(" + pos + " " + newState + " " + flags + ").[Pos invalid]",
                             LoggerLittleBlocks.LogLevel.DEBUG);
             return false;
         } else if (!this.isRemote && this.worldInfo.getTerrainType() == WorldType.DEBUG_WORLD) {
             return false;
         } else {
-            Chunk chunk = this.getChunkFromBlockCoords(pos);
-            Block block = newState.getBlock();
+            BlockPos parent = BlockUtil.getParentPos(pos);
+            Block parentBlock = this.getParentWorld().getChunkFromBlockCoords(parent).getBlock(parent);
+            if (parentBlock.isAssociatedBlock(ConfigurationLib.littleChunk)) {
+                TileEntityLittleChunk chunk = (TileEntityLittleChunk) this.getParentWorld().getTileEntity(parent);
+                Block block = newState.getBlock();
 
-//            net.minecraftforge.common.util.BlockSnapshot blockSnapshot = null; What is that? TODO
-//            if (this.captureBlockSnapshots && !this.isRemote) {
-//                blockSnapshot = net.minecraftforge.common.util.BlockSnapshot.getBlockSnapshot(this, pos, flags);
-//                this.capturedBlockSnapshots.add(blockSnapshot);
-//            }
-            IBlockState currentState = chunk.getBlockState(pos);
-            if(currentState.getBlock().getClass() != BlockLittleChunk.class) {
-                this.getParentWorld().setBlockState(LittleBlocks.scaleDownPos(pos), BlockLittleChunk.getStateById(0)); // TODO Is that right?
-            }
-            IBlockState state = chunk.setBlockState(pos, newState);
-
-            if (state == null) {
-                return false;
-            } else {
-                Block block1 = state.getBlock();
-
-                if (block.getLightOpacity() != block1.getLightOpacity() || block.getLightValue() != block1.getLightValue()) {
-                    this.theProfiler.startSection("checkLight");
-                    this.checkLight(pos);
-                    this.theProfiler.endSection();
+                net.minecraftforge.common.util.BlockSnapshot blockSnapshot = null;
+                if (this.captureBlockSnapshots && !this.isRemote) {
+                    blockSnapshot = net.minecraftforge.common.util.BlockSnapshot.getBlockSnapshot(this, pos, flags);
+                    this.capturedBlockSnapshots.add(blockSnapshot);
                 }
 
-//                if (blockSnapshot == null) { // Don't notify clients or update physics while capturing blockstates
-                this.markAndNotifyBlock(pos, chunk, state, newState, flags); // Modularize client and physic updates
-//                }
+                IBlockState state = chunk.setBlockState(pos, newState);
 
-                return true;
+                if (state == null) {
+                    if (blockSnapshot != null) this.capturedBlockSnapshots.remove(blockSnapshot);
+                    return false;
+                } else {
+                    Block block1 = state.getBlock();
+
+                    if (block.getLightOpacity() != block1.getLightOpacity() || block.getLightValue() != block1.getLightValue()) {
+                        //this.theProfiler.startSection("checkLight");
+                        //this.checkLight(pos);
+                        //this.theProfiler.endSection();
+                    }
+
+                    if (blockSnapshot == null) { // Don't notify clients or update physics while capturing blockstates
+                        this.markAndNotifyBlock(pos, null, state, newState, flags); // Modularize client and physic updates
+                    }
+
+                    return true;
+                }
+            } else {
+                return false;
             }
         }
-        /// OLD
-//        if (isValidPos(pos)) {
-//            if (pos.getY() < 0) {
-//                LoggerLittleBlocks
-//                        .getInstance(Logger.filterClassName(this.getClass()
-//                                .toString()))
-//                        .write(this.getParentWorld().isRemote,
-//                               "setBlock(" + x + ", " + y + ", " + z + ", " + block
-//                                       .getLocalizedName() + ", " + newmeta + ", " + update + ").[y < 0]",
-//                               LoggerLittleBlocks.LogLevel.DEBUG);
-//                return false;
-//            } else if (y >= this.getHeight()) {
-//                LoggerLittleBlocks
-//                        .getInstance(Logger.filterClassName(this.getClass()
-//                                .toString()))
-//                        .write(this.getParentWorld().isRemote,
-//                               "setBlock(" + x + ", " + y + ", " + z + ", " + block
-//                                       .getLocalizedName() + ", " + newmeta + ", " + update + ").[y >= " + this
-//                                       .getHeight() + "]",
-//                               LoggerLittleBlocks.LogLevel.DEBUG);
-//                return false;
-//            } else {
-//                Chunk chunk = this.getParentWorld()
-//                        .getChunkFromChunkCoords(x >> 7,
-//                                                 z >> 7);
-//                if (chunk.getBlock((x & 0x7f) >> 3,
-//                                   y >> 3,
-//                                   (z & 0x7f) >> 3) != ConfigurationLib.littleChunk && this
-//                        .isAirBlock(x,
-//                                    y,
-//                                    z)) {
-//                    this.getParentWorld()
-//                            .setBlock(x >> 3,
-//                                      y >> 3,
-//                                      z >> 3,
-//                                      ConfigurationLib.littleChunk);
-//                } else if (chunk.getBlock((x & 0x7f) >> 3,
-//                                          y >> 3,
-//                                          (z & 0x7f) >> 3) != ConfigurationLib.littleChunk) {
-//                    return false;
-//                }
-//                if (!this.isRemote) {
-//                    TileEntityLittleChunk tile = (TileEntityLittleChunk) this
-//                            .getParentWorld().getTileEntity(x >> 3,
-//                                                            y >> 3,
-//                                                            z >> 3);
-//                    Block originalId = null;
-//
-//                    if ((update & 1) != 0) {
-//                        originalId = tile.getBlock(x & 7,
-//                                                   y & 7,
-//                                                   z & 7);
-//                    }
-//
-//                    boolean flag = tile.setBlockIDWithMetadata(x & 7,
-//                                                               y & 7,
-//                                                               z & 7,
-//                                                               block,
-//                                                               newmeta);
-//
-//                    this.func_147451_t/* updateAllLightTypes */(x,
-//                                                                y,
-//                                                                z);
-//
-//                    if (flag) {
-//                        if ((update & 2) != 0 && ((update & 4) == 0)) {
-//                            this.markBlockForUpdate(x,
-//                                                    y,
-//                                                    z);
-//                        }
-//
-//                        if ((update & 1) != 0) {
-//                            this.notifyBlockChange(x,
-//                                                   y,
-//                                                   z,
-//                                                   originalId);
-//
-//                            if (block != null && block
-//                                    .hasComparatorInputOverride()) {
-//                                this.func_147453_f(x,
-//                                                   y,
-//                                                   z,
-//                                                   block);
-//                            }
-//                        }
-//                    }
-//                    return flag;
-//                }
-//            }
-//        } else {
-//            LoggerLittleBlocks
-//                    .getInstance(Logger.filterClassName(this.getClass()
-//                            .toString()))
-//                    .write(this.getParentWorld().isRemote,
-//                           "setBlock(" + x + ", " + y + ", " + z + ", " + block
-//                                   .getLocalizedName() + ", " + newmeta + ", " + update + ").[" + block
-//                                   .getLocalizedName() + ", " + newmeta + "]:No Change",
-//                           LoggerLittleBlocks.LogLevel.ERROR);
-//        }
-//        return false;
+    }
+
+    // Split off from original setBlockState(BlockPos, IBlockState Block p_147465_4_, int) method in order to directly send client and physic updates
+    public void markAndNotifyBlock(BlockPos pos, Chunk chunk, IBlockState old, IBlockState new_, int flags) {
+        if ((flags & 2) != 0 && (!this.isRemote || (flags & 4) == 0) && (chunk == null || chunk.isPopulated())) {
+            this.markBlockForUpdate(pos);
+        }
+
+        if (!this.isRemote && (flags & 1) != 0) {
+            this.notifyNeighborsRespectDebug(pos, old.getBlock());
+
+            if (new_.getBlock().hasComparatorInputOverride()) {
+                this.updateComparatorOutputLevel(pos, new_.getBlock());
+            }
+        }
     }
 
 
@@ -710,97 +581,87 @@ public abstract class LittleWorld extends World implements ILittleWorld {
         }
     }
 
-    @Override
-    public TileEntity getTileEntity(BlockPos pos) {
-        if(!isValid(pos)) {
-            IBlockState state = this.getParentWorld().getBlockState(BlockUtil.getParentPos(pos));
-            TileEntity tile = this.getParentWorld().getTileEntity(BlockUtil.getParentPos(pos));
-            if(state.getBlock().getClass() == BlockLittleChunk.class) {
-                TileEntityLittleChunk tileLc = (TileEntityLittleChunk) tile;
-                return tileLc.getTileEntity(BlockUtil.getLittlePos(pos), Chunk.EnumCreateEntityType.IMMEDIATE);
-            } else {
-                return tile;
-            }
+    public BlockPos getTopSolidOrLiquidBlock(BlockPos pos) {
+        BlockPos parent = BlockUtil.getParentPos(pos);
+        IBlockState parentState = this.getParentWorld().getBlockState(parent);
+        if (parentState.getBlock().isAssociatedBlock(ConfigurationLib.littleChunk)) {
+            TileEntityLittleChunk chunk = (TileEntityLittleChunk) this.getParentWorld().getTileEntity(parent);
+            BlockPos blockpos1;
+            BlockPos blockpos2;
+
+            //for (blockpos1 = new BlockPos(pos.getX(), chunk.getTopFilledSegment() + 16, pos.getZ()); blockpos1.getY() >= 0; blockpos1 = blockpos2) {
+            //    blockpos2 = blockpos1.down();
+            //    Block block = chunk.getBlock(blockpos2);
+
+            //    if (block.getMaterial().blocksMovement() && !block.isLeaves(this, blockpos2) && !block.isFoliage(this, blockpos2)) {
+            //        break;
+            //    }
+            //}
+
+            //return blockpos1;
         }
-        return null;
+        return parent;
     }
 
-//    @Override OLD
-//    public TileEntity getTileEntity(int x, int y, int z) {
-//        if (x < 0xfe363c80 || z < 0xfe363c80 || x >= 0x1c9c380 || z >= 0x1c9c380) {
-//            LoggerLittleBlocks
-//                    .getInstance(Logger.filterClassName(this.getClass()
-//                            .toString()))
-//                    .write(this.getParentWorld().isRemote,
-//                           "getTileEntity(" + x + ", " + y + ", " + z + ").[Out of bounds]",
-//                           LoggerLittleBlocks.LogLevel.DEBUG);
-//            return null;
-//        }
-//        if (y < 0) {
-//            LoggerLittleBlocks
-//                    .getInstance(Logger.filterClassName(this.getClass()
-//                            .toString()))
-//                    .write(this.getParentWorld().isRemote,
-//                           "getBlockMetadata(" + x + ", " + y + ", " + z + ").[y < 0]",
-//                           LoggerLittleBlocks.LogLevel.DEBUG);
-//            return null;
-//        }
-//        if (y >= this.getHeight()) {
-//            return null;
-//        } else {
-//            Chunk chunk = this.getParentWorld().getChunkFromChunkCoords(x >> 7,
-//                                                                        z >> 7);
-//            if (chunk.getBlock((x & 0x7f) >> 3,
-//                               y >> 3,
-//                               (z & 0x7f) >> 3) == ConfigurationLib.littleChunk) {
-//                TileEntity tileentity = null;
-//                int l;
-//                TileEntity tileentity1;
-//
-//                if (this.field_147481_N) {
-//                    for (l = 0; l < this.addedTileEntityList.size(); ++l) {
-//                        tileentity1 = (TileEntity) this.addedTileEntityList
-//                                .get(l);
-//
-//                        if (!tileentity1.isInvalid() && tileentity1.xCoord == x && tileentity1.yCoord == y && tileentity1.zCoord == z) {
-//                            tileentity = tileentity1;
-//                            break;
-//                        }
-//                    }
-//                }
-//
-//                if (tileentity == null) {
-//                    TileEntityLittleChunk tile = (TileEntityLittleChunk) this
-//                            .getParentWorld().getTileEntity(x >> 3,
-//                                                            y >> 3,
-//                                                            z >> 3);
-//                    if (tile != null) {
-//                        tileentity = tile.getTileEntity(x & 7,
-//                                y & 7,
-//                                z & 7);
-//                    }
-//                }
-//
-//                if (tileentity == null) {
-//                    for (l = 0; l < this.addedTileEntityList.size(); ++l) {
-//                        tileentity1 = (TileEntity) this.addedTileEntityList
-//                                .get(l);
-//
-//                        if (!tileentity1.isInvalid() && tileentity1.xCoord == x && tileentity1.yCoord == y && tileentity1.zCoord == z) {
-//                            tileentity = tileentity1;
-//                            break;
-//                        }
-//                    }
-//                }
-//
-//                return tileentity;
-//            } else {
-//                return this.getParentWorld().getTileEntity(x >> 3,
-//                                                           y >> 3,
-//                                                           z >> 3);
-//            }
-//        }
-//    }
+    @Override
+    public void scheduleUpdate(BlockPos pos, Block blockIn, int delay) {}
+
+    @Override
+    public void updateBlockTick(BlockPos pos, Block blockIn, int p_175654_3_, int p_175654_4_) {}
+
+    @Override
+    public void scheduleBlockUpdate(BlockPos pos, Block blockIn, int delay, int priority) {}
+
+    @Override
+    public TileEntity getTileEntity(BlockPos pos) {
+        if (this.isValid(pos)) {
+            return null;
+        } else {
+            BlockPos parent = BlockUtil.getParentPos(pos);
+            Block block = this.getParentWorld().getChunkFromBlockCoords(parent).getBlock(parent);
+            if (block.isAssociatedBlock(ConfigurationLib.littleChunk)) {
+                TileEntity tileentity = null;
+                int l;
+                TileEntity tileentity1;
+
+                if (this.processingLoadedTiles) {
+                    for (l = 0; l < this.addedTileEntityList.size(); ++l) {
+                        tileentity1 = (TileEntity) this.addedTileEntityList
+                                .get(l);
+
+                        if (!tileentity1.isInvalid() && tileentity1.getPos().equals(pos)) {
+                            tileentity = tileentity1;
+                            break;
+                        }
+                    }
+                }
+
+                if (tileentity == null) {
+                    TileEntityLittleChunk tile = (TileEntityLittleChunk) this
+                            .getParentWorld().getTileEntity(parent);
+                    if (tile != null) {
+                        tileentity = tile.getTileEntity(BlockUtil.getLittlePos(pos), Chunk.EnumCreateEntityType.IMMEDIATE);
+                    }
+                }
+
+                if (tileentity == null) {
+                    for (l = 0; l < this.addedTileEntityList.size(); ++l) {
+                        tileentity1 = (TileEntity) this.addedTileEntityList
+                                .get(l);
+
+                        if (!tileentity1.isInvalid() && tileentity1.getPos().equals(pos)) {
+                            tileentity = tileentity1;
+                            break;
+                        }
+                    }
+                }
+
+                return tileentity;
+            } else {
+                return this.getParentWorld().getTileEntity(parent);
+            }
+        }
+    }
 
 
     @Override

@@ -30,24 +30,17 @@ public class LittleBlocks {
     @EventHandler
     public void LittleBlocksPreInit(FMLPreInitializationEvent event) {
         proxy.registerConfigurationProperties(event.getSuggestedConfigurationFile());
-        proxy.preInit();
-        LBInit.preInitialize();
+        LBCore.preInitialize();
     }
 
     @EventHandler
     public void LittleBlocksInit(FMLInitializationEvent event) {
-        proxy.init();
-        PacketHelper.registerHandler();
-        LBInit.initialize();
+        LBCore.initialize();
+        proxy.registerPacketHandlers();
     }
 
     @EventHandler
     public void LittleBlocksPostInit(FMLPostInitializationEvent event) {
-        proxy.postInit();
-        LBInit.postInitialize();
-    }
-
-    public static BlockPos scaleDownPos(BlockPos pos) {
-        return new BlockPos(pos.getX() << 3, pos.getY() << 3, pos.getZ() << 3);
+        LBCore.postInitialize();
     }
 }

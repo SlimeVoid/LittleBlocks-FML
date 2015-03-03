@@ -6,12 +6,13 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.LanguageRegistry;
 import net.slimevoid.library.IPacketExecutor;
 import net.slimevoid.library.network.PacketUpdate;
+import net.slimevoid.library.network.executor.PacketExecutor;
 import net.slimevoid.library.util.helpers.ChatHelper;
 import net.slimevoid.littleblocks.core.lib.CommandLib;
 import net.slimevoid.littleblocks.core.lib.MessageLib;
 import net.slimevoid.littleblocks.network.packets.PacketLittleNotify;
 
-public class ClientCopierNotifyExecutor implements IPacketExecutor {
+public class ClientCopierNotifyExecutor extends PacketExecutor {
 
     @Override
     public PacketUpdate execute(PacketUpdate packet, World world, EntityPlayer entityplayer) {
