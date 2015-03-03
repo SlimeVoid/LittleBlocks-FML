@@ -33,6 +33,9 @@ public class DrawCopierHighlight {
     }
 
     public void drawInWorldCopierOverlay(DrawBlockHighlightEvent event) {
+        if (event.target == null || event.target.getBlockPos() == null) {
+            return;
+        }
         int blockX = event.target.getBlockPos().getX();
         int blockY = event.target.getBlockPos().getY();
         int blockZ = event.target.getBlockPos().getZ();

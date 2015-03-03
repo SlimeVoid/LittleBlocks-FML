@@ -27,6 +27,7 @@ import net.slimevoid.library.core.lib.CoreLib;
 import net.slimevoid.littleblocks.api.ILittleBlocks;
 import net.slimevoid.littleblocks.api.ILittleWorld;
 import net.slimevoid.littleblocks.core.LittleBlocks;
+import net.slimevoid.littleblocks.core.lib.BlockUtil;
 import net.slimevoid.littleblocks.core.lib.ConfigurationLib;
 
 import java.util.*;
@@ -155,9 +156,9 @@ public class TileEntityLittleChunk extends TileEntity implements IUpdatePlayerLi
 
     public IBlockState getBlockState(BlockPos pos) {
         return this.getBlockState(
-                pos.getX(),
-                pos.getY(),
-                pos.getZ());
+                pos.getX() & 7,
+                pos.getY() & 7,
+                pos.getZ() & 7);
     }
 
     public int getBlockMetadata(int x, int y, int z) {
@@ -168,11 +169,11 @@ public class TileEntityLittleChunk extends TileEntity implements IUpdatePlayerLi
     }
 
     public int getBlockMetadata(BlockPos pos) {
-        return this.getBlockMetadata(pos.getX(), pos.getY(), pos.getZ());
+        return this.getBlockMetadata(pos.getX() & 7, pos.getY() & 7, pos.getZ() & 7);
     }
 
     public IBlockState setBlockState(BlockPos pos, IBlockState newState) {
-        int x = pos.getX() & 7, y = pos.getY(), z = pos.getZ() & 7;
+        int x = pos.getX() & 7, y = pos.getY() & 7, z = pos.getZ() & 7;
         if (x >= this.size | y >= this.size | z >= this.size) {
             BlockPos actualPos = new BlockPos(
                     this.getPos().getX() + (x >= this.size ? 1 : 0),
@@ -215,8 +216,8 @@ public class TileEntityLittleChunk extends TileEntity implements IUpdatePlayerLi
         } else {
             Block newBlock = newState.getBlock();
             Block oldBlock = oldState.getBlock();
-            boolean replaced = false;
-            this.storageArray.set(x, y & 7, z, newState);
+            //boolean replaced = false;
+            this.storageArray.set(x, y, z, newState);
             if (!this.getWorld().isRemote) {
                 if (oldBlock != newBlock) {
                     oldBlock.breakBlock((World) this.getLittleWorld(), pos, oldState);
@@ -226,7 +227,7 @@ public class TileEntityLittleChunk extends TileEntity implements IUpdatePlayerLi
                     }
                 }
             }
-            if (this.storageArray.getBlockByExtId(x, y & 7, z) != newBlock) {
+            if (this.storageArray.getBlockByExtId(x, y, z) != newBlock) {
                 return null;
             } else {
                 TileEntity tileentity;

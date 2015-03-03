@@ -477,7 +477,7 @@ public abstract class LittleWorld extends World implements ILittleWorld {
                     this.capturedBlockSnapshots.add(blockSnapshot);
                 }
 
-                IBlockState state = chunk.setBlockState(BlockUtil.getLittlePos(pos), newState);
+                IBlockState state = chunk.setBlockState(pos, newState);
 
                 if (state == null) {
                     if (blockSnapshot != null) this.capturedBlockSnapshots.remove(blockSnapshot);
@@ -594,7 +594,7 @@ public abstract class LittleWorld extends World implements ILittleWorld {
 
     @Override
     public TileEntity getTileEntity(BlockPos pos) {
-        if (this.isValid(pos)) {
+        if (!this.isValid(pos)) {
             return null;
         } else {
             BlockPos parent = BlockUtil.getParentPos(pos);
@@ -728,8 +728,8 @@ public abstract class LittleWorld extends World implements ILittleWorld {
                 this.loadedTileEntityList.remove(tileentity);
                 this.tickableTileEntities.remove(tileentity);
             }
-            TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getParentWorld().getTileEntity(BlockUtil.getParentPos(pos));
-            tile.removeTileEntity(BlockUtil.getLittlePos(pos));
+            TileEntityLittleChunk chunk = (TileEntityLittleChunk) this.getParentWorld().getTileEntity(BlockUtil.getParentPos(pos));
+            chunk.removeTileEntity(BlockUtil.getLittlePos(pos));
         }
         this.updateComparatorOutputLevel(pos, getBlockState(pos).getBlock()); //Notify neighbors of changes
     }
@@ -817,8 +817,12 @@ public abstract class LittleWorld extends World implements ILittleWorld {
 
     @Override
     public World getParentWorld() {
-        return LittleBlocks.proxy.getParentWorld(this,
-                                                 this.parentDimension);
+        World world = LittleBlocks.proxy.getParentWorld(this,
+                this.parentDimension);
+        if (world == null) {
+            System.out.println("World Null");
+        }
+        return world;
     }
 
     @Override
