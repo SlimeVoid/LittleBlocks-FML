@@ -379,51 +379,22 @@ public abstract class LittleWorld extends World implements ILittleWorld {
         return outdated;
     }
 
-//    @Override TODO What's that? = isBlockLoaded ?
-//    public boolean blockExists(BlockPos pos) {
-//        if (pos.getX() < 0xfe363c80 || pos.getZ() < 0xfe363c80 || pos.getX() >= 0x1c9c380 || pos.getZ() >= 0x1c9c380) {
-//            LoggerLittleBlocks
-//                    .getInstance(Logger.filterClassName(this.getClass()
-//                            .toString()))
-//                    .write(this.getParentWorld().isRemote,
-//                           "getBlockId(" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ").[Out of bounds]",
-//                           LoggerLittleBlocks.LogLevel.DEBUG);
-//            return false;
-//        }
-//        if (pos.getY() < 0) {
-//            LoggerLittleBlocks
-//                    .getInstance(Logger.filterClassName(this.getClass()
-//                            .toString()))
-//                    .write(this.getParentWorld().isRemote,
-//                           "getBlockId(" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ").[y < 0]",
-//                           LoggerLittleBlocks.LogLevel.DEBUG);
-//            return false;
-//        }
-//        if (pos.getY() >= this.getHeight()) {
-//            LoggerLittleBlocks
-//                    .getInstance(Logger.filterClassName(this.getClass()
-//                            .toString()))
-//                    .write(this.getParentWorld().isRemote,
-//                           "getBlockId(" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ").[y >= " + this
-//                                   .getHeight() + "]",
-//                           LoggerLittleBlocks.LogLevel.DEBUG);
-//            return false;
-//        } else {
-//            Block block = this.getParentWorld().getChunkFromChunkCoords(pos.getX() >> 7,
-//                                                                        pos.getZ() >> 7)
-//                    .getBlock((pos.getX() & 0x7f) >> 3,
-//                              pos.getY() >> 3,
-//                              (pos.getZ() & 0x7f) >> 3);
-//            if (block.equals(ConfigurationLib.littleChunk)) {
-//                TileEntityLittleChunk tile = (TileEntityLittleChunk) this
-//                        .getParentWorld().getTileEntity(pos);
-//                Block littleBlock = tile.getBlock(BlockUtil.getLittlePos(pos));
-//                return littleBlock != Blocks.air ? true : false;
-//            } else {
-//                return false;
-//            }
-//        }
-//    }
+    public boolean isBlockLoaded(BlockPos pos, boolean allowEmpty) {
+        if (!this.isValid(pos)) {
+            return false;
+        } else {
+            Block block = this.getParentWorld().getChunkFromBlockCoords(BlockUtil.getParentPos(pos))
+                    .getBlock(BlockUtil.getParentPos(pos));
+            if (block.equals(ConfigurationLib.littleChunk)) {
+                TileEntityLittleChunk tile = (TileEntityLittleChunk) this
+                        .getParentWorld().getTileEntity(BlockUtil.getParentPos(pos));
+                Block littleBlock = tile.getBlock(BlockUtil.getLittlePos(pos));
+                return littleBlock != Blocks.air ? true : false;
+            } else {
+                return false;
+            }
+        }
+    }
 
     @Override
     public IBlockState getBlockState(BlockPos pos) {
@@ -497,7 +468,7 @@ public abstract class LittleWorld extends World implements ILittleWorld {
                     this.capturedBlockSnapshots.add(blockSnapshot);
                 }
 
-                IBlockState state = chunk.setBlockState(pos, newState);
+                IBlockState state = chunk.setBlockState(BlockUtil.getLittlePos(pos), newState);
 
                 if (state == null) {
                     if (blockSnapshot != null) this.capturedBlockSnapshots.remove(blockSnapshot);

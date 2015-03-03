@@ -145,10 +145,7 @@ public class BlockLittleChunk extends BlockContainer {
                         for (int x1 = 0; x1 < tile.size; x1++) {
                             for (int y1 = 0; y1 < tile.size; y1++) {
                                 for (int z1 = 0; z1 < tile.size; z1++) {
-                                    IBlockState blockState = tile.getBlockState(pos);
-                                    int contentMeta = tile.getBlockMetadata(x1,
-                                                                            y1,
-                                                                            z1);
+                                    IBlockState blockState = tile.getBlockState(x1, y1, z1);
                                     if (!blockState.getBlock().isAssociatedBlock(Blocks.air)) {
                                         ItemStack itemToDrop = this.dropLittleBlockAsNormalBlock(world,
                                                                                                  pos,
@@ -182,14 +179,16 @@ public class BlockLittleChunk extends BlockContainer {
     }
 
     private ItemStack dropLittleBlockAsNormalBlock(World world, BlockPos pos, Block block, IBlockState state) {
-        boolean dropsBlocks = block.getDrops(world,
-                                               pos,
-                                               state,
-                                               0).size() > 0 ? true : false;
+        boolean dropsBlocks = block.getDrops(
+                world,
+                pos,
+                state,
+                0).size() > 0 ? true : false;
         if (dropsBlocks) {
-            Item idDropped = block.getItemDropped(state,
-                                                    world.rand,
-                                                    0);
+            Item idDropped = block.getItemDropped(
+                    state,
+                    world.rand,
+                    0);
             int quantityDropped = block.quantityDropped(world.rand);
             int damageDropped = block.damageDropped(state);
             ItemStack itemstack = new ItemStack(idDropped, quantityDropped, damageDropped);
@@ -208,15 +207,17 @@ public class BlockLittleChunk extends BlockContainer {
             if (this.canPlayerPlaceBlockOrUseItem(world,
                                                   entityplayer)) {
                 try {
-                    BlockUtil.getLittleController().onPlayerRightClickFirst((EntityPlayerSP) entityplayer,
-                                                                            (WorldClient) LittleBlocks.proxy.getLittleWorld(world,
-                                                                                                                      false),
-                                                                            entityplayer.inventory.getCurrentItem(),
-                                                                            BlockUtil.getLittleChunkPos(pos).add(xSelected, ySelected, zSelected),
-                                                                            EnumFacing.getFront(side),
-                                                                            hitX,
-                                                                            hitY,
-                                                                            hitZ);
+                    BlockUtil.getLittleController().onPlayerRightClickFirst(
+                            (EntityPlayerSP) entityplayer,
+                            (WorldClient) LittleBlocks.proxy.getLittleWorld(
+                                    world,
+                                    false),
+                            entityplayer.inventory.getCurrentItem(),
+                            BlockUtil.getLittleChunkPos(pos).add(xSelected, ySelected, zSelected),
+                            EnumFacing.getFront(side),
+                            hitX,
+                            hitY,
+                            hitZ);
                 } catch (ClassCastException e) {
                     FMLCommonHandler.instance().getFMLLogger().warn(e.getLocalizedMessage());
                     return true;

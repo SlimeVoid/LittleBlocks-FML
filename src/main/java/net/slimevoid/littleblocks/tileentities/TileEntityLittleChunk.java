@@ -94,14 +94,14 @@ public class TileEntityLittleChunk extends TileEntity implements IUpdatePlayerLi
         }
     }
 
-    public Block getBlock(BlockPos position) {
+    public Block getBlock(BlockPos pos) {
         try {
-            return this.getBlockByExtId(position.getX() & 7, position.getY(), position.getZ() & 7);
+            return this.getBlockByExtId(pos.getX() & 7, pos.getY(), pos.getZ() & 7);
         } catch (ReportedException reportedexception) {
             CrashReportCategory crashreportcategory = reportedexception.getCrashReport().makeCategory("Block being got");
             crashreportcategory.addCrashSectionCallable("Location", new Callable() {
                 public String call() {
-                    return CrashReportCategory.getCoordinateInfo(pos);
+                    return CrashReportCategory.getCoordinateInfo(TileEntityLittleChunk.this.pos);
                 }
             });
             throw reportedexception;
@@ -114,7 +114,7 @@ public class TileEntityLittleChunk extends TileEntity implements IUpdatePlayerLi
                     this.getPos().getX() + (x >= this.size ? 1 : 0),
                     this.getPos().getY() + (y >= this.size ? 1 : 0),
                     this.getPos().getZ() + (z >= this.size ? 1 : 0));
-            IBlockState blockState = this.getWorld().getBlockState(pos);
+            IBlockState blockState = this.getWorld().getBlockState(actualPos);
             if (blockState.getBlock().isAssociatedBlock(this.blockType)) {
                 TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getWorld().getTileEntity(actualPos);
                 BlockPos newLittlePos = new BlockPos(x >= this.size ? x - this.size : x,
@@ -131,7 +131,7 @@ public class TileEntityLittleChunk extends TileEntity implements IUpdatePlayerLi
                     this.getPos().getX() - (x < 0 ? 1 : 0),
                     this.getPos().getY() - (y < 0 ? 1 : 0),
                     this.getPos().getZ() - (z < 0 ? 1 : 0));
-            IBlockState blockState = this.getWorld().getBlockState(pos);
+            IBlockState blockState = this.getWorld().getBlockState(actualPos);
             if (blockState.getBlock().isAssociatedBlock(this.blockType)) {
                 TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getWorld().getTileEntity(actualPos);
                 BlockPos newLittlePos = new BlockPos(x < 0 ? x + this.size : x,
@@ -144,19 +144,25 @@ public class TileEntityLittleChunk extends TileEntity implements IUpdatePlayerLi
             }
             return null;
         } else {
-            return this.storageArray.get(x,
+            IBlockState littleState = this.storageArray.get(
+                    x,
                     y,
                     z);
+            if (littleState.getBlock() != Blocks.air) System.out.println("Block[" + x + "," + y + "," + z + "]: " + littleState.toString());
+            return littleState;
         }
     }
 
     public IBlockState getBlockState(BlockPos pos) {
-        int x = pos.getX(), y = pos.getY(), z = pos.getZ();
-        return this.getBlockState(x, y, z);
+        return this.getBlockState(
+                pos.getX(),
+                pos.getY(),
+                pos.getZ());
     }
 
     public int getBlockMetadata(int x, int y, int z) {
-        return this.storageArray.getExtBlockMetadata(x,
+        return this.storageArray.getExtBlockMetadata(
+                x,
                 y,
                 z);
     }
@@ -174,11 +180,12 @@ public class TileEntityLittleChunk extends TileEntity implements IUpdatePlayerLi
                     this.getPos().getZ() + (z >= this.size ? 1 : 0));
             IBlockState oldState = this.getWorld().getBlockState(actualPos);
             if (oldState.getBlock().isAssociatedBlock(Blocks.air)) {
-                this.getWorld().setBlockState(actualPos, ConfigurationLib.littleChunk.getDefaultState());
+                this.getWorld().setBlockState(actualPos, ConfigurationLib.littleChunk.getDefaultState(), 3);
             }
             if (oldState.getBlock().isAssociatedBlock(this.blockType)) {
                 TileEntityLittleChunk tile = (TileEntityLittleChunk) this.getWorld().getTileEntity(actualPos);
-                BlockPos newLittlePos = new BlockPos(x >= this.size ? x - this.size : x,
+                BlockPos newLittlePos = new BlockPos(
+                        x >= this.size ? x - this.size : x,
                         y >= this.size ? y - this.size : y,
                         z >= this.size ? z - this.size : z);
                 return tile.setBlockState(newLittlePos, newState);
@@ -189,7 +196,7 @@ public class TileEntityLittleChunk extends TileEntity implements IUpdatePlayerLi
                     this.getPos().getX() - (x < 0 ? 1 : 0),
                     this.getPos().getY() - (y < 0 ? 1 : 0),
                     this.getPos().getZ() - (z < 0 ? 1 : 0));
-            IBlockState oldState = this.getWorld().getBlockState(pos);
+            IBlockState oldState = this.getWorld().getBlockState(actualPos);
             if (oldState.getBlock().isAssociatedBlock(Blocks.air)) {
                 this.getWorld().setBlockState(actualPos, ConfigurationLib.littleChunk.getDefaultState());
             }
