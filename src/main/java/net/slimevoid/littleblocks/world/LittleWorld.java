@@ -908,6 +908,12 @@ public abstract class LittleWorld extends World implements ILittleWorld {
 //        }
 //    }
 
+
+    @Override
+    public int getCombinedLight(BlockPos pos, int i) {
+        return this.getParentWorld().getCombinedLight(BlockUtil.getParentPos(pos), i);
+    }
+
     int[] lightUpdateBlockList;
 
 //    public int getSavedLightValue(EnumSkyBlock enumskyblock, int x, int y, int z) { TODO
