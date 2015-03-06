@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
+import net.slimevoid.littleblocks.api.ILittleWorld;
 import net.slimevoid.littleblocks.core.lib.ConfigurationLib;
 
 import java.util.HashMap;
@@ -23,12 +24,12 @@ public class EntityItemLittleBlocksCollection extends EntityItem {
     }
 
     public EntityItemLittleBlocksCollection(World world) {
-        super(world);
+        super(world instanceof ILittleWorld ? ((ILittleWorld) world).getParentWorld() : world);
         this.setEntityItemStack(new ItemStack(ConfigurationLib.littleChunk));
     }
 
     public EntityItemLittleBlocksCollection(World world, double x, double y, double z, ItemStack itemStack) {
-        super(world, x, y, z, itemStack);
+        super(world instanceof ILittleWorld ? ((ILittleWorld) world).getParentWorld() : world, x, y, z, itemStack);
     }
 
     public int dropItems(EntityPlayer entityplayer) {

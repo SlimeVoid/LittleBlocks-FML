@@ -93,6 +93,7 @@ public class TileEntityLittleBlocksRenderer extends TileEntitySpecialRenderer {
                                                                                tileentity.getPos().getY(),
                                                                                tileentity.getPos().getZ(),
                                                                                f);
+                System.out.println("TileEntity: " + tileentity.toString());
             }
 
             GL11.glDisable(GL12.GL_RESCALE_NORMAL);

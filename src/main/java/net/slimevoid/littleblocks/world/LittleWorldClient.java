@@ -1,10 +1,12 @@
 package net.slimevoid.littleblocks.world;
 
+import com.google.common.base.Predicate;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.world.*;
@@ -315,43 +317,42 @@ public class LittleWorldClient extends WorldClient implements ILittleWorld {
 //                                                       z);
 //    }
 
-//    @Override
-//    public boolean canPlaceEntityOnSide(Block blockId, int x, int y, int z, boolean flag, int side, Entity entityPlacing, ItemStack itemstack) {
-//        return this.getLittleWorld().canPlaceEntityOnSide(blockId,
-//                                                          x,
-//                                                          y,
-//                                                          z,
-//                                                          flag,
-//                                                          side,
-//                                                          entityPlacing,
-//                                                          itemstack);
-//    }
+    @Override
+    public boolean canBlockBePlaced(Block blockId, BlockPos pos, boolean flag, EnumFacing side, Entity entityPlacing, ItemStack itemstack) {
+        return this.getLittleWorld().canBlockBePlaced(
+                blockId,
+                pos,
+                flag,
+                side,
+                entityPlacing,
+                itemstack);
+    }
 
-//    @Override
-//    public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb, IEntitySelector entitySelector) {
-//        return this.getLittleWorld().getEntitiesWithinAABBExcludingEntity(entity,
-//                                                                          axisalignedbb,
-//                                                                          entitySelector);
-//    }
-//
-//    @Override
-//    public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb) {
-//        return this.getLittleWorld().getEntitiesWithinAABBExcludingEntity(entity,
-//                                                                          axisalignedbb);
-//    }
-//
-//    @Override
-//    public List selectEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisalignedbb, IEntitySelector entitySelector) {
-//        return this.getLittleWorld().selectEntitiesWithinAABB(entityClass,
-//                                                              axisalignedbb,
-//                                                              entitySelector);
-//    }
-//
-//    @Override
-//    public List getEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisAlignedBB) {
-//        return this.getLittleWorld().getEntitiesWithinAABB(entityClass,
-//                                                           axisAlignedBB);
-//    }
+    @Override
+    public List getEntitiesInAABBexcluding(Entity entity, AxisAlignedBB axisalignedbb, Predicate entitySelector) {
+        return this.getLittleWorld().getEntitiesInAABBexcluding(entity,
+                axisalignedbb,
+                entitySelector);
+    }
+
+    @Override
+    public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb) {
+        return this.getLittleWorld().getEntitiesWithinAABBExcludingEntity(entity,
+                                                                          axisalignedbb);
+    }
+
+    @Override
+    public List getEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisalignedbb, Predicate entitySelector) {
+        return this.getLittleWorld().getEntitiesWithinAABB(entityClass,
+                                                              axisalignedbb,
+                                                              entitySelector);
+    }
+
+    @Override
+    public List getEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisAlignedBB) {
+        return this.getLittleWorld().getEntitiesWithinAABB(entityClass,
+                                                           axisAlignedBB);
+    }
 
     @Override
     public boolean checkNoEntityCollision(AxisAlignedBB axisalignedbb, Entity entity) {

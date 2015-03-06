@@ -1229,40 +1229,28 @@ public abstract class LittleWorld extends World implements ILittleWorld {
 
 
     @Override
-    public boolean canBlockBePlaced(Block block, BlockPos pos, boolean flag, EnumFacing side, Entity entityPlacing, ItemStack itemstack) {
-        IBlockState blockAt = this.getBlockState(pos);
-        AxisAlignedBB axisalignedbb = blockAt.getBlock()
-                .getCollisionBoundingBox(this, pos, blockAt);
-
-        if (flag) {
-            axisalignedbb = null;
-        }
+    public boolean canBlockBePlaced(Block blockIn, BlockPos pos, boolean flag, EnumFacing side, Entity entityPlacing, ItemStack itemstack) {
+        Block blockAt = this.getBlockState(pos).getBlock();
+        AxisAlignedBB axisalignedbb = flag ? null : blockIn.getCollisionBoundingBox(this, pos, blockIn.getDefaultState());
 
         if (axisalignedbb != null && !this
                 .checkNoEntityCollision(axisalignedbb,
                                         entityPlacing)) {
             return false;
-        } else {
-            if ((blockAt.getBlock() == Blocks.flowing_water ||
-                    blockAt.getBlock() == Blocks.water ||
-                    blockAt == Blocks.flowing_lava ||
-                    blockAt == Blocks.lava ||
-                    blockAt == Blocks.fire ||
-                    blockAt.getBlock().getMaterial().isReplaceable())) {
-                blockAt = null;
-            }
-
-            if (blockAt.getBlock().isReplaceable(
-                            this,
-                            pos)) {
-                blockAt = null;
-            }
-
-            return blockAt.getBlock().getMaterial() == Material.circuits && block == Blocks.anvil ? true : block != Blocks.air && blockAt == null && block
-                    .canPlaceBlockOnSide(this,
-                                         pos,
-                                         side);
         }
+//        if ((blockAt == Blocks.flowing_water ||
+//                blockAt == Blocks.water ||
+//                blockAt == Blocks.flowing_lava ||
+//                blockAt == Blocks.lava ||
+//                blockAt == Blocks.fire ||
+//                blockAt.getMaterial().isReplaceable())) {
+//            blockAt = null;
+//        }
+
+        if (blockAt.getMaterial() == Material.circuits && blockIn == Blocks.anvil) {
+            return true;
+        }
+        return blockAt.isReplaceable(this, pos) && blockIn.canReplace(this, pos, side, itemstack);
     }
 
     @Override

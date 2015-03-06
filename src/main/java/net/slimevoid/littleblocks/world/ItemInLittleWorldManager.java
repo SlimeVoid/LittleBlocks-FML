@@ -83,6 +83,7 @@ public class ItemInLittleWorldManager extends ItemInWorldManager {
 
     @Override
     public boolean tryHarvestBlock(BlockPos pos) {
+        System.out.println("Server Harvest");
         int exp = ForgeHooks.onBlockBreakEvent(theWorld, getGameType(), thisPlayerMP, pos);
         if (exp == -1) {
             return false;

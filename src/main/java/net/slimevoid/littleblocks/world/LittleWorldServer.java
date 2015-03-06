@@ -1,9 +1,11 @@
 package net.slimevoid.littleblocks.world;
 
+import com.google.common.base.Predicate;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
@@ -288,10 +290,10 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
         this.getLittleWorld().addTileEntities(tileEntityCollection);
     }
 
-//    @Override TODO
-//    public void addTileEntity(TileEntity tileentity) {
-//        this.getLittleWorld().addTileEntity(tileentity);
-//    }
+    @Override
+    public boolean addTileEntity(TileEntity tileentity) {
+        return this.getLittleWorld().addTileEntity(tileentity);
+    }
 
 
     @Override
@@ -418,37 +420,36 @@ public class LittleWorldServer extends WorldServer implements ILittleWorld {
 
     }
 
-//    @Override TODO
-//    public boolean canPlaceEntityOnSide(Block blockId, int x, int y, int z, boolean flag, int side, Entity entityPlacing, ItemStack itemstack) {
-//        return this.getLittleWorld().canPlaceEntityOnSide(blockId,
-//                                                          x,
-//                                                          y,
-//                                                          z,
-//                                                          flag,
-//                                                          side,
-//                                                          entityPlacing,
-//                                                          itemstack);
-//    }
-//
-//    @Override
-//    public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb, IEntitySelector entitySelector) {
-//        return this.getLittleWorld().getEntitiesWithinAABBExcludingEntity(entity,
-//                                                                          axisalignedbb,
-//                                                                          entitySelector);
-//    }
-//
-//    @Override
-//    public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb) {
-//        return this.getLittleWorld().getEntitiesWithinAABBExcludingEntity(entity,
-//                                                                          axisalignedbb);
-//    }
-//
-//    @Override
-//    public List selectEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisalignedbb, IEntitySelector entitySelector) {
-//        return this.getLittleWorld().selectEntitiesWithinAABB(entityClass,
-//                                                              axisalignedbb,
-//                                                              entitySelector);
-//    }
+    @Override
+    public boolean canBlockBePlaced(Block blockId, BlockPos pos, boolean flag, EnumFacing side, Entity entityPlacing, ItemStack itemstack) {
+        return this.getLittleWorld().canBlockBePlaced(
+                blockId,
+                pos,
+                flag,
+                side,
+                entityPlacing,
+                itemstack);
+    }
+
+    @Override
+    public List getEntitiesInAABBexcluding(Entity entity, AxisAlignedBB axisalignedbb, Predicate entitySelector) {
+        return this.getLittleWorld().getEntitiesInAABBexcluding(entity,
+                axisalignedbb,
+                entitySelector);
+    }
+
+    @Override
+    public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB axisalignedbb) {
+        return this.getLittleWorld().getEntitiesWithinAABBExcludingEntity(entity,
+                                                                          axisalignedbb);
+    }
+
+    @Override
+    public List getEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisalignedbb, Predicate entitySelector) {
+        return this.getLittleWorld().getEntitiesWithinAABB(entityClass,
+                axisalignedbb,
+                entitySelector);
+    }
 
     @Override
     public List getEntitiesWithinAABB(Class entityClass, AxisAlignedBB axisAlignedBB) {
