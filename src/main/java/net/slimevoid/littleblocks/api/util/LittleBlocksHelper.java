@@ -17,6 +17,7 @@ import net.slimevoid.library.util.helpers.SlimevoidHelper;
 import net.slimevoid.littleblocks.api.ILBCommonProxy;
 import net.slimevoid.littleblocks.api.ILittleBlocks;
 import net.slimevoid.littleblocks.api.ILittleWorld;
+import net.slimevoid.littleblocks.core.lib.BlockUtil;
 import net.slimevoid.littleblocks.tileentities.TileEntityLittleChunk;
 
 public class LittleBlocksHelper implements ISlimevoidHelper {
@@ -91,27 +92,37 @@ public class LittleBlocksHelper implements ISlimevoidHelper {
         return world;
     }
 
-    private boolean isLittleBlock(IBlockAccess world, int x, int y, int z) {
+    private boolean isLittleBlock(IBlockAccess world, BlockPos pos) {
         if (world instanceof ILittleWorld) {
             return true;
         }
-        BlockPos pos = new BlockPos(x >> 3,
-					                y >> 3,
-					                z >> 3);
-        if (world.getTileEntity(pos) instanceof ILittleBlocks) {
+        BlockPos parent = BlockUtil.getParentPos(pos);
+        if (world.getTileEntity(parent) instanceof ILittleBlocks) {
             return true;
         }
         return false;
     }
 
-    public boolean isUseableByPlayer(World world, EntityPlayer player, int xCoord, int yCoord, int zCoord, double xDiff, double yDiff, double zDiff, double distance) {
-        if (isLittleBlock(world,
-                          xCoord,
-                          yCoord,
-                          zCoord)) {
-            return player.getDistanceSq((xCoord / size) + xDiff,
-                                        (yCoord / size) + yDiff,
-                                        (zCoord / size) + zDiff) <= distance;
+    @Deprecated
+    private boolean isLittleBlock(IBlockAccess world, int x, int y, int z) {
+        return this.isLittleBlock(world, new BlockPos(x, y, z));
+    }
+
+    @Override
+    @Deprecated
+    public boolean isUseableByPlayer(World world, EntityPlayer player, int x, int y, int z, double xDiff, double yDiff, double zDiff, double distance) {
+        return this.isUseableByPlayer(world, player, new BlockPos(x, y, z), xDiff, yDiff, zDiff, distance);
+    }
+
+    @Override
+    public boolean isUseableByPlayer(World world, EntityPlayer player, BlockPos pos, double xDiff, double yDiff, double zDiff, double distance) {
+        if (isLittleBlock(
+                world,
+                pos)) {
+            return player.getDistanceSq(
+                    (pos.getX() / size) + xDiff,
+                    (pos.getY() / size) + yDiff,
+                    (pos.getZ() / size) + zDiff) <= distance;
         }
         return false;
     }

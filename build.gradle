@@ -51,9 +51,9 @@ minecraft {
     version = mc
     mappings = map
     if  (file('../run').exists()) {
-       runDir = "../run"
+        runDir = "../run"
     } else {
-       runDir = "assets"
+        runDir = "run"
     }
     replaceIn 'net/slimevoid/' + pack + '/core/lib/CoreLib.java'
     replace '@VERSION@', project.version
@@ -76,12 +76,6 @@ processResources {
     // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
-    }
-}
-
-sourceSets {
-    main {
-        output.resourcesDir = output.classesDir
     }
 }
 
