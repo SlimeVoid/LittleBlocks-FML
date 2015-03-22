@@ -79,6 +79,12 @@ processResources {
     }
 }
 
+sourceSets {
+    main {
+        output.resourcesDir = output.classesDir
+    }
+}
+
 task sourceJar(type: Jar) {
 	from sourceSets.main.allSource
 	classifier = 'sources'
