@@ -2,7 +2,6 @@ package net.slimevoid.littleblocks.network.packets.executors;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-import net.slimevoid.library.IPacketExecutor;
 import net.slimevoid.library.network.PacketUpdate;
 import net.slimevoid.library.network.executor.PacketExecutor;
 import net.slimevoid.littleblocks.core.lib.CommandLib;
