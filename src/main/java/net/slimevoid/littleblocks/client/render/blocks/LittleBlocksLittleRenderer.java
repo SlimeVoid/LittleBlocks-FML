@@ -57,17 +57,13 @@ public class LittleBlocksLittleRenderer {
 
             double xS = -((x >> 4) << 4), yS = -((y >> 4) << 4), zS = -((z >> 4) << 4);
 
-            if (!CoreLib.OPTIFINE_INSTALLED) GL11.glTranslated(xS,
-                                                               yS,
-                                                               zS);
+            GL11.glTranslated(xS, yS, zS);
             GL11.glEnable(GL12.GL_RESCALE_NORMAL);
             float scale = 1 / (float) ConfigurationLib.littleBlocksSize;
             GL11.glScalef(scale,
                           scale,
                           scale);
-            if (!CoreLib.OPTIFINE_INSTALLED) GL11.glTranslated(-xS,
-                                                               -yS,
-                                                               -zS);
+            GL11.glTranslated(-xS, -yS, -zS);
 
             tessellator.startDrawingQuads();
             for (LittleBlockToRender littleBlockToRender : this.littleBlocksToRender) {
